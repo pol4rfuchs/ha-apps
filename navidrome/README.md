@@ -1,69 +1,127 @@
-# Home Assistant Add-on: Navidrome
+<div align="center">
 
-![Version](https://img.shields.io/badge/dynamic/yaml?label=Version&query=%24.version&url=https%3A%2F%2Fcodeberg.org%2Fwuest3nfuchs%2Fha-addons%2Fraw%2Fbranch%2Fmain%2Fnavidrome%2Fconfig.yaml)
-[![Upstream](https://img.shields.io/github/v/release/navidrome/navidrome?label=Upstream)](https://github.com/navidrome/navidrome/releases/latest)
-![Ingress](https://img.shields.io/badge/Ingress-true-green)
+# 🎵 Navidrome — Home Assistant Add-on
 
-## About
+</div>
 
-[Navidrome](https://www.navidrome.org/) is a self-hosted music server and streamer.
-It is compatible with the **Subsonic / Airsonic API**, so any Subsonic client
-(DSub, Symfonium, Ultrasonic, Feishin, …) works out of the box.
+<div align="center">
 
-This add-on wraps the official [`deluan/navidrome`](https://hub.docker.com/r/deluan/navidrome)
-Docker image and adds Home Assistant Supervisor integration (Ingress, bashio, options UI).
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ha--apps-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
+[![Upstream](https://img.shields.io/github/v/release/navidrome/navidrome?label=Upstream&style=for-the-badge&logo=github&logoColor=white)](https://github.com/navidrome/navidrome/releases/latest)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-> **Fork note:** based on [celynw/ha-addons](https://github.com/celynw/ha-addons/tree/master/navidrome),
-> extended with full option coverage and kept up-to-date.
+**Self-hosted music server and streamer — Subsonic/Airsonic API compatible, works with any Subsonic client.**
 
-## Installation
+</div>
 
-1. Add this repository to Home Assistant:
-   _Settings → Add-ons → Add-on store → ⋮ → Repositories_
-2. Install **Navidrome**
-3. Set at minimum `ND_MUSICFOLDER` (path to your music, e.g. `/media/music`)
-4. Start the add-on
-5. Open the Web UI via the sidebar panel
+---
 
-## Updating Navidrome
+## 🧭 Overview
 
-Bump the version tag in `build.yaml` and rebuild:
+| Property | Value |
+|---|---|
+| **Upstream image** | `deluan/navidrome` |
+| **Default port** | `4533` |
+| **Arch** | `amd64`, `aarch64` |
+| **API** | Subsonic / Airsonic compatible |
+| **Clients** | DSub, Symfonium, Ultrasonic, Feishin, … |
 
-```yaml
-# build.yaml
-build_from:
-  aarch64: "deluan/navidrome:0.55.0"   # ← new version here (all arches)
+---
+
+## 🚀 Installation
+
+### Step 1 — Add the repository
+
+```text
+Settings → Add-ons → Add-on Store → ⋮ → Repositories
 ```
 
-Then update `config.yaml` → `version` and add an entry to `CHANGELOG.md`.
+Add:
 
-## Configuration
+```text
+https://github.com/pol4rfuchs/ha-apps
+```
+
+### Step 2 — Install & configure
+
+Install **Navidrome** and set at minimum:
+
+```yaml
+ND_MUSICFOLDER: "/media/music"
+```
+
+### Step 3 — Start
+
+Open the Web UI via the button in the add-on Info tab (port `4533`).  
+On first start, create your admin account.
+
+---
+
+## ⚙️ Configuration
 
 All options map 1:1 to [Navidrome environment variables](https://www.navidrome.org/docs/usage/configuration-options/).
 
-| Option | Default | Notes |
+| Option | Default | Description |
 |---|---|---|
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
-| `ND_DATAFOLDER` | `/config/addons_config/navidrome` | Database & cache location. |
+| `ND_DATAFOLDER` | `/data` | Database and cache location. |
 | `ND_SCANSCHEDULE` | `@every 24h` | Cron or duration. `0` = disabled. |
 | `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
-| `ND_ENABLEDOWNLOADS` | `true` | Allow downloading from the UI. |
+| `ND_ENABLEDOWNLOADS` | `true` | Allow downloading tracks from the UI. |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware. |
-| `ND_LASTFM_ENABLED` | `false` | Last.fm scrobbling & metadata. |
+| `ND_LASTFM_ENABLED` | `false` | Last.fm scrobbling and metadata. |
 | `ND_LISTENBRAINZ_ENABLED` | `false` | ListenBrainz scrobbling. |
-| `ND_SPOTIFY_ID/SECRET` | — | Artist images from Spotify. |
+| `ND_SPOTIFY_ID` | — | Spotify Client ID for artist images. |
+| `ND_SPOTIFY_SECRET` | — | Spotify Client Secret. |
 | `ND_REVERSEPROXYUSERHEADER` | — | SSO header (e.g. `Remote-User`). |
 
 Full option reference: <https://www.navidrome.org/docs/usage/configuration-options/>
 
-## Music folder paths
+---
 
-| HA mount | Typical path |
+## 🌐 Ports
+
+| Port | Protocol | Purpose |
+|---|---|---|
+| `4533` | TCP | Navidrome Web UI + Subsonic API |
+
+---
+
+## 📂 Music folder paths
+
+| Source | Typical path |
 |---|---|
 | USB / HDD via HA | `/media/...` |
 | SMB share (Samba add-on) | `/share/...` |
-| NFS mount | `/mnt/...` or `/share/...` |
+| NFS mount | `/share/...` |
 
-## Support
+---
 
-Open an issue on [Codeberg](https://codeberg.org/wuest3nfuchs/ha-addons/issues).
+## 💾 Data persistence
+
+```text
+/data/
+├── navidrome.db      ← Library database
+└── cache/            ← Transcoding cache, artwork
+```
+
+HA backups include the add-on `/data` directory automatically.
+
+---
+
+## 🔧 Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| Web UI not loading | Check that port `4533` is mapped in the Network tab |
+| Music not showing | Verify `ND_MUSICFOLDER` path is correct and readable |
+| Scan not running | Trigger manually: UI → Settings → Scan Library |
+| Client can't connect | Use the Subsonic API URL: `http://[HA-IP]:4533` |
+
+---
+
+## 📜 License
+
+MIT — this add-on wrapper.  
+Navidrome is licensed under [GPL-3.0](https://github.com/navidrome/navidrome/blob/master/LICENSE).
