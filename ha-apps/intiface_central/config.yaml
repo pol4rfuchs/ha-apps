@@ -3,7 +3,7 @@ description: "Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assista
 version: "1.0.0"
 slug: "intiface_central"
 url: "https://codeberg.org/Pol4rFuchs/ha-apps"
-image: "codeberg.org/pol4rfuchs/intiface-ha-app"
+image: "ghcr.io/pol4rfuchs/intiface-ha-app"
 init: false
 arch:
   - amd64

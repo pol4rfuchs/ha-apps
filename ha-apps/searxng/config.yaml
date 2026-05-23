@@ -3,7 +3,7 @@ version: "2026.3.8"
 slug: "searxng"
 description: "Privacy-respecting metasearch engine — kein Tracking, keine Profile."
 url: "https://codeberg.org/Pol4rFuchs/ha-apps"
-image: "codeberg.org/pol4rfuchs/searxng-ha-app"
+image: "ghcr.io/pol4rfuchs/searxng-ha-app"
 arch:
   - aarch64
   - amd64

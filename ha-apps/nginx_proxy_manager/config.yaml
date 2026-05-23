@@ -3,7 +3,7 @@ description: "Manage Nginx reverse proxies with a clean UI, SSL and HA-native in
 version: "2.1.0"
 slug: "nginx_proxy_manager"
 url: "https://codeberg.org/Pol4rFuchs/ha-apps"
-image: "codeberg.org/pol4rfuchs/npm-ha-app"
+image: "ghcr.io/pol4rfuchs/npm-ha-app"
 init: false
 webui: "http://[HOST]:[PORT:81]"
 

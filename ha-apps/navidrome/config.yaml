@@ -3,7 +3,7 @@ version: "2.1.0"
 slug: navidrome
 description: Modern Music Server and Streamer compatible with Subsonic/Airsonic
 url: https://codeberg.org/Pol4rFuchs/ha-apps
-image: "codeberg.org/pol4rfuchs/navidrome-ha-app"
+image: "ghcr.io/pol4rfuchs/navidrome-ha-app"
 arch:
   - aarch64
   - amd64

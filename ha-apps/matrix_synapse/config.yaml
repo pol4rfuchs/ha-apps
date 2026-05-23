@@ -3,7 +3,7 @@ description: "Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Vi
 version: "1.2.11"
 slug: "matrix_server"
 url: "https://codeberg.org/Pol4rFuchs/ha-apps"
-image: "codeberg.org/pol4rfuchs/matrix-synapse-ha-app"
+image: "ghcr.io/pol4rfuchs/matrix-synapse-ha-app"
 init: false
 homeassistant_api: false
 hassio_api: true
