@@ -1,0 +1,39 @@
+name: GHCR Cleanup
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # wöchentlich, Sonntag 03:00 UTC
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    strategy:
+      matrix:
+        package:
+          - searxng-ha-app
+
+    steps:
+      - name: Delete old untagged versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ matrix.package }}
+          package-type: container
+          min-versions-to-keep: 0
+          delete-only-untagged-versions: true
+
+      - name: Delete SHA tags older than 90 days
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ matrix.package }}
+          package-type: container
+          min-versions-to-keep: 1
+          ignore-versions: '^latest$'
+          delete-only-pre-release-versions: false
+          oldest-version-cutoff: 90
