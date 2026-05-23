@@ -6,7 +6,7 @@
 
 <div align="center">
 
-![ntfy logo](https://github.com/pol4rfuchs/ha-apps/raw/branch/main/ntfy/icon.png)
+![ntfy logo](https://github.com/pol4rfuchs/ha-apps/blob/main/ntfy/icon.png)
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
 [![Codeberg Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
