@@ -1,0 +1,172 @@
+#include <tunables/global>
+profile ntfy flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+
+  # Capabilities
+  capability chown,
+  capability dac_override,
+  capability dac_read_search,
+  capability fowner,
+  capability fsetid,
+  capability setgid,
+  capability setuid,
+  capability net_bind_service,
+
+  # Network
+  network inet tcp,
+  network inet udp,
+  network inet6 tcp,
+  network inet6 udp,
+  network unix stream,
+  network unix dgram,
+
+  # -------------------------------------------------------------------------
+  # s6-overlay: komplette Execline-Kette
+  # Alle Symlinks werden von AppArmor aufgelöst — Zielpfade müssen erlaubt sein
+  # -------------------------------------------------------------------------
+  /init                    rix,
+  /init.d/**               rix,
+  /etc/s6-overlay/**       rix,
+  /etc/cont-init.d/**      rix,
+  /etc/services.d/**       rix,
+
+  # s6 runtime
+  /run/s6/**               rwix,
+  /run/s6/**               rwk,
+  /run/**                  rwix,
+  /run/**                  rwk,
+  /var/run/**              rw,
+  /var/run/**              rwk,
+
+  # s6/execline Binaries (symlink-Ziele)
+  /command/**              rix,
+  /package/**              rix,
+
+  # with-contenv environment (wird vor exec geladen)
+  /var/run/s6/container_environment/   r,
+  /var/run/s6/container_environment/** r,
+  /run/s6/container_environment/       r,
+  /run/s6/container_environment/**     r,
+
+  # -------------------------------------------------------------------------
+  # Shell-Interpreter Kette
+  # -------------------------------------------------------------------------
+  /run.sh                  rix,
+  /usr/bin/with-contenv    rix,
+
+  # env (Shebang-Interpreter von bashio: #!/usr/bin/env bash)
+  /usr/bin/env             rix,
+
+  # bash (alle möglichen Pfade + Symlinks)
+  /bin/bash                rix,
+  /usr/bin/bash            rix,
+  /bin/sh                  rix,
+  /usr/bin/sh              rix,
+
+  # bashio: Symlink /usr/bin/bashio → /usr/lib/bashio/bashio
+  /usr/bin/bashio          rix,
+  /usr/lib/bashio/         r,
+  /usr/lib/bashio/**       rix,   # Symlink-Ziel + alle gesourcten Module
+
+  # -------------------------------------------------------------------------
+  # Standard-Tools die run.sh / bashio verwenden
+  # -------------------------------------------------------------------------
+  /bin/mkdir               rix,
+  /usr/bin/mkdir           rix,
+  /usr/bin/printf          rix,
+  /bin/cat                 rix,
+  /usr/bin/cat             rix,
+  /usr/bin/readlink        rix,
+  /bin/readlink            rix,
+  /usr/bin/grep            rix,
+  /bin/grep                rix,
+  /usr/bin/sed             rix,
+  /bin/sed                 rix,
+  /usr/bin/awk             rix,
+  /usr/bin/cut             rix,
+  /usr/bin/tr              rix,
+  /usr/bin/head            rix,
+  /usr/bin/tail            rix,
+  /usr/bin/test            rix,
+  /usr/bin/[               rix,
+  /bin/[                   rix,
+
+  # -------------------------------------------------------------------------
+  # ntfy binary
+  # -------------------------------------------------------------------------
+  /usr/bin/ntfy            rix,
+  /usr/local/bin/ntfy      rix,
+
+  # -------------------------------------------------------------------------
+  # Python (Admin Panel http.server)
+  # -------------------------------------------------------------------------
+  /usr/bin/python3*        rix,
+  /usr/lib/python3*/       r,
+  /usr/lib/python3*/**     r,
+
+  # Admin Panel Dateien
+  /opt/ntfy-admin/         r,
+  /opt/ntfy-admin/**       r,
+
+  # -------------------------------------------------------------------------
+  # Daten & Konfiguration
+  # -------------------------------------------------------------------------
+  /data/ntfy/              rw,
+  /data/ntfy/**            rw,
+  /etc/ntfy/               rw,
+  /etc/ntfy/**             rw,
+  /tmp/                    rw,
+  /tmp/**                  rw,
+
+  # HA Add-on Konfiguration (bashio liest hieraus)
+  /data/options.json       r,
+
+  # -------------------------------------------------------------------------
+  # Proc & Sys (Go-Runtime + bashio benötigt dies)
+  # -------------------------------------------------------------------------
+  /proc/                   r,
+  /proc/**                 r,
+  /sys/kernel/mm/transparent_hugepage/hpage_pmd_size r,
+
+  # -------------------------------------------------------------------------
+  # Bibliotheken
+  # -------------------------------------------------------------------------
+  /lib/**                  r,
+  /lib64/**                r,
+  /usr/lib/**              r,
+  /usr/local/lib/**        r,
+
+  # -------------------------------------------------------------------------
+  # SSL / TLS
+  # -------------------------------------------------------------------------
+  /etc/ssl/certs/**        r,
+  /etc/ssl/private/**      r,
+  /usr/share/ca-certificates/** r,
+
+  # -------------------------------------------------------------------------
+  # DNS / Namensauflösung
+  # -------------------------------------------------------------------------
+  /etc/resolv.conf         r,
+  /etc/hosts               r,
+  /etc/nsswitch.conf       r,
+  /etc/passwd              r,
+  /etc/group               r,
+
+  # -------------------------------------------------------------------------
+  # Gerätezugriff
+  # -------------------------------------------------------------------------
+  /dev/null                rw,
+  /dev/random              r,
+  /dev/urandom             r,
+  /dev/zero                r,
+  /dev/tty                 rw,
+
+  # -------------------------------------------------------------------------
+  # Deny
+  # -------------------------------------------------------------------------
+  deny /proc/sysrq-trigger rw,
+  deny /proc/sys/kernel/** w,
+  deny /sys/**             w,
+}

@@ -1,0 +1,24 @@
+name: "TS6 Manager"
+description: "Web-based management interface for TeamSpeak 6 servers (WebQuery API)"
+version: "1.0.2"
+slug: "ts6_manager"
+image: "codeberg.org/pol4rfuchs/teamspeak6-manager-ha-app"
+init: false
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: auto
+ingress: false
+ports:
+  8066/tcp: 8066
+panel_icon: mdi:microphone
+webui: "http://[HOST]:[PORT:8066]"
+homeassistant_api: false
+hassio_api: false
+options:
+  log_level: "info"
+schema:
+  log_level: "list(trace|debug|info|notice|warning|error|fatal)"
+map:
+  - data

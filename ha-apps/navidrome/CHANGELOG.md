@@ -1,0 +1,26 @@
+# Changelog
+
+## v2.1.0
+
+### Bugfixes
+- **ENV-Persistenz**: `ha_entrypoint.sh` sourct Init-Scripts mit `.` statt `bash`-Subshell — alle `ND_*` Variablen kommen jetzt wirklich bei Navidrome an
+- **Belt+Suspenders**: Zusätzlich wird `/run/navidrome.env` geschrieben und in `navidrome-run.sh` gesourct (doppelte Absicherung)
+- **Ingress SPA-Fix**: `ND_BASEURL` wird dynamisch aus `bashio::addon.ingress_entry` gesetzt — Navidrome-SPA funktioniert jetzt korrekt hinter dem HA Ingress-Pfad
+- `sub_filter`-Hack aus nginx entfernt (war kaputt und unnötig mit `ND_BASEURL`)
+- nginx `ingress.conf`: `proxy_buffering off` für Streaming, `/healthz` Endpunkt statt `/ping`
+
+### Neue Features
+- **Multiple music folders**: `ND_EXTRA_MUSIC_FOLDERS` (kommagetrennt) — werden als Symlinks unter `ND_MUSICFOLDER` eingehängt
+- **Jukebox**: `privileged: true` + ALSA-Devices (`/dev/snd`) in `config.yaml` — Jukebox funktioniert jetzt
+- **Podcasts**: `ND_PODCAST_EPSIODEKEEPCOUNT`, `ND_PODCAST_EPSIODEDOWLOADCOUNT`
+- **Scanner/Extractor**: `ND_SCANNER_EXTRACTOR` (taglib/ffmpeg), `ND_FFMPEGPATH`
+- Alle Optionen jetzt auf Deutsch beschrieben in `translations/en.yaml`
+
+## v2.0.0
+
+- Initiale Neuentwicklung basierend auf celynw/ha-addons Baseline
+- Vollständige Option-Coverage
+
+## v1.0_0.54.5 (upstream celynw baseline)
+
+- Letzte upstream Version: [v0.54.5](https://github.com/navidrome/navidrome/releases/tag/v0.54.5)

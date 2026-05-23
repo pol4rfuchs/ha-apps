@@ -1,0 +1,62 @@
+#!/usr/bin/with-contenv bashio
+
+if ! bashio::config.true 'enable_voice_calls'; then
+    bashio::log.info "lk-jwt-service: Voice Calls deaktiviert — Service inaktiv"
+    exec sleep infinity
+fi
+
+LK_JWT_BIN="/data/matrix/bin/lk-jwt-service"
+LK_SECRET_FILE="/data/matrix/.livekit_secret"
+
+# Warten bis Binary vorhanden
+WAIT=0
+while [ ! -x "${LK_JWT_BIN}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "lk-jwt: Warte auf Binary Download..."
+    fi
+    sleep 2
+    WAIT=$((WAIT + 2))
+    if [ $WAIT -gt 300 ]; then
+        bashio::log.error "Timeout: lk-jwt-service Binary nicht gefunden!"
+        exec sleep infinity
+    fi
+done
+
+ln -sf "${LK_JWT_BIN}" /usr/local/bin/lk-jwt-service
+
+# Warten bis Secret verfügbar
+WAIT=0
+while [ ! -f "${LK_SECRET_FILE}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "lk-jwt: Warte auf LiveKit Secret..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: LiveKit Secret nicht gefunden!"
+        exec sleep infinity
+    fi
+done
+
+LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
+if [ -z "${LIVEKIT_SECRET}" ]; then
+    LIVEKIT_SECRET=$(cat "${LK_SECRET_FILE}")
+fi
+
+# Warten bis Synapse erreichbar
+for i in $(seq 1 60); do
+    if curl -sf "http://127.0.0.1:8008/_matrix/client/versions" -o /dev/null 2>/dev/null; then
+        bashio::log.info "✅ Synapse erreichbar"
+        break
+    fi
+    sleep 2
+done
+
+bashio::log.info "🚀 Starte lk-jwt-service auf Port 8089..."
+exec env \
+    LIVEKIT_URL="ws://127.0.0.1:7880" \
+    LIVEKIT_KEY="devkey" \
+    LIVEKIT_SECRET="${LIVEKIT_SECRET}" \
+    HOMESERVER_URL="http://127.0.0.1:8008" \
+    LIVEKIT_JWT_BIND=":8089" \
+    lk-jwt-service 2>&1

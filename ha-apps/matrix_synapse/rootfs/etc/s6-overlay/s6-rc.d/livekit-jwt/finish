@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "[livekit-jwt] Service beendet (exit: $1)"

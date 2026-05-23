@@ -1,0 +1,49 @@
+---
+configuration:
+  server_name:
+    name: Server Name
+    description: The public display name of your TeamSpeak 6 server.
+  server_password:
+    name: Server Password
+    description: Password to join the server. Leave empty for no password.
+  max_clients:
+    name: Max Clients
+    description: Maximum number of simultaneous clients allowed (1–1024).
+  query_admin_password:
+    name: Query Admin Password
+    description: >-
+      Password for the ServerQuery admin account. Leave empty to auto-generate
+      (check logs after first start).
+  welcome_message:
+    name: Welcome Message
+    description: Message displayed to clients when they connect.
+  log_level:
+    name: Log Level
+    description: "Verbosity of server logging: 0=Critical, 1=Error, 2=Warning, 3=Info, 4=Debug."
+  voice_port:
+    name: Voice Port (UDP)
+    description: UDP port clients use to connect for voice. Default is 9987.
+  filetransfer_port:
+    name: File Transfer Port (TCP)
+    description: TCP port used for file transfers. Default is 30033.
+  query_port:
+    name: Server Query Port (TCP)
+    description: TCP port for the raw ServerQuery interface. Default is 10011.
+  query_ssh_port:
+    name: SSH Query Port (TCP)
+    description: TCP port for the SSH-encrypted ServerQuery interface. Default is 10022.
+  query_http_port:
+    name: HTTP Web Query Port (TCP)
+    description: TCP port for the HTTP ServerQuery interface. Default is 10080.
+  license_accepted:
+    name: Accept TeamSpeak License
+    description: >-
+      You must accept the TeamSpeak Server License before the server can start.
+      See https://teamspeak.com/en/privacy-and-legal/ts-server-license-agreement/
+
+network:
+  "9987/udp": Voice Port (UDP)
+  "30033/tcp": File Transfer Port (TCP)
+  "10011/tcp": Server Query Port (TCP)
+  "10022/tcp": SSH Query Port (TCP)
+  "10080/tcp": HTTP Web Query Port (TCP)

@@ -1,0 +1,125 @@
+name: Build Multi-Arch → Codeberg Registry
+
+# GitHub = Build-Maschine (gratis Runner)
+# Codeberg = Registry (Images landen auf codeberg.org)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ts6_manager/**'
+      - 'searxng/**'
+      - 'teamspeak6/**'
+      - 'ntfy/**'
+      - 'navidrome/**'
+      - 'matrix_synapse/**'
+      - 'nginx_proxy_manager/**'
+     # - 'intiface_central/**'
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: 'Add-on to build (ts6_manager, teamspeak6, ntfy_manager, or all)'
+        required: false
+        default: 'all'
+
+env:
+  REGISTRY: codeberg.org
+  REGISTRY_OWNER: pol4rfuchs
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine which add-ons to build
+        id: set-matrix
+        shell: bash
+        run: |
+          # ── Add-on registry: dir → image name ──────────────
+          declare -A ADDON_IMAGES=(
+            [ts6_manager]="teamspeak6-manager-ha-app"
+            [searxng]="searxng-ha-app"
+            [teamspeak6]="teamspeak6-ha-app"
+            [ntfy]="ntfy-ha-app"
+            [navidrome]="navidrome-ha-app"
+            [matrix_synapse]="matrix-synapse-ha-app"
+            [nginx_proxy_manager]="npm-ha-app"
+           # [intiface_central]="intiface-ha-app"
+          )
+
+          MANUAL="${{ github.event.inputs.addon }}"
+          ADDONS=()
+
+          if [[ "$MANUAL" == "all" || -z "$MANUAL" ]]; then
+            for dir in "${!ADDON_IMAGES[@]}"; do
+              if [[ -f "${dir}/Dockerfile" && -f "${dir}/config.yaml" ]]; then
+                ADDONS+=("$dir")
+              fi
+            done
+          else
+            ADDONS+=("$MANUAL")
+          fi
+
+          JSON="["
+          FIRST=true
+          for dir in "${ADDONS[@]}"; do
+            IMAGE="${ADDON_IMAGES[$dir]}"
+            [[ -z "$IMAGE" ]] && continue
+            VERSION=$(awk '/^version:/ { gsub(/[" ]/, "", $2); print $2; exit }' "${dir}/config.yaml")
+            [[ -z "$VERSION" ]] && { echo "ERROR: no version in ${dir}/config.yaml" >&2; exit 1; }
+            $FIRST || JSON+=","
+            FIRST=false
+            JSON+="{\"dir\":\"${dir}\",\"image\":\"${IMAGE}\",\"version\":\"${VERSION}\"}"
+          done
+          JSON+="]"
+
+          echo "matrix=${JSON}" >> "$GITHUB_OUTPUT"
+          echo "Build matrix: ${JSON}"
+
+  build:
+    needs: detect
+    if: ${{ needs.detect.outputs.matrix != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJSON(needs.detect.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Codeberg Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: codeberg.org
+          username: ${{ secrets.CODEBERG_USER }}
+          password: ${{ secrets.CODEBERG_REGISTRY_TOKEN }}
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.addon.dir }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REGISTRY_OWNER }}/${{ matrix.addon.image }}:${{ matrix.addon.version }}
+            ${{ env.REGISTRY }}/${{ env.REGISTRY_OWNER }}/${{ matrix.addon.image }}:latest
+          build-args: |
+            BUILD_VERSION=${{ matrix.addon.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo "### ${{ matrix.addon.dir }} v${{ matrix.addon.version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Pushed: \`${{ env.REGISTRY }}/${{ env.REGISTRY_OWNER }}/${{ matrix.addon.image }}:${{ matrix.addon.version }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Platforms: \`linux/amd64\`, \`linux/arm64\`" >> "$GITHUB_STEP_SUMMARY"

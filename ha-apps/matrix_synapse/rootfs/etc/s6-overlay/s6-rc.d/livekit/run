@@ -1,0 +1,47 @@
+#!/usr/bin/with-contenv bashio
+
+if ! bashio::config.true 'enable_voice_calls'; then
+    bashio::log.info "LiveKit: Voice Calls deaktiviert — Service inaktiv"
+    exec sleep infinity
+fi
+
+LK_CONFIG="/data/matrix/livekit.yaml"
+LK_BIN="/data/matrix/bin/livekit-server"
+
+# Warten bis Binary vorhanden
+WAIT=0
+while [ ! -x "${LK_BIN}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "LiveKit: Warte auf Binary Download..."
+    fi
+    sleep 2
+    WAIT=$((WAIT + 2))
+    if [ $WAIT -gt 300 ]; then
+        bashio::log.error "Timeout: livekit-server Binary nicht gefunden!"
+        exec sleep infinity
+    fi
+done
+ln -sf "${LK_BIN}" /usr/local/bin/livekit-server
+
+# Warten bis cont-init die Config FRISCH geschrieben hat
+# (nicht eine evtl. veraltete Config vom letzten Start lesen)
+# Erkennbar daran dass homeserver.yaml auch frisch ist — beide werden im selben Script geschrieben
+SYNAPSE_CONFIG="/data/matrix/synapse/homeserver.yaml"
+WAIT=0
+while [ ! -f "${LK_CONFIG}" ] || [ ! -f "${SYNAPSE_CONFIG}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "LiveKit: Warte auf Config-Generierung..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: livekit.yaml nicht gefunden!"
+        exec sleep infinity
+    fi
+done
+
+# Zusätzlich kurz warten bis cont-init komplett durch ist
+sleep 3
+
+bashio::log.info "🚀 Starte LiveKit SFU auf Port 7880 (TURN UDP 3478)..."
+exec livekit-server --config "${LK_CONFIG}" 2>&1

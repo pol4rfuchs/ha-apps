@@ -1,0 +1,26 @@
+name: "SearXNG"
+version: "2026.3.8"
+slug: "searxng"
+description: "Privacy-respecting metasearch engine — kein Tracking, keine Profile."
+url: "https://codeberg.org/Pol4rFuchs/ha-apps"
+image: "codeberg.org/pol4rfuchs/searxng-ha-app"
+arch:
+  - aarch64
+  - amd64
+init: false
+ingress: true
+ingress_port: 8080
+panel_icon: "mdi:magnify"
+hassio_api: true
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: "SearXNG Web UI"
+map:
+  - type: addon_config
+    read_only: false
+    path: /etc/searxng
+options:
+  set_base_url_for_ingress: true
+schema:
+  set_base_url_for_ingress: bool

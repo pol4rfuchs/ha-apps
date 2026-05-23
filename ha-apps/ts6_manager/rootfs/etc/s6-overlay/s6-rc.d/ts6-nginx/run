@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "[ts6-nginx] Starting nginx on :8099 ..."
+exec nginx -g "daemon off;"

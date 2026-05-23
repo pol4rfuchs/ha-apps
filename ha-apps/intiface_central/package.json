@@ -1,0 +1,17 @@
+{
+  "name": "intiface-ha-bridge",
+  "version": "1.0.0",
+  "description": "Intiface Central Web UI + MQTT Bridge für Home Assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mqtt": "^5.3.6",
+    "ws": "^8.17.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

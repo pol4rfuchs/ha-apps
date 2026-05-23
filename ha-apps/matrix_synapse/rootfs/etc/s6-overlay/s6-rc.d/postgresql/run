@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: PostgreSQL
+
+PG_DATA="/data/matrix/postgresql"
+PG_BIN="/usr/lib/postgresql/15/bin"
+MARKER="/data/matrix/.pg_initialized"
+
+# ── Warten bis cont-init die DB vollständig initialisiert hat ─────────────
+# cont-init und S6-Services starten PARALLEL — ohne diesen Wait entsteht
+# eine Race Condition: S6 versucht postgres zu starten während initdb läuft.
+WAIT=0
+while [ ! -f "${MARKER}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf PostgreSQL Initialisierung durch cont-init..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: PostgreSQL Initialisierung dauert zu lang!"
+        exit 1
+    fi
+done
+
+bashio::log.info "Starte PostgreSQL..."
+
+exec gosu postgres "${PG_BIN}/postgres" \
+    -D "${PG_DATA}" \
+    -c "listen_addresses=127.0.0.1" \
+    -c "port=5432" \
+    2>&1

@@ -1,0 +1,440 @@
+#!/usr/bin/with-contenv bashio
+set +e
+
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+bashio::log.info "  Matrix Server ESS CE — Initialisierung"
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+SERVER_NAME=$(bashio::config 'server_name' | sed 's|/$||')
+ELEMENT_WEB_URL=$(bashio::config 'element_web_url' | sed 's|/$||')
+ENABLE_REGISTRATION=$(bashio::config 'enable_registration')
+REG_SECRET=$(bashio::config 'registration_shared_secret')
+ENABLE_FEDERATION=$(bashio::config 'enable_federation')
+MAX_UPLOAD=$(bashio::config 'max_upload_size_mb')
+PG_PASSWORD=$(bashio::config 'postgres_password')
+LOG_LEVEL=$(bashio::config 'log_level')
+NTFY_URL=$(bashio::config 'ntfy_url' | sed 's|/$||')
+ENABLE_VOICE=$(bashio::config 'enable_voice_calls')
+LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
+ELEMENT_CALL_URL=$(bashio::config 'element_call_url' | sed 's|/$||')
+LIVEKIT_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
+LIVEKIT_JWT_URL=$(bashio::config 'livekit_jwt_url' | sed 's|/$||')
+# LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
+LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
+
+DATA_DIR="/data/matrix"
+SYNAPSE_DATA="${DATA_DIR}/synapse"
+PG_DATA="${DATA_DIR}/postgresql"
+SYNAPSE_CONFIG="${SYNAPSE_DATA}/homeserver.yaml"
+SIGNING_KEY="${SYNAPSE_DATA}/signing.key"
+PG_MARKER="${DATA_DIR}/.pg_initialized"
+LK_CONFIG="${DATA_DIR}/livekit.yaml"
+LK_SECRET_FILE="${DATA_DIR}/.livekit_secret"
+
+mkdir -p "${SYNAPSE_DATA}" "${PG_DATA}" "/media/matrix" \
+         "${DATA_DIR}/logs" "${SYNAPSE_DATA}/media_store" \
+         "${DATA_DIR}/element-web" "${DATA_DIR}/element-call"
+
+# ── PostgreSQL init (einmalig) ────────────────────────────────────────────
+if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
+    bashio::log.info "Initialisiere PostgreSQL Datenbank..."
+    chown postgres:postgres "${PG_DATA}"
+    gosu postgres /usr/lib/postgresql/15/bin/initdb \
+        --pgdata="${PG_DATA}" \
+        --auth-local=trust \
+        --auth-host=md5 \
+        --encoding=UTF8 \
+        --locale=C
+
+    cat > "${PG_DATA}/pg_hba.conf" << EOF
+local   all             postgres                                trust
+local   synapse         synapse                                 md5
+host    synapse         synapse         127.0.0.1/32            md5
+EOF
+    cat > "${PG_DATA}/postgresql.conf" << EOF
+listen_addresses = '127.0.0.1'
+port = 5432
+max_connections = 100
+shared_buffers = 128MB
+effective_cache_size = 256MB
+logging_collector = off
+log_min_messages = warning
+datestyle = 'iso, mdy'
+timezone = 'Europe/Vienna'
+lc_messages = 'C'
+lc_monetary = 'C'
+lc_numeric = 'C'
+lc_time = 'C'
+EOF
+
+    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
+        -D "${PG_DATA}" -l /tmp/pg_init.log start -w -t 30
+    gosu postgres psql -c "CREATE USER synapse WITH PASSWORD '${PG_PASSWORD}';"
+    gosu postgres psql -c "CREATE DATABASE synapse ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER synapse;"
+    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
+
+    touch "${PG_MARKER}"
+    bashio::log.info "✅ PostgreSQL initialisiert"
+else
+    bashio::log.info "✅ PostgreSQL bereits initialisiert"
+    touch "${PG_MARKER}"
+fi
+
+# ── Synapse Signing Key ───────────────────────────────────────────────────
+if [ ! -f "${SIGNING_KEY}" ]; then
+    bashio::log.info "Generiere Synapse Signing Key..."
+    /opt/synapse/bin/python -m synapse.app.homeserver \
+        --server-name "${SERVER_NAME}" \
+        --config-path "${SYNAPSE_CONFIG}" \
+        --generate-keys 2>/dev/null || true
+fi
+
+# ── Registration Secret ───────────────────────────────────────────────────
+SECRET_FILE="/data/matrix/.registration_secret"
+if [ -z "${REG_SECRET}" ]; then
+    if [ -f "${SECRET_FILE}" ]; then
+        REG_SECRET=$(cat "${SECRET_FILE}")
+        bashio::log.info "✅ registration_shared_secret aus Speicher geladen"
+    else
+        REG_SECRET=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
+        echo "${REG_SECRET}" > "${SECRET_FILE}"
+        bashio::log.info "✅ registration_shared_secret generiert: ${REG_SECRET}"
+    fi
+fi
+
+# ── LiveKit Secret ────────────────────────────────────────────────────────
+if [ "${ENABLE_VOICE}" = "true" ]; then
+    if [ -z "${LIVEKIT_SECRET}" ]; then
+        if [ -f "${LK_SECRET_FILE}" ]; then
+            LIVEKIT_SECRET=$(cat "${LK_SECRET_FILE}")
+            bashio::log.info "✅ LiveKit Secret aus Speicher geladen"
+        else
+            LIVEKIT_SECRET=$(cat /proc/sys/kernel/random/uuid | tr -d '-')$(cat /proc/sys/kernel/random/uuid | tr -d '-')
+            echo "${LIVEKIT_SECRET}" > "${LK_SECRET_FILE}"
+            bashio::log.info "✅ LiveKit Secret generiert und gespeichert"
+            bashio::log.info "   → Trage es optional in die Addon-Config ein (livekit_secret)"
+        fi
+    fi
+fi
+
+# ── Synapse homeserver.yaml ───────────────────────────────────────────────
+bashio::log.info "Schreibe Synapse homeserver.yaml..."
+
+if [ "${ENABLE_FEDERATION}" = "true" ]; then
+    FEDERATE_FLAG="true"
+else
+    FEDERATE_FLAG="false"
+fi
+
+cat > "${SYNAPSE_CONFIG}" << EOF
+server_name: "${SERVER_NAME}"
+pid_file: /tmp/synapse.pid
+
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ['0.0.0.0']
+    resources:
+      - names: [client, federation]
+        compress: false
+
+enable_admin_api: true
+
+database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: "${PG_PASSWORD}"
+    database: synapse
+    host: 127.0.0.1
+    port: 5432
+    cp_min: 5
+    cp_max: 10
+
+media_store_path: "${SYNAPSE_DATA}/media_store"
+max_upload_size: "${MAX_UPLOAD}M"
+no_tls: true
+
+enable_registration: $([ "${ENABLE_REGISTRATION}" = "true" ] && echo "true" || echo "false")
+enable_registration_without_verification: true
+registration_shared_secret: "${REG_SECRET}"
+
+signing_key_path: "${SIGNING_KEY}"
+suppress_key_server_warning: true
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+log_config: "${SYNAPSE_DATA}/log.yaml"
+
+rc_message:
+  per_second: 0.2
+  burst_count: 10
+
+report_stats: false
+
+url_preview_enabled: true
+url_preview_ip_range_blacklist:
+  - '127.0.0.0/8'
+  - '10.0.0.0/8'
+  - '172.16.0.0/12'
+  - '192.168.0.0/16'
+EOF
+
+# ── Element Call / MSC3401 Support (Voice/Video) ──────────────────────────
+if [ "${ENABLE_VOICE}" = "true" ]; then
+    bashio::log.info "🎤 Konfiguriere Element Call Support in Synapse..."
+    cat >> "${SYNAPSE_CONFIG}" << EOF
+
+# ── Element Call / MSC3401 (Voice/Video) ────────────────────────────────
+experimental_features:
+  msc3266_enabled: true
+  msc3401_enabled: true
+  msc2285_enabled: true
+
+# Höhere Rate Limits für Call-Signaling
+rc_message:
+  per_second: 1
+  burst_count: 50
+
+rc_joins:
+  local:
+    per_second: 0.5
+    burst_count: 10
+  remote:
+    per_second: 0.1
+    burst_count: 10
+
+# TURN für Legacy 1:1 Calls (behebt "falsch konfigurierter Server" Dialog)
+turn_uris:
+  - "turn:${LK_DOMAIN}:3478?transport=udp"
+turn_shared_secret: "${LIVEKIT_SECRET}"
+turn_user_lifetime: 86400000
+turn_allow_guests: true
+EOF
+fi
+
+# ── Push-Konfiguration (immer aktiv) ─────────────────────────────────────
+# include_content: true → Synapse bettet den vollständigen Nachrichtentext
+# in Push-Notifications ein. Ohne diese Option sehen Clients nur "New message".
+# Gilt für alle Push-Methoden (UnifiedPush, FCM, APNs) — daher bedingungslos.
+cat >> "${SYNAPSE_CONFIG}" << EOF
+
+push:
+  include_content: true
+EOF
+
+# ── ntfy UnifiedPush (optional) ───────────────────────────────────────────
+# Hinweis: Synapse muss ntfy_url NICHT kennen — der UnifiedPush-Client
+# (Element Android) trägt die Gateway-URL selbst bei Synapse ein.
+# ntfy_url wird hier ausschließlich für einen Erreichbarkeitscheck genutzt.
+if [ -n "${NTFY_URL}" ]; then
+    bashio::log.info "🔔 ntfy UnifiedPush Gateway: ${NTFY_URL}/_matrix/push/v1/notify"
+    # Erreichbarkeitscheck (POST erwartet — 400 ist OK, Timeout/000 ist Fehler)
+    HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" \
+        --max-time 5 \
+        -X POST "${NTFY_URL}/_matrix/push/v1/notify" \
+        -H "Content-Type: application/json" \
+        -d '{}' 2>/dev/null || echo "000")
+    if [ "${HTTP_CODE}" = "000" ]; then
+        bashio::log.warning "⚠️  ntfy Gateway nicht erreichbar: ${NTFY_URL}"
+        bashio::log.warning "   Prüfen: base_url im ntfy Addon gesetzt? Reverse Proxy aktiv?"
+    else
+        bashio::log.info "✅ ntfy Gateway erreichbar (HTTP ${HTTP_CODE})"
+        bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        bashio::log.info " UnifiedPush Setup:"
+        bashio::log.info "   1. ntfy App (F-Droid) auf Android installieren"
+        bashio::log.info "   2. Server in ntfy App: ${NTFY_URL}"
+        bashio::log.info "   3. Element: Einstellungen → Benachrichtigungen"
+        bashio::log.info "      → ntfy als UnifiedPush Distributor wählen"
+        bashio::log.info "   Synapse wird automatisch vom Client konfiguriert."
+        bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    fi
+fi
+
+# ── Synapse Log-Config ────────────────────────────────────────────────────
+cat > "${SYNAPSE_DATA}/log.yaml" << EOF
+version: 1
+formatters:
+  precise:
+    format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: precise
+loggers:
+  synapse.storage.SQL:
+    level: WARNING
+root:
+  level: ${LOG_LEVEL}
+  handlers: [console]
+disable_existing_loggers: false
+EOF
+
+# ── LiveKit Server Config ─────────────────────────────────────────────────
+if [ "${ENABLE_VOICE}" = "true" ]; then
+    # TURN Domain aus livekit_url ableiten (wss://livekit.x.y → livekit.x.y)
+    LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
+
+    bashio::log.info "⚙️  Schreibe LiveKit Konfiguration (TURN: ${LK_DOMAIN})..."
+    cat > "${LK_CONFIG}" << EOF
+# LiveKit Server Config — generiert von Matrix Addon v1.2.0
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+
+rtc:
+  # Kein direktes UDP-Range nötig — alle Clients gehen über TURN
+  # TCP-Fallback innerhalb des TURN-Flows
+  tcp_port: 7881
+  use_external_ip: true
+
+# API-Keys: Key=devkey, Secret=aus Addon-Config
+keys:
+  devkey: "${LIVEKIT_SECRET}"
+
+logging:
+  json: false
+  level: info
+
+# TURN built-in — nur UDP 3478 (kein TLS ohne Zertifikat)
+# Router: UDP 3478 → Pi freigeben
+turn:
+  enabled: true
+  domain: "${LK_DOMAIN}"
+  udp_port: 3478
+EOF
+    bashio::log.info "✅ LiveKit Config: ${LK_CONFIG}"
+    bashio::log.info "   TURN UDP 3478 → ${LK_DOMAIN}"
+    bashio::log.info "   ⚠️  Router: UDP 3478 → Pi freigeben"
+fi
+
+# ── Element Web config.json ───────────────────────────────────────────────
+bashio::log.info "Schreibe Element Web config.json..."
+
+LOCAL_IP=""
+if [ -f /proc/net/fib_trie ]; then
+    LOCAL_IP=$(awk '/32 HOST/ { print last } { last=$2 }' /proc/net/fib_trie 2>/dev/null | grep "^192\.168\." | head -1)
+fi
+if [ -z "${LOCAL_IP}" ]; then
+    LOCAL_IP=$(hostname -I 2>/dev/null | tr ' ' '\n' | grep "^192\.168\." | head -1)
+fi
+if [ -z "${LOCAL_IP}" ]; then
+    LOCAL_IP="192.168.1.100"
+    bashio::log.warning "Konnte LAN-IP nicht ermitteln — Fallback: ${LOCAL_IP}"
+fi
+bashio::log.info "  Lokale IP: ${LOCAL_IP}"
+
+# Voice-Sektion für element-web config
+VOICE_CONFIG=""
+if [ "${ENABLE_VOICE}" = "true" ]; then
+    VOICE_CONFIG=",
+    \"features\": {
+        \"feature_threads\": true,
+        \"feature_group_calls\": true
+    },
+    \"element_call\": {
+        \"url\": \"${ELEMENT_CALL_URL}\",
+        \"participant_limit\": 8,
+        \"brand\": \"Element Call\"
+    }"
+else
+    VOICE_CONFIG=",
+    \"features\": {
+        \"feature_threads\": true
+    }"
+fi
+
+# Externe config.json
+cat > /data/matrix/element-web/config.json << EOF
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "${ELEMENT_WEB_URL}",
+            "server_name": "${SERVER_NAME}"
+        }
+    },
+    "brand": "Matrix @ Home",
+    "default_theme": "dark",
+    "showLabsSettings": true,
+    "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
+}
+EOF
+
+# Lokale config (direkt via IP)
+cat > /data/matrix/element-web/config.${LOCAL_IP}.json << EOF
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "http://${LOCAL_IP}:8008",
+            "server_name": "${SERVER_NAME}"
+        }
+    },
+    "brand": "Matrix @ Home",
+    "default_theme": "dark",
+    "showLabsSettings": true,
+    "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
+}
+EOF
+
+ELEMENT_DOMAIN=$(echo "${ELEMENT_WEB_URL}" | sed 's|https://||' | sed 's|http://||' | cut -d'/' -f1)
+cat > /data/matrix/element-web/config.${ELEMENT_DOMAIN}.json << EOF
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "${ELEMENT_WEB_URL}",
+            "server_name": "${SERVER_NAME}"
+        }
+    },
+    "brand": "Matrix @ Home",
+    "default_theme": "dark",
+    "showLabsSettings": true,
+    "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
+}
+EOF
+
+ELEMENT_HOSTNAME=$(echo "${ELEMENT_DOMAIN}" | sed 's/^matrix\./element./')
+if [ "${ELEMENT_HOSTNAME}" != "${ELEMENT_DOMAIN}" ]; then
+    cp /data/matrix/element-web/config.${ELEMENT_DOMAIN}.json \
+       /data/matrix/element-web/config.${ELEMENT_HOSTNAME}.json 2>/dev/null || true
+fi
+
+# ── Element Call config.json ──────────────────────────────────────────────
+if [ "${ENABLE_VOICE}" = "true" ]; then
+    bashio::log.info "Schreibe Element Call config.json..."
+    EC_DOMAIN=$(echo "${ELEMENT_CALL_URL}" | sed 's|https://||' | sed 's|http://||' | cut -d'/' -f1)
+
+    cat > /data/matrix/element-call/config.json << EOF
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "${ELEMENT_WEB_URL}",
+            "server_name": "${SERVER_NAME}"
+        }
+    },
+    "livekit_service_url": "${LIVEKIT_JWT_URL}",
+    "brand": "Element Call",
+    "default_theme": "dark",
+    "showLabsSettings": false
+}
+EOF
+    # Auch domain-spezifische config
+    cp /data/matrix/element-call/config.json \
+       /data/matrix/element-call/config.${EC_DOMAIN}.json 2>/dev/null || true
+
+    bashio::log.info "✅ Element Call config.json (livekit_jwt: ${LIVEKIT_JWT_URL})"
+fi
+
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+bashio::log.info "✅ Initialisierung abgeschlossen!"
+bashio::log.info "  Server:      ${SERVER_NAME}"
+bashio::log.info "  Element Web: http://[HA-IP]:7080"
+bashio::log.info "  Synapse API: http://[HA-IP]:8008"
+bashio::log.info "  Admin UI:    http://[HA-IP]:8090"
+if [ "${ENABLE_VOICE}" = "true" ]; then
+bashio::log.info "  Element Call: http://[HA-IP]:7081"
+bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"
+bashio::log.info "  ⚠️  Router: UDP 3478 + TCP 5349 → Pi freigeben!"
+fi
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

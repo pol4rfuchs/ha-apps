@@ -1,0 +1,163 @@
+name: Navidrome
+version: "2.1.0"
+slug: navidrome
+description: Modern Music Server and Streamer compatible with Subsonic/Airsonic
+url: https://codeberg.org/Pol4rFuchs/ha-apps
+image: "codeberg.org/pol4rfuchs/navidrome-ha-app"
+arch:
+  - aarch64
+  - amd64
+panel_icon: mdi:music-box-multiple
+webui: http://[HOST]:[PORT:4533]
+init: false
+
+# --- Netzwerk ---
+ports:
+  4533/tcp: 4533
+ports_description:
+  4533/tcp: "Web UI / Subsonic API"
+
+# --- Berechtigungen ---
+privileged:
+  - SYS_ADMIN
+
+# --- Hardware-Transcoding + Jukebox ---
+devices:
+  - /dev/dri
+  - /dev/dri/card0
+  - /dev/dri/renderD128
+  - /dev/snd
+  - /dev/snd/controlC0
+  - /dev/snd/pcmC0D0p
+
+# --- Dateisystem-Mounts ---
+map:
+  - media:rw
+  - config:rw
+  - share:rw
+
+# ============================================================
+# Optionen
+# str?/password? Felder: null = nicht gesetzt (HA Supervisor Pflicht)
+# Pflichtfelder (str): immer ein Wert
+# ============================================================
+options:
+  # Core
+  ND_MUSICFOLDER: "/media/music"
+  ND_DATAFOLDER: "/config/addons_config/navidrome"
+  ND_LOGLEVEL: "info"
+  PUID: 0
+  PGID: 0
+
+  # Multi-folder (optional)
+
+  # UI
+  ND_ENABLESTARRATING: true
+  ND_ENABLEFAVOURITES: true
+  ND_ENABLEDOWNLOADS: true
+  ND_ENABLESHARING: false
+  ND_ENABLEGRAVATAR: false
+  ND_MAXSIDEBARPLAYLISTS: 100
+
+  # Library
+  ND_SCANNER_SCHEDULE: "@every 24h"
+  ND_AUTOIMPORTPLAYLISTS: true
+  ND_IGNOREDARTICLES: "The El La Los Las Le Les Os As O A"
+  ND_INDEXGROUPS: "A B C D E F G H I J K L M N O P Q R S T U V W X-Z(XYZ) #([^A-Za-z].*)"
+  ND_COVERARTPRIORITY: "embedded, cover.*, folder.*, front.*"
+  ND_IMAGECACHESIZE: "100MB"
+
+  # Scanner / Extractor
+  ND_SCANNER_EXTRACTOR: "taglib"
+
+  # Transcoding
+  ND_TRANSCODINGCACHESIZE: "100MB"
+  ND_DEFAULTDOWNSAMPLINGFORMAT: "opus"
+
+  # Podcasts
+  ND_PODCAST_EPISODEKEEPCOUNT: 0
+  ND_PODCAST_EPISODEDOWNLOADCOUNT: 0
+
+  # Sessions / Sicherheit
+  ND_SESSIONTIMEOUT: "30m"
+
+  # Scrobbling: Last.fm
+  ND_LASTFM_ENABLED: false
+  ND_LASTFM_LANGUAGE: "en"
+
+  # Scrobbling: ListenBrainz
+  ND_LISTENBRAINZ_ENABLED: false
+
+  # Spotify (Artist-Images)
+
+  # Jukebox
+  ND_JUKEBOX_ENABLED: false
+
+  # Playlists
+  ND_DEFAULTPLAYLISTPUBLICVISIBILITY: false
+  ND_SMARTPLAYLISTREFRESHDELAY: "5s"
+
+  # Analytics
+  ND_ENABLEINSIGHTSCOLLECTOR: false
+
+# ============================================================
+# Schema
+# ============================================================
+schema:
+  # Core
+  ND_MUSICFOLDER: str
+  ND_DATAFOLDER: str
+  ND_LOGLEVEL: "list(error|warn|info|debug|trace)"
+  PUID: int
+  PGID: int
+
+  # Multi-folder
+
+  # UI
+  ND_ENABLESTARRATING: bool
+  ND_ENABLEFAVOURITES: bool
+  ND_ENABLEDOWNLOADS: bool
+  ND_ENABLESHARING: bool
+  ND_ENABLEGRAVATAR: bool
+  ND_MAXSIDEBARPLAYLISTS: int
+
+  # Library
+  ND_SCANNER_SCHEDULE: str
+  ND_AUTOIMPORTPLAYLISTS: bool
+  ND_IGNOREDARTICLES: str
+  ND_INDEXGROUPS: str
+  ND_COVERARTPRIORITY: str
+  ND_IMAGECACHESIZE: str
+
+  # Scanner
+  ND_SCANNER_EXTRACTOR: "list(taglib|ffmpeg)"
+
+  # Transcoding
+  ND_TRANSCODINGCACHESIZE: str
+  ND_DEFAULTDOWNSAMPLINGFORMAT: "list(mp3|opus|aac|ogg)"
+
+  # Podcasts
+  ND_PODCAST_EPISODEKEEPCOUNT: int
+  ND_PODCAST_EPISODEDOWNLOADCOUNT: int
+
+  # Sessions
+  ND_SESSIONTIMEOUT: str
+
+  # Last.fm
+  ND_LASTFM_ENABLED: bool
+  ND_LASTFM_LANGUAGE: str
+
+  # ListenBrainz
+  ND_LISTENBRAINZ_ENABLED: bool
+
+  # Spotify
+
+  # Jukebox
+  ND_JUKEBOX_ENABLED: bool
+
+  # Playlists
+  ND_DEFAULTPLAYLISTPUBLICVISIBILITY: bool
+  ND_SMARTPLAYLISTREFRESHDELAY: str
+
+  # Analytics
+  ND_ENABLEINSIGHTSCOLLECTOR: bool

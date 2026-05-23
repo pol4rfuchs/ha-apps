@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ntfy · Admin Console</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{
+      --bg:#111815;--bg2:#18231e;--panel:#202c26;--panel2:#24322b;--panel3:#1b2621;
+      --border:#3a5046;--border2:#48685a;
+      --text:#ffffff;--muted:#c0cbc5;
+      --brand:#467b69;--brand2:#3f6f5f;
+      --ok:#7bc89a;--warn:#d8a64e;--bad:#d46a6a;--info:#9ecfbc;
+      --shadow:0 10px 24px rgba(0,0,0,.35);
+      --radius:14px;--radius2:10px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{margin:0;font-family:var(--sans);
+      background:radial-gradient(1200px 800px at 20% -10%,rgba(70,123,105,.24),transparent 60%),
+                 radial-gradient(1000px 700px at 90% 0%,rgba(63,111,95,.18),transparent 55%),
+                 linear-gradient(180deg,#17211d 0%,#121915 100%);
+      color:var(--text);letter-spacing:.2px;}
+    a{color:inherit;text-decoration:none;}
+    button,input,select,textarea{font:inherit;color:inherit;outline:none;}
+    .app{display:grid;grid-template-columns:280px 1fr;height:100%;}
+    .sidebar{background:linear-gradient(180deg,rgba(24,35,30,.98),rgba(20,29,25,.98));
+      border-right:1px solid rgba(42,59,52,.9);
+      padding:18px 14px;position:sticky;top:0;height:100vh;overflow:auto;}
+    .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 16px;}
+    .logo{width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg,rgba(58,111,95,.98),rgba(47,92,79,.96));
+      box-shadow:0 12px 24px rgba(33,58,48,.20);position:relative;}
+    .logo:after{content:"";position:absolute;inset:7px;border-radius:8px;
+      border:2px solid rgba(255,255,255,.55);transform:rotate(6deg);}
+    .brand h1{margin:0;font-size:14px;line-height:1.1;font-weight:750;letter-spacing:.4px;}
+    .brand .sub{display:block;font-size:11px;color:var(--muted);font-weight:560;margin-top:3px;}
+    .org{background:rgba(31,44,38,.78);border:1px solid rgba(42,59,52,.84);
+      border-radius:var(--radius);padding:10px;margin:4px 10px 14px;}
+    .org .row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;
+      background:rgba(58,80,70,.42);border:1px solid rgba(53,80,70,.88);
+      border-radius:999px;color:var(--muted);font-size:12px;font-weight:650;}
+    .pill b{color:var(--text);font-weight:800;}
+    .nav{margin:6px 6px 18px;display:flex;flex-direction:column;gap:8px;}
+    .nav .label{padding:8px 10px 4px;font-size:11px;color:rgba(192,203,197,.84);
+      font-weight:800;text-transform:uppercase;letter-spacing:.14em;}
+    .nav a{display:flex;align-items:center;gap:10px;padding:10px;
+      border-radius:12px;border:1px solid transparent;
+      color:rgba(255,255,255,.96);background:transparent;
+      transition:transform .08s ease,background .12s ease,border-color .12s ease;
+      font-weight:650;cursor:pointer;}
+    .nav a:hover{background:rgba(63,90,78,.28);border-color:rgba(53,80,70,.52);}
+    .nav a.active{background:linear-gradient(90deg,rgba(70,123,105,.46),rgba(63,111,95,.22));
+      border-color:rgba(103,193,141,.26);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02),0 10px 24px rgba(23,39,33,.18);}
+    .ico{width:28px;height:28px;border-radius:10px;
+      background:rgba(43,58,51,.50);border:1px solid rgba(53,80,70,.65);
+      display:grid;place-items:center;color:rgba(255,255,255,.96);flex:0 0 auto;}
+    .nav small{margin-left:auto;color:rgba(192,203,197,.84);font-weight:750;
+      font-family:var(--mono);font-size:11px;padding:3px 8px;
+      border-radius:999px;border:1px solid rgba(53,80,70,.58);background:rgba(28,39,34,.70);}
+    .ntfyDirectBox{margin:0 10px 14px;padding:11px 12px;border-radius:var(--radius);
+      border:1px solid rgba(103,193,141,.28);background:rgba(34,197,94,.06);
+      display:none;flex-direction:column;gap:6px;}
+    .ntfyDirectBox a{display:flex;align-items:center;gap:7px;
+      font-family:var(--mono);font-size:12px;font-weight:800;color:var(--ok);
+      padding:6px 8px;border-radius:8px;border:1px solid rgba(103,193,141,.25);
+      background:rgba(34,197,94,.08);transition:background .12s ease;}
+    .ntfyDirectBox a:hover{background:rgba(34,197,94,.15);}
+    .ntfyDirectBox .ntfyWarn{font-size:11px;font-weight:700;color:var(--warn);
+      padding:5px 8px;border-radius:7px;border:1px solid rgba(216,166,78,.25);
+      background:rgba(216,166,78,.07);line-height:1.5;}
+    .sidebarFooter{margin:18px 10px 8px;padding:12px;border-radius:var(--radius);
+      border:1px solid rgba(53,80,70,.65);background:rgba(33,46,40,.78);}
+    .sidebarFooter .k{font-size:11px;color:rgba(192,203,197,.94);text-transform:uppercase;letter-spacing:.12em;font-weight:850;}
+    .sidebarFooter .v{margin-top:6px;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.98);display:flex;justify-content:space-between;gap:10px;}
+    .main{display:flex;flex-direction:column;min-width:0;}
+    .topbar{position:sticky;top:0;z-index:20;
+      background:rgba(26,38,33,.78);backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(42,59,52,.65);}
+    .topbarInner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;}
+    .crumbs{display:flex;flex-direction:column;gap:4px;min-width:0;}
+    .crumbs .path{color:rgba(192,203,197,.94);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .crumbs .title{font-size:18px;font-weight:850;letter-spacing:.2px;}
+    .topActions{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+    .search{display:flex;align-items:center;gap:8px;padding:10px 12px;
+      border-radius:999px;border:1px solid rgba(42,58,109,.7);
+      background:rgba(33,46,40,.78);min-width:280px;}
+    .search input{width:100%;border:none;background:transparent;color:rgba(255,255,255,.98);font-weight:650;}
+    .search input::placeholder{color:rgba(192,203,197,.84);font-weight:650;}
+    .btn{border:1px solid rgba(42,58,109,.75);background:rgba(33,46,40,.78);
+      padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:750;
+      transition:transform .08s ease,background .12s ease,border-color .12s ease;
+      display:inline-flex;align-items:center;gap:8px;}
+    .btn:hover{background:rgba(43,58,51,.50);border-color:rgba(103,193,141,.26);}
+    .btn:active{transform:translateY(1px);}
+    .btn.primary{background:linear-gradient(90deg,rgba(70,123,105,.96),rgba(63,111,95,.96));
+      border-color:rgba(103,193,141,.26);box-shadow:0 12px 24px rgba(33,58,48,.20);}
+    .btn.primary:hover{filter:brightness(1.03);}
+    .btn.ghost{background:transparent;border-color:rgba(53,80,70,.52);}
+    .btn.danger{border-color:rgba(212,106,106,.4);color:var(--bad);}
+    .avatar{width:36px;height:36px;border-radius:12px;border:1px solid rgba(42,58,109,.75);
+      background:linear-gradient(180deg,rgba(34,48,88,.45),rgba(15,23,48,.55));
+      display:grid;place-items:center;font-weight:900;color:rgba(255,255,255,.98);}
+    .content{padding:18px;max-width:1400px;width:100%;}
+    .grid{display:grid;gap:14px;}
+    .kpis{grid-template-columns:repeat(12,1fr);}
+    .card{border-radius:var(--radius);border:1px solid rgba(42,59,52,.84);
+      background:linear-gradient(180deg,rgba(32,44,38,.92),rgba(28,39,34,.94));
+      box-shadow:var(--shadow);min-width:0;}
+    .cardHeader{padding:14px 14px 0;display:flex;align-items:flex-start;
+      justify-content:space-between;gap:12px;}
+    .cardHeader h3{margin:0;font-size:13px;font-weight:900;letter-spacing:.08em;
+      text-transform:uppercase;color:rgba(192,203,197,.94);}
+    .cardBody{padding:12px 14px 14px;}
+    .kpi{grid-column:span 3;position:relative;overflow:hidden;}
+    .kpi:before{content:"";position:absolute;inset:-2px;
+      background:radial-gradient(700px 180px at 30% 0%,rgba(51,209,122,.20),transparent 55%),
+                 radial-gradient(620px 180px at 80% 20%,rgba(31,191,102,.14),transparent 55%);
+      pointer-events:none;opacity:.9;}
+    .kpi .cardBody,.kpi .cardHeader{position:relative;}
+    .kpiValue{font-size:28px;font-weight:950;letter-spacing:.2px;margin-top:2px;}
+    .kpiMeta{margin-top:6px;color:rgba(192,203,197,.90);font-size:12px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .delta{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;
+      border:1px solid rgba(53,80,70,.65);background:rgba(28,39,34,.70);color:rgba(255,255,255,.98);}
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--ok);box-shadow:0 0 0 4px rgba(34,197,94,.12);}
+    .dot.warn{background:var(--warn);box-shadow:0 0 0 4px rgba(245,158,11,.12);}
+    .dot.bad{background:var(--bad);box-shadow:0 0 0 4px rgba(239,68,68,.12);}
+    .dot.gray{background:rgba(192,203,197,.4);box-shadow:none;}
+    .row2{grid-template-columns:repeat(12,1fr);margin-top:14px;}
+    .span7{grid-column:span 7;}.span5{grid-column:span 5;}
+    .span8{grid-column:span 8;}.span4{grid-column:span 4;}
+    .span12{grid-column:span 12;}
+    .statusList{display:flex;flex-direction:column;gap:10px;}
+    .statusItem{display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:10px;border-radius:12px;border:1px solid rgba(53,80,70,.58);
+      background:rgba(31,43,37,.74);}
+    .statusLeft{display:flex;align-items:center;gap:10px;min-width:0;}
+    .statusName{font-weight:850;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .statusRight{display:flex;align-items:center;gap:10px;flex:0 0 auto;font-family:var(--mono);color:rgba(255,255,255,.96);font-size:12px;}
+    .badge{padding:4px 10px;border-radius:999px;border:1px solid rgba(53,80,70,.65);background:rgba(28,39,34,.70);font-size:12px;font-weight:850;}
+    .badge.ok{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.10);color:var(--ok);}
+    .badge.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10);color:var(--warn);}
+    .badge.bad{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.10);color:var(--bad);}
+    .badge.info{border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.10);color:var(--info);}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid rgba(53,80,70,.58);background:rgba(31,43,37,.74);}
+    thead th{text-align:left;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(192,203,197,.90);padding:10px 12px;border-bottom:1px solid rgba(42,58,109,.6);
+      background:rgba(33,46,40,.78);}
+    tbody td{padding:10px 12px;border-bottom:1px solid rgba(42,58,109,.35);color:rgba(255,255,255,.96);font-size:13px;font-weight:650;}
+    tbody tr:hover td{background:rgba(34,48,88,.20);}
+    tbody tr:last-child td{border-bottom:none;}
+    .mono{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.96);}
+    .muted{color:rgba(192,203,197,.90);}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+    label{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(192,203,197,.90);}
+    input[type="text"],input[type="password"],input[type="date"],textarea,select{
+      width:100%;padding:10px 11px;border-radius:12px;border:1px solid rgba(42,58,109,.7);
+      background:rgba(28,39,34,.70);color:rgba(255,255,255,.98);font-weight:650;}
+    textarea{min-height:120px;resize:vertical;}
+    .formRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .help{margin-top:4px;color:rgba(192,203,197,.86);font-size:12px;font-weight:650;}
+    .actionsRow{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px;}
+    .preview{border-radius:12px;border:1px solid rgba(53,80,70,.65);background:rgba(31,43,37,.74);padding:12px;}
+    .notif{border-radius:14px;border:1px solid rgba(53,80,70,.65);
+      background:linear-gradient(180deg,rgba(36,50,43,.84),rgba(29,40,35,.90));padding:12px 12px 10px;}
+    .notifTop{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .notifTitle{font-weight:900;font-size:14px;letter-spacing:.2px;}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .chip{font-size:12px;font-weight:850;padding:4px 8px;border-radius:999px;border:1px solid rgba(53,80,70,.65);background:rgba(34,48,88,.25);color:rgba(255,255,255,.96);font-family:var(--mono);}
+    .notifMsg{margin-top:10px;color:rgba(255,255,255,.96);font-size:13px;font-weight:650;line-height:1.45;white-space:pre-wrap;}
+    .debugLog{display:flex;flex-direction:column;gap:6px;max-height:480px;overflow-y:auto;font-family:var(--mono);font-size:12px;}
+    .debugEntry{padding:8px 10px;border-radius:10px;border:1px solid rgba(53,80,70,.58);background:rgba(31,43,37,.60);display:flex;flex-direction:column;gap:3px;}
+    .debugEntry.ok{border-color:rgba(34,197,94,.3);}
+    .debugEntry.err{border-color:rgba(212,106,106,.3);background:rgba(212,106,106,.06);}
+    .debugEntry.warn{border-color:rgba(245,158,11,.3);}
+    .debugMeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .debugTime{color:rgba(192,203,197,.7);font-size:11px;}
+    .debugMethod{font-weight:900;color:var(--info);}
+    .debugUrl{color:rgba(255,255,255,.75);word-break:break-all;}
+    .debugStatus{font-weight:900;}
+    .debugStatus.ok{color:var(--ok);}
+    .debugStatus.err{color:var(--bad);}
+    .debugStatus.warn{color:var(--warn);}
+    .debugBody{margin-top:4px;padding:6px 8px;background:rgba(0,0,0,.25);border-radius:8px;color:rgba(255,255,255,.85);font-size:11px;white-space:pre-wrap;word-break:break-all;max-height:120px;overflow-y:auto;}
+    .debugToggle{font-size:11px;color:var(--info);cursor:pointer;padding:2px 6px;border-radius:6px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);margin-top:2px;align-self:flex-start;}
+    .empty{padding:32px 20px;text-align:center;font-family:var(--mono);font-size:13px;color:var(--muted);}
+    .spinner{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid rgba(192,203,197,.2);border-top-color:var(--info);animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    pre.codeblock{margin:0;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid rgba(53,80,70,.65);font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-all;overflow:auto;}
+    .msgCard{padding:12px 14px;border-radius:12px;border:1px solid rgba(53,80,70,.58);background:rgba(31,43,37,.74);display:flex;flex-direction:column;gap:6px;}
+    .msgCardTop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .msgCardBody{font-size:13px;color:rgba(255,255,255,.92);font-weight:650;white-space:pre-wrap;line-height:1.45;}
+    .msgCardMeta{font-size:11px;color:var(--muted);font-family:var(--mono);}
+    @media(max-width:1100px){
+      .app{grid-template-columns:1fr;}
+      .sidebar{position:relative;height:auto;}
+      .search{min-width:0;width:100%;}
+      .topbarInner{flex-wrap:wrap;}
+      .content{padding:14px;}
+      .kpi{grid-column:span 6;}
+      .split{grid-template-columns:1fr;}
+      .span7,.span5,.span8,.span4{grid-column:span 12;}
+    }
+    @media(max-width:640px){
+      .kpi{grid-column:span 12;}
+      .formRow{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div><h1>ntfy <span class="sub">Admin Console</span></h1></div>
+    </div>
+    <div class="org">
+      <div class="row">
+        <span class="pill" id="connPill"><b id="connStatus">offline</b></span>
+        <button class="btn ghost" onclick="logout()" style="padding:5px 10px;font-size:11px;border-radius:8px;">Log out</button>
+      </div>
+      <div style="margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--muted);word-break:break-all;" id="connUrl">not connected</div>
+    </div>
+    <div class="ntfyDirectBox" id="ntfyDirectBox">
+      <a id="ntfyDirectLink" href="#" target="_blank" rel="noopener">&#8599; <span id="ntfyDirectUrl">&#8212;</span></a>
+
+    </div>
+    <nav class="nav">
+      <div class="label">Console</div>
+      <a class="active" href="#overview" data-view="overview"><span class="ico">&#8962;</span> Overview <small>LIVE</small></a>
+      <a href="#send" data-view="send"><span class="ico">&#10148;</span> Send <small>POST</small></a>
+      <div class="label">Administration</div>
+      <a href="#users" data-view="users"><span class="ico">&#128100;</span> Users <small>RBAC</small></a>
+      <a href="#tokens" data-view="tokens"><span class="ico">&#128273;</span> Tokens <small>API</small></a>
+      <a href="#acl" data-view="acl"><span class="ico">&#128737;</span> Access Control <small>ACL</small></a>
+      <a href="#reservations" data-view="reservations"><span class="ico">&#128204;</span> Reservations <small>RES</small></a>
+      <a href="#server" data-view="server"><span class="ico">&#9881;</span> Server <small>CFG</small></a>
+      <div class="label">Developer</div>
+      <a href="#messages" data-view="messages"><span class="ico">&#128233;</span> Messages <small>POLL</small></a>
+      <a href="#debug" data-view="debug"><span class="ico">&#128027;</span> Debug <small id="debugCount">0</small></a>
+      <a href="#" onclick="openTopicsSettings();return false;"><span class="ico">&#9881;</span> Topic Settings <small>CFG</small></a>
+    </nav>
+    <div class="sidebarFooter">
+      <div class="k">Runtime</div>
+      <div class="v"><span class="muted">Version</span><span class="mono" id="sideVersion">&#8212;</span></div>
+      <div class="v"><span class="muted">Connected</span><span class="mono" id="uptimeSide">&#8212;</span></div>
+      <div class="v"><span class="muted">User</span><span class="mono" id="sideUser">&#8212;</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbarInner">
+        <div class="crumbs">
+          <div class="path" id="path">Console / Overview</div>
+          <div class="title" id="titleEl">Overview</div>
+        </div>
+        <div class="topActions">
+          <div class="search" role="search">
+            <span class="muted">&#8981;</span>
+            <input id="search" type="text" placeholder="Filter current view&#8230;" />
+          </div>
+          <button class="btn ghost" id="refreshBtn">Refresh</button>
+          <button class="btn primary" id="quickSendBtn">Quick Send</button>
+          <div class="avatar" id="avatarEl">AD</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+
+      <!-- OVERVIEW -->
+      <div class="view" id="view-overview">
+        <div class="grid kpis">
+          <div class="card kpi">
+            <div class="cardHeader"><h3>Server Health</h3><span class="badge" id="healthBadge">&#8212;</span></div>
+            <div class="cardBody">
+              <div class="kpiValue" id="healthVal"><span class="dot gray"></span> &#8212;</div>
+              <div class="kpiMeta"><span class="delta" id="versionDelta">v&#8212;</span></div>
+            </div>
+          </div>
+          <div class="card kpi">
+            <div class="cardHeader"><h3>Connected</h3><span class="badge info">SESSION</span></div>
+            <div class="cardBody">
+              <div class="kpiValue" id="uptime">&#8212;</div>
+              <div class="kpiMeta"><span class="delta" id="connectedSince">since &#8212;</span></div>
+            </div>
+          </div>
+          <div class="card kpi">
+            <div class="cardHeader"><h3>Messages</h3><span class="badge info">LIVE</span></div>
+            <div class="cardBody">
+              <div class="kpiValue" id="kpiMsgs">&#8212;</div>
+              <div class="kpiMeta"><span class="delta">published</span></div>
+            </div>
+          </div>
+          <div class="card kpi">
+            <div class="cardHeader"><h3>Users</h3><span class="badge info">RBAC</span></div>
+            <div class="cardBody">
+              <div class="kpiValue" id="kpiUsers">&#8212;</div>
+              <div class="kpiMeta"><span class="delta" id="kpiAdmins">&#8212;</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid row2">
+          <div class="card span5">
+            <div class="cardHeader"><h3>System Status</h3><button class="btn ghost" style="padding:8px 10px;" onclick="loadDashboard()">Probe</button></div>
+            <div class="cardBody"><div class="statusList" id="overviewStatusList"><div class="empty"><span class="spinner"></span>Waiting&#8230;</div></div></div>
+          </div>
+          <div class="card span7">
+            <div class="cardHeader"><h3>Connection Info</h3><button class="btn ghost" style="padding:8px 10px;" onclick="openNtfy()">Open ntfy &#8599;</button></div>
+            <div class="cardBody" id="connInfoBlock"><div class="empty">Not connected yet.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEND -->
+      <div class="view" id="view-send" style="display:none;">
+        <div class="card">
+          <div class="cardHeader"><h3>Send Notification</h3>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" id="fillExample">Load example</button>
+              <button class="btn primary" id="sendBtn">Send</button>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="split">
+              <div>
+                <div class="field"><label>Topic</label><input id="pubTopic" type="text" value="ha-notify" /></div>
+                <div class="formRow">
+                  <div class="field"><label>Title</label><input id="pubTitle" type="text" /></div>
+                  <div class="field"><label>Priority</label>
+                    <select id="pubPrio">
+                      <option value="1">1 min</option><option value="2">2</option>
+                      <option value="3" selected>3 default</option><option value="4">4 high</option><option value="5">5 max</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field"><label>Message</label><textarea id="pubMsg" placeholder="Notification body&#8230;"></textarea></div>
+                <div class="formRow">
+                  <div class="field"><label>Tags</label><input id="pubTags" type="text" placeholder="tag1,tag2" /></div>
+                  <div class="field"><label>Click URL</label><input id="pubClick" type="text" /></div>
+                </div>
+                <div class="actionsRow"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn primary" id="sendBtn2">Send</button></div>
+              </div>
+              <div>
+                <div class="preview">
+                  <div class="muted" style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;">Live Preview</div>
+                  <div class="notif">
+                    <div class="notifTop"><div class="notifTitle" id="pvTitle">(no title)</div><span class="badge info" id="pvPrio">prio 3</span></div>
+                    <div class="chips" id="pvChips"><span class="chip">ha-notify</span></div>
+                    <div class="notifMsg" id="pvMsg">(no message)</div>
+                  </div>
+                </div>
+                <div class="card" style="margin-top:14px;">
+                  <div class="cardHeader"><h3>Policy &amp; Routing</h3><span class="badge info">Live</span></div>
+                  <div class="cardBody"><div class="statusList" id="sendPolicyList"><div class="empty">Connect to server to load policies.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="view" id="view-users" style="display:none;">
+        <div class="card">
+          <div class="cardHeader"><h3>User Directory</h3>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="loadUsers()">Refresh</button>
+              <button class="btn primary" onclick="openModal('modalCreateUser')">Create user</button>
+            </div>
+          </div>
+          <div class="cardBody" id="usersWrap"><div class="empty">Not connected yet.</div></div>
+        </div>
+      </div>
+
+      <!-- TOKENS -->
+      <div class="view" id="view-tokens" style="display:none;">
+        <div class="card">
+          <div class="cardHeader"><h3>API Tokens</h3>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="loadTokens()">Refresh</button>
+              <button class="btn ghost" onclick="openNtfy()">Open ntfy &#8599;</button>
+              <button class="btn primary" onclick="openModal('modalCreateToken')">Create token</button>
+            </div>
+          </div>
+          <div class="cardBody" id="tokensWrap"><div class="empty">Not connected yet.</div></div>
+        </div>
+      </div>
+
+      <!-- ACL -->
+      <div class="view" id="view-acl" style="display:none;">
+        <div class="grid row2">
+          <div class="card span8">
+            <div class="cardHeader"><h3>Access Control List</h3><button class="btn ghost" onclick="loadACL()">Refresh</button></div>
+            <div class="cardBody" id="aclWrap"><div class="empty">Not connected yet.</div></div>
+          </div>
+          <div class="card span4">
+            <div class="cardHeader"><h3>Add / Update Rule</h3><span class="badge info">POST</span></div>
+            <div class="cardBody">
+              <div class="field"><label>Username</label>
+                <select id="aclUser"><option value="">&#8212; select user &#8212;</option><option value="*">* (anonymous)</option></select>
+              </div>
+              <div class="field"><label>Topic</label>
+                <input type="text" id="aclTopic" placeholder="ha-notify  or  *  for all" />
+                <div class="help" style="color:var(--warn);">Exact topic name only &middot; or <span class="mono">*</span> for all &middot; wildcards like <span class="mono">ha-*</span> are NOT supported by ntfy ACL</div>
+              </div>
+              <div class="field"><label>Permission</label>
+                <select id="aclPerm">
+                  <option value="read-write">read-write</option>
+                  <option value="read-only">read-only</option>
+                  <option value="write-only">write-only</option>
+                  <option value="deny-all">deny-all</option>
+                </select>
+              </div>
+              <div class="actionsRow"><button class="btn primary" onclick="setACL()">Save Rule</button></div>
+              <div style="margin-top:14px;padding:10px 12px;border-radius:10px;border:1px solid rgba(53,80,70,.65);background:rgba(31,43,37,.60);font-size:11px;color:var(--muted);line-height:1.6;">
+                <strong style="color:var(--info);">Admin users</strong> have global access &#8212; no ACL needed.<br><br>
+                <strong style="color:var(--warn);">* (anonymous)</strong> controls unauthenticated access.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESERVATIONS -->
+      <div class="view" id="view-reservations" style="display:none;">
+        <div class="grid row2">
+          <div class="card span8">
+            <div class="cardHeader"><h3>Topic Reservations</h3><button class="btn ghost" onclick="loadReservations()">Refresh</button></div>
+            <div class="cardBody" id="resWrap"><div class="empty">Not connected yet.</div></div>
+          </div>
+          <div class="card span4">
+            <div class="cardHeader"><h3>Reserve Topic</h3><span class="badge info">PUT</span></div>
+            <div class="cardBody">
+              <div class="field"><label>Topic</label>
+                <input type="text" id="resTopic" placeholder="ha-alerts" />
+                <div class="help">Locks this topic to your admin account so nobody else can publish to it.</div>
+              </div>
+              <div class="field"><label>Everyone else can</label>
+                <select id="resPermEveryone">
+                  <option value="deny-all">deny-all (private)</option>
+                  <option value="read-only">read-only (subscribers ok)</option>
+                  <option value="write-only">write-only (publishers ok)</option>
+                  <option value="read-write">read-write (open)</option>
+                </select>
+              </div>
+              <div class="actionsRow"><button class="btn primary" onclick="addReservation()">Reserve</button></div>
+              <div style="margin-top:14px;padding:10px 12px;border-radius:10px;border:1px solid rgba(53,80,70,.65);background:rgba(31,43,37,.60);font-size:11px;color:var(--muted);line-height:1.6;">
+                Recommended to protect: <span class="mono">ha-alerts</span> <span class="mono">ha-system</span> <span class="mono">ha-planty</span><br><br>
+                Prevents unauthorized clients from publishing to your HA notification topics.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MESSAGE BROWSER -->
+      <div class="view" id="view-messages" style="display:none;">
+        <div class="card">
+          <div class="cardHeader"><h3>Message Browser</h3>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="badge" id="msgBrowserBadge">IDLE</span>
+              <button class="btn ghost" onclick="pollMessages()">Poll now</button>
+              <button class="btn ghost" onclick="clearMsgBrowser()">Clear</button>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;">
+              <div class="field" style="flex:1;min-width:200px;margin-bottom:0;">
+                <label>Topic(s)</label>
+                <input type="text" id="msgTopic" value="ha-alerts,ha-info,ha-notify,ha-system,ha-planty" />
+              </div>
+              <div class="field" style="width:120px;margin-bottom:0;">
+                <label>Limit</label>
+                <select id="msgLimit">
+                  <option value="25">25</option><option value="50" selected>50</option>
+                  <option value="100">100</option><option value="250">250</option>
+                </select>
+              </div>
+              <div class="field" style="width:150px;margin-bottom:0;">
+                <label>Since</label>
+                <select id="msgSince">
+                  <option value="1h">last 1h</option><option value="6h">last 6h</option>
+                  <option value="24h" selected>last 24h</option><option value="all">all cached</option>
+                </select>
+              </div>
+              <div style="margin-bottom:0;"><button class="btn primary" onclick="pollMessages()">Fetch Messages</button></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                <div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Total</div>
+                <div class="mono" id="msgStatTotal" style="font-size:18px;font-weight:900;">0</div>
+              </div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                <div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Topics hit</div>
+                <div class="mono" id="msgStatTopics" style="font-size:18px;font-weight:900;color:var(--info);">0</div>
+              </div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                <div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">High prio (4-5)</div>
+                <div class="mono" id="msgStatHigh" style="font-size:18px;font-weight:900;color:var(--warn);">0</div>
+              </div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                <div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Last seen</div>
+                <div class="mono" id="msgStatLast" style="font-size:14px;font-weight:900;color:var(--ok);">&#8212;</div>
+              </div>
+            </div>
+            <div id="msgList" style="display:flex;flex-direction:column;gap:8px;max-height:600px;overflow-y:auto;">
+              <div class="empty">Select topics and click "Fetch Messages" to browse cached notifications.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVER -->
+      <div class="view" id="view-server" style="display:none;">
+        <div class="grid row2">
+          <div class="card span7">
+            <div class="cardHeader"><h3>Server Configuration</h3><button class="btn ghost" onclick="openNtfy()">Open ntfy &#8599;</button></div>
+            <div class="cardBody" id="serverStatusList"><div class="empty">Not connected yet.</div></div>
+          </div>
+          <div class="card span5">
+            <div class="cardHeader"><h3>Maintenance</h3><span class="badge warn">Careful</span></div>
+            <div class="cardBody">
+              <div class="statusList">
+                <div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Rotate keys</div></div><div class="statusRight"><button class="btn ghost" style="padding:8px 10px;" onclick="toast('Not implemented in add-on API','info')">Run</button></div></div>
+                <div class="statusItem"><div class="statusLeft"><span class="dot warn"></span><div class="statusName">Restart service</div></div><div class="statusRight"><button class="btn ghost" style="padding:8px 10px;" onclick="toast('Use HA add-on controls to restart','info')">Restart</button></div></div>
+                <div class="statusItem"><div class="statusLeft"><span class="dot bad"></span><div class="statusName">Purge message cache</div></div><div class="statusRight"><button class="btn danger" style="padding:8px 10px;" onclick="toast('Not available via API &#8212; use server CLI','info')">Purge</button></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card span12">
+            <div class="cardHeader"><h3>Home Assistant Integration Example</h3><span class="badge info">reference</span></div>
+            <div class="cardBody" id="haExample"><div class="empty">Connect to server to generate config snippet.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEBUG -->
+      <div class="view" id="view-debug" style="display:none;">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="cardHeader">
+            <h3>SSE Connection Monitor</h3>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="badge" id="sseStateBadge">IDLE</span>
+              <button class="btn ghost" style="padding:8px 10px;" onclick="sseStart()">Connect</button>
+              <button class="btn ghost" style="padding:8px 10px;" onclick="sseStop()">Disconnect</button>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;">
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">State</div><div class="mono" id="sseStateVal" style="font-size:15px;font-weight:900;">&#8212;</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Connects</div><div class="mono" id="sseConnects" style="font-size:15px;font-weight:900;color:var(--ok);">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Disconnects</div><div class="mono" id="sseDisconnects" style="font-size:15px;font-weight:900;color:var(--bad);">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Reconnects</div><div class="mono" id="sseReconnects" style="font-size:15px;font-weight:900;color:var(--warn);">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Messages seen</div><div class="mono" id="sseMsgs" style="font-size:15px;font-weight:900;color:var(--info);">0</div></div>
+            </div>
+            <div style="margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <label style="white-space:nowrap;">Monitor topics:</label>
+              <input type="text" id="sseTopicInput" value="ha-alerts,ha-info,ha-notify,ha-system,ha-planty" style="flex:1;min-width:200px;"/>
+              <div class="help" style="margin:0;white-space:nowrap;">comma-separated &middot; <span class="mono">*</span> = all</div>
+            </div>
+            <div class="debugLog" id="sseLog" style="max-height:280px;"><div class="empty">Not monitoring. Click Connect to open the SSE stream.</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cardHeader"><h3>API Call Log</h3>
+            <div style="display:flex;gap:10px;">
+              <button class="btn ghost" onclick="clearDebugLog()">Clear log</button>
+              <button class="btn ghost" onclick="runDiagnostics()">Run diagnostics</button>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Total Calls</div><div class="mono" id="dbgTotal" style="font-size:18px;font-weight:900;">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Successful</div><div class="mono" id="dbgOk" style="font-size:18px;font-weight:900;color:var(--ok);">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Errors</div><div class="mono" id="dbgErr" style="font-size:18px;font-weight:900;color:var(--bad);">0</div></div>
+              <div class="statusItem" style="flex-direction:column;align-items:flex-start;gap:4px;"><div class="muted" style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;">Base URL</div><div class="mono" id="dbgBase" style="font-size:12px;word-break:break-all;">&#8212;</div></div>
+            </div>
+            <div class="debugLog" id="debugLog"><div class="empty">No API calls recorded yet.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div id="modalCreateUser" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(10,18,14,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:420px;background:linear-gradient(180deg,rgba(32,44,38,.99),rgba(26,38,33,.99));border:1px solid rgba(53,80,70,.84);border-radius:14px;overflow:hidden;">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid rgba(53,80,70,.65);display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Create User</h3>
+      <button onclick="closeModal('modalCreateUser')" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--muted);">&#10005;</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="border-left:3px solid rgba(56,189,248,.5);padding:10px 14px;background:rgba(56,189,248,.06);border-radius:0 8px 8px 0;margin-bottom:16px;font-size:13px;color:var(--muted);">New users get the <strong style="color:var(--info);">user</strong> role. Admin accounts via add-on config.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>Username</label><input type="text" id="newUname" placeholder="username"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>Password</label><input type="password" id="newUpass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+        <button class="btn ghost" onclick="closeModal('modalCreateUser')">Cancel</button>
+        <button class="btn primary" onclick="createUser()">Create User</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalChangePw" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(10,18,14,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:420px;background:linear-gradient(180deg,rgba(32,44,38,.99),rgba(26,38,33,.99));border:1px solid rgba(53,80,70,.84);border-radius:14px;overflow:hidden;">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid rgba(53,80,70,.65);display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Change Password</h3>
+      <button onclick="closeModal('modalChangePw')" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--muted);">&#10005;</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>Username</label><input type="text" id="pwUname" placeholder="username"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>New Password</label><input type="password" id="pwNew" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+        <button class="btn ghost" onclick="closeModal('modalChangePw')">Cancel</button>
+        <button class="btn primary" onclick="changePw()">Update Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalCreateToken" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(10,18,14,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:420px;background:linear-gradient(180deg,rgba(32,44,38,.99),rgba(26,38,33,.99));border:1px solid rgba(53,80,70,.84);border-radius:14px;overflow:hidden;">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid rgba(53,80,70,.65);display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Create API Token</h3>
+      <button onclick="closeModal('modalCreateToken')" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--muted);">&#10005;</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>Label</label><input type="text" id="tokLabel" placeholder="Home Assistant"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"><label>Expiry (optional)</label><input type="date" id="tokExp"></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Token will be copied to clipboard automatically.</div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+        <button class="btn ghost" onclick="closeModal('modalCreateToken')">Cancel</button>
+        <button class="btn primary" onclick="createToken()">Create Token</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalTopics" style="display:none;position:fixed;inset:0;z-index:150;background:rgba(10,18,14,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="width:480px;background:linear-gradient(180deg,rgba(32,44,38,.99),rgba(26,38,33,.99));border:1px solid rgba(53,80,70,.84);border-radius:14px;overflow:hidden;">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid rgba(53,80,70,.65);display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">&#9881; Topic Settings</h3>
+      <button onclick="closeModal('modalTopics')" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--muted);">&#10005;</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="padding:10px 14px;border-radius:8px;border:1px solid rgba(103,193,141,.25);background:rgba(34,197,94,.07);font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+        These topics are used in the <strong style="color:var(--info);">SSE Monitor</strong> and <strong style="color:var(--info);">Message Browser</strong>. Saved locally in your browser.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <label>Your HA Topics (comma-separated)</label>
+        <input type="text" id="topicsInput" placeholder="ha-alerts,ha-info,ha-notify,ha-system,ha-planty" />
+        <div class="help">Wildcards supported: <span class="mono">ha-*</span> or <span class="mono">*</span></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:space-between;margin-top:16px;">
+        <button class="btn ghost" onclick="fetchTopicsFromServer()" id="fetchTopicsBtn">&#8635; Fetch from server</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn ghost" onclick="closeModal('modalTopics')">Cancel</button>
+          <button class="btn primary" onclick="saveTopics()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginOverlay" style="position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 800px at 20% -10%,rgba(70,123,105,.24),transparent 60%),radial-gradient(1000px 700px at 90% 0%,rgba(63,111,95,.18),transparent 55%),linear-gradient(180deg,#17211d 0%,#121915 100%);">
+  <div style="width:440px;background:linear-gradient(180deg,rgba(32,44,38,.98),rgba(26,38,33,.99));border:1px solid rgba(53,80,70,.84);border-radius:14px;overflow:hidden;">
+    <div style="padding:24px 28px 20px;border-bottom:1px solid rgba(53,80,70,.65);display:flex;align-items:center;gap:14px;">
+      <div style="width:38px;height:38px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,rgba(58,111,95,.98),rgba(47,92,79,.96));position:relative;"><div style="position:absolute;inset:8px;border-radius:8px;border:2px solid rgba(255,255,255,.55);transform:rotate(6deg);"></div></div>
+      <div><div style="font-size:16px;font-weight:850;">ntfy Admin Console</div><div style="font-size:12px;color:var(--muted);margin-top:2px;font-weight:600;">Home Assistant Add-on</div></div>
+    </div>
+    <div style="padding:24px 28px;">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><label>Server URL</label><input type="text" id="loginUrl" placeholder="http://homeassistant.local:4280"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><label>Username</label><input type="text" id="loginUser" placeholder="admin" autocomplete="username"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;"><label>Password</label><input type="password" id="loginPass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"></div>
+      <div id="loginErr" style="display:none;margin-bottom:12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(212,106,106,.4);background:rgba(212,106,106,.1);font-size:13px;color:var(--bad);font-weight:650;"></div>
+      <button onclick="doLogin()" id="loginBtn" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(103,193,141,.26);cursor:pointer;background:linear-gradient(90deg,rgba(70,123,105,.96),rgba(63,111,95,.96));font-weight:850;font-size:14px;color:#fff;font-family:inherit;">Connect &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px;"></div>
+
+<style>
+  .toastMsg{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;border:1px solid rgba(53,80,70,.65);background:rgba(26,38,33,.97);backdrop-filter:blur(8px);font-size:13px;font-weight:650;min-width:260px;border-left:3px solid rgba(53,80,70,.8);animation:slideIn .2s ease;}
+  .toastMsg.ok{border-left-color:var(--ok);}
+  .toastMsg.err{border-left-color:var(--bad);}
+  .toastMsg.info{border-left-color:var(--info);}
+  @keyframes slideIn{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}
+</style>
+
+<script>
+  let BASE='',AUTH='',ME='';
+  const _connectedAt={v:0};
+  let _uptimeTicker=null;
+  const _debugLog=[];
+  let _dbgOk=0,_dbgErr=0;
+
+  // ── DEBUG ──────────────────────────────────────────────────────────────────
+  function dbgRecord(method,path,status,data,err){
+    const entry={t:new Date().toLocaleTimeString(),method,path,status,
+      body:err?String(err):JSON.stringify(data,null,2),
+      ok:!err&&status>=200&&status<300};
+    _debugLog.unshift(entry);
+    if(_debugLog.length>200)_debugLog.pop();
+    if(entry.ok)_dbgOk++;else _dbgErr++;
+    renderDebugStats();
+    const logEl=document.getElementById('debugLog');
+    if(logEl){
+      const empty=logEl.querySelector('.empty');if(empty)empty.remove();
+      const id='dbg-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+      const cls=entry.ok?'ok':(status>=400?'err':'warn');
+      const el=document.createElement('div');
+      el.className='debugEntry '+cls;
+      el.innerHTML=`<div class="debugMeta"><span class="debugTime">${entry.t}</span><span class="debugMethod">${entry.method}</span><span class="debugUrl">${BASE}${path}</span><span class="debugStatus ${cls}">HTTP ${status||(err?'NET_ERR':'?')}</span></div><span class="debugToggle" onclick="toggleDbgBody('${id}')">&#9654; response</span><div class="debugBody" id="${id}" style="display:none;">${escHtml(entry.body)}</div>`;
+      logEl.insertBefore(el,logEl.firstChild);
+    }
+    document.getElementById('debugCount').textContent=_debugLog.length;
+  }
+  function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function toggleDbgBody(id){const el=document.getElementById(id);if(!el)return;const v=el.style.display!=='none';el.style.display=v?'none':'block';el.previousElementSibling.innerHTML=(v?'&#9654;':'&#9660;')+' response';}
+  function renderDebugStats(){
+    const t=document.getElementById('dbgTotal'),o=document.getElementById('dbgOk'),e=document.getElementById('dbgErr'),b=document.getElementById('dbgBase');
+    if(t)t.textContent=_debugLog.length;if(o)o.textContent=_dbgOk;if(e)e.textContent=_dbgErr;if(b)b.textContent=BASE||'\u2014';
+  }
+  function clearDebugLog(){_debugLog.length=0;_dbgOk=0;_dbgErr=0;const l=document.getElementById('debugLog');if(l)l.innerHTML='<div class="empty">Log cleared.</div>';document.getElementById('debugCount').textContent='0';renderDebugStats();}
+  async function runDiagnostics(){if(!BASE){toast('Connect first','error');return;}toast('Running diagnostics\u2026','info');for(const ep of['/v1/health','/v1/version','/v1/stats','/v1/users','/v1/account']){await api('GET',ep).catch(()=>{});await new Promise(r=>setTimeout(r,80));}toast('Diagnostics complete','success');}
+
+  // ── API ────────────────────────────────────────────────────────────────────
+  async function api(method,path,body){
+    const opts={method,headers:{Authorization:AUTH,'Content-Type':'application/json'}};
+    if(body!==undefined)opts.body=JSON.stringify(body);
+    let status=0,data={};
+    try{
+      const r=await fetch(BASE+path,opts);
+      status=r.status;
+      try{data=await r.json();}catch{data={};}
+      dbgRecord(method,path,status,data,null);
+      return{ok:r.ok,status,data};
+    }catch(err){dbgRecord(method,path,0,{},err);return{ok:false,status:0,data:{error:err.message}};}
+  }
+
+  // ── TOAST ──────────────────────────────────────────────────────────────────
+  function toast(msg,type='info'){const el=document.createElement('div');el.className='toastMsg '+({success:'ok',error:'err',info:'info'}[type]||'');el.innerHTML=msg;document.getElementById('toast').appendChild(el);setTimeout(()=>el.remove(),3500);}
+
+  // ── MODALS ─────────────────────────────────────────────────────────────────
+  function openModal(id){const m=document.getElementById(id);if(m)m.style.display='flex';}
+  function closeModal(id){const m=document.getElementById(id);if(m)m.style.display='none';}
+
+  // ── LOGIN ──────────────────────────────────────────────────────────────────
+  document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+  async function doLogin(){
+    const url=document.getElementById('loginUrl').value.trim().replace(/\/$/,'');
+    const user=document.getElementById('loginUser').value.trim();
+    const pass=document.getElementById('loginPass').value;
+    const err=document.getElementById('loginErr');
+    const btn=document.getElementById('loginBtn');
+    err.style.display='none';
+    if(!url||!user||!pass){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+    BASE=url;AUTH='Basic '+btoa(user+':'+pass);
+    btn.textContent='Connecting\u2026';btn.style.opacity='.7';
+    const{ok,status,data}=await api('GET','/v1/users');
+    btn.textContent='Connect \u2192';btn.style.opacity='1';
+    if(status===0){err.textContent='Could not reach server: '+(data.error||'network error');err.style.display='block';BASE=AUTH='';return;}
+    if(status===401){err.textContent='Wrong credentials (401).';err.style.display='block';BASE=AUTH='';return;}
+    if(status===403){err.textContent='Not an admin account (403).';err.style.display='block';BASE=AUTH='';return;}
+    if(!ok){err.textContent='Server returned HTTP '+status;err.style.display='block';BASE=AUTH='';return;}
+    ME=user;_connectedAt.v=Date.now();
+    document.getElementById('loginOverlay').style.display='none';
+    document.getElementById('connStatus').innerHTML='\u25cf '+ME;
+    document.getElementById('connUrl').textContent=url;
+    document.getElementById('sideUser').textContent=ME;
+    document.getElementById('avatarEl').textContent=ME.substring(0,2).toUpperCase();
+    document.getElementById('dbgBase').textContent=BASE;
+    const box=document.getElementById('ntfyDirectBox');
+    if(box){document.getElementById('ntfyDirectUrl').textContent=url;document.getElementById('ntfyDirectLink').href=url;box.style.display='flex';}
+    loadDashboard();startUptimeTicker();toast('Connected as '+user+' \u2713','success');
+    applyStoredTopics();
+    if(!localStorage.getItem('ntfy_topics')){fetchTopicsFromServer(true);}
+  }
+
+  function logout(){
+    BASE=AUTH=ME='';
+    if(_uptimeTicker){clearInterval(_uptimeTicker);_uptimeTicker=null;}
+    sseStop();
+    document.getElementById('loginOverlay').style.display='flex';
+    document.getElementById('loginPass').value='';
+    document.getElementById('connStatus').textContent='offline';
+    document.getElementById('connUrl').textContent='not connected';
+    document.getElementById('sideUser').textContent='\u2014';
+    document.getElementById('sideVersion').textContent='\u2014';
+    document.getElementById('avatarEl').textContent='AD';
+    const box=document.getElementById('ntfyDirectBox');if(box)box.style.display='none';
+    const aclSel=document.getElementById('aclUser');
+    if(aclSel){while(aclSel.options.length>2)aclSel.remove(2);}
+    _sseConnects=0;_sseDisconnects=0;_sseReconnects=0;_sseMsgs=0;
+    const sseLogEl=document.getElementById('sseLog');
+    if(sseLogEl)sseLogEl.innerHTML='<div class="empty">Not monitoring.</div>';
+    sseSetState('IDLE');sseUpdateCounters();
+  }
+
+  function openNtfy(){if(BASE)window.open(BASE,'_blank');}
+
+  // ── NAVIGATION ─────────────────────────────────────────────────────────────
+  const navLinks=Array.from(document.querySelectorAll('.nav a[data-view]'));
+  const views=Array.from(document.querySelectorAll('.view'));
+
+  function setActive(view){
+    navLinks.forEach(a=>a.classList.toggle('active',a.dataset.view===view));
+    views.forEach(v=>v.style.display=(v.id==='view-'+view)?'':'none');
+    const labels={overview:'Overview',send:'Send',users:'Users',tokens:'Tokens',acl:'Access Control',reservations:'Reservations',messages:'Message Browser',server:'Server',debug:'Debug'};
+    const t=labels[view]||'Overview';
+    document.getElementById('titleEl').textContent=t;
+    document.getElementById('path').textContent='Console / '+t;
+    location.hash=view;document.getElementById('search').value='';
+    if(ME){
+      if(view==='overview')loadDashboard();
+      if(view==='users')loadUsers();
+      if(view==='tokens')loadTokens();
+      if(view==='acl')loadACL();
+      if(view==='reservations')loadReservations();
+      if(view==='messages')loadMsgBrowserInit();
+      if(view==='server')loadInfo();
+    }
+  }
+
+  navLinks.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();setActive(a.dataset.view);}));
+  window.addEventListener('hashchange',()=>setActive((location.hash||'#overview').replace('#','')));
+  document.getElementById('refreshBtn').addEventListener('click',()=>{
+    const v=(location.hash||'#overview').replace('#','');
+    if(v==='overview')loadDashboard();if(v==='users')loadUsers();if(v==='tokens')loadTokens();
+    if(v==='acl')loadACL();if(v==='reservations')loadReservations();
+    if(v==='messages')pollMessages();if(v==='server')loadInfo();
+  });
+  document.getElementById('quickSendBtn').addEventListener('click',()=>setActive('send'));
+
+  // ── UPTIME ─────────────────────────────────────────────────────────────────
+  function fmtDur(ms){const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sec=s%60;return`${d}d ${h}h ${m}m ${sec}s`;}
+  function startUptimeTicker(){
+    if(_uptimeTicker){clearInterval(_uptimeTicker);_uptimeTicker=null;}
+    const sinceEl=document.getElementById('connectedSince');
+    if(sinceEl)sinceEl.textContent='since '+new Date(_connectedAt.v).toLocaleTimeString();
+    _uptimeTicker=setInterval(()=>{
+      if(!ME){clearInterval(_uptimeTicker);return;}
+      const dur=fmtDur(Date.now()-_connectedAt.v);
+      document.getElementById('uptime').textContent=dur;
+      document.getElementById('uptimeSide').textContent=dur;
+    },1000);
+  }
+
+  // ── DASHBOARD ──────────────────────────────────────────────────────────────
+  async function loadDashboard(){
+    if(!BASE)return;
+    ['overviewStatusList','connInfoBlock'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="empty"><span class="spinner"></span>Loading\u2026</div>';});
+    try{
+      const[health,ver,users,stats]=await Promise.all([
+        api('GET','/v1/health'),
+        api('GET','/v1/version').catch(()=>({data:{}})),
+        api('GET','/v1/users'),
+        api('GET','/v1/stats').catch(()=>({data:{}}))
+      ]);
+      const ok=health.data?.healthy===true;
+      const version=ver.data?.version||'\u2014';
+      const userList=Array.isArray(users.data)?users.data.filter(u=>u.username!=='*'):[];
+      const admins=userList.filter(u=>u.role==='admin').length;
+      const msgs=stats.data?.messages_published??stats.data?.messages??'\u2014';
+      document.getElementById('healthBadge').className='badge '+(ok?'ok':'bad');
+      document.getElementById('healthBadge').textContent=ok?'OK':'ERROR';
+      document.getElementById('healthVal').innerHTML=`<span class="dot ${ok?'':'bad'}"></span> ${ok?'Healthy':'Unhealthy'}`;
+      document.getElementById('versionDelta').textContent='v'+version;
+      document.getElementById('sideVersion').textContent=version;
+      document.getElementById('kpiMsgs').textContent=msgs;
+      document.getElementById('kpiUsers').textContent=userList.length;
+      document.getElementById('kpiAdmins').textContent=`admins: ${admins}`;
+      document.getElementById('overviewStatusList').innerHTML=`
+        <div class="statusItem"><div class="statusLeft"><span class="dot ${ok?'':'bad'}"></span><div class="statusName">HTTP API (/v1/health)</div></div><div class="statusRight"><span class="badge ${ok?'ok':'bad'}">${ok?'OK':'ERROR'}</span></div></div>
+        <div class="statusItem"><div class="statusLeft"><span class="dot ${users.ok?'':'bad'}"></span><div class="statusName">Auth store (/v1/users)</div></div><div class="statusRight"><span class="badge ${users.ok?'ok':'bad'}">${users.ok?'OK':'HTTP '+users.status}</span><span>${userList.length} users</span></div></div>
+        <div class="statusItem"><div class="statusLeft"><span class="dot ${stats.ok?'':'warn'}"></span><div class="statusName">Stats (/v1/stats)</div></div><div class="statusRight"><span class="badge ${stats.ok?'ok':'warn'}">${stats.ok?'OK':'HTTP '+stats.status}</span><span>${msgs==='\u2014'?'no data':msgs+' msgs'}</span></div></div>
+        <div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Version (/v1/version)</div></div><div class="statusRight"><span class="badge ${ver.ok?'ok':'warn'}">${ver.ok?'OK':'HTTP '+ver.status}</span><span class="mono">${version}</span></div></div>`;
+      document.getElementById('connInfoBlock').innerHTML=`
+        <div class="statusList">
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Server URL</div></div><div class="statusRight mono">${BASE}</div></div>
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Admin user</div></div><div class="statusRight mono">${ME}</div></div>
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Version</div></div><div class="statusRight mono">${version}</div></div>
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Health</div></div><div class="statusRight"><span class="badge ${ok?'ok':'bad'}">${ok?'healthy':'unhealthy'}</span></div></div>
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Total users</div></div><div class="statusRight mono">${userList.length} (${admins} admin${admins!==1?'s':''})</div></div>
+          <div class="statusItem"><div class="statusLeft"><div class="statusName muted">Messages published</div></div><div class="statusRight mono">${msgs}</div></div>
+        </div>`;
+      const policyEl=document.getElementById('sendPolicyList');
+      if(policyEl)policyEl.innerHTML=`
+        <div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Connected to</div></div><div class="statusRight mono">${BASE}</div></div>
+        <div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Auth</div></div><div class="statusRight mono">Basic (${ME})</div></div>
+        <div class="statusItem"><div class="statusLeft"><span class="dot ${ok?'':'bad'}"></span><div class="statusName">Server health</div></div><div class="statusRight"><span class="badge ${ok?'ok':'bad'}">${ok?'OK':'UNHEALTHY'}</span></div></div>`;
+    }catch(e){toast('Dashboard error: '+e.message,'error');}
+  }
+
+  // ── USERS ──────────────────────────────────────────────────────────────────
+  async function loadUsers(){
+    if(!BASE)return;
+    const wrap=document.getElementById('usersWrap');
+    wrap.innerHTML='<div class="empty"><span class="spinner"></span>Loading users\u2026</div>';
+    const{ok,status,data}=await api('GET','/v1/users');
+    if(!ok||!Array.isArray(data)){wrap.innerHTML=`<div class="empty" style="color:var(--bad);">Error HTTP ${status}: ${data?.error??'Unknown'}</div>`;return;}
+    const users=data.filter(u=>u.username!=='*');
+    if(!users.length){wrap.innerHTML='<div class="empty">No users found.</div>';return;}
+    wrap.innerHTML=`<table><thead><tr><th>User</th><th style="width:130px;">Role</th><th>Actions</th></tr></thead><tbody>${users.map(u=>`<tr><td><span class="mono">${escHtml(u.username)}</span>${u.username===ME?' <span class="muted" style="font-size:11px;">(you)</span>':''}</td><td><span class="badge ${u.role==='admin'?'info':''}">${escHtml(u.role)}</span></td><td style="display:flex;gap:8px;flex-wrap:wrap;">${u.role!=='admin'?`<button class="btn ghost" style="padding:7px 10px;font-size:12px;" onclick="openChangePw('${escHtml(u.username)}')">Change PW</button>`:''} ${u.username!==ME&&u.role!=='admin'?`<button class="btn danger" style="padding:7px 10px;font-size:12px;" onclick="deleteUser('${escHtml(u.username)}')">Delete</button>`:''} ${u.role==='admin'&&u.username!==ME?'<span class="muted" style="font-size:11px;">managed via config</span>':''}</td></tr>`).join('')}</tbody></table>`;
+  }
+  function openChangePw(uname){document.getElementById('pwUname').value=uname;openModal('modalChangePw');}
+  async function createUser(){
+    const uname=document.getElementById('newUname').value.trim(),upass=document.getElementById('newUpass').value;
+    if(!uname||!upass){toast('Username and password required','error');return;}
+    const{ok,status,data}=await api('PUT','/v1/users',{username:uname,password:upass,role:'user'});
+    if(ok){toast(`User "${uname}" created \u2713`,'success');document.getElementById('newUname').value='';document.getElementById('newUpass').value='';closeModal('modalCreateUser');loadUsers();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+  async function deleteUser(uname){
+    if(!confirm(`Delete user "${uname}"?\nThis cannot be undone.`))return;
+    const{ok,status,data}=await api('DELETE','/v1/users',{username:uname});
+    if(ok){toast(`User "${uname}" deleted`,'success');loadUsers();}else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+  async function changePw(){
+    const uname=document.getElementById('pwUname').value.trim(),pw=document.getElementById('pwNew').value;
+    if(!uname||!pw){toast('Username and password required','error');return;}
+    const{ok,status,data}=await api('PUT','/v1/users',{username:uname,password:pw});
+    if(ok){toast(`Password changed for "${uname}" \u2713`,'success');document.getElementById('pwNew').value='';closeModal('modalChangePw');}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+
+  // ── TOKENS ─────────────────────────────────────────────────────────────────
+  async function loadTokens(){
+    if(!BASE)return;
+    document.getElementById('tokensWrap').innerHTML=`<div style="padding:16px;border-radius:12px;border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.07);font-size:13px;color:var(--info);margin-bottom:14px;">&#8505; Token listing not available admin-wide via ntfy REST API. Create tokens here or manage in ntfy web UI.</div><div style="display:flex;gap:10px;"><button class="btn primary" onclick="openNtfy()">Open ntfy web UI &#8599;</button><button class="btn ghost" onclick="openModal('modalCreateToken')">Create token</button></div>`;
+  }
+  async function createToken(){
+    const label=document.getElementById('tokLabel').value.trim(),expires=document.getElementById('tokExp').value,body={};
+    if(label)body.label=label;if(expires)body.expires=Math.floor(new Date(expires).getTime()/1000);
+    const{ok,status,data}=await api('POST','/v1/account/token',body);
+    if(ok){const t=data?.token??null;if(t){navigator.clipboard?.writeText(t).then(()=>toast('\ud83d\udccb Token copied \u2713: '+t.substring(0,24)+'\u2026','success')).catch(()=>toast('Token created \u2713 \u2014 copy from Debug log','info'));}else toast('Token created \u2713','success');document.getElementById('tokLabel').value='';document.getElementById('tokExp').value='';closeModal('modalCreateToken');loadTokens();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+
+  // ── ACL ────────────────────────────────────────────────────────────────────
+  const _permBadge=p=>{const cls={'read-write':'ok','read-only':'info','write-only':'warn','deny-all':'bad'};return`<span class="badge ${cls[p]||''}">${escHtml(p)}</span>`;};
+  async function loadACL(){
+    if(!BASE)return;
+    const wrap=document.getElementById('aclWrap');
+    wrap.innerHTML='<div class="empty"><span class="spinner"></span>Loading ACL\u2026</div>';
+    const{ok,status,data}=await api('GET','/v1/users');
+    if(!ok||!Array.isArray(data)){wrap.innerHTML=`<div class="empty" style="color:var(--bad);">Error HTTP ${status}: ${data?.error??'Unknown'}</div>`;return;}
+    const sel=document.getElementById('aclUser');
+    const existing=Array.from(sel.options).map(o=>o.value);
+    data.filter(u=>u.username!=='*'&&u.role!=='admin').forEach(u=>{if(!existing.includes(u.username)){const o=document.createElement('option');o.value=u.username;o.textContent=u.username;sel.appendChild(o);}});
+    const rows=[];
+    data.forEach(u=>{if(!Array.isArray(u.grants)||!u.grants.length)return;u.grants.forEach(g=>rows.push({username:u.username,role:u.role,topic:g.topic,permission:g.permission}));});
+    if(!rows.length){wrap.innerHTML='<div class="empty">No ACL entries found. Access governed by <span class="mono">auth-default-access</span> in server config.</div>';return;}
+    wrap.innerHTML=`<table><thead><tr><th>User</th><th style="width:80px;">Role</th><th>Topic</th><th style="width:140px;">Permission</th><th style="width:90px;">Action</th></tr></thead><tbody>${rows.map(r=>`<tr><td><span class="mono">${escHtml(r.username)}</span></td><td><span class="badge ${r.role==='admin'?'info':''}">${escHtml(r.role??'user')}</span></td><td><span class="mono">${escHtml(r.topic)}</span></td><td>${_permBadge(r.permission)}</td><td><button class="btn danger" style="padding:6px 10px;font-size:12px;" onclick="deleteACL('${escHtml(r.username)}','${escHtml(r.topic)}')">Delete</button></td></tr>`).join('')}</tbody></table><div class="help" style="margin-top:10px;">${rows.length} rule${rows.length!==1?'s':''} total.</div>`;
+  }
+  async function setACL(){
+    const username=document.getElementById('aclUser').value.trim(),topic=document.getElementById('aclTopic').value.trim(),permission=document.getElementById('aclPerm').value;
+    if(!username){toast('Select a user','error');return;}
+    if(!topic){toast('Enter a topic','error');return;}
+    if(topic!=='*'&&/[*?]/.test(topic)){toast('ntfy ACL does not support wildcards. Use exact topic name or * for all.','error');return;}
+    const{ok,status,data}=await api('POST','/v1/access',{username,topic,permission});
+    if(ok){toast(`ACL saved: ${username} \u2192 ${topic} [${permission}] \u2713`,'success');document.getElementById('aclTopic').value='';loadACL();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+  async function deleteACL(username,topic){
+    if(!confirm(`Delete ACL rule?\n\nUser:  ${username}\nTopic: ${topic}`))return;
+    const{ok,status,data}=await api('DELETE','/v1/access',{username,topic});
+    if(ok){toast(`ACL deleted: ${username} / ${topic}`,'success');loadACL();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+
+  // ── RESERVATIONS ── PATCH 1: korrekte 404-Meldung ─────────────────────────
+  async function loadReservations(){
+    if(!BASE)return;
+    const wrap=document.getElementById('resWrap');
+    wrap.innerHTML='<div class="empty"><span class="spinner"></span>Loading reservations\u2026</div>';
+    const{ok,status,data}=await api('GET','/v1/account');
+    if(!ok){wrap.innerHTML=`<div class="empty" style="color:var(--bad);">Error HTTP ${status}: ${data?.error??'Unknown'}</div>`;return;}
+    const list=Array.isArray(data?.reservations)?data.reservations:[];
+    if(!list.length){wrap.innerHTML='<div class="empty">No topic reservations for this account.</div>';return;}
+    wrap.innerHTML=`<table><thead><tr><th>Topic</th><th style="width:180px;">Owner permission</th><th style="width:200px;">Everyone else</th><th style="width:90px;">Action</th></tr></thead><tbody>${list.map(r=>`<tr><td><span class="mono">${escHtml(r.topic)}</span></td><td>${_permBadge(r.owner_permission??'read-write')}</td><td>${_permBadge(r.everyone_permission??'deny-all')}</td><td><button class="btn danger" style="padding:6px 10px;font-size:12px;" onclick="deleteReservation('${escHtml(r.topic)}')">Delete</button></td></tr>`).join('')}</tbody></table><div class="help" style="margin-top:10px;">${list.length} reservation${list.length!==1?'s':''} for <span class="mono">${ME}</span>.</div>`;
+  }
+  async function addReservation(){
+    const topic=document.getElementById('resTopic').value.trim(),everyone=document.getElementById('resPermEveryone').value;
+    if(!topic){toast('Enter a topic name','error');return;}
+    const{ok,status,data}=await api('POST',`/v1/account/reservation`,{topic,everyone});
+    if(ok){toast(`Topic "${topic}" reserved \u2713`,'success');document.getElementById('resTopic').value='';loadReservations();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+  async function deleteReservation(topic){
+    if(!confirm(`Delete reservation for "${topic}"?\nOthers will be able to use this topic again.`))return;
+    const{ok,status,data}=await api('DELETE',`/v1/account/reservation/${encodeURIComponent(topic)}`);
+    if(ok){toast(`Reservation "${topic}" deleted`,'success');loadReservations();}
+    else toast(`Error ${status}: `+(data?.error??JSON.stringify(data)),'error');
+  }
+
+  // ── MESSAGE BROWSER ────────────────────────────────────────────────────────
+  function loadMsgBrowserInit(){
+    const sseVal=document.getElementById('sseTopicInput')?.value;
+    const msgInput=document.getElementById('msgTopic');
+    if(msgInput&&sseVal&&msgInput.value==='')msgInput.value=sseVal;
+  }
+  async function pollMessages(){
+    if(!BASE){toast('Connect to a server first','error');return;}
+    const topicRaw=(document.getElementById('msgTopic')?.value||'ha-notify').trim();
+    const limit=document.getElementById('msgLimit')?.value||'50';
+    const since=document.getElementById('msgSince')?.value||'24h';
+    const topics=topicRaw.split(',').map(t=>t.trim()).filter(Boolean);
+    const badge=document.getElementById('msgBrowserBadge');
+    const list=document.getElementById('msgList');
+    if(badge){badge.className='badge info';badge.textContent='FETCHING';}
+    if(list)list.innerHTML='<div class="empty"><span class="spinner"></span>Fetching messages\u2026</div>';
+    const sinceParam=since==='all'?'all':since;
+    const allMsgs=[];
+    for(const topic of topics){
+      const url=`${BASE}/${encodeURIComponent(topic)}/json?poll=1&since=${sinceParam}&limit=${limit}`;
+      try{
+        const r=await fetch(url,{headers:{Authorization:AUTH}});
+        if(!r.ok){allMsgs.push({_error:true,_topic:topic,_status:r.status});continue;}
+        const text=await r.text();
+        text.trim().split('\n').filter(Boolean).forEach(line=>{try{allMsgs.push(JSON.parse(line));}catch{}});
+      }catch(e){allMsgs.push({_error:true,_topic:topic,_msg:e.message});}
+    }
+    const msgs=allMsgs.filter(m=>!m._error).sort((a,b)=>(b.time||0)-(a.time||0));
+    const errs=allMsgs.filter(m=>m._error);
+    const topicSet=new Set(msgs.map(m=>m.topic));
+    const highPrio=msgs.filter(m=>m.priority>=4).length;
+    const lastTime=msgs[0]?new Date(msgs[0].time*1000).toLocaleTimeString():'\u2014';
+    ['msgStatTotal','msgStatTopics','msgStatHigh'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[msgs.length,topicSet.size,highPrio][i];});
+    const lastEl=document.getElementById('msgStatLast');if(lastEl)lastEl.textContent=lastTime;
+    if(badge){badge.className=msgs.length>0?'badge ok':'badge warn';badge.textContent=msgs.length+' messages';}
+    if(!msgs.length&&!errs.length){list.innerHTML='<div class="empty">No cached messages found for the selected topics and time range.</div>';return;}
+    const prioBadge=p=>{if(!p)return'';const cls=p>=5?'bad':p>=4?'warn':p<=2?'info':'';const lbl=p===5?'max':p===4?'high':p===3?'default':p===2?'low':'min';return`<span class="badge ${cls}" style="font-size:11px;">prio ${p} ${lbl}</span>`;};
+    const fmtTime=t=>t?new Date(t*1000).toLocaleString():'?';
+    const errHtml=errs.map(e=>`<div class="debugEntry err" style="padding:10px 12px;"><div class="debugMeta"><span class="debugStatus err">ERROR</span><span class="debugUrl">topic: ${escHtml(e._topic||'?')} ${e._status?'HTTP '+e._status:''} ${e._msg?'\u2014 '+escHtml(e._msg):''}</span></div></div>`).join('');
+    const msgHtml=msgs.map(m=>`<div class="msgCard"><div class="msgCardTop"><span class="chip">${escHtml(m.topic||'?')}</span>${prioBadge(m.priority)}${m.title?`<span style="font-weight:900;font-size:13px;">${escHtml(m.title)}</span>`:''}<span class="muted" style="margin-left:auto;font-size:11px;font-family:var(--mono);">${fmtTime(m.time)}</span></div><div class="msgCardBody">${escHtml(m.message||'')}</div>${m.tags&&m.tags.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;">${m.tags.map(t=>`<span class="chip">${escHtml(t)}</span>`).join('')}</div>`:''}${m.click?`<div class="msgCardMeta">&#8599; ${escHtml(m.click)}</div>`:''}${m.attachment?`<div class="msgCardMeta">&#128206; ${escHtml(m.attachment.name||'attachment')}</div>`:''}</div>`).join('');
+    list.innerHTML=errHtml+msgHtml;
+  }
+  function clearMsgBrowser(){
+    const list=document.getElementById('msgList'),badge=document.getElementById('msgBrowserBadge');
+    if(list)list.innerHTML='<div class="empty">Cleared. Click "Fetch Messages" to reload.</div>';
+    if(badge){badge.className='badge';badge.textContent='IDLE';}
+    ['msgStatTotal','msgStatTopics','msgStatHigh'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0';});
+    const last=document.getElementById('msgStatLast');if(last)last.textContent='\u2014';
+  }
+
+  // ── SERVER INFO ────────────────────────────────────────────────────────────
+  async function loadInfo(){
+    if(!BASE)return;
+    const statusEl=document.getElementById('serverStatusList'),haEl=document.getElementById('haExample');
+    if(statusEl)statusEl.innerHTML='<div class="empty"><span class="spinner"></span>Loading\u2026</div>';
+    if(haEl)haEl.innerHTML='<div class="empty"><span class="spinner"></span>Loading\u2026</div>';
+    const[health,ver]=await Promise.all([api('GET','/v1/health'),api('GET','/v1/version').catch(()=>({data:{}}))]);
+    const ok=health.data?.healthy===true,version=ver.data?.version||'\u2014';
+    if(statusEl)statusEl.innerHTML=`<div class="statusList"><div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Base URL</div></div><div class="statusRight mono">${BASE}</div></div><div class="statusItem"><div class="statusLeft"><span class="dot ${ok?'':'bad'}"></span><div class="statusName">Health</div></div><div class="statusRight"><span class="badge ${ok?'ok':'bad'}">${ok?'healthy':'unhealthy'}</span></div></div><div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Version</div></div><div class="statusRight mono">${version}</div></div><div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Admin user</div></div><div class="statusRight mono">${ME}</div></div><div class="statusItem"><div class="statusLeft"><span class="dot"></span><div class="statusName">Auth mode</div></div><div class="statusRight mono">HTTP Basic</div></div></div>`;
+    if(haEl)haEl.innerHTML=`<div class="help" style="margin-bottom:10px;">Paste into <span class="mono">configuration.yaml</span> for <span class="mono">rest_command</span>:</div><pre class="codeblock"><span style="color:var(--info)">rest_command:</span>
+  <span style="color:var(--info)">ntfy_notify:</span>
+    <span style="color:var(--muted)">url</span>: <span style="color:var(--ok)">"${BASE}/{{ topic }}"</span>
+    <span style="color:var(--muted)">method</span>: POST
+    <span style="color:var(--muted)">headers</span>:
+      Authorization: <span style="color:var(--ok)">"Bearer YOUR_TOKEN_HERE"</span>
+      Title: <span style="color:var(--ok)">"{{ title | default('') }}"</span>
+      Priority: <span style="color:var(--ok)">"{{ priority | default('3') }}"</span>
+      Tags: <span style="color:var(--ok)">"{{ tags | default('') }}"</span>
+    <span style="color:var(--muted)">payload</span>: <span style="color:var(--ok)">"{{ message }}"</span>
+    <span style="color:var(--muted)">content_type</span>: "text/plain"</pre><div class="help" style="margin-top:10px;">Replace <span class="mono">YOUR_TOKEN_HERE</span> with a token from the Tokens tab.</div>`;
+  }
+
+  // ── SEND ───────────────────────────────────────────────────────────────────
+  async function publish(){
+    const topic=document.getElementById('pubTopic').value.trim(),msg=document.getElementById('pubMsg').value.trim();
+    if(!topic||!msg){toast('Topic and message required','error');return;}
+    if(!BASE||!AUTH){toast('Not connected','error');return;}
+    const headers={Authorization:AUTH};
+    const title=document.getElementById('pubTitle').value.trim(),tags=document.getElementById('pubTags').value.trim(),click=document.getElementById('pubClick').value.trim();
+    headers['Priority']=document.getElementById('pubPrio').value;
+    if(title)headers['Title']=title;if(tags)headers['Tags']=tags;if(click)headers['Click']=click;
+    try{const r=await fetch(BASE+'/'+topic,{method:'POST',headers,body:msg});dbgRecord('POST','/'+topic,r.status,{},null);if(r.ok)toast('Message sent \u2713','success');else toast('Error: HTTP '+r.status,'error');}
+    catch(e){dbgRecord('POST','/'+topic,0,{},e);toast('Send failed: '+e.message,'error');}
+  }
+  function updatePreview(){
+    const t=document.getElementById('pubTitle').value.trim()||'(no title)';
+    const m=document.getElementById('pubMsg').value.trim()||'(no message)';
+    const tp=document.getElementById('pubTopic').value.trim()||'(topic)';
+    const p=document.getElementById('pubPrio').value||'3';
+    document.getElementById('pvTitle').textContent=t;
+    document.getElementById('pvMsg').textContent=m;
+    document.getElementById('pvPrio').textContent='prio '+p;
+    const chips=document.getElementById('pvChips');
+    const tags=(document.getElementById('pubTags').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+    chips.innerHTML='';
+    const mkChip=txt=>{const s=document.createElement('span');s.className='chip';s.textContent=txt;return s;};
+    chips.appendChild(mkChip(tp));tags.slice(0,6).forEach(x=>chips.appendChild(mkChip(x)));
+  }
+  ['pubTopic','pubTitle','pubMsg','pubTags','pubPrio'].forEach(id=>{document.getElementById(id)?.addEventListener('input',updatePreview);});
+  document.getElementById('sendBtn').addEventListener('click',publish);
+  document.getElementById('sendBtn2').addEventListener('click',publish);
+  document.getElementById('clearBtn').addEventListener('click',()=>{'pubTitle,pubTags,pubClick,pubMsg'.split(',').forEach(id=>document.getElementById(id).value='');document.getElementById('pubTopic').value='ha-notify';document.getElementById('pubPrio').value='3';updatePreview();});
+  document.getElementById('fillExample').addEventListener('click',()=>{document.getElementById('pubTopic').value='ha-notify';document.getElementById('pubTitle').value='Test Notification';document.getElementById('pubMsg').value='Hello from ntfy Admin Console!';document.getElementById('pubTags').value='house,test';document.getElementById('pubPrio').value='4';document.getElementById('pubClick').value='';updatePreview();});
+
+  // ── SSE ────────────────────────────────────────────────────────────────────
+  let _sse=null,_sseConnects=0,_sseDisconnects=0,_sseReconnects=0,_sseMsgs=0;
+  let _sseReconnectTimer=null,_sseIntentionalStop=false,_sseAbort=null;
+
+  function sseSetState(state){
+    const badge=document.getElementById('sseStateBadge'),valEl=document.getElementById('sseStateVal'),cs=document.getElementById('connStatus');
+    if(!badge||!valEl)return;
+    const map={IDLE:{cls:'',pill:'offline'},CONNECTING:{cls:'info',pill:'\u25d6 connecting'},CONNECTED:{cls:'ok',pill:'\u25cf '+ME},DISCONNECTED:{cls:'bad',pill:'\u2715 disconnected'},RECONNECTING:{cls:'warn',pill:'\u21ba reconnecting'},STOPPED:{cls:'',pill:'offline'}};
+    const s=map[state]||map.IDLE;
+    badge.className='badge '+s.cls;badge.textContent=state;valEl.textContent=state;
+    if(cs)cs.innerHTML=s.pill;
+  }
+  function sseLog(msg,type){
+    const logEl=document.getElementById('sseLog');if(!logEl)return;
+    const empty=logEl.querySelector('.empty');if(empty)empty.remove();
+    const el=document.createElement('div');el.className='debugEntry '+(type||'info');
+    el.innerHTML=`<div class="debugMeta"><span class="debugTime">${new Date().toLocaleTimeString()}</span><span class="debugStatus ${type||''}" style="font-weight:900;">[SSE]</span><span class="debugUrl">${escHtml(msg)}</span></div>`;
+    logEl.insertBefore(el,logEl.firstChild);
+    while(logEl.children.length>200)logEl.removeChild(logEl.lastChild);
+  }
+  function sseUpdateCounters(){['sseConnects','sseDisconnects','sseReconnects','sseMsgs'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[_sseConnects,_sseDisconnects,_sseReconnects,_sseMsgs][i];});}
+  function sseBuildUrl(){const raw=(document.getElementById('sseTopicInput')?.value||'ha-notify').trim();return`${BASE}/${raw.split(',').map(t=>t.trim()).filter(Boolean).join(',')}/sse`;}
+
+  function sseStart(isReconnect){
+    if(!BASE){toast('Connect to a server first','error');return;}
+    if(_sseReconnectTimer){clearTimeout(_sseReconnectTimer);_sseReconnectTimer=null;}
+    _sseIntentionalStop=false;
+    sseSetState(isReconnect?'RECONNECTING':'CONNECTING');
+    if(isReconnect){_sseReconnects++;sseLog(`Reconnect attempt #${_sseReconnects}\u2026`,'warn');}
+    else sseLog('Opening SSE stream: '+sseBuildUrl(),'info');
+    sseUpdateCounters();_sseUseFetch(isReconnect);
+  }
+  async function _sseUseFetch(isReconnect){
+    const url=sseBuildUrl();sseLog('Fetch-SSE: '+url,'info');
+    let response;
+    try{response=await fetch(url,{headers:{Authorization:AUTH},signal:(_sseAbort=new AbortController()).signal});}
+    catch(err){
+      if(_sseIntentionalStop){sseSetState('STOPPED');sseLog('Stream stopped by user.','warn');return;}
+      _sseDisconnects++;sseUpdateCounters();sseSetState('DISCONNECTED');sseLog('Connection failed: '+err.message,'err');
+      toast('SSE failed \u2014 retrying in 5s','error');_sseReconnectTimer=setTimeout(()=>sseStart(true),5000);return;
+    }
+    if(!response.ok){_sseDisconnects++;sseUpdateCounters();sseSetState('DISCONNECTED');sseLog(`HTTP ${response.status} \u2014 not retrying.`,'err');toast('SSE: HTTP '+response.status,'error');return;}
+    _sseConnects++;sseUpdateCounters();sseSetState('CONNECTED');sseLog('Stream opened \u2713 (HTTP '+response.status+')','ok');
+    const reader=response.body.getReader(),decoder=new TextDecoder();let buf='';
+    try{
+      while(true){
+        const{value,done}=await reader.read();if(done)break;
+        buf+=decoder.decode(value,{stream:true});
+        const parts=buf.split('\n\n');buf=parts.pop();
+        for(const part of parts){
+          if(!part.trim())continue;
+          const lines=part.split('\n'),eventData={};
+          for(const line of lines){if(line.startsWith('data:'))eventData.data=line.slice(5).trim();}
+          if(eventData.data){
+            try{const msg=JSON.parse(eventData.data);_sseMsgs++;sseUpdateCounters();const title=msg.title?` | ${msg.title}`:'',prio=msg.priority?` | prio:${msg.priority}`:'';sseLog(`\ud83d\udce8 [${msg.topic||'?'}] ${msg.message||'(no body)'}${title}${prio}`,'ok');}
+            catch{sseLog(eventData.data==='keepalive'?'keepalive \u2665':'RAW: '+eventData.data,'info');}
+          }
+        }
+      }
+    }catch(err){if(_sseIntentionalStop){sseSetState('STOPPED');sseLog('Stream stopped by user.','warn');return;}}
+    if(!_sseIntentionalStop){_sseDisconnects++;sseUpdateCounters();sseSetState('DISCONNECTED');sseLog('Stream closed \u2014 reconnecting in 5s\u2026','err');toast('SSE disconnected \u2014 reconnecting','error');_sseReconnectTimer=setTimeout(()=>sseStart(true),5000);}
+  }
+  function sseStop(){_sseIntentionalStop=true;if(_sseReconnectTimer){clearTimeout(_sseReconnectTimer);_sseReconnectTimer=null;}if(_sseAbort){_sseAbort.abort();_sseAbort=null;}sseSetState('STOPPED');sseLog('Monitoring stopped by user.','warn');}
+
+  // ── SEARCH ─────────────────────────────────────────────────────────────────
+  document.getElementById('search').addEventListener('input',function(){
+    const q=this.value.trim().toLowerCase();
+    const view=(location.hash||'#overview').replace('#','');
+    if(view==='users'){document.querySelectorAll('#usersWrap tbody tr').forEach(r=>{r.style.display=q===''||r.textContent.toLowerCase().includes(q)?'':'none';});}
+    else if(view==='acl'){document.querySelectorAll('#aclWrap tbody tr').forEach(r=>{r.style.display=q===''||r.textContent.toLowerCase().includes(q)?'':'none';});}
+    else if(view==='reservations'){document.querySelectorAll('#resWrap tbody tr').forEach(r=>{r.style.display=q===''||r.textContent.toLowerCase().includes(q)?'':'none';});}
+    else if(view==='messages'){document.querySelectorAll('#msgList .msgCard').forEach(c=>{c.style.display=q===''||c.textContent.toLowerCase().includes(q)?'':'none';});}
+    else if(view==='debug'){document.querySelectorAll('#debugLog .debugEntry').forEach(e=>{e.style.display=q===''||e.textContent.toLowerCase().includes(q)?'':'none';});}
+  });
+
+  // ── TOPIC SETTINGS ─────────────────────────────────────────────────────────
+  function applyStoredTopics(){
+    const saved=localStorage.getItem('ntfy_topics');
+    if(!saved)return;
+    const sseEl=document.getElementById('sseTopicInput');
+    const msgEl=document.getElementById('msgTopic');
+    if(sseEl)sseEl.value=saved;if(msgEl)msgEl.value=saved;
+  }
+  function openTopicsSettings(){
+    const saved=localStorage.getItem('ntfy_topics');
+    const input=document.getElementById('topicsInput');
+    if(input)input.value=saved||'';
+    openModal('modalTopics');
+  }
+  function saveTopics(){
+    const val=(document.getElementById('topicsInput')?.value||'').trim();
+    if(!val){toast('Enter at least one topic','error');return;}
+    localStorage.setItem('ntfy_topics',val);
+    applyStoredTopics();closeModal('modalTopics');toast('Topics saved \u2713','success');
+  }
+
+  // ── PATCH 2: fetchTopicsFromServer — 404 guard verhindert Debug-Spam beim Login
+  async function fetchTopicsFromServer(autoOpen){
+    if(!BASE){toast('Connect to a server first','error');return;}
+    const btn=document.getElementById('fetchTopicsBtn');
+    if(btn){btn.innerHTML='↻ Fetching…';btn.disabled=true;}
+    const{ok,status:resStat,data}=await api('GET','/v1/account');
+    if(btn){btn.innerHTML='&#8635; Fetch from server';btn.disabled=false;}
+    if(!ok){
+      if(!autoOpen)toast('Could not load account \u2014 check server connection','error');
+      return;
+    }
+    let topics=[];
+    const list=Array.isArray(data?.reservations)?data.reservations:[];
+    topics=list.map(r=>r.topic).filter(Boolean);
+    const input=document.getElementById('topicsInput');
+    if(topics.length){
+      if(input)input.value=topics.join(',');
+      if(autoOpen){openModal('modalTopics');toast('Found '+topics.length+' reserved topic(s) \u2713','success');}
+      else toast('Fetched '+topics.length+' topic(s) from server','success');
+    }else{
+      if(input)input.value='';
+      if(autoOpen)openModal('modalTopics');
+      else toast('No reserved topics found on server','info');
+    }
+  }
+
+  // ── INIT ───────────────────────────────────────────────────────────────────
+  window.addEventListener('load',()=>{
+    document.getElementById('loginUrl').value=`http://${window.location.hostname}:4280`;
+    setActive((location.hash||'#overview').replace('#',''));
+    applyStoredTopics();updatePreview();renderDebugStats();
+  });
+</script>
+</body>
+</html>

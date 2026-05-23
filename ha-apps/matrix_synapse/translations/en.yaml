@@ -1,0 +1,47 @@
+---
+configuration:
+  server_name:
+    name: Server Name
+    description: "Matrix server name / domain (e.g. deine-domain.duckdns.org). This becomes your Matrix ID: @user:server_name."
+  element_web_url:
+    name: Element Web URL
+    description: "External HTTPS URL for Element Web (e.g. https://element.deine-domain.duckdns.org)."
+  enable_registration:
+    name: Enable Registration
+    description: "Allow new users to register accounts on this server."
+  registration_shared_secret:
+    name: Registration Shared Secret
+    description: "Secret for admin-controlled user registration. Leave empty to auto-generate."
+  enable_federation:
+    name: Enable Federation
+    description: "Connect to the wider Matrix network. Disable for fully private servers."
+  max_upload_size_mb:
+    name: Max Upload Size (MB)
+    description: "Maximum file upload size in megabytes (10–500)."
+  enable_synapse_admin:
+    name: Enable Synapse Admin UI
+    description: "Start the Synapse Admin web UI on port 8090."
+  postgres_password:
+    name: PostgreSQL Password
+    description: "Password for the internal Synapse database user."
+  log_level:
+    name: Log Level
+    description: "Synapse log verbosity. WARNING recommended for normal operation."
+  ntfy_url:
+    name: ntfy URL (UnifiedPush)
+    description: "Optional: External URL of your ntfy server (e.g. https://ntfy.deine-domain.tld). Used at startup to verify the ntfy Matrix Push Gateway is reachable and to print setup instructions. Synapse itself does not need this URL — the UnifiedPush client (Element Android) registers the gateway with Synapse automatically."
+  enable_voice_calls:
+    name: Enable Voice/Video Calls
+    description: "Enable Element Call (MSC3401) with LiveKit SFU. Downloads LiveKit and lk-jwt-service on first start."
+  livekit_secret:
+    name: LiveKit Secret
+    description: "Shared secret for LiveKit. Leave empty to auto-generate on first start."
+  element_call_url:
+    name: Element Call URL
+    description: "External HTTPS URL for the Element Call web app."
+  livekit_url:
+    name: LiveKit URL
+    description: "External WSS URL for the LiveKit SFU (e.g. wss://livekit.deine-domain.tld)."
+  livekit_jwt_url:
+    name: LiveKit JWT URL
+    description: "External HTTPS URL for the lk-jwt-service token bridge."

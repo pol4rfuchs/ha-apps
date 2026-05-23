@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bashio
+
+if ! bashio::config.true 'enable_voice_calls'; then
+    bashio::log.info "Element Call: Voice Calls deaktiviert — Service inaktiv"
+    exec sleep infinity
+fi
+
+VOICE_MARKER="/data/matrix/.voice_downloaded"
+EC_DIR="/data/matrix/element-call"
+
+WAIT=0
+while [ ! -f "${VOICE_MARKER}" ] || [ ! -f "${EC_DIR}/index.html" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf Element Call Download..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 300 ]; then
+        bashio::log.error "Timeout: Element Call nicht gefunden!"
+        exit 1
+    fi
+done
+
+bashio::log.info "🚀 Starte Element Call WebApp auf Port 7081..."
+cd "${EC_DIR}"
+exec python3 -m http.server 7081 2>&1

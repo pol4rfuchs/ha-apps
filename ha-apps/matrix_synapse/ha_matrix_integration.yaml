@@ -1,0 +1,64 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Home Assistant — Matrix Benachrichtigungen
+# In configuration.yaml einfügen (oder packages/ Ordner)
+# ════════════════════════════════════════════════════════════════════════════
+
+notify:
+  - platform: matrix
+    name: matrix_notify
+    homeserver: https://deine-domain.duckdns.org  # ← deinen Server eintragen
+    username: "@homeassistant:deine-domain.duckdns.org"
+    password: "dein_ha_matrix_passwort"
+    default_room: "#homeassistant:deine-domain.duckdns.org"
+    # Weitere Räume definieren:
+    rooms:
+      - "#alarms:deine-domain.duckdns.org"
+      - "#presence:deine-domain.duckdns.org"
+
+# ── Beispiel Automationen ──────────────────────────────────────────────────
+automation:
+  # Alarm-Benachrichtigung
+  - alias: "Matrix: Bewegungsalarm"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.motion_sensor
+        to: "on"
+    action:
+      - service: notify.matrix_notify
+        data:
+          message: "🚨 Bewegung erkannt!"
+          target: "#alarms:deine-domain.duckdns.org"
+
+  # Tagesübersicht morgens
+  - alias: "Matrix: Tagesübersicht"
+    trigger:
+      - platform: time
+        at: "07:00:00"
+    action:
+      - service: notify.matrix_notify
+        data:
+          message: >
+            🏠 **Guten Morgen!**
+            🌡️ Wohnzimmer: {{ states('sensor.wohnzimmer_temperatur') }}°C
+            💡 Lichter an: {{ states | selectattr('domain','eq','light') | selectattr('state','eq','on') | list | count }}
+            🔒 Türen offen: {{ states | selectattr('domain','eq','binary_sensor') | selectattr('attributes.device_class','eq','door') | selectattr('state','eq','on') | list | count }}
+
+  # Matrix Webhook für HA Events empfangen
+  # (Matrix → HA via REST API, kein Plugin nötig)
+
+# ── Matrix als HA-Benachrichtigungsziel in scripts.yaml ───────────────────
+script:
+  matrix_alert:
+    alias: "Matrix Alert senden"
+    fields:
+      message:
+        description: "Nachrichtentext"
+        example: "Alarm ausgelöst!"
+      room:
+        description: "Zielraum (optional)"
+        example: "#alarms:domain.duckdns.org"
+    sequence:
+      - service: notify.matrix_notify
+        data:
+          message: "{{ message }}"
+          target: "{{ room | default('#homeassistant:deine-domain.duckdns.org') }}"

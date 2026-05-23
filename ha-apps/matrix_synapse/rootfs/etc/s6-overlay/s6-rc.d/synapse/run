@@ -1,0 +1,35 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: Synapse Homeserver
+
+SYNAPSE_CONFIG="/data/matrix/synapse/homeserver.yaml"
+MARKER="/data/matrix/.pg_initialized"
+
+# ── Warten bis cont-init homeserver.yaml geschrieben hat ─────────────────
+# (S6 und cont-init laufen parallel — ohne Wait startet Synapse zu früh)
+WAIT=0
+while [ ! -f "${SYNAPSE_CONFIG}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf homeserver.yaml..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: homeserver.yaml wurde nicht erstellt!"
+        exit 1
+    fi
+done
+
+# ── Warten bis PostgreSQL bereit ist ─────────────────────────────────────
+bashio::log.info "Warte auf PostgreSQL..."
+for i in $(seq 1 60); do
+    if [ -f "${MARKER}" ] && pg_isready -h 127.0.0.1 -p 5432 -U synapse -q 2>/dev/null; then
+        bashio::log.info "✅ PostgreSQL bereit"
+        break
+    fi
+    sleep 1
+done
+
+bashio::log.info "Starte Synapse Homeserver..."
+exec /opt/synapse/bin/python -m synapse.app.homeserver \
+    --config-path "${SYNAPSE_CONFIG}" \
+    2>&1

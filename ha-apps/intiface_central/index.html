@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intiface · HA</title>
+<style>
+:root{
+  --bg:#09090f;--surf:#12121c;--card:#181825;--bord:#272740;
+  --acc:#7c3aed;--acc2:#a855f7;--acc3:#c084fc;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --text:#e2e8f0;--muted:#64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:13px/1.4 'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* Header */
+header{background:var(--surf);border-bottom:1px solid var(--bord);padding:8px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+header h1{font-size:14px;font-weight:700;color:var(--acc3);flex:1}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;background:var(--card);border:1px solid var(--bord)}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.badge.on .dot{background:var(--green);box-shadow:0 0 5px var(--green)}
+.badge.off .dot{background:var(--red)}
+
+/* Toolbar */
+.tb{background:var(--surf);border-bottom:1px solid var(--bord);padding:6px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0}
+button{cursor:pointer;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:500;transition:.15s}
+.bp{background:var(--acc);color:#fff}.bp:hover{background:var(--acc2)}
+.bs{background:var(--card);color:var(--text);border:1px solid var(--bord)}.bs:hover{background:var(--bord)}
+.bd{background:#450a0a;color:#fca5a5;border:1px solid var(--red)}.bd:hover{background:var(--red);color:#fff}
+.bsm{padding:3px 9px;font-size:11px}
+button:disabled{opacity:.35;cursor:default}
+.sw{display:none;align-items:center;gap:5px;font-size:11px;color:var(--amber)}.sw.vis{display:flex}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp2{width:11px;height:11px;border:2px solid var(--amber);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+
+/* Layout */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* Device panel */
+.devp{width:268px;min-width:190px;border-right:1px solid var(--bord);overflow-y:auto;padding:10px;flex-shrink:0}
+.ptitle{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:8px}
+.nodev{text-align:center;padding:30px 12px;color:var(--muted);line-height:1.8}
+.nodev big{font-size:28px;display:block}
+.dcard{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:10px;margin-bottom:8px;transition:border-color .2s}
+.dcard:hover{border-color:var(--acc)}
+.dname{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsub{font-size:10px;color:var(--muted);margin-bottom:8px;margin-top:2px}
+.mrow{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.ml{font-size:10px;color:var(--acc3);width:48px;flex-shrink:0}
+input[type=range].msl{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--bord);outline:none;cursor:pointer}
+input[type=range].msl::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--acc2);cursor:pointer}
+input[type=range].msl::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--acc2);border:none;cursor:pointer}
+.mv{font-size:10px;width:30px;text-align:right;font-variant-numeric:tabular-nums}
+.dfoot{display:flex;gap:5px;margin-top:8px}
+
+/* Sequencer panel */
+.seqp{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.seqtb{padding:7px 12px;border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:7px;flex-wrap:wrap;flex-shrink:0;background:var(--surf)}
+select.sel,input.it{background:var(--card);border:1px solid var(--bord);color:var(--text);border-radius:6px;padding:4px 8px;font-size:12px;outline:none}
+select.sel:focus,input.it:focus{border-color:var(--acc)}
+input.inn{background:var(--card);border:1px solid var(--bord);color:var(--text);border-radius:5px;padding:3px 6px;font-size:12px;width:58px;outline:none}
+input.inn:focus{border-color:var(--acc)}
+.div{width:1px;height:18px;background:var(--bord);margin:0 2px}
+
+/* Canvas wrap */
+.cwrap{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
+#cv{display:block;cursor:crosshair}
+.cinfo{font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.cinfo .l{color:var(--acc3)}
+
+/* Progress */
+.prog{height:3px;background:var(--bord);flex-shrink:0}
+.progb{height:100%;background:var(--acc2);width:0%;transition:width .1s linear}
+
+/* Presets bar */
+.prebar{padding:7px 12px;border-top:1px solid var(--bord);display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex-shrink:0;background:var(--surf)}
+.prbt{font-size:11px;padding:3px 9px;background:var(--card);border:1px solid var(--bord);color:var(--acc3);border-radius:20px;cursor:pointer;transition:.15s}
+.prbt:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+/* Toast */
+#tst{position:fixed;bottom:14px;right:14px;background:var(--card);border:1px solid var(--bord);border-radius:8px;padding:7px 14px;font-size:12px;opacity:0;transform:translateY(8px);transition:.25s;z-index:99;pointer-events:none}
+#tst.vis{opacity:1;transform:translateY(0)}
+#tst.ok{border-color:var(--green)}
+#tst.er{border-color:var(--red)}
+
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Intiface · Buttplug</h1>
+  <span class="badge" id="be"><span class="dot"></span>Engine</span>
+  <span class="badge" id="bm"><span class="dot"></span>MQTT</span>
+</header>
+
+<div class="tb">
+  <button class="bp"  id="bsc"  onclick="scan(true)"  disabled>▶ Scan</button>
+  <button class="bs"  id="bscs" onclick="scan(false)" disabled>■ Stop Scan</button>
+  <button class="bd"  id="bsa"  onclick="stopAll()"   disabled>⏹ Alle stoppen</button>
+  <div class="sw" id="scw"><div class="sp2"></div>Scanne…</div>
+  <div style="flex:1"></div>
+  <button class="bs bsm" onclick="exportPat()">⬇ Export</button>
+  <button class="bs bsm" onclick="document.getElementById('fi').click()">⬆ Import</button>
+  <input id="fi" type="file" accept=".json" style="display:none" onchange="importPat(event)">
+</div>
+
+<div class="main">
+
+  <!-- Devices -->
+  <div class="devp">
+    <div class="ptitle">Geräte</div>
+    <div id="dl"><div class="nodev"><big>📡</big>Keine Geräte.<br>Scan starten.</div></div>
+  </div>
+
+  <!-- Sequencer -->
+  <div class="seqp">
+    <div class="seqtb">
+      <input class="it" id="pn" placeholder="Pattern-Name" style="width:120px">
+      <select class="sel" id="ps" onchange="loadPat()" style="min-width:140px">
+        <option value="">— Pattern —</option>
+      </select>
+      <button class="bs bsm" onclick="newPat()">+ Neu</button>
+      <button class="bs bsm" onclick="savePat()">💾</button>
+      <button class="bd bsm" onclick="delPat()">🗑</button>
+      <div class="div"></div>
+      <label style="font-size:11px;color:var(--muted)">s</label>
+      <input class="inn" id="cd" type="number" min="1" max="600" value="10" onchange="cfgChange()">
+      <label style="font-size:11px;color:var(--muted)">BPM</label>
+      <input class="inn" id="cb" type="number" min="20" max="300" value="60" onchange="cfgChange()">
+      <label style="font-size:11px;color:var(--muted)">Raster</label>
+      <select class="sel" id="cg" onchange="cfgChange()">
+        <option value="4">1/4</option>
+        <option value="8" selected>1/8</option>
+        <option value="16">1/16</option>
+        <option value="32">1/32</option>
+      </select>
+      <div style="flex:1"></div>
+      <select class="sel" id="pd" onchange="devChange()"><option value="">— Gerät —</option></select>
+      <button class="bp" id="bpl" onclick="playSeq()" disabled>▶ Play</button>
+      <button class="bd bsm" id="bsp" onclick="stopSeq()" style="display:none">■ Stop</button>
+      <button class="bs bsm" id="blp" onclick="toggleLoop()" title="Loop">🔁</button>
+    </div>
+
+    <div class="cwrap" id="cw">
+      <canvas id="cv"></canvas>
+      <div class="cinfo">
+        <span><span class="l">Cursor:</span><span id="ct">—</span></span>
+        <span><span class="l">Motor:</span><span id="cm">1</span></span>
+        <span id="php" style="display:none;color:var(--amber)">▶ <span id="pht">0.0s</span></span>
+        <span style="margin-left:auto;font-size:10px;color:#374151">LMB=Zeichnen · RMB=Löschen · Scroll=Zoom · Shift+Drag=Pan</span>
+      </div>
+    </div>
+
+    <div class="prog"><div class="progb" id="pb"></div></div>
+
+    <div class="prebar">
+      <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Presets:</span>
+      <button class="prbt" onclick="preset('pulse')">💓 Pulse</button>
+      <button class="prbt" onclick="preset('escalate')">📈 Eskalierend</button>
+      <button class="prbt" onclick="preset('wave')">🌊 Welle</button>
+      <button class="prbt" onclick="preset('heartbeat')">❤️ Heartbeat</button>
+      <button class="prbt" onclick="preset('zigzag')">⚡ Zigzag</button>
+      <button class="prbt" onclick="preset('staccato')">🎵 Staccato</button>
+      <button class="prbt" onclick="preset('breath')">🫁 Atem</button>
+      <button class="prbt" onclick="clearMot()">🗑 Clear</button>
+      <button class="prbt" onclick="addLane()">➕ Motor</button>
+    </div>
+  </div>
+</div>
+
+<div id="tst"></div>
+
+<script>
+'use strict';
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let devs={}, engOk=false, looping=false, playing=false, aborted=false;
+
+// ─── Canvas ───────────────────────────────────────────────────────────────────
+const cv=document.getElementById('cv');
+const cx=cv.getContext('2d');
+const COLS=['#a855f7','#22c55e','#f59e0b','#3b82f6','#ef4444','#ec4899','#06b6d4','#84cc16'];
+
+let cfg={dur:10,bpm:60,grid:8};
+let motors=[[]];   // motors[m]=[{t,v}]
+let curM=0;
+let zoom=1, panX=0, ph=-1;
+
+// Input state
+let drawing=false,erasing=false,panning=false,panSX=0,panSPX=0;
+
+// Saved patterns
+let pats={};
+try{pats=JSON.parse(localStorage.getItem('bp_seq')||'{}')}catch(_){}
+
+// ─── Geometry ─────────────────────────────────────────────────────────────────
+const nL=()=>Math.max(motors.length,1);
+const lH=()=>Math.max(60,(cv.height-30)/nL());
+const tX=t=>70+(t*zoom)-panX;
+const xT=x=>((x-70)+panX)/zoom;
+const vY=(v,y0)=>y0+lH()*.1+(1-v)*lH()*.8;
+const yV=(y,y0)=>1-(y-y0-lH()*.1)/(lH()*.8);
+const lyY=m=>30+m*lH();
+const snapT=t=>{const s=(60/cfg.bpm)/(cfg.grid/4);return Math.round(t/s)*s;};
+
+// ─── Resize ───────────────────────────────────────────────────────────────────
+function resize(){
+  const w=document.getElementById('cw');
+  cv.width=Math.max(400,w.clientWidth-24);
+  cv.height=Math.max(150,w.clientHeight-52);
+  fitZ();draw();
+}
+function fitZ(){const mz=(cv.width-72)/cfg.dur;if(zoom<mz)zoom=mz;}
+
+// ─── Draw ─────────────────────────────────────────────────────────────────────
+function draw(){
+  const W=cv.width,H=cv.height,_lh=lH(),_nl=nL();
+  cx.clearRect(0,0,W,H);
+
+  // Lane backgrounds
+  for(let m=0;m<_nl;m++){
+    const y0=lyY(m);
+    cx.fillStyle=m%2?'#0d0d17':'#12121c';cx.fillRect(70,y0,W-70,_lh);
+    if(m===curM){cx.fillStyle='rgba(124,58,237,.07)';cx.fillRect(70,y0,W-70,_lh);}
+    cx.strokeStyle='#2a2a40';cx.lineWidth=.5;cx.setLineDash([]);
+    for(const f of[.1,.5,.9]){cx.beginPath();cx.moveTo(70,y0+_lh*f);cx.lineTo(W,y0+_lh*f);cx.stroke();}
+  }
+
+  // Grid
+  const bd=60/cfg.bpm,sd=bd/(cfg.grid/4);
+  for(let t=Math.floor(Math.max(0,xT(70))/sd)*sd;t<=cfg.dur+.001;t+=sd){
+    const x=tX(t);if(x<70||x>W)continue;
+    const iM=t%(bd*4)<sd*.1,iB=t%bd<sd*.1;
+    cx.strokeStyle=iM?'#4a4a70':iB?'#2f2f50':'#1e1e2e';
+    cx.lineWidth=iM?1.5:1;cx.setLineDash([]);
+    cx.beginPath();cx.moveTo(x,30);cx.lineTo(x,H);cx.stroke();
+    if(iB){cx.fillStyle='#4a5568';cx.font='9px monospace';cx.textAlign='center';cx.fillText(t.toFixed(1)+'s',x,20);}
+  }
+  cx.setLineDash([]);
+
+  // End line
+  const xe=tX(cfg.dur);
+  if(xe>=70&&xe<=W){cx.strokeStyle='#ef4444';cx.lineWidth=2;cx.beginPath();cx.moveTo(xe,30);cx.lineTo(xe,H);cx.stroke();}
+
+  // Motor curves
+  for(let m=0;m<_nl;m++){
+    const y0=lyY(m),pts=(motors[m]||[]).slice().sort((a,b)=>a.t-b.t);
+    if(!pts.length)continue;
+    const col=COLS[m%COLS.length];
+    // Fill
+    cx.beginPath();cx.moveTo(tX(pts[0].t),vY(0,y0));
+    for(const p of pts)cx.lineTo(tX(p.t),vY(p.v,y0));
+    cx.lineTo(tX(pts[pts.length-1].t),vY(0,y0));
+    cx.closePath();cx.fillStyle=col+'20';cx.fill();
+    // Line
+    cx.beginPath();cx.strokeStyle=col;cx.lineWidth=2;
+    pts.forEach((p,i)=>{const x=tX(p.t),y=vY(p.v,y0);i?cx.lineTo(x,y):cx.moveTo(x,y);});
+    cx.stroke();
+    // Points
+    pts.forEach(p=>{
+      const x=tX(p.t);if(x<70||x>W)return;
+      cx.beginPath();cx.arc(x,vY(p.v,y0),4,0,Math.PI*2);
+      cx.fillStyle=col;cx.fill();cx.strokeStyle='#fff4';cx.lineWidth=1;cx.stroke();
+    });
+  }
+
+  // Playhead
+  if(playing&&ph>=0){
+    const xp=tX(ph);cx.strokeStyle='#f59e0b';cx.lineWidth=2;cx.setLineDash([4,3]);
+    cx.beginPath();cx.moveTo(xp,30);cx.lineTo(xp,H);cx.stroke();cx.setLineDash([]);
+    cx.fillStyle='#f59e0b';cx.beginPath();cx.moveTo(xp-6,30);cx.lineTo(xp+6,30);cx.lineTo(xp,40);cx.closePath();cx.fill();
+    document.getElementById('pht').textContent=ph.toFixed(2)+'s';
+    document.getElementById('php').style.display='inline';
+  }else{document.getElementById('php').style.display='none';}
+
+  // Left gutter
+  cx.fillStyle='#09090f';cx.fillRect(0,0,70,H);
+  cx.strokeStyle='#272740';cx.lineWidth=1;cx.setLineDash([]);
+  cx.beginPath();cx.moveTo(70,0);cx.lineTo(70,H);cx.stroke();
+  for(let m=0;m<_nl;m++){
+    const y0=lyY(m),col=COLS[m%COLS.length];
+    if(m===curM){cx.fillStyle=col+'22';cx.fillRect(0,y0,68,_lh);}
+    cx.strokeStyle=m===curM?col:'#272740';cx.lineWidth=1;cx.strokeRect(1,y0,66,_lh);
+    cx.fillStyle=m===curM?col:'#64748b';cx.font='bold 10px sans-serif';cx.textAlign='center';
+    cx.fillText('M'+(m+1),34,y0+_lh/2+4);
+  }
+  // Top ruler
+  cx.fillStyle='#12121c';cx.fillRect(0,0,W,30);
+  cx.strokeStyle='#272740';cx.lineWidth=1;cx.beginPath();cx.moveTo(0,30);cx.lineTo(W,30);cx.stroke();
+}
+
+// ─── Canvas input ─────────────────────────────────────────────────────────────
+function cp(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function lAt(y){return Math.max(0,Math.min(nL()-1,Math.floor((y-30)/lH())));}
+
+function paint(x,y,erase){
+  if(x<70)return;
+  const t=Math.max(0,Math.min(cfg.dur,xT(x))),ts=snapT(t);
+  const m=lAt(y),y0=lyY(m),v=Math.max(0,Math.min(1,yV(y,y0)));
+  if(!motors[m])motors[m]=[];
+  if(erase){motors[m]=motors[m].filter(p=>Math.abs(tX(p.t)-x)>7);}
+  else{const ni=motors[m].findIndex(p=>Math.abs(tX(p.t)-x)<=6);ni>=0?motors[m][ni].v=v:motors[m].push({t:ts,v});}
+  draw();
+}
+
+cv.addEventListener('mousedown',e=>{
+  const{x,y}=cp(e);
+  if(e.shiftKey||e.button===1){panning=true;panSX=e.clientX;panSPX=panX;cv.style.cursor='grabbing';return;}
+  if(x<70){curM=lAt(y);document.getElementById('cm').textContent=curM+1;draw();return;}
+  e.button===2?(erasing=true,paint(x,y,true)):(drawing=true,paint(x,y,false));
+});
+cv.addEventListener('mousemove',e=>{
+  const{x,y}=cp(e);
+  if(panning){panX=Math.max(0,panSPX-(e.clientX-panSX));draw();return;}
+  if(drawing)paint(x,y,false);
+  if(erasing)paint(x,y,true);
+  if(x>=70)document.getElementById('ct').textContent=Math.max(0,xT(x)).toFixed(2)+'s';
+});
+cv.addEventListener('mouseup',  ()=>{drawing=erasing=panning=false;cv.style.cursor='crosshair';});
+cv.addEventListener('mouseleave',()=>{drawing=erasing=panning=false;cv.style.cursor='crosshair';});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const{x}=cp(e),tC=xT(x);
+  if(!e.shiftKey){
+    zoom=Math.max((cv.width-72)/cfg.dur,zoom*(e.deltaY<0?1.15:1/1.15));
+    panX=Math.max(0,tC*zoom-(x-70));
+  }else{panX=Math.max(0,panX+e.deltaY*2);}
+  draw();
+},{passive:false});
+
+// ─── Config ───────────────────────────────────────────────────────────────────
+function cfgChange(){
+  cfg.dur=parseFloat(document.getElementById('cd').value)||10;
+  cfg.bpm=parseFloat(document.getElementById('cb').value)||60;
+  cfg.grid=parseInt(document.getElementById('cg').value)||8;
+  fitZ();draw();
+}
+function clearMot(){motors=motors.map(()=>[]);draw();}
+function addLane(){
+  const d=devs[parseInt(document.getElementById('pd').value,10)];
+  if(d&&motors.length>=d.vibrateCount){toast('Gerät hat nur '+d.vibrateCount+' Motor(en)','er');return;}
+  motors.push([]);draw();
+}
+
+// ─── Presets ──────────────────────────────────────────────────────────────────
+const PR={
+  pulse:     d=>pf(d,[0,.8,.45,.8,.5,0,1,0]),
+  escalate:  d=>rng(40,i=>({t:(i/39)*d,v:i/39})),
+  wave:      d=>rng(80,i=>({t:(i/79)*d,v:.5+.5*Math.sin(2*Math.PI*i/79*2)})),
+  heartbeat: d=>pf(d,[0,0,.08,.9,.2,.4,.32,.9,.42,0,1,0]),
+  zigzag:    d=>rng(20,i=>({t:(i/19)*d,v:i%2?0.05:1})),
+  staccato:  d=>rng(20,i=>({t:(i/19)*d,v:i%2?0:.6+Math.random()*.4})),
+  breath:    d=>rng(80,i=>({t:(i/79)*d,v:.5+.5*Math.sin(2*Math.PI*i/79*.5)})),
+};
+function rng(n,f){return Array.from({length:n},(_,i)=>f(i));}
+function pf(d,flat){const r=[];for(let i=0;i<flat.length;i+=2)r.push({t:flat[i]*d,v:flat[i+1]});return r;}
+function preset(n){if(!PR[n])return;motors[curM]=PR[n](cfg.dur);draw();toast('Preset "'+n+'"','ok');}
+
+// ─── Canvas → API steps ───────────────────────────────────────────────────────
+function toSteps(N=60){
+  const sd=cfg.dur/N;
+  return Array.from({length:N},(_,i)=>{
+    const t=(i+.5)*sd;
+    return{
+      duration:Math.round(sd*1000),
+      speeds:motors.map(pts=>{
+        const s=(pts||[]).slice().sort((a,b)=>a.t-b.t);
+        if(!s.length)return 0;
+        if(t<=s[0].t)return s[0].v;
+        if(t>=s[s.length-1].t)return s[s.length-1].v;
+        for(let j=0;j<s.length-1;j++){
+          if(t>=s[j].t&&t<=s[j+1].t){const f=(t-s[j].t)/(s[j+1].t-s[j].t);return s[j].v+f*(s[j+1].v-s[j].v);}
+        }
+        return 0;
+      }),
+    };
+  });
+}
+
+// ─── Playback ─────────────────────────────────────────────────────────────────
+async function playSeq(){
+  const idx=parseInt(document.getElementById('pd').value,10);
+  if(isNaN(idx)||!devs[idx]){toast('Kein Gerät','er');return;}
+  const steps=toSteps(Math.max(20,Math.ceil(cfg.dur*20)));
+  if(!steps.length){toast('Pattern leer','er');return;}
+  playing=true;aborted=false;
+  document.getElementById('bpl').style.display='none';
+  document.getElementById('bsp').style.display='inline-block';
+  const total=steps.reduce((s,st)=>s+st.duration,0);
+  do{
+    ph=0;let el=0;
+    for(let si=0;si<steps.length;si++){
+      if(aborted)break;
+      await fetch(`/api/devices/${idx}/vibrate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speeds:steps[si].speeds})}).catch(()=>{});
+      const t0=Date.now();
+      while(Date.now()-t0<steps[si].duration){
+        if(aborted)break;
+        el=steps.slice(0,si).reduce((s,st)=>s+st.duration,0)+(Date.now()-t0);
+        ph=el/1000;
+        document.getElementById('pb').style.width=Math.min(100,el/total*100)+'%';
+        draw();await slp(16);
+      }
+    }
+  }while(looping&&!aborted);
+  ph=-1;playing=false;
+  document.getElementById('pb').style.width='0%';draw();
+  if(!aborted)await fetch(`/api/devices/${idx}/stop`,{method:'POST'}).catch(()=>{});
+  document.getElementById('bpl').style.display='inline-block';
+  document.getElementById('bsp').style.display='none';
+}
+function stopSeq(){
+  aborted=true;
+  const i=parseInt(document.getElementById('pd').value,10);
+  if(!isNaN(i))fetch(`/api/devices/${i}/stop`,{method:'POST'}).catch(()=>{});
+}
+function toggleLoop(){
+  looping=!looping;
+  const b=document.getElementById('blp');b.style.background=looping?'var(--acc)':'';b.style.color=looping?'#fff':'';
+  toast(looping?'Loop AN':'Loop AUS','ok');
+}
+
+// ─── Pattern storage ──────────────────────────────────────────────────────────
+function savePat(){
+  const n=document.getElementById('pn').value.trim();if(!n){toast('Name fehlt','er');return;}
+  pats[n]={cfg:{...cfg},motors:motors.map(m=>[...m])};
+  localStorage.setItem('bp_seq',JSON.stringify(pats));updPS();
+  document.getElementById('ps').value=n;toast('"'+n+'" gespeichert','ok');
+}
+function loadPat(){
+  const n=document.getElementById('ps').value;if(!n||!pats[n]){newPat();return;}
+  const p=pats[n];cfg={...p.cfg};motors=p.motors.map(m=>[...m]);
+  document.getElementById('pn').value=n;
+  document.getElementById('cd').value=cfg.dur;
+  document.getElementById('cb').value=cfg.bpm;
+  document.getElementById('cg').value=cfg.grid;
+  fitZ();draw();
+}
+function delPat(){
+  const n=document.getElementById('ps').value;if(!n)return;
+  delete pats[n];localStorage.setItem('bp_seq',JSON.stringify(pats));updPS();newPat();toast('"'+n+'" gelöscht','ok');
+}
+function newPat(){
+  motors=[[]];cfg={dur:10,bpm:60,grid:8};
+  document.getElementById('pn').value='';document.getElementById('ps').value='';
+  document.getElementById('cd').value=cfg.dur;document.getElementById('cb').value=cfg.bpm;document.getElementById('cg').value=cfg.grid;
+  fitZ();draw();
+}
+function updPS(){
+  const sel=document.getElementById('ps'),cur=sel.value,keys=Object.keys(pats);
+  sel.innerHTML='<option value="">— Pattern —</option>';
+  keys.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o);});
+  if(keys.includes(cur))sel.value=cur;
+}
+function exportPat(){
+  const n=document.getElementById('pn').value.trim()||'pattern';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({name:n,cfg,motors,steps:toSteps(100)},null,2)],{type:'application/json'}));
+  a.download=n+'.json';a.click();
+}
+function importPat(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(d.cfg)cfg={...d.cfg};
+      motors=d.motors?d.motors.map(m=>[...m]):[[...( d.steps||[]).map((s,i)=>({t:i*(cfg.dur||10)/(d.steps.length||1),v:Array.isArray(s.speeds)?s.speeds[0]:(s.speed||0)}))]];
+      document.getElementById('pn').value=d.name||'';
+      document.getElementById('cd').value=cfg.dur;document.getElementById('cb').value=cfg.bpm;document.getElementById('cg').value=cfg.grid;
+      fitZ();draw();toast('Import OK','ok');
+    }catch(_){toast('Import fehlgeschlagen','er');}
+  };r.readAsText(f);e.target.value='';
+}
+
+// ─── Devices ──────────────────────────────────────────────────────────────────
+function renderDevs(){
+  const el=document.getElementById('dl'),list=Object.values(devs);
+  if(!list.length){el.innerHTML='<div class="nodev"><big>📡</big>Keine Geräte.<br>Scan starten.</div>';return;}
+  el.innerHTML=list.map(d=>`<div class="dcard" id="dc-${d.index}">
+    <div class="dname">${esc(d.name)}</div>
+    <div class="dsub">${esc(d.address||'idx:'+d.index)} · ${d.vibrateCount}M</div>
+    ${d.motorStates.map((v,i)=>`<div class="mrow">
+      <span class="ml">Motor ${i+1}</span>
+      <input type="range" class="msl" id="sl-${d.index}-${i}" min="0" max="1" step="0.05" value="${v}">
+      <span class="mv" id="mv-${d.index}-${i}">${Math.round(v*100)}%</span>
+    </div>`).join('')}
+    <div class="dfoot">
+      <button class="bd bsm" onclick="fetch('/api/devices/${d.index}/stop',{method:'POST'})">⏹</button>
+      <button class="bs bsm" onclick="selD(${d.index})">📝 Sequencer</button>
+    </div>
+  </div>`).join('');
+  list.forEach(d=>d.motorStates.forEach((_,i)=>{
+    const sl=document.getElementById(`sl-${d.index}-${i}`);if(!sl)return;
+    sl.addEventListener('input',()=>{document.getElementById(`mv-${d.index}-${i}`).textContent=Math.round(sl.value*100)+'%';d.motorStates[i]=+sl.value;});
+    sl.addEventListener('change',()=>{clearTimeout(sl._t);sl._t=setTimeout(()=>vib(d.index,d.motorStates),50);});
+  }));
+  updPD();
+}
+function selD(i){document.getElementById('pd').value=i;devChange();}
+function updPD(){
+  const sel=document.getElementById('pd'),cur=sel.value;
+  sel.innerHTML='<option value="">— Gerät —</option>';
+  Object.values(devs).forEach(d=>{const o=document.createElement('option');o.value=d.index;o.textContent=d.name;sel.appendChild(o);});
+  if(cur)sel.value=cur;devChange();
+}
+function devChange(){
+  const i=parseInt(document.getElementById('pd').value,10);
+  document.getElementById('bpl').disabled=isNaN(i)||!devs[i];
+}
+function vib(idx,speeds){
+  fetch(`/api/devices/${idx}/vibrate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speeds})}).catch(()=>{});
+}
+function scan(s){fetch(`/api/scan/${s?'start':'stop'}`,{method:'POST'}).catch(()=>{});}
+function stopAll(){fetch('/api/stop_all',{method:'POST'}).catch(()=>{});}
+
+// ─── SSE ──────────────────────────────────────────────────────────────────────
+function sse(){
+  const es=new EventSource('/api/events');
+  es.addEventListener('status',e=>{
+    const d=JSON.parse(e.data);engOk=d.connected;
+    document.getElementById('be').className='badge '+(d.connected?'on':'off');
+    ['bsc','bscs','bsa'].forEach(id=>document.getElementById(id).disabled=!d.connected);
+  });
+  es.addEventListener('mqtt',e=>{document.getElementById('bm').className='badge '+(JSON.parse(e.data).connected?'on':'off');});
+  es.addEventListener('devices',e=>{devs={};JSON.parse(e.data).forEach(d=>{devs[d.index]=d;});renderDevs();});
+  es.addEventListener('device_update',e=>{
+    const d=JSON.parse(e.data);devs[d.index]=d;
+    d.motorStates.forEach((v,i)=>{
+      const s=document.getElementById(`sl-${d.index}-${i}`),m=document.getElementById(`mv-${d.index}-${i}`);
+      if(s)s.value=v;if(m)m.textContent=Math.round(v*100)+'%';
+    });
+  });
+  es.addEventListener('scanning',e=>{document.getElementById('scw').className='sw'+(JSON.parse(e.data).scanning?' vis':'');});
+  es.onerror=()=>{document.getElementById('be').className='badge off';setTimeout(sse,3000);es.close();};
+}
+
+// ─── Util ──────────────────────────────────────────────────────────────────────
+const slp=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let tt;
+function toast(m,t='ok'){const e=document.getElementById('tst');e.textContent=m;e.className='vis '+t;clearTimeout(tt);tt=setTimeout(()=>e.className='',2500);}
+
+// ─── Init ──────────────────────────────────────────────────────────────────────
+window.addEventListener('resize',resize);
+resize();sse();updPS();
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+configuration:
+  engine_ws_port:
+    name: Engine WebSocket Port
+    description: Port for the Buttplug WebSocket server (external clients connect here).
+  use_bluetooth_le:
+    name: Bluetooth LE
+    description: Enable Bluetooth Low Energy device support.
+  use_hid:
+    name: USB/HID
+    description: Enable USB HID device support (e.g. Lovense dongle).
+  use_serial:
+    name: Serial Port
+    description: Enable serial port device support.
+  log_level:
+    name: Log Level
+    description: Logging verbosity for intiface-engine.
+  mqtt_host:
+    name: MQTT Host
+    description: IP or hostname of your MQTT broker. Leave empty to disable MQTT bridge.
+  mqtt_port:
+    name: MQTT Port
+    description: MQTT broker port (default 1883).
+  mqtt_user:
+    name: MQTT Username
+    description: MQTT broker username (optional).
+  mqtt_pass:
+    name: MQTT Password
+    description: MQTT broker password (optional).
+  mqtt_topic_prefix:
+    name: MQTT Topic Prefix
+    description: Prefix for all MQTT topics (default "buttplug").
+  ha_discovery:
+    name: Home Assistant Discovery
+    description: Publish MQTT discovery messages so devices appear automatically in Home Assistant.
+  ha_discovery_prefix:
+    name: HA Discovery Prefix
+    description: MQTT discovery prefix matching your Home Assistant config (default "homeassistant").
+
+network:
+  12345/TCP: Buttplug WebSocket server (external clients)

@@ -1,0 +1,83 @@
+#include <tunables/global>
+
+profile nginx_proxy_manager flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+
+  # Capabilities
+  capability chown,
+  capability dac_override,
+  capability dac_read_search,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability net_bind_service,
+  capability net_raw,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+  capability mknod,
+
+  # s6-overlay v3 (jc21 Image)
+  /init                    ixr,
+  /init-shim               ixr,
+  /package/**              ixr,
+  /command/**              ixr,
+  /run/s6/**               ixrw,
+  /run/s6-rc/**            ixrw,
+  /run/uncaught-logs/**    rw,
+  /run/service/**          rw,
+  /tmp/s6/**               ixrw,
+  /tmp/**                  rw,
+
+  # Binaries
+  /bin/**    ixr,
+  /sbin/**   ixr,
+  /usr/**    ixr,
+  /lib/**    mr,
+  /lib64/**  mr,
+
+  # Filesystem
+  /etc/**    rw,
+  /proc/**   r,
+  /run/**    rw,
+  /srv/**    r,
+  /var/**    rw,
+
+  # NPM Data
+  /data/**   rw,
+
+  # Nginx
+  /var/lib/nginx/**  rw,
+  /var/log/nginx/**  rw,
+  /var/cache/nginx** rw,
+
+  # Certbot / Python
+  /opt/certbot/**    ixr,
+  /usr/lib/python**  mr,
+
+  # Node.js App
+  /app/**    ixr,
+
+  # Netzwerk
+  network tcp,
+  network udp,
+  network unix,
+
+  # Proc
+  @{PROC}/*/fd/        r,
+  @{PROC}/*/net/**     r,
+  @{PROC}/sys/net/**   rw,
+  @{PROC}/*/stat       r,
+  @{PROC}/*/status     r,
+  @{PROC}/sys/kernel/ngroups_max r,
+
+  # Blockieren
+  deny /etc/shadow  r,
+  deny /etc/passwd  w,
+  deny @{PROC}/sysrq-trigger rw,
+  deny @{PROC}/mem           rw,
+  deny @{PROC}/kmem          rw,
+  deny @{PROC}/kcore         rw,
+}

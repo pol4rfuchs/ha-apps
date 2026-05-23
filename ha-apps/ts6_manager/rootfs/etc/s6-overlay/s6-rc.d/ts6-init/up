@@ -1,0 +1,2 @@
+#!/bin/execlineb -P
+/bin/sh /usr/bin/ts6-init-run.sh

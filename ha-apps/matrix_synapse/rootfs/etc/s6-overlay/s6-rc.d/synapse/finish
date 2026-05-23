@@ -1,0 +1,2 @@
+#!/usr/bin/with-contenv bashio
+bashio::log.warning "Synapse wurde beendet (exit code: $1)"

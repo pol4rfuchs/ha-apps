@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: Synapse Admin UI (Python HTTP Server Port 8090)
+
+MARKER="/data/matrix/.webapps_downloaded"
+
+WAIT=0
+while [ ! -f "${MARKER}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf Synapse Admin Download..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: Synapse Admin nicht gefunden!"
+        exit 1
+    fi
+done
+
+bashio::log.info "Starte Synapse Admin UI auf Port 8090..."
+cd /data/matrix/synapse-admin
+exec python3 -m http.server 8090 2>&1

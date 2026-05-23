@@ -1,0 +1,178 @@
+---
+configuration:
+  PUID:
+    name: User ID
+    description: UID des Navidrome-Prozesses. 0 = root.
+  PGID:
+    name: Group ID
+    description: GID des Navidrome-Prozesses. 0 = root.
+
+  ND_MUSICFOLDER:
+    name: Music folder
+    description: >-
+      Hauptpfad zur Musikbibliothek. Nutze /media/... für USB/HDD-Mounts oder
+      /share/... für SMB-Freigaben. Kann read-only gemountet sein.
+  ND_EXTRA_MUSIC_FOLDERS:
+    name: Extra music folders
+    description: >-
+      Kommagetrennte Liste zusätzlicher Musikordner, z.B. "/media/flac,/share/hires".
+      Diese werden als Symlinks unter ND_MUSICFOLDER eingehängt, da Navidrome
+      nativ nur einen Ordner unterstützt.
+  ND_DATAFOLDER:
+    name: Data folder
+    description: >-
+      Speicherort für Datenbank und Cache.
+      Standard: /config/addons_config/navidrome
+  ND_LOGLEVEL:
+    name: Log level
+    description: "Detailgrad der Logs: error, warn, info, debug, trace."
+
+  ND_UIWELCOMEMESSAGE:
+    name: Willkommensnachricht
+    description: Text der auf dem Login-Screen angezeigt wird.
+  ND_UILOGINBACKGROUNDURL:
+    name: Login-Hintergrundbild URL
+    description: URL eines eigenen Hintergrundbilds für die Login-Seite.
+  ND_DEFAULTTHEME:
+    name: Standard-Theme
+    description: "Theme-Name z.B. Dark, Light, Spotify-ish. Leer = Built-in Default."
+  ND_ENABLESTARRATING:
+    name: Sternebewertungen aktivieren
+    description: 5-Sterne-Bewertungen in der UI anzeigen.
+  ND_ENABLEFAVOURITES:
+    name: Favoriten aktivieren
+    description: Herz/Loved-Toggle für Songs, Alben und Künstler anzeigen.
+  ND_ENABLEDOWNLOADS:
+    name: Downloads aktivieren
+    description: Download von Tracks und Alben aus der UI erlauben.
+  ND_ENABLESHARING:
+    name: Teilen aktivieren
+    description: Öffentliche Share-Links für Tracks und Playlists erlauben.
+  ND_SHAREURL:
+    name: Share-Basis-URL
+    description: >-
+      Öffentliche Basis-URL für Share-Links. Nötig wenn Navidrome hinter
+      einem VPN (z.B. Tailscale) läuft.
+  ND_ENABLEGRAVATAR:
+    name: Gravatar aktivieren
+    description: Gravatar als Profilbild nutzen (benötigt E-Mail beim User).
+  ND_MAXSIDEBARPLAYLISTS:
+    name: Max. Playlists in Sidebar
+    description: Maximale Anzahl Playlists in der Seitenleiste.
+
+  ND_SCANNER_SCHEDULE:
+    name: Scan-Zeitplan
+    description: >-
+      Cron- oder Intervall-Ausdruck für automatische Bibliotheks-Scans.
+      Beispiele: "@every 24h", "0 2 * * *", "0" = deaktiviert.
+  ND_AUTOIMPORTPLAYLISTS:
+    name: Playlists automatisch importieren
+    description: .m3u/.m3u8 Playlist-Dateien im Musikordner automatisch einlesen.
+  ND_PLAYLISTSPATH:
+    name: Playlist-Ordner
+    description: Ordner in dem Navidrome auf Playlist-Dateien achtet. Standard = Musikordner.
+  ND_IGNOREDARTICLES:
+    name: Ignorierte Artikel
+    description: Leerzeichen-getrennte Liste von Artikeln die beim Sortieren ignoriert werden.
+  ND_INDEXGROUPS:
+    name: Index-Gruppen
+    description: Definiert die A-Z Gruppen in der Browser-Ansicht.
+  ND_COVERARTPRIORITY:
+    name: Cover-Art Priorität
+    description: Kommagetrennte Prioritätsliste der Cover-Quellen.
+  ND_IMAGECACHESIZE:
+    name: Bild-Cache-Größe
+    description: Größe des Cover-Art Caches. "0" = deaktiviert.
+
+  ND_SCANNER_EXTRACTOR:
+    name: Metadaten-Extraktor
+    description: >-
+      "taglib" (Standard, schnell) oder "ffmpeg" (unterstützt mehr Formate,
+      z.B. Opus, AAC in MP4). Benötigt ffmpeg installiert wenn "ffmpeg" gewählt.
+  ND_FFMPEGPATH:
+    name: ffmpeg-Pfad
+    description: >-
+      Pfad zum ffmpeg-Binary. Leer = automatische Erkennung (/usr/bin/ffmpeg).
+      Nur relevant wenn Scanner-Extraktor auf ffmpeg oder Transcoding genutzt wird.
+
+  ND_TRANSCODINGCACHESIZE:
+    name: Transcoding-Cache-Größe
+    description: Größe des Transcoding-Caches. "0" = deaktiviert.
+  ND_DEFAULTDOWNSAMPLINGFORMAT:
+    name: Standard-Downsampling-Format
+    description: "Audio-Format für Subsonic-Clients die Downsampling anfragen: mp3, opus, aac, ogg."
+
+  ND_PODCAST_EPISODEKEEPCOUNT:
+    name: Podcast-Episoden behalten
+    description: >-
+      Anzahl der Episoden die pro Podcast behalten werden (0 = unbegrenzt).
+      Ältere Episoden werden automatisch gelöscht.
+  ND_PODCAST_EPISODEDOWNLOADCOUNT:
+    name: Podcast-Episoden vorab laden
+    description: >-
+      Anzahl der neuesten Episoden die beim Abonnieren sofort heruntergeladen
+      werden (0 = keine automatischen Downloads).
+
+  ND_SESSIONTIMEOUT:
+    name: Session-Timeout
+    description: Inaktive Browser-Sessions werden nach dieser Zeit geschlossen (z.B. "30m", "2h").
+  ND_EXTAUTH_USERHEADER:
+    name: Reverse-Proxy User-Header
+    description: >-
+      HTTP-Header-Name der vom vorgelagerten Reverse-Proxy den authentifizierten
+      Benutzernamen trägt (z.B. "Remote-User" für Authelia/NPM).
+  ND_EXTAUTH_TRUSTEDSOURCES:
+    name: Reverse-Proxy Whitelist
+    description: >-
+      CIDRs die diesen Header senden dürfen (z.B. "127.0.0.1/32,192.168.1.0/24").
+      Sicherheits-kritisch — nie auf 0.0.0.0/0 setzen!
+
+  ND_LASTFM_ENABLED:
+    name: Last.fm aktivieren
+    description: Last.fm Scrobbling und Metadaten aktivieren.
+  ND_LASTFM_LANGUAGE:
+    name: Last.fm Sprache
+    description: Zweistelliger ISO-Sprachcode für Last.fm Metadaten (z.B. "de", "en").
+  ND_LASTFM_APIKEY:
+    name: Last.fm API-Key
+  ND_LASTFM_SECRET:
+    name: Last.fm API-Secret
+
+  ND_LISTENBRAINZ_ENABLED:
+    name: ListenBrainz aktivieren
+    description: ListenBrainz Scrobbling aktivieren.
+
+  ND_SPOTIFY_ID:
+    name: Spotify Client-ID
+    description: Erforderlich für Künstler-Bilder von Spotify.
+  ND_SPOTIFY_SECRET:
+    name: Spotify Client-Secret
+    description: Erforderlich für Künstler-Bilder von Spotify.
+
+  ND_JUKEBOX_ENABLED:
+    name: Jukebox aktivieren
+    description: >-
+      Audio direkt auf der Server-Hardware abspielen (z.B. am Raspberry Pi
+      angeschlossene Lautsprecher). Benötigt ALSA-Gerät und privileged-Modus.
+  ND_JUKEBOX_DEFAULT:
+    name: Jukebox Standard-Gerät
+    description: Standard-Audiogerät wenn mehrere konfiguriert sind (ALSA-Gerätename).
+  ND_JUKEBOX_DEVICES:
+    name: Jukebox Geräte
+    description: >-
+      Kommagetrennte Liste von ALSA-Audiogeräten die für Jukebox verfügbar sind
+      (z.B. "hw:0,0" oder "default").
+
+  ND_DEFAULTPLAYLISTPUBLICVISIBILITY:
+    name: Playlists standardmäßig öffentlich
+    description: Neu importierte Playlists standardmäßig als öffentlich setzen.
+  ND_SMARTPLAYLISTREFRESHDELAY:
+    name: Smart-Playlist Aktualisierungsintervall
+    description: Wie oft Smart Playlists aktualisiert werden (z.B. "5s", "1m").
+
+  ND_ENABLEINSIGHTSCOLLECTOR:
+    name: Anonyme Nutzungsstatistiken
+    description: Anonyme Statistiken an das Navidrome-Projekt senden. Standard deaktiviert.
+  ND_GATRACKINGID:
+    name: Google Analytics ID
+    description: Optionale GA-Tracking-ID für die Navidrome UI.

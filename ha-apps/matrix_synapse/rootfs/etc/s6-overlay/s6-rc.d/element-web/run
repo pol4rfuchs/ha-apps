@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: Element Web (Python HTTP Server)
+# Port 7080 — statische Files, kein nginx nötig
+
+MARKER="/data/matrix/.webapps_downloaded"
+
+# Warten bis Element Web heruntergeladen wurde
+WAIT=0
+while [ ! -f "${MARKER}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf Element Web Download..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: Element Web nicht gefunden!"
+        exit 1
+    fi
+done
+
+bashio::log.info "Starte Element Web auf Port 7080..."
+cd /data/matrix/element-web
+exec python3 -m http.server 7080 2>&1

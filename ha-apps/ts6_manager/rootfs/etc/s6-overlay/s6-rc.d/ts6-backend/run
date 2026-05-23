@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# set -a: alle folgenden Variablenzuweisungen automatisch exportieren
+set -a
+. /data/secrets.env
+set +a
+
+export DATABASE_URL="file:/data/ts6webui.db"
+export MUSIC_DIR="/data/music"
+export PORT="3001"
+export NODE_ENV="production"
+export FRONTEND_URL="http://localhost:8066"
+
+ENTRY="dist/index.js"
+MAIN="$(node -e "try{console.log(require('/app/package.json').main||'')}catch(e){}" 2>/dev/null)"
+[ -n "${MAIN}" ] && ENTRY="${MAIN}"
+
+echo "[ts6-backend] Starting (${ENTRY}) on :3001 ..."
+cd /app
+exec node "${ENTRY}"
