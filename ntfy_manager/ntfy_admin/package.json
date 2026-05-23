@@ -1,0 +1,9 @@
+{
+  "name": "ntfy-haos-admin-monorepo",
+  "private": true,
+  "version": "0.2.0",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ]
+}
