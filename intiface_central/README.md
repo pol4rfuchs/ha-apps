@@ -1,48 +1,157 @@
-# Intiface Central für Home Assistant
+<div align="center">
 
-Vollwertiges Buttplug/Intiface-Add-on mit WebGUI, MQTT-Bridge und HA-Entities.
+# 🎛️ Intiface Central — Home Assistant Add-on
 
-## Features
+</div>
 
-- **Keine noVNC** – eigene Browser-WebGUI (kein X11, kein VNC-Overhead)
-- **Echte Gerätekontrolle** direkt im Browser mit Vibrations-Slidern
-- **Pattern Editor** – erstelle, speichere und spiele Vibrationsmuster
-- **MQTT Bridge** – jedes Gerät/Motor als MQTT-Topic verfügbar
-- **Home Assistant MQTT Discovery** – automatische Entities ohne YAML
-- **Bluetooth LE + USB/HID** Passthrough über Host-Kernel
-- **aarch64** (Raspberry Pi 4/5) via box64
+<div align="center">
 
-## Architektur
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ha--apps-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
+[![Intiface](https://img.shields.io/badge/Intiface-Engine-8E44AD?style=for-the-badge&logoColor=white)](https://github.com/intiface/intiface-engine)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+**Buttplug/Intiface Central with browser WebGUI, MQTT bridge and Home Assistant entity auto-discovery — no VNC, no X11.**
+
+</div>
+
+---
+
+## 🧭 Overview
+
+| Property | Value |
+|---|---|
+| **Engine** | `intiface-engine` (x64, via box64 on ARM) |
+| **Web UI port** | `12346` |
+| **Intiface port** | `12345` |
+| **Arch** | `amd64`, `aarch64` (via box64) |
+| **Bluetooth** | Host BLE passthrough |
+| **USB/HID** | Host kernel passthrough |
+
+---
+
+## ✨ Features
+
+- **Browser WebGUI** — no VNC, no X11, no noVNC overhead
+- **Device control** directly in the browser with vibration sliders
+- **Pattern Editor** — create, save and play vibration patterns
+- **MQTT Bridge** — each device/motor available as an MQTT topic
+- **Home Assistant MQTT Discovery** — automatic entities without YAML
+- **Bluetooth LE + USB/HID** via host kernel passthrough
+- **aarch64** support via [box64](https://github.com/ptitSeb/box64)
+
+---
+
+## 🏗️ Architecture
 
 ```
-Browser  ←──── WebGUI (/api/*, SSE) ────────────────────┐
-                                                          │
+Browser  ←──── WebGUI (/api/*, SSE) ─────────────────┐
+                                                        │
 HA Automation ←── MQTT ──→ mqtt-bridge ──→ Node.js ──→ intiface-engine :12345
-                                                          │
-Externe Clients (Spiele etc.) ──────────────────────────►┘
+                                                        │
+External clients (games, etc.) ───────────────────────►┘
 ```
 
-## Installation
+---
 
-1. Repository in HA hinzufügen: **Settings → Add-ons → Store → ⋮ → Repositories**
-2. **Intiface Central** installieren
-3. MQTT-Host konfigurieren (optional)
-4. Starten → **Open Web UI**
+## 🚀 Installation
 
-## Hinweis zum Binary-Download
+### Step 1 — Add the repository
 
-Das Add-on lädt `intiface-engine` von GitHub herunter. Falls der Build fehlschlägt:
-1. Prüfe die aktuelle Release-URL unter https://github.com/intiface/intiface-engine/releases
-2. Passe `ENGINE_VERSION` im Dockerfile an
+```text
+Settings → Add-ons → Add-on Store → ⋮ → Repositories
+```
 
-## aarch64 / Raspberry Pi
+Add:
 
-Die x64-Binary von intiface-engine wird via [box64](https://github.com/ptitSeb/box64) emuliert.
-Bluetooth und USB laufen direkt über den Host-Kernel, keine Performance-Probleme erwartet.
+```text
+https://github.com/pol4rfuchs/ha-apps
+```
 
-## Unterstützte Architekturen
+### Step 2 — Install & configure
+
+Install **Intiface Central**. If you want MQTT integration, set the broker options in the Configuration tab.
+
+### Step 3 — Start
+
+Click **Open Web UI** — the browser interface opens on port `12346`.
+
+---
+
+## ⚙️ Configuration
+
+| Option | Default | Description |
+|---|---|---|
+| `mqtt_host` | — | MQTT broker hostname or IP. Leave empty to disable MQTT bridge. |
+| `mqtt_port` | `1883` | MQTT broker port. |
+| `mqtt_username` | — | MQTT username. |
+| `mqtt_password` | — | MQTT password. |
+| `mqtt_discovery` | `true` | Enable HA MQTT auto-discovery. |
+
+---
+
+## 🌐 Ports
+
+| Port | Protocol | Purpose |
+|---|---|---|
+| `12345` | TCP | Intiface Engine WebSocket (external clients) |
+| `12346` | TCP | WebGUI |
+
+---
+
+## 🔵 Bluetooth & USB
+
+Bluetooth LE and USB/HID devices are accessed directly through the host kernel — no additional configuration required.
+
+On aarch64 (Raspberry Pi), the x64 intiface-engine binary runs via box64. Bluetooth and USB are unaffected — they run natively through the host.
+
+---
+
+## 🏠 MQTT topics
+
+Each device and motor is exposed as:
+
+```
+intiface/devices/<device_id>/motor/<motor_index>/vibrate
+```
+
+Publish a value between `0.0` and `1.0` to control intensity.
+
+HA MQTT Discovery creates entities automatically when `mqtt_discovery: true`.
+
+---
+
+## 💾 Data persistence
+
+```text
+/data/
+└── patterns/    ← Saved vibration patterns
+```
+
+---
+
+## 🔧 Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| Web UI not opening | Check port `12346` in the Network tab |
+| Device not found | Ensure Bluetooth is enabled on the host; restart add-on |
+| box64 error on ARM | Check add-on log; verify `ENGINE_VERSION` in Dockerfile matches a current release |
+| MQTT entities not appearing | Verify broker hostname and that MQTT integration is configured in HA |
+| Engine binary download fails | Check current release URL at [intiface-engine releases](https://github.com/intiface/intiface-engine/releases) and update `ENGINE_VERSION` in the Dockerfile |
+
+---
+
+## 🏗️ Supported architectures
 
 | Arch | Support |
-|------|---------|
-| amd64 | ✅ nativ |
-| aarch64 | ✅ via box64 |
+|---|---|
+| `amd64` | ✅ Native |
+| `aarch64` | ✅ via box64 |
+
+---
+
+## 📜 License
+
+MIT — this add-on wrapper.  
+intiface-engine is licensed under [BSD-3-Clause](https://github.com/intiface/intiface-engine/blob/main/LICENSE).
