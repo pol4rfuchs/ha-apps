@@ -1,0 +1,43 @@
+#!/usr/bin/with-contenv bashio
+set -euo pipefail
+
+bashio::log.info "Preparing ntfy HAOS Admin Panel API …"
+
+mkdir -p /data/logs
+
+# --- Static runtime envs ---------------------------------------------------
+export NODE_ENV="production"
+export API_PORT="3000"
+export LOG_LEVEL="info"
+export SESSION_COOKIE_NAME="ntfy_admin_token"
+
+# --- Persistent JWT/encryption secret -------------------------------------
+# Used for AES-GCM encrypting the auth cookie.  Survives add-on restarts.
+if [[ ! -f /data/jwt_secret ]]; then
+    openssl rand -base64 48 > /data/jwt_secret
+    chmod 600 /data/jwt_secret
+    bashio::log.info "Generated new JWT secret (persisted in /data/jwt_secret)"
+fi
+export JWT_SECRET="$(cat /data/jwt_secret)"
+
+# --- ntfy connection (from add-on options) --------------------------------
+export NTFY_BASE_URL="$(bashio::config 'ntfy_base_url')"
+export NTFY_AUTH_TYPE="$(bashio::config 'ntfy_auth_type')"
+export NTFY_USERNAME="$(bashio::config 'ntfy_username')"
+export NTFY_PASSWORD="$(bashio::config 'ntfy_password')"
+export NTFY_BEARER_TOKEN="$(bashio::config 'ntfy_bearer_token')"
+export NTFY_DEFAULT_TOPICS="$(bashio::config 'default_topics | join(\",\")')"
+export ALLOW_LOGIN_OVERRIDE="$(bashio::config 'allow_login_override')"
+
+bashio::log.info "ntfy base URL : ${NTFY_BASE_URL}"
+bashio::log.info "ntfy auth type: ${NTFY_AUTH_TYPE}"
+if [[ -n "${NTFY_USERNAME}" ]]; then
+    bashio::log.info "ntfy default user configured: ${NTFY_USERNAME}"
+fi
+if [[ -n "${NTFY_BEARER_TOKEN}" ]]; then
+    bashio::log.info "ntfy default bearer token configured"
+fi
+
+bashio::log.info "Starting Express API on 127.0.0.1:${API_PORT} …"
+cd /opt/ntfy-admin/apps/api
+exec node dist/index.js
