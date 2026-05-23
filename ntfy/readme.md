@@ -21,7 +21,7 @@
 
 ---
 ### WIKI
-[ntfy-Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/)
+[ntfy-Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/ntfy-ha-app/)
 
 
 ## Installation
@@ -818,7 +818,7 @@ ntfy access
 Full documentation:
 
 - [DOCS.md](ntfy/DOCS.md)
-- [CLI Reference Wiki](https://github.com/pol4rfuchs/ha-apps/wiki/CLI-Reference.-) -TODO
+- [CLI Reference Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/ntfy-ha-app/#cli-reference)
 - [Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/)
 
 Optional desktop companion:
