@@ -45,11 +45,6 @@ Run a TeamSpeak 6 voice server natively on your Raspberry Pi 4 via Home Assistan
 3. Accept the TeamSpeak license in the Configuration tab and start.
 
 
-🔗 [Manual](https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app/src/branch/main/READMEeng.md) -TODO
-
-🔗 [Anleitung](https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app/src/branch/main/READMEger.md) -TODO
-
-
 # 🎙️ TeamSpeak 6 Server — Home Assistant App
 
 <div align="center">
