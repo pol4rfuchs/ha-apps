@@ -1,218 +1,219 @@
-# 🔷 Matrix Server Addon für Home Assistant
-### Synapse + Element Web + Synapse Admin (etkecc) + PostgreSQL
+<div align="center">
 
-> **Optimiert für:** Raspberry Pi 4 (aarch64) & amd64 | HA OS 17+ | nginx Proxy Manager
+# 🔷 Matrix Server — Home Assistant Add-on
+
+</div>
+
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ha--apps-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
+[![Synapse Version](https://img.shields.io/badge/Synapse-1.148.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+**Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) + Synapse Admin — as a single Home Assistant Add-on.**
+
+</div>
 
 ---
 
-## 📦 Was ist drin?
+## 🧩 What's included
 
-| Komponente | Version | Zweck |
+| Component | Version | Purpose |
 |---|---|---|
-| **Synapse** | 1.148.0 (pip) | Matrix Homeserver |
-| **PostgreSQL 15** | Debian pkg | Datenbank |
-| **Element Web** | v1.12.11 | Web-Client |
-| **Synapse Admin** | v0.10.3-etke32 (etkecc fork) | Admin UI |
-| **S6-Overlay** | — | Multi-Service Orchestration |
+| **Synapse** | 1.148.0 | Matrix homeserver |
+| **PostgreSQL 15** | Debian pkg | Database |
+| **Element Web** | v1.12.11 | Web client |
+| **Element Call** | latest | Voice / Video calls |
+| **LiveKit SFU** | latest | WebRTC media server |
+| **Synapse Admin** | v0.10.3-etke32 | Admin UI |
+| **S6-Overlay** | — | Multi-service init |
 
-> **Hinweis:** Synapse Admin verwendet den [etkecc Fork](https://github.com/etkecc/synapse-admin) — kompatibel mit Synapse 1.14x (react-admin v5). Der Original Awesome-Technologies Fork funktioniert **nicht** mit Synapse 1.14x.
+> ℹ️ Synapse Admin uses the [etkecc fork](https://github.com/etkecc/synapse-admin) — required for Synapse 1.14x compatibility. The original Awesome-Technologies fork does not work with Synapse 1.14x.
 
 ---
 
 ## 🚀 Installation
 
-### 1. ZIP hochladen
-In HA → Einstellungen → Add-ons → Dreipunkt-Menü → Addon aus ZIP installieren.
+### Step 1 — Add the repository
 
-### 2. Konfiguration anpassen
-```yaml
-server_name: "matrix.deine-domain.duckdns.org"   # OHNE trailing slash!
-element_web_url: "https://matrix.deine-domain.duckdns.org"
-enable_registration: false
-registration_shared_secret: ""     # leer lassen → wird automatisch generiert
-enable_federation: true
-max_upload_size_mb: 50
-enable_synapse_admin: true
-postgres_password: "sicheresPasswort123!"
-log_level: "WARNING"
+```text
+Settings → Add-ons → Add-on Store → ⋮ → Repositories
 ```
 
-> ⚠️ `server_name` darf **keinen** trailing slash haben (`matrix.example.org` ✅, `matrix.example.org/` ❌)
+Add:
 
-### 3. Addon starten
-Erster Start dauert 2–3 Minuten — Element Web und Synapse Admin werden erst zur Laufzeit heruntergeladen (HA blockiert Netzwerk während dem Docker Build).
+```text
+https://github.com/pol4rfuchs/ha-apps
+```
 
-### 4. Admin User erstellen
+### Step 2 — Install & configure
+
+Install **Matrix Server (ESS CE)** and set at minimum:
+
+```yaml
+server_name: "your-domain.duckdns.org"
+element_web_url: "https://your-domain.duckdns.org"
+postgres_password: "changeme_please"
+enable_registration: false
+```
+
+### Step 3 — Start
+
+First start takes 2–3 minutes. Element Web and Synapse Admin are downloaded at runtime (HA blocks network during the Docker build phase).
+
+---
+
+## ⚙️ Configuration
+
+| Option | Default | Description |
+|---|---|---|
+| `server_name` | — | Your Matrix domain. **No trailing slash.** |
+| `element_web_url` | — | External HTTPS URL for Element Web. |
+| `element_call_url` | — | External HTTPS URL for Element Call. |
+| `livekit_url` | — | WebSocket URL for LiveKit SFU. |
+| `livekit_jwt_url` | — | HTTPS URL for LiveKit JWT bridge. |
+| `ntfy_url` | — | Optional: external ntfy URL for UnifiedPush. |
+| `postgres_password` | — | PostgreSQL password — set before first start. |
+| `enable_registration` | `false` | Allow public registration. |
+| `enable_federation` | `true` | Connect to the Matrix federation. |
+| `max_upload_size_mb` | `50` | Max media upload size in MB. |
+| `log_level` | `WARNING` | `DEBUG / INFO / WARNING / ERROR` |
+
+> ⚠️ `server_name` cannot be changed after the first start — it becomes the permanent Matrix ID (`@user:server_name`).
+
+---
+
+## 🌐 Ports
+
+| Port | Service | Access |
+|---|---|---|
+| `7080` | Element Web | Via NPM → `element.your-domain` |
+| `8008` | Synapse API | Via NPM → `matrix.your-domain` |
+| `8090` | Synapse Admin UI | Via NPM → `admin.your-domain` |
+| `8448` | Matrix Federation | Direct — port-forward required |
+| `7880` | LiveKit SFU | Via NPM (WebSocket) |
+| `8089` | LiveKit JWT Bridge | Via NPM |
+
+See [`NPM_SETUP.md`](NPM_SETUP.md) for the full Nginx Proxy Manager configuration.
+
+---
+
+## 👤 Creating the first admin user
+
 ```bash
 docker exec -it addon_local_matrix_server \
   /opt/synapse/bin/register_new_matrix_user \
   -c /data/matrix/synapse/homeserver.yaml \
-  --admin -u admin -p DeinSicheresPasswort! \
+  --admin -u admin -p YourSecurePassword \
   http://localhost:8008
 ```
 
-### 5. Nginx Proxy Manager konfigurieren
-Siehe `NPM_SETUP.md` für die genaue Konfiguration.
+Or use the helper script included in the add-on:
 
----
-
-## 🌐 Ports & URLs
-
-| Port | Dienst | Zugriff |
-|---|---|---|
-| **7080** | Element Web | Via NPM → `element.deine-domain.duckdns.org` |
-| **8008** | Synapse API | Via NPM → `matrix.deine-domain.duckdns.org` |
-| **8090** | Synapse Admin UI | Via NPM → `admin.deine-domain.duckdns.org` |
-| **8448** | Matrix Federation | Direkt (Router Port-Forwarding) |
-
----
-
-## 🔧 Synapse Admin UI
-
-### Zugriff
-- Extern: `https://admin.deine-domain.duckdns.org`
-- Lokal: `http://[HA-IP]:8090`
-
-### Login
-- **Homeserver URL:** `https://matrix.deine-domain.duckdns.org`
-- **Benutzername:** `admin`
-
-> ⚠️ NPM Access List für `admin.*` muss auf **Publicly Accessible** stehen — die Auth kommt vom Synapse Admin Login selbst.
-
-### Token manuell holen (falls nötig)
 ```bash
-curl -s -X POST http://[HA-IP]:8008/_matrix/client/v3/login \
-  -H "Content-Type: application/json" \
-  -d '{"type":"m.login.password","user":"admin","password":"DeinPasswort"}' \
-  | grep access_token
-```
-
-### Admin-Status prüfen
-```bash
-docker exec -it addon_local_matrix_server \
-  psql -U synapse -d synapse -c "SELECT name, admin FROM users;"
+docker exec -it addon_local_matrix_server matrix-create-admin.sh
 ```
 
 ---
 
-## 🌍 Element Web — Dual Config (Lokal + Extern)
+## 💾 Data persistence
 
-Element Web lädt automatisch eine hostname-spezifische Config:
-
-| Datei | Wird geladen von | Synapse URL |
-|---|---|---|
-| `config.json` | Fallback / extern | `https://matrix.deine-domain.duckdns.org` |
-| `config.[HA-IP].json` | Browser im LAN | `http://[HA-IP]:8008` |
-| `config.matrix.[domain].json` | `matrix.*` Subdomain | `https://matrix.deine-domain.duckdns.org` |
-
----
-
-## 💾 Datenspeicherung (persistent)
-
-```
+```text
 /data/matrix/
-├── postgresql/           # PostgreSQL Datenbank
+├── postgresql/             ← PostgreSQL database
 ├── synapse/
-│   ├── homeserver.yaml   # Konfiguration
-│   ├── signing.key       # Server Signing Key ⚠️ BACKUP!
-│   └── media_store/      # Hochgeladene Medien
-├── element-web/          # Element Web Dateien (persistent)
-├── synapse-admin/        # Synapse Admin Dateien (persistent)
-└── .webapps_downloaded   # Marker: Web-Apps bereits heruntergeladen
+│   ├── homeserver.yaml     ← Synapse config
+│   ├── signing.key         ← ⚠️ Back this up — loss = loss of federation identity
+│   └── media_store/        ← Uploaded media
+├── element-web/            ← Element Web (persistent)
+├── synapse-admin/          ← Synapse Admin (persistent)
+└── .webapps_downloaded     ← Marker: skip re-download on restart
 ```
 
-> ⚠️ `signing.key` unbedingt sichern — Verlust bedeutet Verlust der Federation-Identität.
+To force re-download of web apps:
 
-### Web-Apps neu herunterladen erzwingen
 ```bash
 docker exec addon_local_matrix_server rm /data/matrix/.webapps_downloaded
-# dann Addon neu starten
+# then restart the add-on
 ```
 
 ---
 
-## 📱 UnifiedPush (Android Push via ntfy)
+## 📱 UnifiedPush (Android push via ntfy)
 
-Mit dem ntfy Add-on kann dieses Addon vollständiges **datenschutzfreundliches Push** für Element Android bieten — ohne Google Firebase, ohne externe Server.
-
-### Wie es funktioniert
+This add-on integrates with the [ntfy add-on](../ntfy) for privacy-friendly push notifications on Element Android — no Google Firebase, no external servers.
 
 ```
 Element Android
-  → wählt ntfy als UnifiedPush Distributor
-  → registriert Push Gateway bei Synapse:
-      https://ntfy.deine-domain.tld/_matrix/push/v1/notify
-  → Synapse schickt Pushes an ntfy
-  → ntfy liefert an dein Gerät
+  → selects ntfy as UnifiedPush distributor
+  → registers push gateway with Synapse:
+      https://ntfy.your-domain/_matrix/push/v1/notify
+  → Synapse sends pushes to ntfy
+  → ntfy delivers to your device
 ```
 
-Synapse muss die ntfy-URL **nicht** in seiner Config kennen — der Client trägt alles selbst ein.
+Synapse does not need the ntfy URL in its config — the client registers the gateway automatically.
 
-### Voraussetzungen
-
-- **ntfy Add-on** läuft mit gesetzter `base_url` (ohne `base_url` kein Gateway-Endpoint)
-- **ntfy App** aus F-Droid (Play Store Version hat kein UnifiedPush)
-- ntfy-Server von extern erreichbar (via NPM)
-
-### Einrichtung
-
-**1. Addon-Config:** `ntfy_url` auf die externe ntfy-URL setzen:
-```yaml
-ntfy_url: "https://ntfy.deine-domain.tld"
-```
-Beim Start prüft das Addon die Erreichbarkeit und gibt Anweisungen im Log aus.
-
-**2. ntfy App (F-Droid):** Installieren → Einstellungen → Server: `https://ntfy.deine-domain.tld`
-
-**3. Element Android:** Einstellungen → Benachrichtigungen → UnifiedPush → ntfy auswählen
-
-Fertig. Kein weiterer Eingriff in Synapse nötig.
+**Setup:**
+1. Set `ntfy_url` in the add-on config
+2. Install ntfy from F-Droid (Play Store version has no UnifiedPush)
+3. In Element Android: Settings → Notifications → UnifiedPush → select ntfy
 
 ---
 
-## 🏠 Home Assistant Integration
+## 🏠 Home Assistant integration
 
 ```yaml
 # configuration.yaml
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://matrix.deine-domain.duckdns.org
-    username: "@homeassistant:deine-domain.duckdns.org"
-    password: "ha_user_passwort"
-    default_room: "#homeassistant:deine-domain.duckdns.org"
+    homeserver: https://matrix.your-domain.duckdns.org
+    username: "@homeassistant:your-domain.duckdns.org"
+    password: "ha_user_password"
+    default_room: "#homeassistant:your-domain.duckdns.org"
 ```
+
+See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full example with automations.
 
 ---
 
-## 🔍 Federation testen
+## 📊 Resource usage (Pi 4, 8 GB RAM)
 
-```
-https://federationtester.matrix.org/#deine-domain.duckdns.org
-```
-
----
-
-## 📊 Ressourcenverbrauch (Pi 4, 8GB RAM)
-
-| Dienst | RAM | CPU (idle) |
+| Service | RAM | CPU (idle) |
 |---|---|---|
-| PostgreSQL | ~100MB | <1% |
-| Synapse | ~300–500MB | 1–3% |
-| Element Web (Python HTTP) | ~10MB | <1% |
-| Synapse Admin (Python HTTP) | ~10MB | <1% |
-| **Gesamt** | **~450–650MB** | **~3–5%** |
+| PostgreSQL | ~100 MB | <1% |
+| Synapse | ~300–500 MB | 1–3% |
+| Element Web | ~10 MB | <1% |
+| Synapse Admin | ~10 MB | <1% |
+| **Total** | **~450–650 MB** | **~3–5%** |
 
 ---
 
-## 🐛 Troubleshooting
+## 🔍 Test federation
 
-| Problem | Ursache | Lösung |
+```
+https://federationtester.matrix.org/#your-domain.duckdns.org
+```
+
+---
+
+## 🔧 Troubleshooting
+
+| Problem | Cause | Fix |
 |---|---|---|
-| `Server name has invalid format` | trailing slash in `server_name` | Slash entfernen |
-| Admin Panel "Something went wrong" | alter Browser-Cache | F12 → Application → Clear Site Data |
-| Admin Panel 401 | NPM Access List aktiv | Access List auf "Publicly Accessible" |
-| Element Web falscher Server | falsches config.json | Browser-Cache leeren |
-| Web-Apps 0 Dateien | Extraktion fehlgeschlagen | Marker löschen + Addon neu starten |
-| Synapse Token ungültig | Addon neu installiert, DB leer | Admin User neu erstellen |
-| Federation broken | Port 8448 nicht offen | Router: 8448 → HA-IP:8448 |
+| `Server name has invalid format` | Trailing slash in `server_name` | Remove the slash |
+| Admin Panel "Something went wrong" | Stale browser cache | F12 → Application → Clear Site Data |
+| Admin Panel 401 | NPM Access List active | Set Access List to "Publicly Accessible" |
+| Element Web wrong server | Wrong config.json loaded | Clear browser cache |
+| Web apps not loading | Extraction failed | Delete marker + restart add-on |
+| Synapse token invalid | Add-on reinstalled, DB empty | Re-create admin user |
+| Federation broken | Port 8448 not forwarded | Router: 8448 → HA-IP:8448 |
+
+---
+
+## 📜 License
+
+MIT — this add-on wrapper.
+Synapse is licensed under [AGPL-3.0](https://github.com/element-hq/synapse/blob/develop/LICENSE).
