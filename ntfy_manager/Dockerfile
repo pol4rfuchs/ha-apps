@@ -14,7 +14,7 @@ ENV LANG=C.UTF-8 \
 # nginx       : serves SPA + reverse proxies /api to API
 # openssl     : random secret generation
 # curl        : healthcheck
-RUN apk add --no-cache \
+RUN apk update && apk add --no-cache \
         nodejs \
         npm \
         nginx \
