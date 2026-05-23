@@ -1,43 +1,158 @@
-# SearXNG — Home Assistant Add-on
+<div align="center">
 
-Privacy-respecting metasearch engine. Kein Tracking, keine Profile.
+# 🔍 SearXNG — Home Assistant Add-on
 
-## Konfiguration
+</div>
 
-### Add-on Option
+<div align="center">
 
-| Option | Typ | Standard | Beschreibung |
-|---|---|---|---|
-| `set_base_url_for_ingress` | bool | `true` | Setzt `SEARXNG_BASE_URL` automatisch auf die HA-Ingress-URL |
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ha--apps-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
+[![SearXNG](https://img.shields.io/badge/SearXNG-upstream-3498DB?style=for-the-badge&logo=searxng&logoColor=white)](https://github.com/searxng/searxng)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-### SearXNG selbst
+**Privacy-respecting metasearch engine — no tracking, no profiles, self-hosted.**
 
-Nach dem Erststart liegt die Konfigurationsdatei unter:
+</div>
 
+---
+
+## 🧭 Overview
+
+| Property | Value |
+|---|---|
+| **Upstream image** | `searxng/searxng` |
+| **Default port** | `8080` (Ingress) |
+| **Arch** | `amd64`, `aarch64` |
+| **Access** | HA Ingress (sidebar) |
+
+SearXNG aggregates results from 70+ search engines without tracking users or building profiles. It exposes a JSON API for use in automations.
+
+---
+
+## 🚀 Installation
+
+### Step 1 — Add the repository
+
+```text
+Settings → Add-ons → Add-on Store → ⋮ → Repositories
 ```
+
+Add:
+
+```text
+https://github.com/pol4rfuchs/ha-apps
+```
+
+### Step 2 — Install
+
+Install **SearXNG**. No mandatory configuration — it starts with sensible defaults.
+
+### Step 3 — Start
+
+Open via the **Open Web UI** button or the HA sidebar. The Ingress URL is set automatically.
+
+---
+
+## ⚙️ Configuration
+
+| Option | Default | Description |
+|---|---|---|
+| `set_base_url_for_ingress` | `true` | Auto-sets `SEARXNG_BASE_URL` to the HA Ingress URL. Disable only if you access SearXNG through an external reverse proxy. |
+
+---
+
+## 📝 SearXNG settings file
+
+After the first start, the settings file is written to:
+
+```text
 addon_configs/<SLUG>_searxng/settings.yml
 ```
 
-Bearbeitbar z.B. über den File Editor. Änderungen werden nach einem Add-on-Neustart aktiv.
+Edit it via the HA File Editor add-on. Changes apply after restarting the add-on.
 
-Vollständige Doku: https://docs.searxng.org/admin/settings/index.html
+Full reference: <https://docs.searxng.org/admin/settings/index.html>
 
-### custom.sh Hook
+---
 
-In `addon_configs/<SLUG>_searxng/custom.sh` können eigene Shell-Befehle vor dem
-SearXNG-Start eingetragen werden (z.B. Settings patchen, Plugins aktivieren).
+## 🪝 custom.sh hook
 
-## JSON API
+Place a `custom.sh` in the config directory to run shell commands before SearXNG starts — useful for patching settings or activating plugins:
+
+```text
+addon_configs/<SLUG>_searxng/custom.sh
+```
+
+Example:
+
+```bash
+#!/bin/sh
+# Patch a setting after the config is written
+sed -i 's/safe_search: 0/safe_search: 1/' /etc/searxng/settings.yml
+```
+
+---
+
+## 🌐 JSON API
+
+SearXNG exposes a JSON API for automations and integrations:
 
 ```
-http://homeassistant.local:8080/search?q=test&format=json
+http://homeassistant.local:8080/search?q=your+query&format=json
 ```
 
-## Valkey/Redis (optional)
+Example in a HA automation:
 
-Im `settings.yml` unter `redis:` eintragen:
+```yaml
+action: rest_command.searxng_search
+data:
+  query: "current weather Berlin"
+```
+
+```yaml
+# configuration.yaml
+rest_command:
+  searxng_search:
+    url: "http://localhost:8080/search?q={{ query }}&format=json"
+    method: GET
+```
+
+---
+
+## ⚡ Valkey / Redis (optional)
+
+For caching and improved performance, add Redis/Valkey to `settings.yml`:
 
 ```yaml
 redis:
   url: "valkey://SLUG-valkey:6379/0"
 ```
+
+---
+
+## 💾 Data persistence
+
+```text
+addon_configs/<SLUG>_searxng/
+├── settings.yml    ← SearXNG configuration
+└── custom.sh       ← Optional pre-start hook
+```
+
+---
+
+## 🔧 Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| Sidebar shows blank page | Use the direct URL: `http://[HA-IP]:8080` |
+| Settings not applied | Restart the add-on after editing `settings.yml` |
+| Search returns no results | Check engine list in `settings.yml` — some engines may be rate-limited |
+| Ingress URL wrong | Set `set_base_url_for_ingress: true` in add-on options |
+
+---
+
+## 📜 License
+
+MIT — this add-on wrapper.  
+SearXNG is licensed under [AGPL-3.0](https://github.com/searxng/searxng/blob/master/LICENSE).
