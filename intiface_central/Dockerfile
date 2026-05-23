@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libusb-1.0-0-dev \
     && rm -rf /var/lib/apt/lists/*
 
-ARG ENGINE_VERSION=4.0.0
+ARG ENGINE_VERSION=4.0.2
 RUN cargo install intiface-engine --version "${ENGINE_VERSION}" \
     && strip /usr/local/cargo/bin/intiface-engine
 
