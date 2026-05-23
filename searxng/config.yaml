@@ -23,3 +23,4 @@ options:
   set_base_url_for_ingress: true
 schema:
   set_base_url_for_ingress: bool
+image: "searxng/searxng"
