@@ -1,0 +1,42 @@
+name: "ntfy HAOS Admin Panel"
+version: "0.2.0"
+slug: "ntfy_haos_admin_panel"
+description: "Full-featured admin console for ntfy on Home Assistant OS"
+url: "https://github.com/Pol4rFuchs/ntfy-haos-admin-panel"
+apparmor: false
+arch:
+  - aarch64
+  - amd64
+startup: "application"
+boot: "auto"
+init: false
+ingress: true
+ingress_port: 8099
+panel_icon: "mdi:bell-cog"
+panel_title: "ntfy Admin"
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: "Optional direct web UI access. Ingress works without exposing this port."
+options:
+  ntfy_base_url: "http://homeassistant.local:4280"
+  ntfy_auth_type: "basic"
+  ntfy_username: ""
+  ntfy_password: ""
+  ntfy_bearer_token: ""
+  default_topics:
+    - "ha-alerts"
+    - "ha-info"
+    - "ha-notify"
+    - "ha-system"
+    - "ha-planty"
+  allow_login_override: true
+schema:
+  ntfy_base_url: "url"
+  ntfy_auth_type: "list(none|basic|bearer)"
+  ntfy_username: "str?"
+  ntfy_password: "password?"
+  ntfy_bearer_token: "password?"
+  default_topics:
+    - "str"
+  allow_login_override: "bool"
