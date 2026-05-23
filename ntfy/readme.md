@@ -6,12 +6,12 @@
 
 <div align="center">
 
-![ntfy logo](https://codeberg.org/Pol4rFuchs/ntfy-ha-app/raw/branch/main/ntfy/icon.png)
+![ntfy logo](https://github.com/pol4rfuchs/ha-apps/raw/branch/main/ntfy/icon.png)
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
-[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ntfy--ha--app-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ntfy-ha-app)
+[![Codeberg Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.22.0-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
-[![App Version](https://img.shields.io/badge/ntfy--ha--app-v1.1.6.6-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://codeberg.org/Pol4rFuchs/ntfy-ha-app)
+[![App Version](https://img.shields.io/badge/ntfy--ha--app-v1.1.6.6-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Claude%20Code-C2410C?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=2D2D2D)](https://www.anthropic.com/claude-code)
 
@@ -26,7 +26,7 @@
 
 ## Installation
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fntfy-ha-app)
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
 > **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant add-on.  
 > Not affiliated with or endorsed by the ntfy project or Binwiederhier.
@@ -205,12 +205,12 @@ Settings → Add-ons → Add-on Store → ⋮ → Repositories
 Paste this repository URL:
 
 ```text
-https://codeberg.org/Pol4rFuchs/ntfy-ha-app
+https://github.com/pol4rfuchs/ha-apps
 ```
 
 or use the one-click badge:
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fntfy-ha-app)
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
 ---
 
@@ -818,8 +818,8 @@ ntfy access
 Full documentation:
 
 - [DOCS.md](ntfy/DOCS.md)
-- [CLI Reference Wiki](https://codeberg.org/Pol4rFuchs/ntfy-ha-app/wiki/CLI-Reference.-)
-- [Wiki Sidebar](https://codeberg.org/Pol4rFuchs/ntfy-ha-app/wiki/_Sidebar.md.-)
+- [CLI Reference Wiki](https://github.com/pol4rfuchs/ha-apps/wiki/CLI-Reference.-)
+- [Wiki Sidebar](https://github.com/pol4rfuchs/ha-apps/wiki/_Sidebar.md.-)
 
 Optional desktop companion:
 
@@ -860,6 +860,6 @@ Made with ❤️ for the Home Assistant and self-hosting community
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=flat-square&logo=ntfy&logoColor=white)](https://ntfy.sh)
-[![Codeberg](https://img.shields.io/badge/Codeberg-Repository-2185D0?style=flat-square&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ntfy-ha-app)
+[![Codeberg](https://img.shields.io/badge/Codeberg-Repository-2185D0?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
 </div>
