@@ -2,7 +2,7 @@ name: "Matrix Server (ESS CE)"
 description: "Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS Community Edition Style"
 version: "1.2.11"
 slug: "matrix_server"
-url: "https://codeberg.org/Pol4rFuchs/ha-apps"
+url: "https://github.com/pol4rfuchs/ha-apps"
 image: "ghcr.io/pol4rfuchs/matrix-synapse-ha-app"
 init: false
 homeassistant_api: false
