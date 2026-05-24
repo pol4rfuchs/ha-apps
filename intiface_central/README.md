@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎛️ Intiface Central — Home Assistant Add-on
+# 🎛️ Intiface/Lovense Ce(o)ntral — Home Assistant Add-on
 
 </div>
 
