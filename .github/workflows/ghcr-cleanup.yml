@@ -1,25 +1,27 @@
 name: GHCR Cleanup
-
 on:
   schedule:
-    - cron: '0 3 * * 0'  # wöchentlich, Sonntag 03:00 UTC
+    - cron: '0 3 * * 0'
   workflow_dispatch:
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-
     strategy:
       matrix:
         package:
           - searxng-ha-app
           - intiface-ha-app
-
+          - matrix-synapse-ha-app
+          - npm-ha-app
+          - teamspeak6-ha-app
+          - ntfy-ha-app
+          - teamspeak6-manager-ha-app
+          - navidrome-ha-app
+          - ntfy-manager-ha-app
     steps:
       - name: Delete old untagged versions
         uses: actions/delete-package-versions@v5
@@ -28,13 +30,11 @@ jobs:
           package-type: container
           min-versions-to-keep: 0
           delete-only-untagged-versions: true
-
-      - name: Delete SHA tags older than 90 days
+      - name: Keep only latest 5 tagged versions
         uses: actions/delete-package-versions@v5
         with:
           package-name: ${{ matrix.package }}
           package-type: container
-          min-versions-to-keep: 1
-          ignore-versions: '^latest$'
-          delete-only-pre-release-versions: false
-          oldest-version-cutoff: 90
+          min-versions-to-keep: 5
+          ignore-versions: '^(latest|latest-amd64|latest-aarch64)$'
+          delete-only-untagged-versions: false
