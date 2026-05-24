@@ -25,6 +25,7 @@ jobs:
           - ntfy-manager-ha-app
     steps:
       - name: Delete old untagged versions
+        continue-on-error: true
         uses: actions/delete-package-versions@v5
         with:
           package-name: ${{ matrix.package }}
