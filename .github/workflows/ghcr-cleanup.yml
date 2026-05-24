@@ -11,6 +11,7 @@ jobs:
     permissions:
       packages: write
     strategy:
+      fail-fast: false
       matrix:
         package:
           - searxng-ha-app
@@ -28,13 +29,5 @@ jobs:
         with:
           package-name: ${{ matrix.package }}
           package-type: container
-          min-versions-to-keep: 0
+          min-versions-to-keep: 2
           delete-only-untagged-versions: true
-      - name: Keep only latest 5 tagged versions
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: ${{ matrix.package }}
-          package-type: container
-          min-versions-to-keep: 5
-          ignore-versions: '^(latest|latest-amd64|latest-aarch64)$'
-          delete-only-untagged-versions: false
