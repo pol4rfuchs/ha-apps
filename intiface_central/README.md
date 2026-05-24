@@ -1,4 +1,6 @@
 <div align="center">
+  
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/intiface_central/lovense_studio.png" alt="Intiface Lovense Central Logo" width="220">
 
 # 🎛️ Intiface/Lovense Ce(o)ntral — Home Assistant Add-on
 
