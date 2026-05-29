@@ -1,0 +1,213 @@
+name: TS6 Manager Safe Auto-Update Candidate
+
+on:
+  schedule:
+    - cron: "30 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      target_ts6_manager_ref:
+        description: "Optional explicit upstream ref/SHA for clusterzx/ts6-manager. Empty = latest main commit."
+        required: false
+        default: ""
+      validate_docker:
+        description: "Docker validation mode: auto, required, or false."
+        required: false
+        default: "auto"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ts6-manager-safe-auto-update
+  cancel-in-progress: false
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+
+    env:
+      ADDON_DIR: ts6_manager
+      UPSTREAM_REPO: clusterzx/ts6-manager
+      UPSTREAM_BRANCH: main
+      BASE_BRANCH: main
+      VALIDATE_DOCKER: ${{ inputs.validate_docker || 'auto' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify required files are present
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for file in \
+            "scripts/validate-addon.sh" \
+            "scripts/install-yq-ci.sh" \
+            "ts6_manager/Dockerfile" \
+            "ts6_manager/config.yaml"; do
+            if [[ ! -f "$file" ]]; then
+              echo "ERROR: required file is missing: $file" >&2
+              missing=1
+            else
+              echo "OK: $file"
+            fi
+          done
+
+          if [[ "$missing" -ne 0 ]]; then
+            exit 1
+          fi
+
+          chmod +x scripts/validate-addon.sh scripts/install-yq-ci.sh
+
+      - name: Install validation tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl git jq python3 python3-yaml
+          bash ./scripts/install-yq-ci.sh
+
+      - name: Resolve target TS6 Manager ref
+        id: upstream
+        shell: bash
+        env:
+          TARGET_TS6_MANAGER_REF: ${{ inputs.target_ts6_manager_ref }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${TARGET_TS6_MANAGER_REF}" ]]; then
+            ref="${TARGET_TS6_MANAGER_REF}"
+          else
+            ref="$(git ls-remote "https://github.com/${UPSTREAM_REPO}.git" "refs/heads/${UPSTREAM_BRANCH}" | awk '{print $1}')"
+          fi
+
+          if [[ -z "${ref}" ]]; then
+            echo "ERROR: could not resolve upstream ref for ${UPSTREAM_REPO}:${UPSTREAM_BRANCH}" >&2
+            exit 1
+          fi
+
+          short_ref="${ref:0:12}"
+          branch="auto/ts6-manager-${short_ref}"
+
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+          echo "short_ref=${short_ref}" >> "$GITHUB_OUTPUT"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+
+      - name: Update TS6 Manager Dockerfile ref
+        shell: bash
+        env:
+          TARGET_REF: ${{ steps.upstream.outputs.ref }}
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          target_ref = os.environ["TARGET_REF"]
+          path = Path("ts6_manager/Dockerfile")
+
+          text = path.read_text(encoding="utf-8")
+          original = text
+
+          replacements = [
+              (
+                  r"(?m)^(ARG\s+TS6_MANAGER_REF\s*=\s*).+$",
+                  rf"\g<1>{target_ref}",
+              ),
+              (
+                  r"(?m)^(ENV\s+TS6_MANAGER_REF\s*=\s*).+$",
+                  rf"\g<1>{target_ref}",
+              ),
+              (
+                  r"(?m)^(LABEL\s+org\.opencontainers\.image\.revision\s*=\s*).+$",
+                  rf"\g<1>{target_ref}",
+              ),
+          ]
+
+          changed = False
+          for pattern, repl in replacements:
+              text_next, count = re.subn(pattern, repl, text, count=1)
+              if count:
+                  text = text_next
+                  changed = True
+                  break
+
+          if not changed:
+              print(
+                  "ERROR: no TS6 Manager ref field found in ts6_manager/Dockerfile. "
+                  "Expected one of: ARG TS6_MANAGER_REF=..., ENV TS6_MANAGER_REF=..., "
+                  "or LABEL org.opencontainers.image.revision=...",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+
+          if text != original:
+              path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Validate add-on
+        shell: bash
+        run: bash ./scripts/validate-addon.sh
+
+      - name: Stop when no update is required
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- ts6_manager/Dockerfile ts6_manager/config.yaml ts6_manager/CHANGELOG.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No TS6 Manager update required."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff -- ts6_manager/Dockerfile ts6_manager/config.yaml ts6_manager/CHANGELOG.md || true
+          fi
+
+      - name: Create or update pull request
+        if: steps.diff.outputs.changed == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_BRANCH: ${{ steps.upstream.outputs.branch }}
+          TARGET_REF: ${{ steps.upstream.outputs.ref }}
+          SHORT_REF: ${{ steps.upstream.outputs.short_ref }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "${TARGET_BRANCH}"
+          git add ts6_manager/Dockerfile ts6_manager/config.yaml ts6_manager/CHANGELOG.md
+          git commit -m "ts6_manager: update upstream ref to ${SHORT_REF}"
+          git push --force-with-lease origin "${TARGET_BRANCH}"
+
+          title="ts6_manager: update upstream ref to ${SHORT_REF}"
+          body="$(cat <<EOF
+          Automated safe-update candidate for TS6 Manager.
+
+          - Upstream: https://github.com/${UPSTREAM_REPO}
+          - Target ref: ${TARGET_REF}
+          - Add-on directory: ${ADDON_DIR}
+          - Validation: completed in GitHub Actions
+          EOF
+          )"
+
+          if gh pr view "${TARGET_BRANCH}" --json number >/dev/null 2>&1; then
+            gh pr edit "${TARGET_BRANCH}" --title "${title}" --body "${body}"
+          else
+            gh pr create \
+              --base "${BASE_BRANCH}" \
+              --head "${TARGET_BRANCH}" \
+              --title "${title}" \
+              --body "${body}"
+          fi

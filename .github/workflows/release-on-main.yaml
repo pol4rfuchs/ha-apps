@@ -1,0 +1,118 @@
+name: TS6 Manager Release on main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "ts6_manager/config.yaml"
+      - "ts6_manager/Dockerfile"
+      - "ts6_manager/CHANGELOG.md"
+      - ".github/workflows/release-on-main.yaml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ts6-manager-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      ADDON_DIR: ts6_manager
+      TARGET_BRANCH: main
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify release files are present
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f ts6_manager/config.yaml || { echo "ERROR: missing ts6_manager/config.yaml" >&2; exit 1; }
+          test -f ts6_manager/Dockerfile || { echo "ERROR: missing ts6_manager/Dockerfile" >&2; exit 1; }
+
+          if [[ -f ts6_manager/build.yaml ]]; then
+            echo "WARN: ts6_manager/build.yaml exists but is deprecated; Dockerfile ARGs should be used instead."
+          fi
+
+      - name: Read add-on version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(python3 - <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          text = Path("ts6_manager/config.yaml").read_text(encoding="utf-8")
+          match = re.search(r"(?m)^\s*version:\s*[\"']?([^\"'\n#]+)", text)
+          if not match:
+              print("ERROR: version not found in ts6_manager/config.yaml", file=sys.stderr)
+              sys.exit(1)
+
+          print(match.group(1).strip())
+          PY
+          )"
+
+          tag="ts6-manager-v${version}"
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "Release ${RELEASE_TAG} already exists. Nothing to do."
+            exit 0
+          fi
+
+          if git ls-remote --tags origin "refs/tags/${RELEASE_TAG}" | grep -q "${RELEASE_TAG}"; then
+            echo "Tag ${RELEASE_TAG} already exists on origin."
+          else
+            git tag -a "${RELEASE_TAG}" -m "TS6 Manager ${RELEASE_VERSION}"
+            git push origin "${RELEASE_TAG}"
+          fi
+
+          notes_file="$(mktemp)"
+          {
+            echo "TS6 Manager Home Assistant add-on release ${RELEASE_VERSION}"
+            echo
+            echo "Source directory: \`ts6_manager/\`"
+            echo "Target branch: \`${TARGET_BRANCH}\`"
+          } > "${notes_file}"
+
+          if [[ -f ts6_manager/CHANGELOG.md ]]; then
+            {
+              echo
+              echo "## Changelog"
+              echo
+              cat ts6_manager/CHANGELOG.md
+            } >> "${notes_file}"
+          fi
+
+          gh release create "${RELEASE_TAG}" \
+            --target "${GITHUB_SHA}" \
+            --title "TS6 Manager ${RELEASE_VERSION}" \
+            --notes-file "${notes_file}"
