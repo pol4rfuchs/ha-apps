@@ -1,66 +1,68 @@
-# Neues Projekt hinzufügen
+# Contributing
 
-## 1. Ordner anlegen
+## Add a New Project
 
-```
+### 1. Create the folder
+
+```text
 pages/
-└── neues-projekt/
+└── new-project/
     └── index.html
 ```
 
-## 2. Card in `index.html` (Root) ergänzen
+### 2. Add a card to the root `index.html`
 
-Im `<div class="grid">` Block eine neue Card einfügen:
+Insert a new card inside the `<div class="grid">` block:
 
 ```html
-<a class="card" data-search-card href="./neues-projekt/">
-  <div class="meta"><span class="badge">Kategorie</span></div>
-  <h3>Projektname</h3>
-  <p>Kurze Beschreibung des Projekts.</p>
-  <span class="card-link">./neues-projekt/ →</span>
+<a class="card" data-search-card href="./new-project/">
+  <div class="meta"><span class="badge">Category</span></div>
+  <h3>Project Name</h3>
+  <p>Short description of the project.</p>
+  <span class="card-link">./new-project/ →</span>
 </a>
 ```
 
-## 3. Nav-Link ergänzen (optional)
+### 3. Add a nav link — optional
 
-In `index.html`, `404.html` und allen Sub-Pages im `<nav>`-Block:
+In `index.html`, `404.html`, and all sub-pages, add this inside the `<nav>` block:
 
 ```html
-<a href="./neues-projekt/">Projektname</a>
+<a href="./new-project/">Project Name</a>
 ```
 
-## 4. Shortlink in `_redirects` ergänzen (optional)
+### 4. Add a shortlink to `_redirects` — optional
 
+```text
+/shortcut    /new-project/    301
 ```
-/kürzel    /neues-projekt/    301
-```
 
-## 5. Sitemap ergänzen
+### 5. Update the sitemap
 
-In `sitemap.xml` neue Einträge:
+Add a new entry to `sitemap.xml`:
 
 ```xml
-<url><loc>https://pol4rfuchs.codeberg.page/neues-projekt/</loc></url>
+<url><loc>https://pol4rfuchs.codeberg.page/new-project/</loc></url>
 ```
 
-## 6. Committen & pushen
+### 6. Commit and push
 
 ```powershell
 git add .
-git commit -m "pages: add neues-projekt"
+git commit -m "pages: add new-project"
 git push origin pages
 ```
 
 ---
 
-## Asset-Regeln
+## Asset Rules
 
-| Situation | Pfad |
+| Situation | Path |
 |---|---|
-| Hub-CSS/JS (Root-Seiten) | `./assets/css/site.css` |
-| Sub-Page eine Ebene tief | `../assets/css/site.css` |
-| Sub-Page zwei Ebenen tief | `../../assets/css/site.css` |
-| Projekt-eigene Assets | im eigenen Ordner, z.B. `./assets/logo.png` |
-| `404.html` | immer `/assets/css/site.css` (absolut) |
+| Hub CSS/JS for root pages | `./assets/css/site.css` |
+| Sub-page one level deep | `../assets/css/site.css` |
+| Sub-page two levels deep | `../../assets/css/site.css` |
+| Project-specific assets | inside the project’s own folder, e.g. `./assets/logo.png` |
+| `404.html` | always `/assets/css/site.css` absolute path |
 
-Selbst enthaltene Projekte (eigenes CSS/JS wie GPU Tools AIO) brauchen keine Hub-Assets.
+Self-contained projects with their own CSS/JS, such as GPU Tools AIO, do not need the hub assets.
