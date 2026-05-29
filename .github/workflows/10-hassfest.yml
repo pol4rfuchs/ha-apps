@@ -1,0 +1,37 @@
+name: 10 Hassfest
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - custom_components/**
+      - ".github/workflows/10-hassfest.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - custom_components/**
+      - ".github/workflows/10-hassfest.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hassfest:
+    name: Hassfest if custom_components exists
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run hassfest
+        if: ${{ hashFiles('custom_components/**/manifest.json') != '' }}
+        uses: home-assistant/actions/hassfest@master
+
+      - name: Skip
+        if: ${{ hashFiles('custom_components/**/manifest.json') == '' }}
+        run: echo "No custom integration manifests found; skipping hassfest."

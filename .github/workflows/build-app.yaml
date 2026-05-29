@@ -1,0 +1,147 @@
+name: Build app
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        required: true
+        type: string
+      publish:
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  prepare:
+    name: Prepare ${{ inputs.app }}
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.info.outputs.image }}
+      version: ${{ steps.info.outputs.version }}
+      platforms: ${{ steps.info.outputs.platforms }}
+      name: ${{ steps.info.outputs.name }}
+      slug: ${{ steps.info.outputs.slug }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read add-on config
+        id: info
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="${{ inputs.app }}"
+          cfg="${app}/config.yaml"
+          dockerfile="${app}/Dockerfile"
+
+          test -f "${cfg}"
+          test -f "${dockerfile}"
+
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import re
+          from pathlib import Path
+
+          app = "${{ inputs.app }}"
+          text = Path(app, "config.yaml").read_text(encoding="utf-8")
+
+          def scalar(key: str) -> str:
+              m = re.search(rf"(?m)^\s*{re.escape(key)}\s*:\s*['\"]?([^'\"\n#]+)", text)
+              return m.group(1).strip().strip("'\"") if m else ""
+
+          def list_value(key: str) -> list[str]:
+              m = re.search(rf"(?ms)^\s*{re.escape(key)}\s*:\s*\n((?:\s+-\s+[^\n]+\n?)+)", text)
+              if m:
+                  return [x.strip().strip("'\"") for x in re.findall(r"(?m)^\s*-\s*([^\n#]+)", m.group(1))]
+              one = scalar(key)
+              if one.startswith("[") and one.endswith("]"):
+                  return [x.strip().strip("'\"") for x in one[1:-1].split(",") if x.strip()]
+              return [one] if one else []
+
+          image = scalar("image")
+          version = scalar("version")
+          name = scalar("name")
+          slug = scalar("slug") or app
+          arch = list_value("arch")
+
+          if not image.startswith("ghcr.io/pol4rfuchs/"):
+              raise SystemExit(f"invalid image: {image}")
+          if not version:
+              raise SystemExit("missing version")
+          if not arch:
+              raise SystemExit("missing arch")
+
+          arch_to_platform = {
+              "amd64": "linux/amd64",
+              "aarch64": "linux/arm64",
+          }
+          platforms = []
+          for item in arch:
+              if item not in arch_to_platform:
+                  raise SystemExit(f"unsupported arch for GHCR build: {item}")
+              platforms.append(arch_to_platform[item])
+
+          print(f"image={image}")
+          print(f"version={version}")
+          print(f"name={name}")
+          print(f"slug={slug}")
+          print(f"platforms={','.join(platforms)}")
+          PY
+
+      - name: Summary
+        shell: bash
+        run: |
+          echo "App: ${{ inputs.app }}"
+          echo "Image: ${{ steps.info.outputs.image }}"
+          echo "Version: ${{ steps.info.outputs.version }}"
+          echo "Platforms: ${{ steps.info.outputs.platforms }}"
+
+  build:
+    name: Build ${{ inputs.app }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        if: inputs.publish
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./${{ inputs.app }}
+          platforms: ${{ needs.prepare.outputs.platforms }}
+          push: ${{ inputs.publish }}
+          provenance: true
+          sbom: false
+          build-args: |
+            BUILD_VERSION=${{ needs.prepare.outputs.version }}
+            VERSION=${{ needs.prepare.outputs.version }}
+          tags: |
+            ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}
+            ${{ needs.prepare.outputs.image }}:latest
+          cache-from: type=gha,scope=${{ inputs.app }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.app }}

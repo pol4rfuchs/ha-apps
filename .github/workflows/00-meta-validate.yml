@@ -1,0 +1,131 @@
+name: 00 Meta Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meta-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repo-shape:
+    name: Repository shape and monorepo contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate repository and add-on folders
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f repository.yaml
+
+          python3 - <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          root = Path(".")
+          expected = {
+              "intiface_central",
+              "matrix_synapse",
+              "navidrome",
+              "nginx_proxy_manager",
+              "ntfy",
+              "ntfy_manager",
+              "searxng",
+              "teamspeak6",
+              "ts6_manager",
+          }
+
+          def scalar(text: str, key: str) -> str:
+              m = re.search(rf"(?m)^\s*{re.escape(key)}\s*:\s*['\"]?([^'\"\n#]+)", text)
+              return m.group(1).strip() if m else ""
+
+          def list_value(text: str, key: str) -> list[str]:
+              m = re.search(rf"(?ms)^\s*{re.escape(key)}\s*:\s*\n((?:\s+-\s+[^\n]+\n?)+)", text)
+              if m:
+                  return [x.strip().strip("'\"") for x in re.findall(r"(?m)^\s*-\s*([^\n#]+)", m.group(1))]
+              one = scalar(text, key)
+              if one.startswith("[") and one.endswith("]"):
+                  return [x.strip().strip("'\"") for x in one[1:-1].split(",") if x.strip()]
+              return [one] if one else []
+
+          repo_text = Path("repository.yaml").read_text(encoding="utf-8")
+          for key in ("name", "url", "maintainer"):
+              if not scalar(repo_text, key):
+                  raise SystemExit(f"repository.yaml missing required key: {key}")
+
+          found = {p.parent.as_posix() for p in root.glob("*/config.yaml") if not p.parent.name.startswith(".")}
+          missing = expected - found
+          if missing:
+              raise SystemExit(f"missing expected add-on folders: {sorted(missing)}")
+
+          extra = found - expected
+          if extra:
+              print(f"notice: extra config.yaml folders present: {sorted(extra)}")
+
+          for app in sorted(expected):
+              cfg = Path(app, "config.yaml")
+              dockerfile = Path(app, "Dockerfile")
+              if not cfg.is_file():
+                  raise SystemExit(f"{cfg} missing")
+              if not dockerfile.is_file():
+                  raise SystemExit(f"{dockerfile} missing")
+
+              text = cfg.read_text(encoding="utf-8")
+              for key in ("name", "version", "slug", "arch", "image", "url"):
+                  if not scalar(text, key) and key != "arch":
+                      raise SystemExit(f"{cfg}: missing {key}")
+
+              image = scalar(text, "image").strip("'\"")
+              if not image.startswith("ghcr.io/pol4rfuchs/"):
+                  raise SystemExit(f"{cfg}: image must point to ghcr.io/pol4rfuchs/...")
+
+              url = scalar(text, "url").strip("'\"")
+              if url != "https://github.com/pol4rfuchs/ha-apps":
+                  raise SystemExit(f"{cfg}: url must be https://github.com/pol4rfuchs/ha-apps")
+
+              arch = list_value(text, "arch")
+              if not arch:
+                  raise SystemExit(f"{cfg}: arch must be non-empty")
+              bad_arch = sorted(set(arch) - {"aarch64", "amd64"})
+              if bad_arch:
+                  raise SystemExit(f"{cfg}: unsupported arch entries: {bad_arch}")
+
+              if Path(app, "build.yaml").exists():
+                  raise SystemExit(f"{app}/build.yaml is deprecated and must not exist")
+              if Path(app, "repository.yaml").exists():
+                  raise SystemExit(f"{app}/repository.yaml must not exist inside add-on folder")
+              if Path(app, "rootfs", "etc", "services.d").exists():
+                  raise SystemExit(f"{app}/rootfs/etc/services.d is old s6-v2 layout and must not exist")
+
+          print("Validated monorepo app contract:", ", ".join(sorted(expected)))
+          PY
+
+      - name: Check for deprecated legacy forge references
+        shell: bash
+        run: |
+          set -euo pipefail
+          token_a="code"
+          token_b="berg"
+          token_c="forge"
+          token_d="jo"
+          pattern="${token_a}${token_b}|${token_c}${token_d}|${token_a}${token_b}[.]page|[.]${token_c}${token_d}"
+          if git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml'; then
+            echo "ERROR: deprecated legacy forge reference found." >&2
+            exit 1
+          fi

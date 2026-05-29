@@ -1,0 +1,41 @@
+name: 09 HACS Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - hacs.json
+      - custom_components/**
+      - ".github/workflows/09-hacs-validate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - hacs.json
+      - custom_components/**
+      - ".github/workflows/09-hacs-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hacs:
+    name: HACS validation if hacs.json exists
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate HACS
+        if: ${{ hashFiles('hacs.json') != '' }}
+        uses: hacs/action@main
+        with:
+          category: integration
+
+      - name: Skip
+        if: ${{ hashFiles('hacs.json') == '' }}
+        run: echo "No hacs.json in repository root; skipping HACS validation."

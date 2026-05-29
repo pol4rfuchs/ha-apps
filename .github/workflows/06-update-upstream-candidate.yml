@@ -1,4 +1,4 @@
-name: Safe Auto-Update Candidates
+name: 06 Update Upstream Candidate
 
 on:
   schedule:
@@ -120,6 +120,8 @@ jobs:
         id: target
         if: ${{ (env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon) && matrix.mode != 'noop' }}
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 

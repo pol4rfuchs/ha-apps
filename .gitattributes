@@ -1,0 +1,6 @@
+# Keep CI/config files stable across Windows and Linux runners.
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.md text eol=lf

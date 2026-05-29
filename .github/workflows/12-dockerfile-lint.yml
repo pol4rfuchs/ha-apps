@@ -1,0 +1,50 @@
+name: 12 Dockerfile Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "*/Dockerfile"
+      - ".github/workflows/12-dockerfile-lint.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "*/Dockerfile"
+      - ".github/workflows/12-dockerfile-lint.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hadolint:
+    name: Hadolint ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - intiface_central
+          - matrix_synapse
+          - navidrome
+          - nginx_proxy_manager
+          - ntfy
+          - ntfy_manager
+          - searxng
+          - teamspeak6
+          - ts6_manager
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run Hadolint
+        if: ${{ hashFiles(format('{0}/Dockerfile', matrix.app)) != '' }}
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ matrix.app }}/Dockerfile
+          failure-threshold: error
+          no-fail: false

@@ -1,0 +1,28 @@
+name: 07 Dependabot PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  dependabot-metadata:
+    name: Dependabot metadata
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+
+      - name: Print update class
+        shell: bash
+        run: |
+          echo "dependency-names=${{ steps.metadata.outputs.dependency-names }}"
+          echo "update-type=${{ steps.metadata.outputs.update-type }}"
+          echo "directory=${{ steps.metadata.outputs.directory }}"
+          echo "package-ecosystem=${{ steps.metadata.outputs.package-ecosystem }}"

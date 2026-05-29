@@ -1,0 +1,57 @@
+name: 11 Python Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**/*.py"
+      - requirements*.txt
+      - pyproject.toml
+      - ".github/workflows/11-python-tests.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.py"
+      - requirements*.txt
+      - pyproject.toml
+      - ".github/workflows/11-python-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    name: Pytest if tests exist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        if: ${{ hashFiles('tests/**/*.py') != '' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        if: ${{ hashFiles('tests/**/*.py') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          if [ -f requirements_test.txt ]; then pip install -r requirements_test.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          pip install pytest
+
+      - name: Run pytest
+        if: ${{ hashFiles('tests/**/*.py') != '' }}
+        run: pytest -q
+
+      - name: Skip
+        if: ${{ hashFiles('tests/**/*.py') == '' }}
+        run: echo "No tests directory found; skipping pytest."

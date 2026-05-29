@@ -1,0 +1,89 @@
+name: 02 Build Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/02-build-test.yml"
+      - ".github/workflows/build-app.yaml"
+      - "*/Dockerfile"
+      - "*/config.yaml"
+      - "*/rootfs/**"
+      - "*/scripts/**"
+      - "*/apps/**"
+      - "*/package*.json"
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Specific add-on folder to test-build, or all"
+        required: false
+        default: "all"
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: build-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect add-ons
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.detect.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build test matrix
+        id: detect
+        shell: bash
+        env:
+          DISPATCH_APP: ${{ inputs.app || 'all' }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+
+          expected = [
+              "intiface_central",
+              "matrix_synapse",
+              "navidrome",
+              "nginx_proxy_manager",
+              "ntfy",
+              "ntfy_manager",
+              "searxng",
+              "teamspeak6",
+              "ts6_manager",
+          ]
+          wanted = os.environ.get("DISPATCH_APP", "all")
+          rows = []
+          for app in expected:
+              if wanted not in ("", "all") and app != wanted:
+                  continue
+              if Path(app, "Dockerfile").is_file() and Path(app, "config.yaml").is_file():
+                  rows.append({"app": app})
+          print("apps=" + json.dumps(rows))
+          PY
+
+  build:
+    name: Test build ${{ matrix.app }}
+    needs: detect
+    if: needs.detect.outputs.apps != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.apps) }}
+    uses: ./.github/workflows/build-app.yaml
+    with:
+      app: ${{ matrix.app }}
+      publish: false
+    secrets: inherit

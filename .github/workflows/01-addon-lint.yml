@@ -1,0 +1,87 @@
+name: 01 Add-on Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "17 2 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: addon-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - intiface_central
+          - matrix_synapse
+          - navidrome
+          - nginx_proxy_manager
+          - ntfy
+          - ntfy_manager
+          - searxng
+          - teamspeak6
+          - ts6_manager
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Static add-on lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="${{ matrix.app }}"
+          test -f "${app}/config.yaml"
+          test -f "${app}/Dockerfile"
+
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          app = "${{ matrix.app }}"
+          cfg = Path(app, "config.yaml")
+          text = cfg.read_text(encoding="utf-8")
+
+          def scalar(key: str) -> str:
+              m = re.search(rf"(?m)^\s*{re.escape(key)}\s*:\s*['\"]?([^'\"\n#]+)", text)
+              return m.group(1).strip() if m else ""
+
+          required = ("name", "version", "slug", "description", "arch", "image", "url")
+          missing = [key for key in required if not scalar(key) and key != "arch"]
+          if missing:
+              raise SystemExit(f"{cfg}: missing keys {missing}")
+
+          image = scalar("image").strip("'\"")
+          if not image.startswith("ghcr.io/pol4rfuchs/"):
+              raise SystemExit(f"{cfg}: invalid image {image!r}")
+
+          slug = scalar("slug").strip("'\"")
+          if not re.fullmatch(r"[a-z0-9_][a-z0-9_-]*", slug):
+              raise SystemExit(f"{cfg}: invalid slug {slug!r}")
+
+          version = scalar("version").strip("'\"")
+          if not re.fullmatch(r"[0-9]+(\.[0-9A-Za-z-]+)+", version):
+              raise SystemExit(f"{cfg}: suspicious version {version!r}")
+
+          print(f"OK: {app} {slug} {version} -> {image}")
+          PY
+
+      - name: Home Assistant add-on linter
+        uses: frenck/action-addon-linter@v2.21
+        with:
+          path: "./${{ matrix.app }}"

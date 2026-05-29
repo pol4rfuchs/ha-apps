@@ -1,0 +1,128 @@
+name: 04 Release From Config
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*/config.yaml"
+      - ".github/workflows/04-release-from-config.yml"
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Specific add-on folder to release, or all"
+        required: false
+        default: "all"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-from-config-${{ github.ref }}-${{ github.event.inputs.app || 'all' }}
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Discover release targets
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.apps.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build release matrix
+        id: apps
+        env:
+          DISPATCH_APP: ${{ inputs.app || 'all' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          expected = [
+              "intiface_central",
+              "matrix_synapse",
+              "navidrome",
+              "nginx_proxy_manager",
+              "ntfy",
+              "ntfy_manager",
+              "searxng",
+              "teamspeak6",
+              "ts6_manager",
+          ]
+          wanted = os.environ.get("DISPATCH_APP", "all")
+
+          def scalar(text: str, key: str) -> str:
+              m = re.search(rf"(?m)^\s*{re.escape(key)}\s*:\s*['\"]?([^'\"\n#]+)", text)
+              return m.group(1).strip().strip("'\"") if m else ""
+
+          rows = []
+          for app in expected:
+              if wanted not in ("", "all") and app != wanted:
+                  continue
+              cfg = Path(app, "config.yaml")
+              if not cfg.is_file():
+                  continue
+              text = cfg.read_text(encoding="utf-8")
+              version = scalar(text, "version")
+              slug = scalar(text, "slug") or app
+              image = scalar(text, "image")
+              if not version:
+                  raise SystemExit(f"{cfg}: missing version")
+              rows.append({
+                  "app": app,
+                  "slug": slug,
+                  "version": version,
+                  "image": image,
+                  "tag": f"{slug}-v{version}",
+              })
+          print("apps=" + json.dumps(rows))
+          PY
+
+  release:
+    name: Release ${{ matrix.app }} ${{ matrix.version }}
+    needs: discover
+    if: needs.discover.outputs.apps != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.discover.outputs.apps) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check tag existence
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/${{ matrix.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub release
+        if: steps.tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ matrix.tag }}
+          name: ${{ matrix.slug }} ${{ matrix.version }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            Automated release from `${{ matrix.app }}/config.yaml`.
+
+            Image: `${{ matrix.image }}:${{ matrix.version }}`
+            Latest: `${{ matrix.image }}:latest`
+          generate_release_notes: true
