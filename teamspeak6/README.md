@@ -8,19 +8,17 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-teamspeak6--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/teamspeak6-ha-app)
-[![Codeberg Repo](https://img.shields.io/badge/Codeberg-teamspeak6--ha--app-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app)
 [![TS6 Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0.beta9-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://github.com/teamspeak/teamspeak6-server)
-[![App Version](https://img.shields.io/badge/teamspeak6--ha--app-v1.1.2-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 </div>
 
 ### WIKI
-[TS6-Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/teamspeak6-ha-app/)
+[TS6-Wiki](https://https://github.com/pol4rfuchs/ha-apps/wiki)
 
 ## Installation
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fteamspeak6-ha-app)
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
 > **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant add-on. Not affiliated with or endorsed by the TeamSpeak Systems, Inc..
 ## Add-ons in this repository
@@ -164,7 +162,6 @@ git add .
 git commit -m "feat: initial TeamSpeak 6 addon"
 
 # Push to your remote (must be public!)
-git remote add origin https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app.git
 git push -u origin main
 ```
 
@@ -183,14 +180,14 @@ Settings → Add-ons → Add-on Store → ⋮ (three dots) → Repositories
 Paste the URL of your repository:
 
 ```
-https://codeberg.org/<your-username>/teamspeak6-ha-app
+https://github.com/pol4rfuchs/ha-apps
 ```
 
 or via one-click badge:
 
 ## Installation
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fteamspeak6-ha-app)
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 ---
 
 ### Step 3 — Install the add-on
