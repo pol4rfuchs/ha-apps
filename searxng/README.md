@@ -7,7 +7,6 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Codeberg Repo](https://img.shields.io/badge/Codeberg-ha--apps-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
 [![SearXNG](https://img.shields.io/badge/SearXNG-upstream-3498DB?style=for-the-badge&logo=searxng&logoColor=white)](https://github.com/searxng/searxng)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
