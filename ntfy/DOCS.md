@@ -9,7 +9,7 @@ Self-hosted push notification service. Send notifications to your phone, desktop
 ### Step 1 — Install the add-on
 
 1. **Settings → Add-ons → Add-on Store** → ⋮ (top right) → **Repositories**
-2. Add: `https://codeberg.org/Pol4rFuchs/ntfy-ha-app`
+2. Add: `https://github.com/pol4rfuchs/ha-apps`
 3. Search for **ntfy**, click **Install**
 
 ### Step 2 — Configure
