@@ -23,7 +23,7 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) als Sing
 
 1. Repository zum Add-on Store hinzufügen:  
    **Einstellungen → Add-ons → Add-on Store → ⋮ → Repositories**  
-   URL: `https://codeberg.org/Pol4rFuchs/ha-apps`
+   URL: `https://github.com/pol4rfuchs/ha-apps`
 
 2. "TS6 Manager" installieren
 
