@@ -1,4 +1,8 @@
-const API_BASE = "/api";
+const INGRESS_BASE = (() => {
+  const m = window.location.pathname.match(/^(.*\/hassio_ingress\/[^/]+)/);
+  return m ? m[1] : "";
+})();
+const API_BASE = `${INGRESS_BASE}/api`;
 
 export type ApiError = {
   status: number;
