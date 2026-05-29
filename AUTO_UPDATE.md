@@ -1,6 +1,6 @@
 # Safe TeamSpeak 6 Manager Auto-Update Flow
 
-This repository uses a guarded Forgejo workflow for the TeamSpeak 6 Manager Home Assistant add-on.
+This repository uses guarded GitHub Actions workflows for the TeamSpeak 6 Manager Home Assistant add-on.
 
 ## Safety model
 
@@ -41,9 +41,9 @@ args        → ARG BUILD_VERSION / BUILD_ARCH / TS6_MANAGER_REPO / TS6_MANAGER_
 
 If `ts6_manager/build.yaml` still exists, remove it after this migration is committed and validated.
 
-## Codeberg hosted runner note
+## GitHub Actions runner note
 
-Codeberg hosted runners may not expose a usable Docker daemon. Therefore the default validation mode is:
+GitHub-hosted runners normally expose Docker. The default validation mode remains conservative:
 
 ```text
 VALIDATE_DOCKER=auto
@@ -51,7 +51,7 @@ VALIDATE_DOCKER=auto
 
 This always runs static validation. Docker build and smoke-test run only when Docker is actually available.
 
-For full validation use a self-hosted runner with Docker and set:
+For mandatory Docker validation, set:
 
 ```text
 VALIDATE_DOCKER=required
@@ -62,11 +62,11 @@ VALIDATE_DOCKER=required
 Both workflows require these files to be committed at repository root:
 
 ```text
-.forgejo/workflows/validate-addon.yaml
-.forgejo/workflows/auto-update-ts6-manager.yaml
+.github/workflows/validate-addon.yaml
+.github/workflows/auto-update-ts6-manager.yaml
+.github/workflows/release-on-main.yaml
 scripts/install-yq-ci.sh
 scripts/validate-addon.sh
-scripts/update-ts6-manager.sh
 ts6_manager/Dockerfile
 ts6_manager/config.yaml
 ```
@@ -80,10 +80,10 @@ Release creation remains separate and must run only after a candidate branch is 
 Flow:
 
 ```text
-candidate branch → pull request → merge into main → release-on-main creates Codeberg Release
+candidate branch → pull request → merge into main → release-on-main creates GitHub Release
 ```
 
-Do not create Releases from candidate branches.
+Do not create GitHub Releases from candidate branches.
 
 
 ## v8 build.yaml-free release/push fixes

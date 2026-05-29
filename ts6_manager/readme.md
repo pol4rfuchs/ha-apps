@@ -7,7 +7,7 @@
 
 <div align="center">
 
-[![Codeberg Repo](https://img.shields.io/badge/Codeberg-teamspeak6--manager--ha--app-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-teamspeak6--manager--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Upstream](https://img.shields.io/badge/Upstream-clusterzx%2Fts6--manager-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/clusterzx/ts6-manager)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![License](https://img.shields.io/badge/License-MIT-2ECC71?style=for-the-badge)](LICENSE)
@@ -18,7 +18,7 @@
 
 ---
 ### WIKI
-[ts6-manager-Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/ts6-manager-ha-app/)
+[ts6-manager Documentation](https://github.com/pol4rfuchs/ha-apps/tree/main/ts6_manager)
 
 
 ## Installation
@@ -495,6 +495,6 @@ Made with ❤️ for the Home Assistant and TeamSpeak community
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![TeamSpeak](https://img.shields.io/badge/TeamSpeak-6-blue?style=flat-square&logo=teamspeak&logoColor=white)](https://teamspeak.com)
-[![Codeberg](https://img.shields.io/badge/Codeberg-Repository-2185D0?style=flat-square&logo=codeberg&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
 </div>

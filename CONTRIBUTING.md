@@ -42,7 +42,7 @@ In `index.html`, `404.html`, and all sub-pages, add this inside the `<nav>` bloc
 Add a new entry to `sitemap.xml`:
 
 ```xml
-<url><loc>https://pol4rfuchs.codeberg.page/new-project/</loc></url>
+<url><loc>https://pol4rfuchs.github.io/ha-apps/new-project/</loc></url>
 ```
 
 ### 6. Commit and push

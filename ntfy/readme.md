@@ -9,7 +9,7 @@
 ![ntfy logo](https://github.com/pol4rfuchs/ha-apps/blob/main/ntfy/icon.png)
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
-[![Codeberg Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.22.0-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
 [![App Version](https://img.shields.io/badge/ntfy--ha--app-v1.1.6.6-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
@@ -21,7 +21,7 @@
 
 ---
 ### WIKI
-[ntfy-Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/ntfy-ha-app/)
+[ntfy Documentation](https://github.com/pol4rfuchs/ha-apps/tree/main/ntfy)
 
 
 ## Installation
@@ -818,8 +818,8 @@ ntfy access
 Full documentation:
 
 - [DOCS.md](ntfy/DOCS.md)
-- [CLI Reference Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/ntfy-ha-app/#cli-reference)
-- [Wiki](https://pol4rfuchs.codeberg.page/ha-appwikis/)
+- [CLI Reference](DOCS.md#cli-reference)
+- [Repository Documentation](https://github.com/pol4rfuchs/ha-apps)
 
 Optional desktop companion:
 
@@ -860,6 +860,6 @@ Made with ❤️ for the Home Assistant and self-hosting community
 
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=flat-square&logo=ntfy&logoColor=white)](https://ntfy.sh)
-[![Codeberg](https://img.shields.io/badge/Codeberg-Repository-2185D0?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
 </div>
