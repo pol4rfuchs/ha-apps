@@ -97,7 +97,7 @@ jobs:
 
       - name: Checkout repository
         if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
