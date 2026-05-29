@@ -1,6 +1,6 @@
 # Pol4rFuchs Home Assistant Add-ons
 
-[![HA Add-on Repository](https://img.shields.io/badge/HA-Add--on%20Repository-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://codeberg.org/Pol4rFuchs/ha-apps)
+[![HA Add-on Repository](https://img.shields.io/badge/HA-Add--on%20Repository-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
 Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64` + `amd64`).
 
@@ -11,6 +11,7 @@ Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64
 | [TS6 Manager](ts6_manager/) | stable | custom build | Web management interface for TeamSpeak 6 servers |
 | [TeamSpeak 6 Server](teamspeak6/) | ready | `teamspeaksystems/teamspeak6-server` | TeamSpeak 6 voice server |
 | [ntfy](ntfy/) | ready | `binwiederhier/ntfy` | ntfy push notification server |
+| [ntfy HAOS Admin Panel](ntfy_manager/) | ready | custom build | Full-featured admin console for ntfy |
 | [Navidrome](navidrome/) | ready | `deluan/navidrome` | Self-hosted music server (Subsonic-compatible) |
 | [Matrix Synapse](matrix_synapse/) | ready | `ghcr.io/element-hq/synapse` | Matrix homeserver for secure messaging |
 | [SearXNG](searxng/) | ready | `searxng/searxng` | Privacy-respecting metasearch engine |
@@ -23,7 +24,7 @@ Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64
 2. Navigate to **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
 3. Add this URL:
    ```
-   https://codeberg.org/Pol4rFuchs/ha-apps
+   https://github.com/pol4rfuchs/ha-apps
    ```
 4. Reload the store — all available add-ons appear automatically
 
@@ -38,12 +39,12 @@ No `armhf`, `armv7`, or `i386` builds.
 
 ## Prebuilt Images
 
-Add-ons are distributed as prebuilt multi-arch container images via Codeberg Container Registry.
+Add-ons are distributed as prebuilt multi-arch container images via the GitHub Container Registry (GHCR).
 Home Assistant pulls the finished image — no local build required on your device.
 
 ```
-Codeberg (source + registry) ← images live here
-GitHub Mirror (CI only)      ← builds via free GitHub Actions runners
+GitHub (source + CI)   → builds via GitHub Actions runners
+GHCR (ghcr.io)         ← images live here
 ```
 
 ## License
