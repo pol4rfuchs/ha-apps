@@ -17,7 +17,6 @@ FROM ghcr.io/hassio-addons/base:16.3.2
 RUN apk add --no-cache \
     nodejs \
     nginx \
-    openssl \
     curl \
     ca-certificates \
     && rm -rf /var/cache/apk/*
