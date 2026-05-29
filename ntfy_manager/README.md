@@ -48,7 +48,7 @@ Liefert die komplette Feature-Parität des single-file HTML-Admin-Panels — als
 
 ## Installation
 
-1. Add Codeberg Repo to Home Assistant.
+1. Repository zu Home Assistant hinzufügen: `https://github.com/pol4rfuchs/ha-apps`
 2. Add-on installieren.
 3. Konfigurieren — entweder ntfy-Credentials direkt im Add-on, oder leer lassen für interaktiven Login.
 4. Starten — Sidebar-Eintrag „ntfy Admin" erscheint.
