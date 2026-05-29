@@ -9,6 +9,8 @@ on:
     branches: [main]
     paths:
       - "ntfy_manager/**"
+      - ".github/workflows/ntfy_manager.yml"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -57,6 +59,17 @@ jobs:
           VERSION=$(grep '^version:' ntfy_manager/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Build only
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: ntfy_manager
+          platforms: ${{ matrix.platform }}
+          push: false
+          build-args: |
+            BUILD_VERSION=${{ steps.addon.outputs.version }}
+          cache-from: type=gha,scope=ntfy_manager-${{ matrix.suffix }}
+
       - name: Build and push by digest
         id: build
         if: github.event_name != 'pull_request'
@@ -66,6 +79,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          build-args: |
+            BUILD_VERSION=${{ steps.addon.outputs.version }}
           cache-from: type=gha,scope=ntfy_manager-${{ matrix.suffix }}
           cache-to: type=gha,mode=max,scope=ntfy_manager-${{ matrix.suffix }}
 
@@ -90,6 +105,7 @@ jobs:
     needs: build
     if: github.event_name != 'pull_request'
     permissions:
+      contents: read
       packages: write
 
     steps:

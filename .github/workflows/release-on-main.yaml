@@ -1,11 +1,40 @@
-name: TS6 Manager Release on main
+name: Release Add-ons on main
 
 on:
   workflow_dispatch:
+    inputs:
+      addon:
+        description: "Add-on dir to release, or all."
+        required: false
+        default: "all"
   push:
     branches:
       - main
     paths:
+      - "intiface_central/config.yaml"
+      - "intiface_central/Dockerfile"
+      - "intiface_central/CHANGELOG.md"
+      - "matrix_synapse/config.yaml"
+      - "matrix_synapse/Dockerfile"
+      - "matrix_synapse/CHANGELOG.md"
+      - "navidrome/config.yaml"
+      - "navidrome/Dockerfile"
+      - "navidrome/CHANGELOG.md"
+      - "nginx_proxy_manager/config.yaml"
+      - "nginx_proxy_manager/Dockerfile"
+      - "nginx_proxy_manager/CHANGELOG.md"
+      - "ntfy/config.yaml"
+      - "ntfy/Dockerfile"
+      - "ntfy/CHANGELOG.md"
+      - "ntfy_manager/config.yaml"
+      - "ntfy_manager/Dockerfile"
+      - "ntfy_manager/CHANGELOG.md"
+      - "searxng/config.yaml"
+      - "searxng/Dockerfile"
+      - "searxng/CHANGELOG.md"
+      - "teamspeak6/config.yaml"
+      - "teamspeak6/Dockerfile"
+      - "teamspeak6/CHANGELOG.md"
       - "ts6_manager/config.yaml"
       - "ts6_manager/Dockerfile"
       - "ts6_manager/CHANGELOG.md"
@@ -15,15 +44,93 @@ permissions:
   contents: write
 
 concurrency:
-  group: ts6-manager-release
+  group: addon-release-${{ github.ref }}-${{ github.event.inputs.addon || 'auto' }}
   cancel-in-progress: false
 
 jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect release candidates
+        id: detect
+        shell: bash
+        env:
+          MANUAL_ADDON: ${{ github.event.inputs.addon || '' }}
+          BEFORE_SHA: ${{ github.event.before || '' }}
+          CURRENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          all_addons=(
+            "intiface_central"
+            "matrix_synapse"
+            "navidrome"
+            "nginx_proxy_manager"
+            "ntfy"
+            "ntfy_manager"
+            "searxng"
+            "teamspeak6"
+            "ts6_manager"
+          )
+
+          selected=()
+
+          if [[ -n "${MANUAL_ADDON}" ]]; then
+            if [[ "${MANUAL_ADDON}" == "all" ]]; then
+              selected=("${all_addons[@]}")
+            else
+              selected=("${MANUAL_ADDON}")
+            fi
+          else
+            if [[ -n "${BEFORE_SHA}" && ! "${BEFORE_SHA}" =~ ^0+$ ]]; then
+              changed="$(git diff --name-only "${BEFORE_SHA}" "${CURRENT_SHA}" || true)"
+            else
+              changed="$(git diff-tree --no-commit-id --name-only -r "${CURRENT_SHA}" || true)"
+            fi
+
+            for addon in "${all_addons[@]}"; do
+              if grep -Eq "^${addon}/(config.yaml|Dockerfile|CHANGELOG.md)$" <<< "${changed}"; then
+                selected+=("${addon}")
+              fi
+            done
+          fi
+
+          python3 - <<'PY' "${selected[@]}" >> "$GITHUB_OUTPUT"
+          import json
+          import sys
+          from pathlib import Path
+
+          matrix = []
+          seen = set()
+          for addon in sys.argv[1:]:
+              if addon in seen:
+                  continue
+              seen.add(addon)
+              if Path(addon, "config.yaml").is_file() and Path(addon, "Dockerfile").is_file():
+                  matrix.append({"addon": addon})
+
+          print("matrix=" + json.dumps(matrix, separators=(",", ":")))
+          PY
+
   release:
+    needs: detect
+    if: ${{ needs.detect.outputs.matrix != '[]' }}
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.matrix) }}
+
     env:
-      ADDON_DIR: ts6_manager
+      ADDON_DIR: ${{ matrix.addon }}
       TARGET_BRANCH: main
 
     steps:
@@ -33,50 +140,62 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify release files are present
+      - name: Read release metadata
+        id: meta
         shell: bash
         run: |
           set -euo pipefail
 
-          test -f ts6_manager/config.yaml || { echo "ERROR: missing ts6_manager/config.yaml" >&2; exit 1; }
-          test -f ts6_manager/Dockerfile || { echo "ERROR: missing ts6_manager/Dockerfile" >&2; exit 1; }
-
-          if [[ -f ts6_manager/build.yaml ]]; then
-            echo "WARN: ts6_manager/build.yaml exists but is deprecated; Dockerfile ARGs should be used instead."
-          fi
-
-      - name: Read add-on version
-        id: version
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          version="$(python3 - <<'PY'
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os
           import re
           import sys
           from pathlib import Path
 
-          text = Path("ts6_manager/config.yaml").read_text(encoding="utf-8")
-          match = re.search(r"(?m)^\s*version:\s*[\"']?([^\"'\n#]+)", text)
-          if not match:
-              print("ERROR: version not found in ts6_manager/config.yaml", file=sys.stderr)
-              sys.exit(1)
+          addon = os.environ["ADDON_DIR"]
+          config_path = Path(addon, "config.yaml")
+          dockerfile_path = Path(addon, "Dockerfile")
 
-          print(match.group(1).strip())
+          if not config_path.is_file():
+              print(f"ERROR: missing {config_path}", file=sys.stderr)
+              raise SystemExit(1)
+          if not dockerfile_path.is_file():
+              print(f"ERROR: missing {dockerfile_path}", file=sys.stderr)
+              raise SystemExit(1)
+
+          def read_scalar(key, default=""):
+              pattern = re.compile(rf"^\s*{re.escape(key)}\s*:\s*[\"']?([^\"'\n#]+)")
+              for line in config_path.read_text(encoding="utf-8").splitlines():
+                  match = pattern.search(line)
+                  if match:
+                      return match.group(1).strip()
+              return default
+
+          version = read_scalar("version")
+          name = read_scalar("name", addon)
+          slug = read_scalar("slug", addon)
+
+          if not version:
+              print(f"ERROR: version not found in {config_path}", file=sys.stderr)
+              raise SystemExit(1)
+
+          tag_prefix = addon.replace("_", "-")
+          safe_title = name.replace("\n", " ").strip()
+          tag = f"{tag_prefix}-v{version}"
+
+          print(f"version={version}")
+          print(f"tag={tag}")
+          print(f"title={safe_title}")
+          print(f"slug={slug}")
           PY
-          )"
-
-          tag="ts6-manager-v${version}"
-
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ steps.version.outputs.tag }}
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_TAG: ${{ steps.meta.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.meta.outputs.version }}
+          RELEASE_TITLE: ${{ steps.meta.outputs.title }}
         run: |
           set -euo pipefail
 
@@ -91,28 +210,36 @@ jobs:
           if git ls-remote --tags origin "refs/tags/${RELEASE_TAG}" | grep -q "${RELEASE_TAG}"; then
             echo "Tag ${RELEASE_TAG} already exists on origin."
           else
-            git tag -a "${RELEASE_TAG}" -m "TS6 Manager ${RELEASE_VERSION}"
+            git tag -a "${RELEASE_TAG}" -m "${RELEASE_TITLE} ${RELEASE_VERSION}"
             git push origin "${RELEASE_TAG}"
           fi
 
           notes_file="$(mktemp)"
           {
-            echo "TS6 Manager Home Assistant add-on release ${RELEASE_VERSION}"
+            echo "${RELEASE_TITLE} Home Assistant add-on release ${RELEASE_VERSION}"
             echo
-            echo "Source directory: \`ts6_manager/\`"
+            echo "Source directory: \`${ADDON_DIR}/\`"
             echo "Target branch: \`${TARGET_BRANCH}\`"
+            echo "Image: \`$(python3 - <<'PY'
+          import os
+          import yaml
+          from pathlib import Path
+          data = yaml.safe_load(Path(os.environ["ADDON_DIR"], "config.yaml").read_text(encoding="utf-8")) or {}
+          print(data.get("image", ""))
+          PY
+          ):${RELEASE_VERSION}\`"
           } > "${notes_file}"
 
-          if [[ -f ts6_manager/CHANGELOG.md ]]; then
+          if [[ -f "${ADDON_DIR}/CHANGELOG.md" ]]; then
             {
               echo
               echo "## Changelog"
               echo
-              cat ts6_manager/CHANGELOG.md
+              cat "${ADDON_DIR}/CHANGELOG.md"
             } >> "${notes_file}"
           fi
 
           gh release create "${RELEASE_TAG}" \
             --target "${GITHUB_SHA}" \
-            --title "TS6 Manager ${RELEASE_VERSION}" \
+            --title "${RELEASE_TITLE} ${RELEASE_VERSION}" \
             --notes-file "${notes_file}"
