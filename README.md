@@ -23,7 +23,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 ## Installation
 
 1. Open Home Assistant
-2. Navigate to **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
+2. Navigate to **Settings → Apps → App Store → ⋮ → Repositories**
 3. Add this URL:
    ```
    https://github.com/pol4rfuchs/ha-apps
