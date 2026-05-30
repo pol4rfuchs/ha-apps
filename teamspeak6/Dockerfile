@@ -5,7 +5,7 @@ FROM teamspeaksystems/teamspeak6-server:${TEAMSPEAK_VERSION}
 
 ARG BUILD_VERSION=dev
 ARG BUILD_ARCH=aarch64
-ARG TEAMSPEAK_VERSION=6.0.0-beta9
+ARG TEAMSPEAK_VERSION=6.0.0-beta10
 
 USER root
 

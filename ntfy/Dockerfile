@@ -9,7 +9,7 @@ FROM binwiederhier/ntfy:v${NTFY_VERSION} AS ntfy-source
 FROM ghcr.io/hassio-addons/base:16.3.2
 
 ARG BUILD_VERSION=dev
-ARG NTFY_VERSION=2.22.0
+ARG NTFY_VERSION=2.23.0
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
