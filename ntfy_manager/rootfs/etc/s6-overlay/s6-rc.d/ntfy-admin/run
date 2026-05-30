@@ -11,7 +11,7 @@ export LOG_LEVEL="info"
 export SESSION_COOKIE_NAME="ntfy_admin_token"
 
 if [[ ! -f /data/jwt_secret ]]; then
-    openssl rand -base64 48 > /data/jwt_secret
+    dd if=/dev/urandom bs=48 count=1 2>/dev/null | base64 | tr -d '\n' > /data/jwt_secret
     chmod 600 /data/jwt_secret
     bashio::log.info "Generated new JWT secret (persisted in /data/jwt_secret)"
 fi
