@@ -203,7 +203,6 @@ jobs:
           MATRIX:   ${{ needs.prepare.outputs.matrix }}
           OWNER:    ${{ github.repository_owner }}
         run: |
-        run: |
           set -euo pipefail
 
           python3 - <<'PY'
