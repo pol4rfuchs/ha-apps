@@ -1,5 +1,5 @@
 name: "SearXNG"
-version: "2026.3.8"
+version: "2026.5.29"
 slug: "searxng"
 image: "ghcr.io/pol4rfuchs/searxng-ha-app"
 description: "Privacy-respecting metasearch engine — kein Tracking, keine Profile."
