@@ -177,25 +177,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Build list of per-suffix source tags from matrix JSON
-          # Build list of per-suffix source tags from matrix JSON
-          mapfile -t suffixes < <(python3 -c "
-          import json, os
-          m = json.loads(os.environ['MATRIX'])
-          print('\\n'.join(e['suffix'] for e in m))
-          ")
-
-          sources=()
-          for suffix in "${suffixes[@]}"; do
-            sources+=("${IMAGE}:${VERSION}-${suffix}")
-          done
-
-          docker buildx imagetools create \
-            --tag "${IMAGE}:${VERSION}" \
-            --tag "${IMAGE}:latest" \
-            "${sources[@]}"
-          echo "Manifest pushed:"
-          docker buildx imagetools inspect "${IMAGE}:${VERSION}"
+          python3 - <<'PY'
+          import json, os, subprocess
+          matrix  = json.loads(os.environ['MATRIX'])
+          image   = os.environ['IMAGE']
+          version = os.environ['VERSION']
+          sources = [f"{image}:{version}-{e['suffix']}" for e in matrix]
+          cmd = ['docker', 'buildx', 'imagetools', 'create',
+                 '--tag', f'{image}:{version}',
+                 '--tag', f'{image}:latest',
+                 *sources]
+          subprocess.run(cmd, check=True)
+          subprocess.run(['docker', 'buildx', 'imagetools', 'inspect',
+                          f'{image}:{version}'], check=True)
+          print('Manifest pushed successfully')
+          PY
 
       - name: Delete intermediate platform tags
         if: inputs.publish
@@ -207,34 +203,35 @@ jobs:
           MATRIX:   ${{ needs.prepare.outputs.matrix }}
           OWNER:    ${{ github.repository_owner }}
         run: |
+        run: |
           set -euo pipefail
 
-          # Extract package name from image (ghcr.io/owner/pkg → pkg)
-          pkg="${IMAGE##*/}"
-
-          suffixes=$(python3 -c "
-          mapfile -t suffixes < <(python3 -c "
-          import json, os
-          m = json.loads(os.environ['MATRIX'])
-          print('\\n'.join(e['suffix'] for e in m))
-          ")
-
-          for suffix in "${suffixes[@]}"; do
-            echo "Deleting intermediate tag: ${pkg}:${tag}"
-
-            # Find the version ID for this tag
-            version_id=$(gh api \
-              "https://api.github.com/users/${OWNER}/packages/container/${pkg}/versions" \
-              --paginate \
-              --jq ".[] | select(.metadata.container.tags[] == \"${tag}\") | .id" \
-              2>/dev/null | head -1 || true)
-
-            if [[ -n "${version_id}" ]]; then
-              gh api --method DELETE \
-                "https://api.github.com/users/${OWNER}/packages/container/${pkg}/versions/${version_id}" \
-                && echo "Deleted version ID ${version_id} (${tag})" \
-                || echo "Warning: could not delete ${tag} (non-fatal)"
-            else
-              echo "Tag ${tag} not found or already gone — skipping"
-            fi
-          done
+          python3 - <<'PY'
+          import json, os, subprocess
+          matrix  = json.loads(os.environ['MATRIX'])
+          image   = os.environ['IMAGE']
+          version = os.environ['VERSION']
+          owner   = os.environ['OWNER']
+          pkg     = image.split('/')[-1]
+          for e in matrix:
+              tag = f"{version}-{e['suffix']}"
+              print(f'Deleting intermediate tag: {pkg}:{tag}')
+              res = subprocess.run(
+                  ['gh', 'api',
+                   f'https://api.github.com/users/{owner}/packages/container/{pkg}/versions',
+                   '--paginate',
+                   '--jq', f'.[] | select(.metadata.container.tags[] == "{tag}") | .id'],
+                  capture_output=True, text=True)
+              vid = res.stdout.strip().split('\n')[0] if res.stdout.strip() else ''
+              if vid:
+                  r = subprocess.run(
+                      ['gh', 'api', '--method', 'DELETE',
+                       f'https://api.github.com/users/{owner}/packages/container/{pkg}/versions/{vid}'],
+                      capture_output=True)
+                  if r.returncode == 0:
+                      print(f'Deleted version ID {vid} ({tag})')
+                  else:
+                      print(f'Warning: could not delete {tag} (non-fatal)')
+              else:
+                  print(f'Tag {tag} not found or already gone — skipping')
+          PY
