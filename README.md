@@ -42,6 +42,11 @@ All add-ons are built for:
 
 No `armhf`, `armv7`, or `i386` builds.
 ![Unsupported architectures](https://img.shields.io/badge/no%20builds-armhf%20%7C%20armv7%20%7C%20i386-critical?style=for-the-badge&logo=homeassistant&logoColor=white)
+
+![aarch64](https://img.shields.io/badge/aarch64-supported-41BDF5?style=for-the-badge&logo=arm&logoColor=white)
+![amd64](https://img.shields.io/badge/amd64-supported-41BDF5?style=for-the-badge&logo=amd&logoColor=white)
+![Unsupported architectures](https://img.shields.io/badge/no%20builds-armhf%20%7C%20armv7%20%7C%20i386-critical?style=for-the-badge&logo=homeassistant&logoColor=white)
+
 ## Prebuilt Images
 
 Add-ons are distributed as prebuilt multi-arch container images via the GitHub Container Registry (GHCR).
