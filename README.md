@@ -5,6 +5,8 @@
 ![aarch64](https://img.shields.io/badge/aarch64-supported-41BDF5?style=for-the-badge&logo=arm&logoColor=white)
 ![amd64](https://img.shields.io/badge/amd64-supported-41BDF5?style=for-the-badge&logo=amd&logoColor=white)
 ![Unsupported architectures](https://img.shields.io/badge/no%20support-armhf%20%7C%20armv7%20%7C%20i386-lightgrey?style=for-the-badge&logo=homeassistant&logoColor=white)
+
+
 Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`aarch64` + `amd64`).
 
 ## Apps
