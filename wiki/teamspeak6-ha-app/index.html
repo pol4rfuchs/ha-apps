@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TeamSpeak 6 Server · Home Assistant App Wiki</title>
+<style>
+  :root {
+    --ts-blue: #2588ff;
+    --ts-blue-2: #41bdf5;
+    --ts-cyan: #7de7ff;
+    --ts-deep: #050914;
+    --ts-navy: #071221;
+    --ts-panel: rgba(9, 23, 43, .72);
+    --ts-panel-2: rgba(13, 43, 78, .48);
+    --ts-panel-3: rgba(2, 7, 15, .78);
+    --border: rgba(125, 231, 255, .18);
+    --border-strong: rgba(125, 231, 255, .40);
+    --text: #eff9ff;
+    --muted: #a7c4d8;
+    --dim: #6f8ea4;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(37,136,255,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(65,189,245,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(0,120,255,.14), transparent 34rem),
+      linear-gradient(135deg, #02050b 0%, #071221 44%, #0a1020 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(125,231,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(125,231,255,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--ts-cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(3, 10, 22, .90), rgba(5, 16, 31, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(37,136,255,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(37,136,255,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(125,231,255,.98), rgba(65,189,245,.68) 46%, rgba(16,55,103,.86));
+    color: #02101f;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(65,189,245,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(65,189,245,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ts-cyan); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(37,136,255,.14);
+    box-shadow: 0 10px 32px rgba(37,136,255,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(65,189,245,.13);
+    border: 1px solid rgba(125,231,255,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(37,136,255,.25), rgba(65,189,245,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(125,231,255,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--ts-cyan);
+    background: rgba(2, 16, 31, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(37,136,255,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ts-cyan);
+    box-shadow: 0 0 0 0 rgba(125,231,255,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(125,231,255,0); } 100% { box-shadow: 0 0 0 0 rgba(125,231,255,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .blue { color: var(--ts-cyan); text-shadow: 0 0 45px rgba(125,231,255,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #d5edf9; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(37,136,255,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(37,136,255,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--ts-cyan); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(11, 31, 58, .62), rgba(4, 10, 21, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(125,231,255,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(65,189,245,.14);
+    border: 1px solid rgba(125,231,255,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--ts-cyan); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #e0f4ff; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #f4fbff; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--ts-cyan); }
+  .doc-content h4 { font-size: 1.02rem; color: #e5f8ff; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #d8ecf8; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(125,231,255,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(125,231,255,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--ts-cyan); background: rgba(37,136,255,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #d5f6ff; background: rgba(65,189,245,.11); border: 1px solid rgba(125,231,255,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(125,231,255,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { display: block; padding: 0; border: 0; background: transparent; color: #e4f8ff; font-size: .84rem; line-height: 1.58; white-space: pre; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; border: 1px solid rgba(125,231,255,.30); border-radius: 10px; padding: 6px 9px; color: var(--ts-cyan); background: rgba(0,0,0,.44); font-family: var(--font-mono); font-size: .72rem; cursor: pointer; }
+  .copy-btn:hover { background: rgba(37,136,255,.20); }
+
+  .source-section { margin-top: 22px; padding: 24px; }
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 10px; margin-top: 14px; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #02101f; background: var(--ts-cyan); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #02101f; background: var(--ts-cyan); box-shadow: 0 16px 50px rgba(37,136,255,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🎙️</div>
+      <div>
+        <h1>TS6 Server</h1>
+        <p>HA APP · BLUE GLASS</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search ports, token, WebQuery, backup..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+<a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, quick start, role split</small></span></a>
+<a class="nav-item" href="#sources-docker" data-target="sources-docker"><span class="nav-icon">🐳</span><span><strong>Sources &amp; Docker Images</strong><small>Official repo, Docker tags, ARM64</small></span></a>
+<a class="nav-item" href="#beta-status" data-target="beta-status"><span class="nav-icon">🧪</span><span><strong>Beta Status &amp; Limits</strong><small>Beta9, license, migration limits</small></span></a>
+<a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
+<a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Add-on Configuration</strong><small>HA UI options and TS env mapping</small></span></a>
+<a class="nav-item" href="#ports-networking" data-target="ports-networking"><span class="nav-icon">🌐</span><span><strong>Ports &amp; Networking</strong><small>Voice, files, query, forwarding</small></span></a>
+<a class="nav-item" href="#first-start-token" data-target="first-start-token"><span class="nav-icon">🔑</span><span><strong>First Start &amp; Admin Token</strong><small>Privilege key, serveradmin, logs</small></span></a>
+<a class="nav-item" href="#manager-compatibility" data-target="manager-compatibility"><span class="nav-icon">🎛️</span><span><strong>TS6 Manager Compatibility</strong><small>WebQuery API and pairing</small></span></a>
+<a class="nav-item" href="#data-backup" data-target="data-backup"><span class="nav-icon">💾</span><span><strong>Data Persistence &amp; Backup</strong><small>/data/teamspeak6 and HA backups</small></span></a>
+<a class="nav-item" href="#project-structure" data-target="project-structure"><span class="nav-icon">📁</span><span><strong>Project Structure</strong><small>Repository layout and file roles</small></span></a>
+<a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔐</span><span><strong>Security Notes</strong><small>Ports, query, passwords, public exposure</small></span></a>
+<a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Startup, token, ports, clients</small></span></a>
+<a class="nav-item" href="#maintenance" data-target="maintenance"><span class="nav-icon">🧰</span><span><strong>Update &amp; Rollback Runbook</strong><small>Beta-safe update path</small></span></a>
+<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.2 add-on and beta9 server</small></span></a>
+<a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, beta, architecture</small></span></a>
+<a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer &amp; License</strong><small>Unofficial wrapper and licenses</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--ts-blue-2)">Runtime hints</strong><br>
+      Voice: <code>9987/udp</code><br>
+      Files: <code>30033/tcp</code><br>
+      WebQuery: <code>10080/tcp</code><br>
+      Arch: <code>amd64</code> · <code>aarch64</code>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> TEAMSPEAK 6 SERVER · HOME ASSISTANT · BLUE GLASS</div>
+        <h2>Voice Server Wiki in <span class="blue">TS6 Blue</span>.</h2>
+        <p class="hero-copy">
+          Standalone documentation dashboard for your TeamSpeak 6 Server Home Assistant App: install, ports,
+          license acceptance, first admin token, persistence, WebQuery pairing with TS6 Manager and update-safe operations.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#configuration">⚙️ Config Matrix</a>
+          <a class="btn secondary" href="#first-start-token">🔑 First Token</a>
+          <a class="btn secondary" href="#manager-compatibility">🎛️ Pair Manager</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>Voice</small><strong>9987/udp</strong></div>
+          <div class="metric"><small>Filetransfer</small><strong>30033/tcp</strong></div>
+          <div class="metric"><small>WebQuery</small><strong>10080/tcp</strong></div>
+          <div class="metric"><small>Generated</small><strong>2026-04-29</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Configuration</h3>
+        <p>Use this first, then expose only the required client ports.</p>
+        <pre><code>license_accepted: true
+server_name: "Home Assistant TeamSpeak Server"
+voice_port: 9987
+filetransfer_port: 30033
+query_http_port: 10080</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>🧭 Runbook Health Matrix</h3>
+        <p>Critical operational checks before you call the server healthy.</p>
+        <div class="mini-status">
+          <div class="status-pill"><small>LICENSE</small><strong>Accepted</strong></div>
+          <div class="status-pill"><small>DATA</small><strong>/data/teamspeak6</strong></div>
+          <div class="status-pill"><small>QUERY</small><strong>Private only</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview, quick start, role split teamspeak 6 server home assistant app ist dein eigentlicher voice-server als home-assistant-add-on. diese seite ist die blaue ts6-server-wiki im gleichen stil wie die ts6-manager-wiki. wichtig: server und manager sind zwei verschiedene bausteine. der server stellt voice, filetransfer und query bereit. der ts6 manager verbindet sich danach über die http-webquery-schnittstelle mit diesem server. bereich wert ha add-on name teamspeak 6 server ha add-on slug teamspeak6 offizieller upstream teamspeak/teamspeak6-server docker image teamspeaksystems/teamspeak6-server target version 6.0.0-beta9 voice port 9987/udp filetransfer 30033/tcp http webquery 10080/tcp persistenz /data/teamspeak6 quick start repository: https://codeberg.org/pol4rfuchs/teamspeak6-ha-app add-on: teamspeak 6 server voice: udp/9987 files: tcp/30033 webquery: tcp/10080 data: /data/teamspeak6 merksatz: extern freigeben nur 9987/udp und optional 30033/tcp . query-ports bleiben privat.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">HOME.md</p><h2>Home</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+
+<p><strong>TeamSpeak 6 Server Home Assistant App</strong> is your actual voice server as a Home Assistant add-on. This page is the blue TS6 Server Wiki in the same style as the TS6 Manager Wiki.</p>
+<p>Important: <strong>Server</strong> and <strong>Manager</strong> are two separate components. The server provides voice, file transfer and query. The TS6 Manager connects to this server via the HTTP WebQuery interface.</p>
+<table>
+<thead><tr><th>Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>HA Add-on Name</td><td><code>TeamSpeak 6 Server</code></td></tr>
+<tr><td>HA Add-on Slug</td><td><code>teamspeak6</code></td></tr>
+<tr><td>Official Upstream</td><td><a href="https://github.com/teamspeak/teamspeak6-server">teamspeak/teamspeak6-server</a></td></tr>
+<tr><td>Docker Image</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server"><code>teamspeaksystems/teamspeak6-server</code></a></td></tr>
+<tr><td>Target Version</td><td><code>6.0.0-beta9</code></td></tr>
+<tr><td>Voice Port</td><td><code>9987/udp</code></td></tr>
+<tr><td>Filetransfer</td><td><code>30033/tcp</code></td></tr>
+<tr><td>HTTP WebQuery</td><td><code>10080/tcp</code></td></tr>
+<tr><td>Persistence</td><td><code>/data/teamspeak6</code></td></tr>
+</tbody>
+</table>
+<h2>Quick Start</h2>
+<pre><code>Repository: https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app
+Add-on:     TeamSpeak 6 Server
+Voice:      udp/9987
+Files:      tcp/30033
+WebQuery:   tcp/10080
+Data:       /data/teamspeak6</code></pre>
+<blockquote><strong>Rule of thumb:</strong> Only expose <code>9987/udp</code> and optionally <code>30033/tcp</code> externally. Query ports stay private.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="sources-docker" class="doc-section glass-card" data-search="sources &amp; docker images official repo, docker tags, arm64 die seite ist auf die offizielle teamspeak-6-server-beta und dein home-assistant-add-on-repository zugeschnitten. source matrix quelle rolle link official ts6 server upstream-server, releases, readme, config.md github official docker image container-image für docker/ha-add-on-build docker hub docker tags architektur- und versionstags tags codeberg add-on repo dein home-assistant-add-on-repository codeberg github mirror github-repo-link aus readme github home assistant add-ons supervisor/add-on-plattform home assistant official image status teamspeaksystems/teamspeak6-server:latest zeigt auf die aktuelle beta. teamspeaksystems/teamspeak6-server:6.0.0-beta9 ist der versionierte beta-9-tag. docker hub listet für latest und 6.0.0-beta9 images für linux/amd64 und linux/arm64 . docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta9 damit ist für dein ha-add-on nicht mehr zwingend ein alter community-arm-workaround nötig, solange dein build/config sauber auf das offizielle multi-arch-image zeigt.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🐳</span><div><p class="eyebrow">SOURCES.md</p><h2>Sources &amp; Docker Images</h2></div></div>
+        <a class="section-link" href="#sources-docker">#sources-docker</a>
+      </div>
+      <div class="doc-content">
+
+<p>This page is tailored to the official TeamSpeak 6 Server beta and your Home Assistant add-on repository.</p>
+<h2>Source Matrix</h2>
+<table>
+<thead><tr><th>Source</th><th>Role</th><th>Link</th></tr></thead>
+<tbody>
+<tr><td>Official TS6 Server</td><td>Upstream server, releases, README, CONFIG.md</td><td><a href="https://github.com/teamspeak/teamspeak6-server">GitHub</a></td></tr>
+<tr><td>Official Docker Image</td><td>Container image for Docker/HA add-on build</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server">Docker Hub</a></td></tr>
+<tr><td>Docker Tags</td><td>Architecture and version tags</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server/tags">Tags</a></td></tr>
+<tr><td>Codeberg Add-on Repo</td><td>Your Home Assistant add-on repository</td><td><a href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app">Codeberg</a></td></tr>
+<tr><td>GitHub Mirror</td><td>GitHub repo link from README</td><td><a href="https://github.com/pol4rfuchs/teamspeak6-ha-app">GitHub</a></td></tr>
+<tr><td>Home Assistant Add-ons</td><td>Supervisor/add-on platform</td><td><a href="https://www.home-assistant.io/addons/">Home Assistant</a></td></tr>
+</tbody>
+</table>
+<h2>Official Image Status</h2>
+<ul>
+<li><code>teamspeaksystems/teamspeak6-server:latest</code> points to the current beta.</li>
+<li><code>teamspeaksystems/teamspeak6-server:6.0.0-beta9</code> is the versioned beta-9 tag.</li>
+<li>Docker Hub lists images for <code>linux/amd64</code> and <code>linux/arm64</code> under both <code>latest</code> and <code>6.0.0-beta9</code>.</li>
+</ul>
+<pre><code>docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
+<blockquote>This means the old community ARM workaround is no longer required for your HA add-on, as long as your build/config points to the official multi-arch image.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="beta-status" class="doc-section glass-card" data-search="beta status &amp; limits beta9, license, migration limits teamspeak 6 server ist aktuell als beta veröffentlicht. für ein produktives home-assistant-add-on heißt das: updates sind wichtig, aber backup und rollback bleiben pflicht. wichtige beta-punkte thema praxisfolge beta-software features und verhalten können sich ändern; logs nach updates prüfen. ts3-lizenzen teamspeak-3-server-lizenzen sind nicht mit teamspeak 6 server kompatibel. migration offiziell gibt es derzeit keinen direkten migrationspfad von ts3 server zu ts6 server. beta-lizenz der server kommt mit einer beta-lizenz; größere ts6-lizenzen sind derzeit nicht allgemein upgradebar. v6.0.0-beta9 bringt native arm64-unterstützung und mehrere server-fixes. update-hinweis für dein add-on # sinnvoller pin im add-on, statt floating latest teamspeaksystems/teamspeak6-server:6.0.0-beta9 pinning ist sauberer: für ha-add-ons ist ein versionierter image-tag reproduzierbarer als latest .">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🧪</span><div><p class="eyebrow">BETA.md</p><h2>Beta Status &amp; Limits</h2></div></div>
+        <a class="section-link" href="#beta-status">#beta-status</a>
+      </div>
+      <div class="doc-content">
+
+<p>TeamSpeak 6 Server is currently released as a beta. For a production Home Assistant add-on this means: updates are important, but backup and rollback remain mandatory.</p>
+<h2>Key Beta Points</h2>
+<table>
+<thead><tr><th>Topic</th><th>Practical Impact</th></tr></thead>
+<tbody>
+<tr><td>Beta Software</td><td>Features and behavior may change; check logs after updates.</td></tr>
+<tr><td>TS3 Licenses</td><td>TeamSpeak 3 Server licenses are not compatible with TeamSpeak 6 Server.</td></tr>
+<tr><td>Migration</td><td>There is currently no official direct migration path from TS3 Server to TS6 Server.</td></tr>
+<tr><td>Beta License</td><td>The server ships with a beta license; larger TS6 licenses are currently not generally upgradable.</td></tr>
+<tr><td>v6.0.0-beta9</td><td>Brings native ARM64 support and several server fixes.</td></tr>
+</tbody>
+</table>
+<h2>Update Note for Your Add-on</h2>
+<pre><code># Pin to a specific version instead of floating latest
+teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
+<blockquote><strong>Pinning is cleaner:</strong> For HA add-ons, a versioned image tag is more reproducible than <code>latest</code>.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation repository adden, installieren, starten step 1 — repository in home assistant hinzufügen home assistant öffnen. einstellungen → add-ons → add-on store öffnen. oben rechts ⋮ → repositories wählen. diese url einfügen: https://codeberg.org/pol4rfuchs/teamspeak6-ha-app add klicken und dialog schließen. one-click badge step 2 — add-on installieren nach teamspeak 6 server suchen. add-on öffnen. install klicken. warten, bis download/build abgeschlossen ist. step 3 — license akzeptieren im add-on-tab configuration muss die teamspeak-lizenz akzeptiert werden. license_accepted: true step 4 — starten save klicken. zurück auf info . start klicken. log öffnen und auf token, ports und fehler prüfen.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">INSTALLATION.md</p><h2>Installation</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Step 1 — Add Repository to Home Assistant</h2>
+<ol>
+<li>Open Home Assistant.</li>
+<li>Open <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+<li>Click <strong>⋮ → Repositories</strong> in the top right.</li>
+<li>Paste this URL:</li>
+</ol>
+<pre><code>https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app</code></pre>
+<ol start="5"><li>Click <strong>Add</strong> and close the dialog.</li></ol>
+<h2>One-Click Badge</h2>
+<p><a href="https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fteamspeak6-ha-app"><img alt="Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled." src="https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg"></a></p>
+<h2>Step 2 — Install the Add-on</h2>
+<ol>
+<li>Search for <strong>TeamSpeak 6 Server</strong>.</li>
+<li>Open the add-on.</li>
+<li>Click <strong>Install</strong>.</li>
+<li>Wait until the download/build is complete.</li>
+</ol>
+<h2>Step 3 — Accept the License</h2>
+<p>In the add-on <strong>Configuration</strong> tab, the TeamSpeak license must be accepted.</p>
+<pre><code>license_accepted: true</code></pre>
+<h2>Step 4 — Start</h2>
+<ol>
+<li>Click <strong>Save</strong>.</li>
+<li>Go back to <strong>Info</strong>.</li>
+<li>Click <strong>Start</strong>.</li>
+<li>Open the log and check for token, ports, and errors.</li>
+</ol>
+
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="add-on configuration ha ui options and ts env mapping alle praktischen werte sollen in home assistant über die add-on-configuration steuerbar sein. intern werden daraus teamspeak-server-parameter, umgebungsvariablen oder eine konfiguration erzeugt. basic server settings option default beschreibung server_name home assistant teamspeak server name, der im client sichtbar ist. server_password leer join-passwort. leer bedeutet offener server. max_clients 32 maximale gleichzeitige clients. welcome_message welcome to our teamspeak server! begrüßung beim connect. license &amp; admin option default beschreibung license_accepted false muss true sein, sonst startet der server nicht. query_admin_password leer passwort für serveradmin . leer = generiert beziehungsweise aus log entnehmen. log_level 3 0 critical · 1 error · 2 warning · 3 info · 4 debug. port options option default protokoll zweck voice_port 9987 udp voice-verbindungen. filetransfer_port 30033 tcp dateitransfers. query_port 10011 tcp raw serverquery. query_ssh_port 10022 tcp ssh serverquery. query_http_port 10080 tcp http webquery; wichtig für ts6 manager. official server environment mapping ts6 variable bedeutung ha-option tsserver_license_accepted license acceptance: accept oder 1 . license_accepted tsserver_default_port default udp voice port. voice_port tsserver_file_transfer_port tcp filetransfer port. filetransfer_port tsserver_query_http_enabled http query interface aktivieren. für manager-betrieb aktiv lassen tsserver_query_http_port http webquery port. query_http_port tsserver_query_admin_password serveradmin query-passwort. query_admin_password bei portänderungen müssen configuration-tab und network-tab logisch zusammenpassen. gerade filetransfer ist empfindlich, wenn interner port und veröffentlichter host-port auseinanderlaufen.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">CONFIGURATION.md</p><h2>Add-on Configuration</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+
+<p>All practical values should be configurable in Home Assistant via the add-on configuration. Internally, these are mapped to TeamSpeak server parameters, environment variables, or a configuration file.</p>
+<h2>Basic Server Settings</h2>
+<table>
+<thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>server_name</code></td><td><code>Home Assistant TeamSpeak Server</code></td><td>Name visible in the client.</td></tr>
+<tr><td><code>server_password</code></td><td><em>empty</em></td><td>Join password. Empty means open server.</td></tr>
+<tr><td><code>max_clients</code></td><td><code>32</code></td><td>Maximum concurrent clients.</td></tr>
+<tr><td><code>welcome_message</code></td><td><code>Welcome to our TeamSpeak Server!</code></td><td>Greeting shown on connect.</td></tr>
+</tbody>
+</table>
+<h2>License & Admin</h2>
+<table>
+<thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>license_accepted</code></td><td><code>false</code></td><td>Must be <code>true</code>, otherwise the server will not start.</td></tr>
+<tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password for <code>serveradmin</code>. Empty = auto-generated, retrieve from log.</td></tr>
+<tr><td><code>log_level</code></td><td><code>3</code></td><td>0 Critical · 1 Error · 2 Warning · 3 Info · 4 Debug.</td></tr>
+</tbody>
+</table>
+<h2>Port Options</h2>
+<table>
+<thead><tr><th>Option</th><th>Default</th><th>Protocol</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>voice_port</code></td><td><code>9987</code></td><td>UDP</td><td>Voice connections.</td></tr>
+<tr><td><code>filetransfer_port</code></td><td><code>30033</code></td><td>TCP</td><td>File transfers.</td></tr>
+<tr><td><code>query_port</code></td><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td></tr>
+<tr><td><code>query_ssh_port</code></td><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td></tr>
+<tr><td><code>query_http_port</code></td><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery; required for TS6 Manager.</td></tr>
+</tbody>
+</table>
+<h2>Official Server Environment Mapping</h2>
+<table>
+<thead><tr><th>TS6 Variable</th><th>Description</th><th>HA Option</th></tr></thead>
+<tbody>
+<tr><td><code>TSSERVER_LICENSE_ACCEPTED</code></td><td>License acceptance: <code>accept</code> or <code>1</code>.</td><td><code>license_accepted</code></td></tr>
+<tr><td><code>TSSERVER_DEFAULT_PORT</code></td><td>Default UDP voice port.</td><td><code>voice_port</code></td></tr>
+<tr><td><code>TSSERVER_FILE_TRANSFER_PORT</code></td><td>TCP filetransfer port.</td><td><code>filetransfer_port</code></td></tr>
+<tr><td><code>TSSERVER_QUERY_HTTP_ENABLED</code></td><td>Enable HTTP query interface.</td><td>Keep active for Manager operation</td></tr>
+<tr><td><code>TSSERVER_QUERY_HTTP_PORT</code></td><td>HTTP WebQuery port.</td><td><code>query_http_port</code></td></tr>
+<tr><td><code>TSSERVER_QUERY_ADMIN_PASSWORD</code></td><td>serveradmin query password.</td><td><code>query_admin_password</code></td></tr>
+</tbody>
+</table>
+<blockquote>When changing ports, the Configuration tab and Network tab must match logically. File transfer in particular is sensitive when internal port and published host port diverge.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="ports-networking" class="doc-section glass-card" data-search="ports &amp; networking voice, files, query, forwarding default port matrix port protocol purpose extern freigeben? 9987 udp voice-port für teamspeak clients. ✅ ja 30033 tcp filetransfer. ✅ optional 10011 tcp raw serverquery. ⛔ nein 10022 tcp ssh serverquery. ⛔ nein 10080 tcp http webquery / manager-anbindung. ⛔ nein router port forwarding udp 9987 -&gt; &amp;lt;ha-ip&amp;gt;:9987 tcp 30033 -&gt; &amp;lt;ha-ip&amp;gt;:30033 # optional filetransfer ts6 manager verbindung ts6 manager web ui: http://&amp;lt;ha-ip&amp;gt;:8066 ts6 server webquery: http://&amp;lt;ha-ip&amp;gt;:10080 nicht öffentlich: 10080 ist der verwaltungszugang für webquery. der gehört nur ins lan/vlan beziehungsweise zu vertrauenswürdigen services wie ts6 manager. lan smoke tests # voice-port ist udp: extern sinnvoller per client testen. # http webquery lokal prüfen: curl -i http://&amp;lt;ha-ip&amp;gt;:10080">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">NETWORKING.md</p><h2>Ports &amp; Networking</h2></div></div>
+        <a class="section-link" href="#ports-networking">#ports-networking</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Default Port Matrix</h2>
+<table>
+<thead><tr><th>Port</th><th>Protocol</th><th>Purpose</th><th>Expose externally?</th></tr></thead>
+<tbody>
+<tr><td><code>9987</code></td><td><strong>UDP</strong></td><td>Voice port for TeamSpeak clients.</td><td>✅ Yes</td></tr>
+<tr><td><code>30033</code></td><td>TCP</td><td>File transfer.</td><td>✅ Optional</td></tr>
+<tr><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td><td>⛔ No</td></tr>
+<tr><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td><td>⛔ No</td></tr>
+<tr><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery / Manager connection.</td><td>⛔ No</td></tr>
+</tbody>
+</table>
+<h2>Router Port Forwarding</h2>
+<pre><code>UDP  9987  -> &lt;HA-IP&gt;:9987
+TCP 30033  -> &lt;HA-IP&gt;:30033   # optional filetransfer</code></pre>
+<h2>TS6 Manager Connection</h2>
+<pre><code>TS6 Manager Web UI:  http://&lt;HA-IP&gt;:8066
+TS6 Server WebQuery: http://&lt;HA-IP&gt;:10080</code></pre>
+<blockquote><strong>Not public:</strong> <code>10080</code> is the management access for WebQuery. It belongs in LAN/VLAN only, accessible to trusted services like TS6 Manager.</blockquote>
+<h2>LAN Smoke Tests</h2>
+<pre><code># Voice port is UDP: best tested externally via client.
+# Test HTTP WebQuery locally:
+curl -I http://&lt;HA-IP&gt;:10080</code></pre>
+
+      </div>
+    </article>
+
+    <article id="first-start-token" class="doc-section glass-card" data-search="first start &amp; admin token privilege key, serveradmin, logs privilege key finden beim ersten start erzeugt der server einen einmaligen privilege key für server-admin-rechte im teamspeak client. teamspeak 6 server add-on → log tab → search for token= token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx privilege key verwenden mit dem teamspeak 6 client auf &amp;lt;ha-ip&amp;gt;:9987 verbinden. im client permissions → use privilege key öffnen. token einfügen und bestätigen. sofort sichern: der token ist einmalig und nur beim ersten start beziehungsweise bei neuerstellung sichtbar. serverquery admin für query/automatisierung gibt es den eingebauten account serveradmin . wenn kein passwort gesetzt wurde, muss das generierte passwort aus dem log gesichert werden. serveradmin password: &amp;lt;generated-password&amp;gt; neuen privilege key via serverquery erzeugen telnet &amp;lt;ha-ip&amp;gt; 10011 login serveradmin &amp;lt;query-password&amp;gt; use sid=1 tokenadd tokentype=0 tokenid1=6 tokenid2=0">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔑</span><div><p class="eyebrow">FIRST-START.md</p><h2>First Start &amp; Admin Token</h2></div></div>
+        <a class="section-link" href="#first-start-token">#first-start-token</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Finding the Privilege Key</h2>
+<p>On first start, the server generates a one-time Privilege Key for server admin rights in the TeamSpeak client.</p>
+<pre><code>TeamSpeak 6 Server Add-on → Log tab → search for token=
+
+token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></pre>
+<h2>Using the Privilege Key</h2>
+<ol>
+<li>Connect with the TeamSpeak 6 client to <code>&lt;HA-IP&gt;:9987</code>.</li>
+<li>In the client, open <strong>Permissions → Use Privilege Key</strong>.</li>
+<li>Paste the token and confirm.</li>
+</ol>
+<blockquote><strong>Save immediately:</strong> The token is one-time only and only visible on first start or when regenerated.</blockquote>
+<h2>ServerQuery Admin</h2>
+<p>For query/automation, the built-in <code>serveradmin</code> account is available. If no password was set, the generated password must be retrieved from the log.</p>
+<pre><code>ServerAdmin password: &lt;generated-password&gt;</code></pre>
+<h2>Generate a New Privilege Key via ServerQuery</h2>
+<pre><code>telnet &lt;HA-IP&gt; 10011
+login serveradmin &lt;query-password&gt;
+use sid=1
+tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
+
+      </div>
+    </article>
+
+    <article id="manager-compatibility" class="doc-section glass-card" data-search="ts6 manager compatibility webquery api and pairing diese server-wiki passt direkt zur ts6-manager-wiki. der manager ist das admin-webpanel, dieser server ist der eigentliche voice-server. pairing matrix komponente port rolle teamspeak 6 server 9987/udp clients verbinden sich hier. teamspeak 6 server 10080/tcp http webquery api für ts6 manager. ts6 manager add-on 8066/tcp weboberfläche im browser. manager connection profil host: &amp;lt;ha-ip&amp;gt; oder &amp;lt;ts6-server-ip&amp;gt; webquery port: 10080 api/auth: serveradmin / api-key / webquery credentials typische fehler manager zeigt auf 8066 statt 10080 . webquery http ist nicht aktiviert. firewall/vlan blockiert manager → server. query-port wurde geändert, aber manager-profil nicht angepasst. query-admin-passwort wurde nach update/restore nicht mehr gefunden.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🎛️</span><div><p class="eyebrow">MANAGER.md</p><h2>TS6 Manager Compatibility</h2></div></div>
+        <a class="section-link" href="#manager-compatibility">#manager-compatibility</a>
+      </div>
+      <div class="doc-content">
+
+<p>This server wiki pairs directly with the TS6 Manager Wiki. The Manager is the admin web panel, this server is the actual voice server.</p>
+<h2>Pairing Matrix</h2>
+<table>
+<thead><tr><th>Component</th><th>Port</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>TeamSpeak 6 Server</td><td><code>9987/udp</code></td><td>Clients connect here.</td></tr>
+<tr><td>TeamSpeak 6 Server</td><td><code>10080/tcp</code></td><td>HTTP WebQuery API for TS6 Manager.</td></tr>
+<tr><td>TS6 Manager Add-on</td><td><code>8066/tcp</code></td><td>Web interface in the browser.</td></tr>
+</tbody>
+</table>
+<h2>Manager Connection Profile</h2>
+<pre><code>Host:           &lt;HA-IP&gt; or &lt;TS6-SERVER-IP&gt;
+WebQuery Port: 10080
+API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
+<h2>Common Errors</h2>
+<ul>
+<li>Manager points to <code>8066</code> instead of <code>10080</code>.</li>
+<li>WebQuery HTTP is not enabled.</li>
+<li>Firewall/VLAN blocks Manager → Server.</li>
+<li>Query port was changed but Manager profile was not updated.</li>
+<li>Query admin password was lost after update/restore.</li>
+</ul>
+
+      </div>
+    </article>
+
+    <article id="data-backup" class="doc-section glass-card" data-search="data persistence &amp; backup /data/teamspeak6 and ha backups persistenter datenpfad der serverzustand muss unter /data/teamspeak6 liegen, damit updates nicht channels, clients, rechte oder serverkonfiguration verlieren. /data/teamspeak6/ ├── ts6server.sqlitedb ├── ts6server.sqlitedb-wal ├── ts6server.sqlitedb-shm ├── tsserver.yaml / ts6.ini ├── serveradmin_password ├── query_ip_allowlist.txt ├── query_ip_denylist.txt └── logs/ └── ts6server_*.log was ist kritisch? datei/pfad wert warum ts6server.sqlitedb sehr hoch virtuelle server, channels, rechte, clientdaten. serveradmin_password hoch query-admin-zugang. tsserver.yaml / ts6.ini hoch generierte laufzeitkonfiguration. logs/ mittel debugging, token-fund, audit. home assistant backup settings → system → backups → create backup vor jedem image-wechsel oder beta-update ein ha-backup erstellen. bei ts6 ist das kein luxus, sondern deine rollback-strategie.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">BACKUP.md</p><h2>Data Persistence &amp; Backup</h2></div></div>
+        <a class="section-link" href="#data-backup">#data-backup</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Persistent Data Path</h2>
+<p>Server state must reside under <code>/data/teamspeak6</code> so that updates do not lose channels, clients, permissions, or server configuration.</p>
+<pre><code>/data/teamspeak6/
+├── ts6server.sqlitedb
+├── ts6server.sqlitedb-wal
+├── ts6server.sqlitedb-shm
+├── tsserver.yaml / ts6.ini
+├── serveradmin_password
+├── query_ip_allowlist.txt
+├── query_ip_denylist.txt
+└── logs/
+    └── ts6server_*.log</code></pre>
+<h2>What Is Critical?</h2>
+<table>
+<thead><tr><th>File/Path</th><th>Importance</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><code>ts6server.sqlitedb</code></td><td>Very high</td><td>Virtual servers, channels, permissions, client data.</td></tr>
+<tr><td><code>serveradmin_password</code></td><td>High</td><td>Query admin access.</td></tr>
+<tr><td><code>tsserver.yaml</code> / <code>ts6.ini</code></td><td>High</td><td>Generated runtime configuration.</td></tr>
+<tr><td><code>logs/</code></td><td>Medium</td><td>Debugging, token retrieval, audit.</td></tr>
+</tbody>
+</table>
+<h2>Home Assistant Backup</h2>
+<pre><code>Settings → System → Backups → Create Backup</code></pre>
+<blockquote>Create an HA backup before every image switch or beta update. For TS6, this is not a luxury but your rollback strategy.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="project-structure" class="doc-section glass-card" data-search="project structure repository layout and file roles empfohlenes repo-layout teamspeak6-ha-app/ ├── repository.yaml ├── readme.md ├── readmeeng.md ├── readmeger.md └── teamspeak6/ ├── config.yaml ├── build.yaml ├── dockerfile ├── docs.md ├── changelog.md ├── icon.png ├── logo.png ├── translations/ │ └── en.yaml └── rootfs/ └── run.sh file roles datei rolle repository.yaml markiert das repo als home-assistant-add-on-repository. teamspeak6/config.yaml add-on-metadaten, schema, ports, image, ha ui. teamspeak6/build.yaml build-quelle pro architektur, idealerweise offizielles multi-arch-image. teamspeak6/dockerfile wrapper um das ts6-server-image mit ha-startlogik. teamspeak6/rootfs/run.sh liest add-on-optionen, erzeugt config, startet server. translations/en.yaml labels und beschreibungen in der ha-config-ui. image switch guard # prüfen vor umstellung von community-image auf official image: [ ] /data/teamspeak6 backup vorhanden [ ] datenpfad im neuen image korrekt gemountet [ ] server startet mit gleicher sqlite db [ ] ports sind gleich [ ] query/admin-zugang funktioniert [ ] client kann joinen [ ] ts6 manager kann webquery erreichen">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📁</span><div><p class="eyebrow">PROJECT.md</p><h2>Project Structure</h2></div></div>
+        <a class="section-link" href="#project-structure">#project-structure</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Recommended Repo Layout</h2>
+<pre><code>teamspeak6-ha-app/
+├── repository.yaml
+├── README.md
+├── READMEeng.md
+├── READMEger.md
+└── teamspeak6/
+    ├── config.yaml
+    ├── build.yaml
+    ├── Dockerfile
+    ├── DOCS.md
+    ├── CHANGELOG.md
+    ├── icon.png
+    ├── logo.png
+    ├── translations/
+    │   └── en.yaml
+    └── rootfs/
+        └── run.sh</code></pre>
+<h2>File Roles</h2>
+<table>
+<thead><tr><th>File</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><code>repository.yaml</code></td><td>Marks the repo as a Home Assistant add-on repository.</td></tr>
+<tr><td><code>teamspeak6/config.yaml</code></td><td>Add-on metadata, schema, ports, image, HA UI.</td></tr>
+<tr><td><code>teamspeak6/build.yaml</code></td><td>Build source per architecture, ideally the official multi-arch image.</td></tr>
+<tr><td><code>teamspeak6/Dockerfile</code></td><td>Wrapper around the TS6 server image with HA start logic.</td></tr>
+<tr><td><code>teamspeak6/rootfs/run.sh</code></td><td>Reads add-on options, generates config, starts the server.</td></tr>
+<tr><td><code>translations/en.yaml</code></td><td>Labels and descriptions in the HA config UI.</td></tr>
+</tbody>
+</table>
+<h2>Image Switch Guard</h2>
+<pre><code># Check before switching from community image to official image:
+[ ] /data/teamspeak6 backup exists
+[ ] Data path correctly mounted in new image
+[ ] Server starts with same SQLite DB
+[ ] Ports are unchanged
+[ ] Query/admin access works
+[ ] Client can join
+[ ] TS6 Manager can reach WebQuery</code></pre>
+
+      </div>
+    </article>
+
+    <article id="security" class="doc-section glass-card" data-search="security notes ports, query, passwords, public exposure security baseline nur voice-port öffentlich: 9987/udp . filetransfer optional: 30033/tcp , nur wenn benötigt. query privat: 10011 , 10022 , 10080 niemals offen ins internet. query-admin-passwort sichern und nicht in git committen. privilege key sofort sichern und nach nutzung nicht öffentlich lagern. backups vor updates , weil beta-software und serverdaten kritisch sind. query allowlist wenn du query-zugriffe beschränkst, sollte der ha-host beziehungsweise der ts6-manager-container erreichbar bleiben. query_ip_allowlist.txt # beispiel 127.0.0.1 &amp;lt;ha-ip&amp;gt; &amp;lt;manager-ip&amp;gt; die allowlist schützt nicht vor falscher portfreigabe im router. router/nat/firewall bleiben die erste sicherheitsgrenze.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔐</span><div><p class="eyebrow">SECURITY.md</p><h2>Security Notes</h2></div></div>
+        <a class="section-link" href="#security">#security</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Security Baseline</h2>
+<ul>
+<li><strong>Only voice port public:</strong> <code>9987/udp</code>.</li>
+<li><strong>File transfer optional:</strong> <code>30033/tcp</code>, only if needed.</li>
+<li><strong>Query private:</strong> <code>10011</code>, <code>10022</code>, <code>10080</code> never exposed to the internet.</li>
+<li><strong>Secure the query admin password</strong> and never commit it to Git.</li>
+<li><strong>Save the Privilege Key immediately</strong> and do not store it publicly after use.</li>
+<li><strong>Backups before updates</strong>, because beta software and server data are critical.</li>
+</ul>
+<h2>Query Allowlist</h2>
+<p>When restricting query access, make sure the HA host and the TS6 Manager container remain reachable.</p>
+<pre><code>query_ip_allowlist.txt
+# Example
+127.0.0.1
+&lt;HA-IP&gt;
+&lt;Manager-IP&gt;</code></pre>
+<blockquote>The allowlist does not protect against incorrect port forwarding in the router. Router/NAT/firewall remain the first line of defense.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting startup, token, ports, clients server startet nicht symptom ursache fix license check failed lizenz nicht akzeptiert. license_accepted: true setzen und speichern. bind failed port bereits belegt. port ändern oder konfliktdienst stoppen. permission denied datenpfad nicht beschreibbar. /data/teamspeak6 und startscript prüfen. database -fehler sqlite-pfad, wal/shm oder rechteproblem. backup prüfen, add-on stoppen, db-dateien kontrollieren. privilege key verpasst log vollständig prüfen. falls token wirklich weg ist: per serverquery neu erzeugen. neuen token sofort im client verwenden. telnet &amp;lt;ha-ip&amp;gt; 10011 login serveradmin &amp;lt;query-password&amp;gt; use sid=1 tokenadd tokentype=0 tokenid1=6 tokenid2=0 clients verbinden extern nicht udp 9987 am router weitergeleitet? richtige öffentliche ip oder domain verwendet? keine doppelte nat-/firewall-regel im weg? host-port und container-port stimmen überein? teamspeak client nutzt wirklich domain:9987 beziehungsweise standardport? ts6 manager verbindet nicht http webquery auf 10080 aktiv? manager zeigt auf server-ip, nicht auf localhost im falschen container? query-admin/api-key korrekt? vlan/firewall zwischen ha und ts6 server offen?">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">TROUBLESHOOTING.md</p><h2>Troubleshooting</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Server Does Not Start</h2>
+<table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td><code>license check failed</code></td><td>License not accepted.</td><td>Set <code>license_accepted: true</code> and save.</td></tr>
+<tr><td><code>bind failed</code></td><td>Port already in use.</td><td>Change port or stop the conflicting service.</td></tr>
+<tr><td><code>permission denied</code></td><td>Data path not writable.</td><td>Check <code>/data/teamspeak6</code> and the start script.</td></tr>
+<tr><td><code>database</code>-Fehler</td><td>SQLite path, WAL/SHM, or permission issue.</td><td>Check backup, stop add-on, inspect DB files.</td></tr>
+</tbody>
+</table>
+<h2>Missed the Privilege Key</h2>
+<ol>
+<li>Check the full log.</li>
+<li>If the token is truly gone: regenerate via ServerQuery.</li>
+<li>Use the new token in the client immediately.</li>
+</ol>
+<pre><code>telnet &lt;HA-IP&gt; 10011
+login serveradmin &lt;query-password&gt;
+use sid=1
+tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
+<h2>Clients Cannot Connect Externally</h2>
+<ul>
+<li>UDP <code>9987</code> forwarded on the router?</li>
+<li>Correct public IP or domain used?</li>
+<li>No double NAT/firewall rule blocking?</li>
+<li>Host port and container port match?</li>
+<li>TeamSpeak client actually using <code>domain:9987</code> or the default port?</li>
+</ul>
+<h2>TS6 Manager Does Not Connect</h2>
+<ul>
+<li>HTTP WebQuery on <code>10080</code> active?</li>
+<li>Manager points to server IP, not <code>localhost</code> in the wrong container?</li>
+<li>Query admin/API key correct?</li>
+<li>VLAN/firewall between HA and TS6 server open?</li>
+</ul>
+
+      </div>
+    </article>
+
+    <article id="maintenance" class="doc-section glass-card" data-search="update &amp; rollback runbook beta-safe update path vor update [ ] home assistant backup erstellt [ ] /data/teamspeak6 exists [ ] ts6server.sqlitedb exists [ ] query-admin-passwort gesichert [ ] privilege/admin-zugang im client funktioniert [ ] aktueller image-tag notiert [ ] ports/network-tab dokumentiert update add-on stoppen oder direkt ha-update durchführen. image auf neuen versionierten tag setzen, nicht blind latest erzwingen. add-on starten. log auf license, db-migration, port-bindings und query prüfen. mit client verbinden. ts6 manager gegen 10080 testen. rollback add-on stoppen. ha backup wiederherstellen. optional image-tag zurücksetzen. add-on starten. client-join, channel-struktur, rechte und query prüfen. bei serverdaten ist rollback nur sauber, wenn datenbank und image-version zusammenpassen. deshalb backup direkt vor update.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🧰</span><div><p class="eyebrow">MAINTENANCE.md</p><h2>Update &amp; Rollback Runbook</h2></div></div>
+        <a class="section-link" href="#maintenance">#maintenance</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Before Update</h2>
+<pre><code>[ ] Home Assistant backup created
+[ ] /data/teamspeak6 exists
+[ ] ts6server.sqlitedb exists
+[ ] Query admin password saved
+[ ] Privilege/admin access in client works
+[ ] Current image tag noted
+[ ] Ports/network tab documented</code></pre>
+<h2>Update</h2>
+<ol>
+<li>Stop the add-on or run the HA update directly.</li>
+<li>Set the image to the new versioned tag, do not blindly force <code>latest</code>.</li>
+<li>Start the add-on.</li>
+<li>Check the log for license, DB migration, port bindings, and query.</li>
+<li>Connect with a client.</li>
+<li>Test TS6 Manager against <code>10080</code>.</li>
+</ol>
+<h2>Rollback</h2>
+<ol>
+<li>Stop the add-on.</li>
+<li>Restore the HA backup.</li>
+<li>Optionally reset the image tag.</li>
+<li>Start the add-on.</li>
+<li>Verify client join, channel structure, permissions, and query.</li>
+</ol>
+<blockquote>For server data, rollback is only clean when database and image version match. That is why you back up right before updating.</blockquote>
+
+      </div>
+    </article>
+
+    <article id="changelog" class="doc-section glass-card" data-search="version notes v1.1.2 add-on and beta9 server home assistant app komponente version hinweis teamspeak6-ha-app v1.1.2 version aus deinem readme/badge. teamspeak 6 server 6.0.0-beta9 aktueller zielstand aus deinem readme und offiziellem upstream. docker image teamspeaksystems/teamspeak6-server:6.0.0-beta9 versionierter offizieller container-tag. v6.0.0-beta9 highlights native arm64-unterstützung. verbesserte server-migration-notifications für clients. crash-fix beim flush mit ungültigen datenbankverbindungen. s3-performance-optimierung. aktualisierte default-lizenz.">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
+        <a class="section-link" href="#changelog">#changelog</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Home Assistant App</h2>
+<table>
+<thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>teamspeak6-ha-app</td><td><code>v1.1.2</code></td><td>Version from your README/badge.</td></tr>
+<tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta9</code></td><td>Current target from your README and official upstream.</td></tr>
+<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></td><td>Versioned official container tag.</td></tr>
+</tbody>
+</table>
+<h2>v6.0.0-beta9 Highlights</h2>
+<ul>
+<li>Native ARM64 support.</li>
+<li>Improved server migration notifications for clients.</li>
+<li>Crash fix on flush with invalid database connections.</li>
+<li>S3 performance optimization.</li>
+<li>Updated default license.</li>
+</ul>
+
+      </div>
+    </article>
+
+    <article id="known-limitations" class="doc-section glass-card" data-search="known limitations ingress beta arm architecture webquery ports">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚠️</span><div><p class="eyebrow">LIMITATIONS.md</p><h2>Known Limitations</h2></div></div>
+        <a class="section-link" href="#known-limitations">#known-limitations</a>
+      </div>
+      <div class="doc-content">
+<h2>No HA Ingress Support</h2>
+<p>The TeamSpeak 6 Server has no web UI, so Ingress is not applicable. Management is done via the TS6 Manager add-on or via ServerQuery.</p>
+
+<h2>Beta Software</h2>
+<p>TeamSpeak 6 Server is beta software. Features, configuration keys, and database schemas may change between versions. Always back up before updating.</p>
+
+<h2>No TS3 → TS6 Migration</h2>
+<p>There is currently no official migration path from TeamSpeak 3 Server to TeamSpeak 6 Server. Channels, permissions, and client data cannot be transferred.</p>
+
+<h2>No armhf / armv7 / i386 Support</h2>
+<p>The add-on only supports <code>amd64</code> and <code>aarch64</code>. The official Docker image provides multi-arch builds for these two platforms only.</p>
+
+<h2>Single Virtual Server</h2>
+<p>The beta license limits the server to a single virtual server instance. Multi-server hosting is not available in the current beta.</p>
+
+<h2>Query Ports Must Stay Private</h2>
+<p>Ports <code>10011</code>, <code>10022</code>, and <code>10080</code> must never be exposed to the internet. They provide full administrative access to the server and have no built-in rate limiting or brute force protection beyond the allowlist.</p>
+      </div>
+    </article>
+
+    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer &amp; license unofficial wrapper and licenses disclaimer this is an unofficial, community-maintained home assistant add-on. not affiliated with or endorsed by teamspeak systems, inc. wrapper license apache license 2.0 dein readme nennt apache 2.0 für den add-on-wrapper. der teamspeak 6 server selbst unterliegt den teamspeak-lizenzbedingungen. useful links 🧊 codeberg repo pol4rfuchs/teamspeak6-ha-app 🐙 github repo pol4rfuchs/teamspeak6-ha-app 🎙️ official ts6 server teamspeak/teamspeak6-server 🐳 docker image teamspeaksystems/teamspeak6-server 💬 teamspeak community announcements and feedback 🏠 ha add-ons home assistant supervisor platform">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📜</span><div><p class="eyebrow">LEGAL.md</p><h2>Disclaimer &amp; License</h2></div></div>
+        <a class="section-link" href="#disclaimer-license">#disclaimer-license</a>
+      </div>
+      <div class="doc-content">
+
+<h2>Disclaimer</h2>
+<blockquote>This is an unofficial, community-maintained Home Assistant add-on. Not affiliated with or endorsed by TeamSpeak Systems, Inc.</blockquote>
+<h2>Wrapper License</h2>
+<pre><code>Apache License 2.0</code></pre>
+<p>Your README states Apache 2.0 for the add-on wrapper. The TeamSpeak 6 Server itself is subject to TeamSpeak licensing terms.</p>
+<h2>Useful Links</h2>
+<div class="source-grid">
+<a class="source-chip" href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app"><span>🧊</span><strong>Codeberg Repo</strong><small>Pol4rFuchs/teamspeak6-ha-app</small></a>
+<a class="source-chip" href="https://github.com/pol4rfuchs/teamspeak6-ha-app"><span>🐙</span><strong>GitHub Repo</strong><small>pol4rfuchs/teamspeak6-ha-app</small></a>
+<a class="source-chip" href="https://github.com/teamspeak/teamspeak6-server"><span>🎙️</span><strong>Official TS6 Server</strong><small>teamspeak/teamspeak6-server</small></a>
+<a class="source-chip" href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server"><span>🐳</span><strong>Docker Image</strong><small>teamspeaksystems/teamspeak6-server</small></a>
+<a class="source-chip" href="https://community.teamspeak.com/"><span>💬</span><strong>TeamSpeak Community</strong><small>Announcements and feedback</small></a>
+<a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>HA Add-ons</strong><small>Home Assistant Supervisor platform</small></a>
+</div>
+
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app">🧊 Codeberg</a>
+        <a href="https://github.com/teamspeak/teamspeak6-server">🎙️ Official TS6</a>
+        <a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server">🐳 Docker</a>
+      </div>
+      <div>TeamSpeak 6 Server Home Assistant App · TS6 Blue Glass Wiki · standalone HTML · source links embedded</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>

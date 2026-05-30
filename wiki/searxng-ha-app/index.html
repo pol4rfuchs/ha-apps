@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SearXNG · Privacy Search Wiki</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TS6 Manager · Blue Glass Wiki</title>
+<style>
+  :root {
+    --accent: #6366f1;
+    --accent-2: #818cf8;
+    --accent-3: #c7d2fe;
+    --bg-deep: #030308;
+    --bg-navy: #08080f;
+    --panel: rgba(8, 8, 15, .72);
+    --panel-2: rgba(8, 8, 15, .48);
+    --panel-3: rgba(3, 3, 8, .78);
+    --border: rgba(199, 210, 254, .18);
+    --border-strong: rgba(199, 210, 254, .40);
+    --text: #eff9ff;
+    --muted: #a7c4d8;
+    --dim: #6f8ea4;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(99, 102, 241,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(129, 140, 248,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(99, 102, 241,.14), transparent 34rem),
+      linear-gradient(135deg, #030308 0%, #08080f 44%, #09091a 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(125,231,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(125,231,255,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(3, 10, 22, .90), rgba(5, 16, 31, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(37,136,255,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(37,136,255,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(125,231,255,.98), rgba(65,189,245,.68) 46%, rgba(16,55,103,.86));
+    color: #02101f;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(65,189,245,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(65,189,245,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(37,136,255,.14);
+    box-shadow: 0 10px 32px rgba(37,136,255,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(65,189,245,.13);
+    border: 1px solid rgba(125,231,255,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(37,136,255,.25), rgba(65,189,245,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(125,231,255,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(2, 16, 31, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(37,136,255,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(125,231,255,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(125,231,255,0); } 100% { box-shadow: 0 0 0 0 rgba(125,231,255,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(125,231,255,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #d5edf9; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(37,136,255,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(37,136,255,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(11, 31, 58, .62), rgba(4, 10, 21, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(125,231,255,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(65,189,245,.14);
+    border: 1px solid rgba(125,231,255,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #e0f4ff; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #f4fbff; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #e5f8ff; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #d8ecf8; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(125,231,255,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(125,231,255,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(37,136,255,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #d5f6ff; background: rgba(65,189,245,.11); border: 1px solid rgba(125,231,255,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(125,231,255,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { display: block; padding: 0; border: 0; background: transparent; color: #e4f8ff; font-size: .84rem; line-height: 1.58; white-space: pre; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; border: 1px solid rgba(125,231,255,.30); border-radius: 10px; padding: 6px 9px; color: var(--accent-3); background: rgba(0,0,0,.44); font-family: var(--font-mono); font-size: .72rem; cursor: pointer; }
+  .copy-btn:hover { background: rgba(37,136,255,.20); }
+
+  .source-section { margin-top: 22px; padding: 24px; }
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 10px; margin-top: 14px; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #02101f; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #02101f; background: var(--accent-3); box-shadow: 0 16px 50px rgba(37,136,255,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+</head>
+
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🔍</div>
+      <div>
+        <h1>SearXNG</h1>
+        <p>GREEN GLASS WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search privacy, engines, settings, API..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, architecture</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>Options and settings.yml</small></span></a>
+      <a class="nav-item" href="#api" data-target="api"><span class="nav-icon">🔌</span><span><strong>JSON API</strong><small>HA automations, REST command</small></span></a>
+      <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>Config files, backup</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Blank page, no results, ingress</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Web UI: <code>:8080</code><br>
+      Config: <code>addon_configs/.../settings.yml</code><br>
+      Hook: <code>custom.sh</code><br>
+      API: <code>/search?format=json</code>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> SEARXNG · PRIVACY SEARCH · HOME ASSISTANT ADD-ON</div>
+        <h2>SearXNG in <span class="accent">Indigo Glass</span>.</h2>
+        <p class="hero-copy">Operations wiki for the SearXNG Home Assistant Add-on: installation, settings.yml configuration, JSON API for automations and troubleshooting.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#api">🔌 JSON API</a>
+          <a class="btn secondary" href="#troubleshooting">🛠 Troubleshooting</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>Add-on Slug</small><strong>searxng</strong></div>
+          <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:8080</strong></div>
+          <div class="metric"><small>Access</small><strong>HA Ingress + direct</strong></div>
+          <div class="metric"><small>Upstream Image</small><strong>searxng/searxng</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>Install, start, open via sidebar or direct URL.</p>
+        <pre><code>Web UI: http://homeassistant.local:8080
+Config: addon_configs/<SLUG>_searxng/settings.yml</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>🔍 JSON API</h3>
+        <p>Use SearXNG from HA automations via REST command.</p>
+        <pre><code>GET http://localhost:8080/search?q=query&format=json</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview searxng privacy metasearch engine no tracking home assistant addon ingress port 8080">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>SearXNG</strong> is a privacy-respecting metasearch engine that aggregates results from 70+ search engines — no tracking, no profiles. This add-on wraps the official <code>searxng/searxng</code> image with HA Ingress support and a custom.sh hook.</p>
+        <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
+        <table>
+          <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#installation">Installation</a></td><td>Add repository, install, start.</td></tr>
+            <tr><td><a href="#configuration">Configuration</a></td><td>Add-on options and settings.yml.</td></tr>
+            <tr><td><a href="#api">JSON API</a></td><td>Use SearXNG from HA automations.</td></tr>
+            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Ingress, blank page, search engines.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
+        <pre><code>HA Ingress → SearXNG Web UI :8080
+SearXNG    → aggregates search engines (outbound)
+Config     → addon_configs/&lt;SLUG&gt;_searxng/settings.yml</code></pre>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github searxng">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="sxng-step-1"><a class="anchor" href="#sxng-step-1">#</a>Step 1 — Add Repository</h2>
+        <ol>
+          <li>Open Home Assistant.</li>
+          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Open <strong>⋮ → Repositories</strong>.</li>
+          <li>Add:</li>
+        </ol>
+        <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
+        <h2 id="sxng-step-2"><a class="anchor" href="#sxng-step-2">#</a>Step 2 — Install</h2>
+        <ol>
+          <li>Search for <strong>SearXNG</strong> in the Add-on Store.</li>
+          <li>Click <strong>Install</strong>.</li>
+        </ol>
+        <h2 id="sxng-step-3"><a class="anchor" href="#sxng-step-3">#</a>Step 3 — Start</h2>
+        <ol>
+          <li>Enable <strong>Start on boot</strong>.</li>
+          <li>Click <strong>Start</strong>.</li>
+          <li>Open via <strong>Open Web UI</strong> button or the HA sidebar.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options set_base_url_for_ingress settings.yml custom.sh hook searxng">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Options & settings.yml</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="sxng-options"><a class="anchor" href="#sxng-options">#</a>Add-on Options</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>set_base_url_for_ingress</code></td><td><code>true</code></td><td>Auto-sets <code>SEARXNG_BASE_URL</code> to the HA Ingress URL. Disable only if using an external reverse proxy.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="sxng-settings"><a class="anchor" href="#sxng-settings">#</a>settings.yml</h2>
+        <p>After the first start, the settings file is written to:</p>
+        <pre><code>addon_configs/&lt;SLUG&gt;_searxng/settings.yml</code></pre>
+        <p>Edit it via the File Editor add-on. Changes apply after restarting the add-on.</p>
+        <p>Full reference: <a href="https://docs.searxng.org/admin/settings/index.html">docs.searxng.org</a></p>
+        <h2 id="sxng-custom"><a class="anchor" href="#sxng-custom">#</a>custom.sh Hook</h2>
+        <p>Runs before SearXNG starts. Useful for patching settings or activating plugins:</p>
+        <pre><code>addon_configs/&lt;SLUG&gt;_searxng/custom.sh</code></pre>
+        <pre><code>#!/bin/sh
+# Example: force safe search
+sed -i 's/safe_search: 0/safe_search: 1/' /etc/searxng/settings.yml</code></pre>
+      </div>
+    </article>
+
+    <article id="api" class="doc-section glass-card" data-search="json api search home assistant automation rest command query format">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔌</span><div><p class="eyebrow">JSON API</p><h2>Use from HA Automations</h2></div></div>
+        <a class="section-link" href="#api">#api</a>
+      </div>
+      <div class="doc-content">
+        <p>SearXNG exposes a JSON search API usable from HA automations and scripts.</p>
+        <h2 id="api-url"><a class="anchor" href="#api-url">#</a>Endpoint</h2>
+        <pre><code>http://homeassistant.local:8080/search?q=your+query&amp;format=json</code></pre>
+        <h2 id="api-ha"><a class="anchor" href="#api-ha">#</a>Home Assistant Integration</h2>
+        <pre><code># configuration.yaml
+rest_command:
+  searxng_search:
+    url: "http://localhost:8080/search?q={{ query }}&format=json"
+    method: GET</code></pre>
+        <h2 id="api-engines"><a class="anchor" href="#api-engines">#</a>Limit to Specific Engines</h2>
+        <pre><code>http://localhost:8080/search?q=test&engines=google,bing&format=json</code></pre>
+      </div>
+    </article>
+
+    <article id="persistence" class="doc-section glass-card" data-search="persistence config settings.yml custom.sh backup data searxng">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Persistence</p><h2>Config & Data</h2></div></div>
+        <a class="section-link" href="#persistence">#persistence</a>
+      </div>
+      <div class="doc-content">
+        <pre><code>addon_configs/&lt;SLUG&gt;_searxng/
+├── settings.yml    # SearXNG configuration
+└── custom.sh       # Optional pre-start hook</code></pre>
+        <blockquote>The <code>addon_configs</code> directory is preserved across add-on updates. HA backups include it.</blockquote>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting blank page ingress sidebar settings not applied search no results rate limit">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms & Fixes</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Sidebar shows blank page</td><td>Ingress URL issue.</td><td>Use direct URL: <code>http://HA-IP:8080</code></td></tr>
+            <tr><td>Settings not applied</td><td>Add-on not restarted.</td><td>Restart the add-on after editing <code>settings.yml</code>.</td></tr>
+            <tr><td>Search returns no results</td><td>Engine rate-limited or blocked.</td><td>Check engine list in settings.yml; some engines block automated queries.</td></tr>
+            <tr><td>Ingress URL wrong</td><td>Base URL not set.</td><td>Enable <code>set_base_url_for_ingress: true</code>.</td></tr>
+            <tr><td>custom.sh not running</td><td>Not executable.</td><td>Add <code>chmod +x</code> call or check script syntax.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github codeberg searxng upstream license disclaimer">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links & License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/searxng/searxng"><span>🔍</span><strong>SearXNG Upstream</strong><small>searxng/searxng</small></a>
+          <a class="source-chip" href="https://docs.searxng.org/"><span>📖</span><strong>SearXNG Docs</strong><small>docs.searxng.org</small></a>
+          <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
+        </div>
+        <blockquote>Unofficial, community-maintained wrapper. SearXNG is licensed under AGPL-3.0. Add-on wrapper is MIT.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+        <a href="https://github.com/searxng/searxng">🔍 Upstream</a>
+        <a href="https://docs.searxng.org/">📖 Docs</a>
+      </div>
+      <div>SearXNG · Privacy Search Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>

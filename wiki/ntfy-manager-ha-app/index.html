@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ntfy Manager · Admin Console Wiki</title>
+<style>
+  :root {
+    --accent:   #f59e0b;
+    --accent-2: #fbbf24;
+    --accent-3: #fde68a;
+    --bg-deep:  #0b0800;
+    --bg-warm:  #130e00;
+    --panel:    rgba(19, 14, 0, .72);
+    --panel-2:  rgba(19, 14, 0, .48);
+    --panel-3:  rgba(11, 8, 0, .78);
+    --border:       rgba(253, 230, 138, .18);
+    --border-strong: rgba(253, 230, 138, .40);
+    --text:  #fffbeb;
+    --muted: #c4a96a;
+    --dim:   #8c7445;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok:   #4ade80;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui:   Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18%  8%, rgba(245,158, 11,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(251,191, 36,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(245,158, 11,.14), transparent 34rem),
+      linear-gradient(135deg, #0b0800 0%, #130e00 44%, #1a1100 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(253,230,138,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(253,230,138,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky; top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(19,14,0,.92), rgba(11,8,0,.72));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex; gap: 14px; align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(245,158,11,.24), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(245,158,11,.14);
+  }
+  .brand-logo {
+    width: 50px; height: 50px;
+    display: grid; place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(253,230,138,.98), rgba(251,191,36,.72) 46%, rgba(120,77,0,.86));
+    color: #1a0e00;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(245,158,11,.44);
+  }
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p  { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px; outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(245,158,11,.14); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px; align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(245,158,11,.14);
+    box-shadow: 0 10px 32px rgba(245,158,11,.12);
+  }
+  .nav-icon {
+    width: 34px; height: 34px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: rgba(245,158,11,.14);
+    border: 1px solid rgba(253,230,138,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small  { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px; padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted); font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative; overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(245,158,11,.18), rgba(251,191,36,.06) 60%, transparent),
+      linear-gradient(180deg, rgba(19,14,0,.78), rgba(11,8,0,.62));
+    box-shadow: var(--shadow), 0 0 80px rgba(245,158,11,.08);
+  }
+  .hero::before {
+    content: "";
+    position: absolute; right: -80px; top: -80px;
+    width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,158,11,.26), transparent 68%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: rgba(245,158,11,.12);
+    color: var(--accent-2);
+    font-family: var(--font-mono); font-size: .74rem; font-weight: 800;
+    letter-spacing: .10em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    margin: 0 0 14px;
+    font-size: clamp(1.9rem, 5vw, 3.2rem);
+    letter-spacing: -.04em; line-height: 1.04;
+  }
+  .hero h1 span { color: var(--accent-2); }
+  .hero p { margin: 0; color: var(--muted); font-size: 1.04rem; max-width: 620px; line-height: 1.7; }
+
+  .meta-strip {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 24px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(245,158,11,.08);
+    color: var(--accent-3);
+    font-family: var(--font-mono); font-size: .76rem; font-weight: 700;
+  }
+
+  .section { margin-top: 40px; }
+  .section-title {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title .icon {
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    border-radius: 14px;
+    background: rgba(245,158,11,.16);
+    border: 1px solid var(--border);
+    font-size: 18px; flex-shrink: 0;
+  }
+  .section-title h2 { margin: 0; font-size: 1.28rem; letter-spacing: -.03em; }
+  .section-title p  { margin: 4px 0 0; color: var(--muted); font-size: .86rem; }
+
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: .88em;
+    padding: 3px 7px;
+    border-radius: 8px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    color: var(--accent-3);
+  }
+
+  .code-block {
+    position: relative;
+    margin: 16px 0;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(0,0,0,.42);
+    overflow-x: auto;
+  }
+  .code-block pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: .88rem;
+    line-height: 1.7;
+    color: var(--accent-3);
+    white-space: pre;
+  }
+  .code-block .label {
+    position: absolute; top: 10px; right: 14px;
+    color: var(--dim); font-family: var(--font-mono); font-size: .72rem;
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; min-width: 500px; }
+  th, td { padding: 12px 16px; border-bottom: 1px solid rgba(253,230,138,.08); text-align: left; vertical-align: top; }
+  th { color: var(--accent-2); font-family: var(--font-mono); font-size: .76rem; letter-spacing: .10em; text-transform: uppercase; background: rgba(245,158,11,.08); }
+  td { color: var(--muted); font-size: .92rem; }
+  td code { font-size: .82em; }
+  tr:last-child td { border-bottom: 0; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 16px; }
+  .card {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: rgba(19,14,0,.62);
+    backdrop-filter: blur(12px);
+  }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card h3 { margin: 0 0 8px; font-size: .96rem; letter-spacing: -.02em; }
+  .card p  { margin: 0; font-size: .84rem; color: var(--muted); }
+
+  .alert {
+    display: flex; gap: 14px;
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid;
+    margin: 16px 0;
+    font-size: .92rem;
+  }
+  .alert.warn  { border-color: rgba(255,209,102,.28); background: rgba(255,209,102,.06); color: var(--warning); }
+  .alert.info  { border-color: var(--border); background: rgba(245,158,11,.06); color: var(--accent-3); }
+  .alert.ok    { border-color: rgba(74,222,128,.28); background: rgba(74,222,128,.06); color: var(--ok); }
+  .alert-icon  { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+  .alert-body  { color: inherit; }
+  .alert-body strong { display: block; margin-bottom: 4px; }
+
+  .step-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .step {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px; align-items: start;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(0,0,0,.22);
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: rgba(245,158,11,.18);
+    border: 1px solid var(--border-strong);
+    color: var(--accent-2);
+    font-family: var(--font-mono); font-size: .88rem; font-weight: 800;
+  }
+  .step-body h4 { margin: 0 0 6px; font-size: .94rem; }
+  .step-body p  { margin: 0; font-size: .88rem; color: var(--muted); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo">🔧</div>
+    <div>
+      <h1>ntfy Manager</h1>
+      <p>pol4rfuchs/ha-apps</p>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="search" placeholder="Section suchen…" id="sidebarSearch" autocomplete="off" />
+  </div>
+
+  <div class="nav-group-title">Inhalt</div>
+  <nav class="nav" id="sidebarNav">
+    <a class="nav-item active" href="#overview">
+      <div class="nav-icon">📋</div>
+      <div><strong>Übersicht</strong><small>Was ist ntfy Manager?</small></div>
+    </a>
+    <a class="nav-item" href="#features">
+      <div class="nav-icon">✨</div>
+      <div><strong>Features</strong><small>Admin-Konsole Funktionen</small></div>
+    </a>
+    <a class="nav-item" href="#install">
+      <div class="nav-icon">📦</div>
+      <div><strong>Installation</strong><small>Add-on einrichten</small></div>
+    </a>
+    <a class="nav-item" href="#config">
+      <div class="nav-icon">⚙️</div>
+      <div><strong>Konfiguration</strong><small>Options &amp; Schema</small></div>
+    </a>
+    <a class="nav-item" href="#ui">
+      <div class="nav-icon">🖥️</div>
+      <div><strong>Web UI</strong><small>Bedienung der Konsole</small></div>
+    </a>
+    <a class="nav-item" href="#acl">
+      <div class="nav-icon">🔐</div>
+      <div><strong>ACL &amp; Tokens</strong><small>Zugangskontrolle</small></div>
+    </a>
+    <a class="nav-item" href="#sse">
+      <div class="nav-icon">📡</div>
+      <div><strong>SSE Live-Monitor</strong><small>Echtzeit-Nachrichten</small></div>
+    </a>
+    <a class="nav-item" href="#troubleshoot">
+      <div class="nav-icon">🔧</div>
+      <div><strong>Troubleshooting</strong><small>Häufige Probleme</small></div>
+    </a>
+  </nav>
+
+  <div class="nav-group-title" style="margin-top:28px">Verwandte</div>
+  <nav class="nav">
+    <a class="nav-item" href="../ntfy-ha-app/">
+      <div class="nav-icon">🔔</div>
+      <div><strong>ntfy-ha-app</strong><small>ntfy Server Add-on</small></div>
+    </a>
+    <a class="nav-item" href="../">
+      <div class="nav-icon">🏠</div>
+      <div><strong>Wiki Hub</strong><small>Alle Add-on Wikis</small></div>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <strong style="color:var(--accent-2)">ntfy-manager-ha-app</strong><br/>
+    Repo: <a href="https://github.com/pol4rfuchs/ha-apps" target="_blank">pol4rfuchs/ha-apps</a><br/>
+    Image: <code style="font-size:.72rem">ghcr.io/pol4rfuchs/ntfy-manager-ha-app</code><br/>
+    Arch: aarch64 · amd64
+  </div>
+</aside>
+
+<!-- ── MAIN ────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero" id="overview">
+    <div class="hero-badge">🔔 ntfy Admin Console · HA Add-on</div>
+    <h1>ntfy <span>Manager</span></h1>
+    <p>Web-basierte Admin-Konsole für den ntfy-ha-app Add-on. Verwalte Topic Reservations, ACL-Regeln, Auth-Tokens und beobachte Nachrichten in Echtzeit über SSE — alles ohne CLI-Zugriff auf den Container.</p>
+    <div class="meta-strip">
+      <span class="chip">🏗️ Custom Add-on</span>
+      <span class="chip">🌐 Web UI</span>
+      <span class="chip">🔐 ACL / Token Mgmt</span>
+      <span class="chip">📡 SSE Live-Stream</span>
+      <span class="chip">aarch64 · amd64</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section" id="features">
+    <div class="section-title">
+      <div class="icon">✨</div>
+      <div>
+        <h2>Features</h2>
+        <p>Vollständige Admin-Konsole für ntfy — single-page HTML served by Add-on</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📌</div>
+        <h3>Topic Reservations</h3>
+        <p>Erstelle und verwalte reservierte Topics mit Read/Write-Permissions für spezifische User.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📬</div>
+        <h3>Message Browser</h3>
+        <p>Durchsuche gecachte Nachrichten pro Topic. Zeigt Priority, Tags, Attachment-Links.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>ACL Management</h3>
+        <p>Verwalte User-Access-Control-Listen: anlegen, bearbeiten, löschen — ohne ntfy CLI.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🪙</div>
+        <h3>Token Management</h3>
+        <p>Auth-Tokens für ntfy anlegen, auflisten und widerrufen über die ntfy REST API.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📡</div>
+        <h3>SSE Live-Monitor</h3>
+        <p>Subscribe auf beliebige Topics per SSE-Stream und sieh Nachrichten in Echtzeit ankommen.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💾</div>
+        <h3>Topic Settings</h3>
+        <p>Persistente Topic-Einstellungen (Default-Prio, Labels) gespeichert im Add-on-Storage.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALLATION -->
+  <div class="section" id="install">
+    <div class="section-title">
+      <div class="icon">📦</div>
+      <div>
+        <h2>Installation</h2>
+        <p>Add-on via custom Repository oder direktem GHCR-Image einbinden</p>
+      </div>
+    </div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Repository hinzufügen</h4>
+          <p>In HA → Einstellungen → Add-ons → Add-on Store → ⋮ → Repositories → URL einfügen:</p>
+          <div class="code-block" style="margin-top:10px">
+            <pre>https://github.com/pol4rfuchs/ha-apps</pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Add-on installieren</h4>
+          <p>Im Store <strong>ntfy Manager</strong> suchen → Installieren. Das Image wird von GHCR gepullt (<code>ghcr.io/pol4rfuchs/ntfy-manager-ha-app</code>).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>ntfy-Endpunkt konfigurieren</h4>
+          <p>Im Add-on die Options setzen — mindestens <code>ntfy_url</code> und optional <code>ntfy_token</code> für Auth-geschützte Instanzen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Add-on starten &amp; Web UI öffnen</h4>
+          <p>Starten → <strong>Web UI öffnen</strong> (öffnet Browser-Tab, kein HA Ingress). Alternativ direkt via <code>http://homeassistant.local:&lt;PORT&gt;</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert info" style="margin-top:20px">
+      <div class="alert-icon">ℹ️</div>
+      <div class="alert-body">
+        <strong>Kein Ingress</strong>
+        ntfy Manager nutzt <code>webui:</code> statt HA Ingress — der Browser-Tab öffnet direkt den Add-on-Port. Für externen Zugriff einen NPM Proxy Host einrichten.
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="section" id="config">
+    <div class="section-title">
+      <div class="icon">⚙️</div>
+      <div>
+        <h2>Konfiguration</h2>
+        <p>Options und Schema-Felder des Add-ons</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Typ</th><th>Default</th><th>Beschreibung</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ntfy_url</code></td>
+            <td><code>str</code></td>
+            <td><em>required</em></td>
+            <td>URL der ntfy-Instanz — z.B. <code>http://a0d7b954-ntfy:80</code> (Docker-intern) oder externe URL.</td>
+          </tr>
+          <tr>
+            <td><code>ntfy_token</code></td>
+            <td><code>str?</code></td>
+            <td><code>""</code></td>
+            <td>Admin-Token für Auth-geschützte ntfy-Instanzen (<code>auth-file</code> aktiv). Leer lassen wenn ntfy ohne Auth läuft.</td>
+          </tr>
+          <tr>
+            <td><code>log_level</code></td>
+            <td><code>str</code></td>
+            <td><code>info</code></td>
+            <td>Log-Level des Add-ons: <code>trace</code> / <code>debug</code> / <code>info</code> / <code>warning</code> / <code>error</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="label">config.yaml · options</div>
+      <pre>options:
+  ntfy_url: "http://a0d7b954-ntfy:80"
+  ntfy_token: ""
+  log_level: "info"</pre>
+    </div>
+
+    <div class="alert warn">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <strong>Docker-interne URL empfohlen</strong>
+        Für den Zugriff vom Add-on auf den ntfy-Server nutze die Docker-interne Adresse <code>http://a0d7b954-ntfy:80</code> statt der externen DuckDNS-URL — kein TLS-Overhead, kein NAT-Loopback.
+      </div>
+    </div>
+  </div>
+
+  <!-- WEB UI -->
+  <div class="section" id="ui">
+    <div class="section-title">
+      <div class="icon">🖥️</div>
+      <div>
+        <h2>Web UI</h2>
+        <p>Aufbau und Bedienung der Admin-Konsole</p>
+      </div>
+    </div>
+
+    <p>Die Admin-Konsole ist ein Single-Page HTML-Interface das direkt vom Add-on geserved wird. Alle Daten kommen live von der ntfy REST API.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bereich</th><th>Funktion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dashboard</strong></td><td>Server-Version, User-Count, Nachrichten-Statistiken auf einen Blick.</td></tr>
+          <tr><td><strong>Topic Reservations</strong></td><td>Tabelle aller reservierten Topics. Anlegen / Bearbeiten / Löschen inline.</td></tr>
+          <tr><td><strong>Message Browser</strong></td><td>Topic auswählen → gecachte Nachrichten anzeigen mit Priority, Tags, Click-URL.</td></tr>
+          <tr><td><strong>ACL</strong></td><td>User-Access-Regeln verwalten: welcher User darf welches Topic lesen/schreiben.</td></tr>
+          <tr><td><strong>Token Manager</strong></td><td>Auth-Tokens anlegen (Label, Ablaufdatum) und widerrufen.</td></tr>
+          <tr><td><strong>Live Monitor</strong></td><td>SSE-Subscribe auf N Topics gleichzeitig — Nachrichten erscheinen in Echtzeit.</td></tr>
+          <tr><td><strong>Topic Settings</strong></td><td>Add-on-seitige Konfiguration pro Topic (Default-Prio, Label). Wird persistiert.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ACL & TOKENS -->
+  <div class="section" id="acl">
+    <div class="section-title">
+      <div class="icon">🔐</div>
+      <div>
+        <h2>ACL &amp; Token Management</h2>
+        <p>Zugangskontrolle für ntfy via Web UI statt CLI</p>
+      </div>
+    </div>
+
+    <p>ntfy Manager ersetzt die direkte Nutzung von <code>ntfy user</code> und <code>ntfy access</code> CLI-Befehlen. Voraussetzung: ntfy läuft mit <code>auth-file</code> in seiner Konfiguration.</p>
+
+    <div class="code-block">
+      <div class="label">ntfy server.yml (Prerequisite)</div>
+      <pre>auth-file: /data/user.db
+auth-default-access: deny-all</pre>
+    </div>
+
+    <p>Mit aktiver Auth gibt es den <strong>Admin-User</strong> (oder einen Token mit Admin-Rechten), den du im Add-on hinterlegen musst. Danach kannst du im UI:</p>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-body">
+          <h4>User anlegen</h4>
+          <p>ACL-Tab → "New User" → Username + Password → Role wählen (<code>user</code> oder <code>admin</code>).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-body">
+          <h4>Topic-Zugriff setzen</h4>
+          <p>Topic Reservations → Topic auswählen → Owner + Permissions (read-write / read-only / deny) setzen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">→</div>
+        <div class="step-body">
+          <h4>Token generieren</h4>
+          <p>Token Manager → "New Token" → Label eingeben, optionales Ablaufdatum → Token kopieren für HA <code>rest_command</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert ok">
+      <div class="alert-icon">✅</div>
+      <div class="alert-body">
+        <strong>Empfehlung: Token statt Passwort in HA</strong>
+        Erstelle einen dedizierten Token für HA-Automations (topic: <code>ha-*</code>, kein Ablauf) und hinterlege ihn in <code>secrets.yaml</code> — nicht den Admin-User direkt.
+      </div>
+    </div>
+  </div>
+
+  <!-- SSE LIVE MONITOR -->
+  <div class="section" id="sse">
+    <div class="section-title">
+      <div class="icon">📡</div>
+      <div>
+        <h2>SSE Live-Monitor</h2>
+        <p>Nachrichten in Echtzeit beobachten</p>
+      </div>
+    </div>
+
+    <p>Der Live-Monitor öffnet einen <strong>Server-Sent Events</strong>-Stream direkt auf die ntfy-API. Mehrere Topics können gleichzeitig abonniert werden.</p>
+
+    <div class="code-block">
+      <div class="label">ntfy SSE endpoint (intern)</div>
+      <pre>GET http://a0d7b954-ntfy:80/ha-alerts,ha-info,ha-system/sse
+Authorization: Bearer &lt;token&gt;</pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feld</th><th>Beschreibung</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>Message-ID (12-char random)</td></tr>
+          <tr><td><code>topic</code></td><td>Welches Topic die Nachricht empfangen hat</td></tr>
+          <tr><td><code>title</code></td><td>Nachrichtentitel (optional)</td></tr>
+          <tr><td><code>message</code></td><td>Nachrichtentext</td></tr>
+          <tr><td><code>priority</code></td><td>1 (min) – 5 (max urgent)</td></tr>
+          <tr><td><code>tags</code></td><td>Emoji / Keyword Tags als Array</td></tr>
+          <tr><td><code>click</code></td><td>Click-Action URL (optional)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert info">
+      <div class="alert-icon">💡</div>
+      <div class="alert-body">
+        <strong>Browser-seitige Verbindung</strong>
+        Der SSE-Stream läuft direkt vom Browser zur ntfy-API — ntfy Manager ist nur das UI-Shell. Wenn ntfy hinter NPM mit Auth liegt, muss der Browser das Token kennen (wird aus Add-on-Config geladen).
+      </div>
+    </div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="section" id="troubleshoot">
+    <div class="section-title">
+      <div class="icon">🔧</div>
+      <div>
+        <h2>Troubleshooting</h2>
+        <p>Häufige Probleme und Lösungen</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Problem</th><th>Ursache</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>"Cannot connect to ntfy"</td>
+            <td>Falsche <code>ntfy_url</code> oder ntfy-Add-on nicht gestartet</td>
+            <td>Docker-interne URL prüfen: <code>http://a0d7b954-ntfy:80</code>. Beide Add-ons müssen laufen.</td>
+          </tr>
+          <tr>
+            <td>401 Unauthorized</td>
+            <td>ntfy läuft mit Auth, Token fehlt oder falsch</td>
+            <td>Admin-Token in Add-on Options unter <code>ntfy_token</code> hinterlegen.</td>
+          </tr>
+          <tr>
+            <td>ACL-Tab leer</td>
+            <td>ntfy ohne <code>auth-file</code> konfiguriert</td>
+            <td>In ntfy <code>server.yml</code> <code>auth-file: /data/user.db</code> setzen und ntfy neu starten.</td>
+          </tr>
+          <tr>
+            <td>SSE-Stream bricht ab</td>
+            <td>NPM-Timeout oder Proxy-Pufferung</td>
+            <td>Im NPM Proxy Host: <code>proxy_read_timeout 3600;</code> und <code>proxy_buffering off;</code> als Custom Config setzen.</td>
+          </tr>
+          <tr>
+            <td>Web UI nicht erreichbar</td>
+            <td>Port-Konflikt oder Add-on nicht gestartet</td>
+            <td>Logs prüfen (<code>bashio::log.info</code>). Port-Mapping im Add-on kontrollieren.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="label">NPM Custom Config für SSE</div>
+      <pre>proxy_read_timeout 3600s;
+proxy_buffering off;
+proxy_cache off;
+chunked_transfer_encoding on;</pre>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+  // Sidebar search
+  const searchInput = document.getElementById('sidebarSearch');
+  const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+  searchInput?.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    navItems.forEach(item => {
+      item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('[id]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => {
+          n.classList.toggle('active', n.getAttribute('href') === '#' + e.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

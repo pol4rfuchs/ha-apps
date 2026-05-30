@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pol4rfuchs.codeberg.page/sitemap.xml

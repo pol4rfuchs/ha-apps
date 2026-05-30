@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TS6 Manager · Blue Glass Wiki</title>
+<style>
+  :root {
+    --ts-blue: #2588ff;
+    --ts-blue-2: #41bdf5;
+    --ts-cyan: #7de7ff;
+    --ts-deep: #050914;
+    --ts-navy: #071221;
+    --ts-panel: rgba(9, 23, 43, .72);
+    --ts-panel-2: rgba(13, 43, 78, .48);
+    --ts-panel-3: rgba(2, 7, 15, .78);
+    --border: rgba(125, 231, 255, .18);
+    --border-strong: rgba(125, 231, 255, .40);
+    --text: #eff9ff;
+    --muted: #a7c4d8;
+    --dim: #6f8ea4;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(37,136,255,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(65,189,245,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(0,120,255,.14), transparent 34rem),
+      linear-gradient(135deg, #02050b 0%, #071221 44%, #0a1020 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(125,231,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(125,231,255,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--ts-cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(3, 10, 22, .90), rgba(5, 16, 31, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(37,136,255,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(37,136,255,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(125,231,255,.98), rgba(65,189,245,.68) 46%, rgba(16,55,103,.86));
+    color: #02101f;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(65,189,245,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(65,189,245,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ts-cyan); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(37,136,255,.14);
+    box-shadow: 0 10px 32px rgba(37,136,255,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(65,189,245,.13);
+    border: 1px solid rgba(125,231,255,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(37,136,255,.25), rgba(65,189,245,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(125,231,255,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--ts-cyan);
+    background: rgba(2, 16, 31, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(37,136,255,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ts-cyan);
+    box-shadow: 0 0 0 0 rgba(125,231,255,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(125,231,255,0); } 100% { box-shadow: 0 0 0 0 rgba(125,231,255,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .blue { color: var(--ts-cyan); text-shadow: 0 0 45px rgba(125,231,255,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #d5edf9; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(37,136,255,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(37,136,255,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--ts-cyan); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(11, 31, 58, .62), rgba(4, 10, 21, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(125,231,255,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(65,189,245,.14);
+    border: 1px solid rgba(125,231,255,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--ts-cyan); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #e0f4ff; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #f4fbff; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--ts-cyan); }
+  .doc-content h4 { font-size: 1.02rem; color: #e5f8ff; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #d8ecf8; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(125,231,255,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(125,231,255,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--ts-cyan); background: rgba(37,136,255,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #d5f6ff; background: rgba(65,189,245,.11); border: 1px solid rgba(125,231,255,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(125,231,255,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { display: block; padding: 0; border: 0; background: transparent; color: #e4f8ff; font-size: .84rem; line-height: 1.58; white-space: pre; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; border: 1px solid rgba(125,231,255,.30); border-radius: 10px; padding: 6px 9px; color: var(--ts-cyan); background: rgba(0,0,0,.44); font-family: var(--font-mono); font-size: .72rem; cursor: pointer; }
+  .copy-btn:hover { background: rgba(37,136,255,.20); }
+
+  .source-section { margin-top: 22px; padding: 24px; }
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 10px; margin-top: 14px; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #02101f; background: var(--ts-cyan); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #02101f; background: var(--ts-cyan); box-shadow: 0 16px 50px rgba(37,136,255,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🎧</div>
+      <div>
+        <h1>TS6 Manager</h1>
+        <p>BLUE GLASS WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search TS6, WebQuery, ports, backup..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, quick start, status</small></span></a>
+      <a class="nav-item" href="#architecture" data-target="architecture"><span class="nav-icon">🧱</span><span><strong>Architecture</strong><small>Frontend, backend, SQLite, WebQuery</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
+      <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Setup wizard and admin account</small></span></a>
+      <a class="nav-item" href="#connect" data-target="connect"><span class="nav-icon">🔌</span><span><strong>TS6 Connection</strong><small>Host, WebQuery port, API key</small></span></a>
+      <a class="nav-item" href="#features" data-target="features"><span class="nav-icon">✨</span><span><strong>Features</strong><small>Dashboard, bots, flows, widgets</small></span></a>
+      <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports & Networking</strong><small>8066, 10080, LAN exposure</small></span></a>
+      <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data, SQLite, music, backup</small></span></a>
+      <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔐</span><span><strong>Security</strong><small>API keys, proxy, public widgets</small></span></a>
+      <a class="nav-item" href="#updates" data-target="updates"><span class="nav-icon">🛡️</span><span><strong>Update & Rollback</strong><small>Safe HA backup workflow</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Known symptoms and fixes</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>Codeberg, upstream, docs links</small></span></a>
+      <a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, WebQuery, architecture</small></span></a>
+      <a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer & License</strong><small>Unofficial wrapper, licenses</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--ts-cyan)">Runtime hints</strong><br>
+      Manager UI: <code>8066</code><br>
+      TS6 WebQuery: <code>10080</code><br>
+      Persistence: <code>/data</code><br>
+      Database: <code>/data/ts6webui.db</code>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> TEAMSPEAK 6 · WEBQUERY HTTP · HOME ASSISTANT ADD-ON</div>
+        <h2>TS6 Manager in <span class="blue">Blue Glass</span>.</h2>
+        <p class="hero-copy">
+          Single-file operations wiki for the TS6 Manager Home Assistant Add-on: installation, first start, TeamSpeak 6 WebQuery connection, persistence, backup, security and troubleshooting — with a TS6-blue admin-dashboard look.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#connect">🔌 Connect TS6 Server</a>
+          <a class="btn secondary" href="#troubleshooting">🛠 Troubleshooting</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>Add-on Slug</small><strong>ts6_manager</strong></div>
+          <div class="metric"><small>Manager Web UI</small><strong>http://homeassistant.local:8066</strong></div>
+          <div class="metric"><small>WebQuery API</small><strong>TS6 Server :10080</strong></div>
+          <div class="metric"><small>Generated</small><strong>2026-04-29</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>Install the add-on, open the Web UI, create the first admin account and add your TeamSpeak 6 WebQuery connection.</p>
+        <pre><code>Repository: https://codeberg.org/Pol4rFuchs/teamspeak6-manager-ha-app
+Web UI:     http://homeassistant.local:8066
+Setup:      /setup
+TS6 API:    http://&lt;TS6-HOST&gt;:10080</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>🧭 Runbook Health Matrix</h3>
+        <p>The manager is a control panel. It does not replace the TeamSpeak 6 server itself.</p>
+        <div class="mini-status">
+          <div class="status-pill"><small>SERVER</small><strong>External dependency</strong></div>
+          <div class="status-pill"><small>WEBQUERY</small><strong>Required</strong></div>
+          <div class="status-pill"><small>BACKUP</small><strong>/data included</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview quick start ts6 manager home assistant add-on teamspeak webquery port 8066 setup database sqlite data">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>TS6 Manager</strong> is a browser-based management interface for TeamSpeak servers. This Home Assistant Add-on wrapper packages the manager so it can be installed, started, stopped, backed up and monitored through Home Assistant.</p>
+        <blockquote><strong>Important:</strong> This add-on is the manager UI, not the TeamSpeak 6 server. It connects to an already running TeamSpeak 6 server through the WebQuery HTTP API.</blockquote>
+        <h2 id="home-pages"><a class="anchor" href="#home-pages" aria-label="Permalink">#</a>Wiki Pages</h2>
+        <table>
+          <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#installation">Installation</a></td><td>Add repository, install and start the add-on.</td></tr>
+            <tr><td><a href="#first-start">First Start</a></td><td>Create the first admin account through the setup wizard.</td></tr>
+            <tr><td><a href="#connect">TS6 Connection</a></td><td>Connect to TeamSpeak 6 with host, WebQuery port and API key.</td></tr>
+            <tr><td><a href="#persistence">Persistence & Backup</a></td><td>Understand what lives under <code>/data</code> and what HA backups preserve.</td></tr>
+            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Fast checks for broken UI, API errors, database resets and port conflicts.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="home-minimum"><a class="anchor" href="#home-minimum" aria-label="Permalink">#</a>Minimum Operating Model</h2>
+        <pre><code>Home Assistant Add-on → TS6 Manager Web UI :8066
+TS6 Manager Backend  → TeamSpeak 6 WebQuery HTTP API :10080
+TS6 Manager Data     → /data/ts6webui.db + /data/music + /data/secrets.env</code></pre>
+      </div>
+    </article>
+
+    <article id="architecture" class="doc-section glass-card" data-search="architecture frontend backend react express sqlite prisma webquery api sidecar teamSpeak server architecture">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🧱</span><div><p class="eyebrow">Architecture</p><h2>How TS6 Manager Works</h2></div></div>
+        <a class="section-link" href="#architecture">#architecture</a>
+      </div>
+      <div class="doc-content">
+        <p>The upstream project is structured as a web application with a frontend, backend and SQLite persistence. The frontend never needs direct access to TeamSpeak API keys; API calls go through the backend.</p>
+        <pre><code>┌──────────────────┐      ┌──────────────────┐      ┌────────────────────────┐
+│ Browser / Web UI │ ───▶ │ TS6 Manager API  │ ───▶ │ TeamSpeak 6 Server     │
+│ Frontend SPA     │      │ Backend service  │      │ WebQuery HTTP :10080   │
+└──────────────────┘      └─────────┬────────┘      └────────────────────────┘
+                                    │
+                                    ▼
+                              ┌──────────┐
+                              │ SQLite   │
+                              │ /data DB │
+                              └──────────┘</code></pre>
+        <h2 id="architecture-components"><a class="anchor" href="#architecture-components" aria-label="Permalink">#</a>Component Map</h2>
+        <table>
+          <thead><tr><th>Layer</th><th>Role</th><th>Operational note</th></tr></thead>
+          <tbody>
+            <tr><td>Frontend</td><td>Browser UI for dashboard, channels, clients, bots, flows and widgets.</td><td>Expose only behind trusted access.</td></tr>
+            <tr><td>Backend</td><td>Handles authentication, WebQuery calls, bot engine and persisted settings.</td><td>Requires stable secrets and database persistence.</td></tr>
+            <tr><td>SQLite</td><td>Stores users, settings, connections and manager state.</td><td>Must remain under <code>/data</code> for HA backup safety.</td></tr>
+            <tr><td>TeamSpeak 6</td><td>Actual voice server and WebQuery API endpoint.</td><td>Keep WebQuery private; do not publish port <code>10080</code> to the internet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store codeberg teamspeak6 manager ha app">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Home Assistant Add-on</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="installation-step-1"><a class="anchor" href="#installation-step-1" aria-label="Permalink">#</a>Step 1 — Add Repository</h2>
+        <ol>
+          <li>Open Home Assistant.</li>
+          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Open <strong>⋮ → Repositories</strong>.</li>
+          <li>Add the repository:</li>
+        </ol>
+        <pre><code>https://codeberg.org/Pol4rFuchs/teamspeak6-manager-ha-app</code></pre>
+        <h2 id="installation-step-2"><a class="anchor" href="#installation-step-2" aria-label="Permalink">#</a>Step 2 — Install Add-on</h2>
+        <ol>
+          <li>Search for <strong>TS6 Manager</strong> in the Add-on Store.</li>
+          <li>Click <strong>Install</strong>.</li>
+          <li>Wait until the image is downloaded and prepared.</li>
+        </ol>
+        <h2 id="installation-step-3"><a class="anchor" href="#installation-step-3" aria-label="Permalink">#</a>Step 3 — Start</h2>
+        <ol>
+          <li>Open the add-on <strong>Info</strong> tab.</li>
+          <li>Enable <strong>Start on boot</strong> if the manager should run permanently.</li>
+          <li>Click <strong>Start</strong>.</li>
+          <li>Open the <strong>Log</strong> tab and verify that the service starts without errors.</li>
+        </ol>
+        <h2 id="installation-open"><a class="anchor" href="#installation-open" aria-label="Permalink">#</a>Open Web UI</h2>
+        <pre><code>http://homeassistant.local:8066</code></pre>
+        <blockquote>If you changed the host port in the Home Assistant <strong>Network</strong> tab, use your configured host port instead of <code>8066</code>.</blockquote>
+      </div>
+    </article>
+
+    <article id="first-start" class="doc-section glass-card" data-search="first start setup wizard admin account localhost setup ts6 manager">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">✅</span><div><p class="eyebrow">First Start</p><h2>Initial Setup Wizard</h2></div></div>
+        <a class="section-link" href="#first-start">#first-start</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="first-start-setup"><a class="anchor" href="#first-start-setup" aria-label="Permalink">#</a>1. Open Setup</h2>
+        <pre><code>http://homeassistant.local:8066/setup</code></pre>
+        <p>Create your first admin account. There are no safe default credentials; define your own strong password.</p>
+        <h2 id="first-start-login"><a class="anchor" href="#first-start-login" aria-label="Permalink">#</a>2. Log In</h2>
+        <ol>
+          <li>Open the TS6 Manager Web UI.</li>
+          <li>Log in with the admin account created in setup.</li>
+          <li>Go to <strong>Settings → Connections</strong>.</li>
+        </ol>
+        <h2 id="first-start-checklist"><a class="anchor" href="#first-start-checklist" aria-label="Permalink">#</a>3. First Health Check</h2>
+        <table>
+          <thead><tr><th>Check</th><th>Expected result</th></tr></thead>
+          <tbody>
+            <tr><td>Web UI opens</td><td>Login or setup screen appears.</td></tr>
+            <tr><td>Database exists</td><td><code>/data/ts6webui.db</code> is created after first start.</td></tr>
+            <tr><td>Secrets exist</td><td><code>/data/secrets.env</code> exists and remains stable across restarts.</td></tr>
+            <tr><td>Connection page loads</td><td>Settings area allows adding a TeamSpeak server connection.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="connect" class="doc-section glass-card" data-search="connect teamspeak 6 server webquery http api port 10080 api key settings connections host">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔌</span><div><p class="eyebrow">TS6 Connection</p><h2>Connect to TeamSpeak 6 Server</h2></div></div>
+        <a class="section-link" href="#connect">#connect</a>
+      </div>
+      <div class="doc-content">
+        <p>TS6 Manager talks to your server through the TeamSpeak 6 <strong>WebQuery HTTP API</strong>. Raw Telnet ServerQuery is not the operating model for this manager.</p>
+        <h2 id="connect-values"><a class="anchor" href="#connect-values" aria-label="Permalink">#</a>Required Values</h2>
+        <table>
+          <thead><tr><th>Field</th><th>Value</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Host</td><td><code>&lt;TS6-SERVER-IP&gt;</code> or local hostname</td><td>Use the IP/hostname reachable from the add-on container.</td></tr>
+            <tr><td>WebQuery Port</td><td><code>10080</code></td><td>Default WebQuery HTTP API port.</td></tr>
+            <tr><td>API Key</td><td>Generated by TeamSpeak server</td><td>Copy from server log or server admin tooling.</td></tr>
+            <tr><td>Protocol</td><td>HTTP WebQuery</td><td>Do not use raw Telnet query.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="connect-local"><a class="anchor" href="#connect-local" aria-label="Permalink">#</a>If TS6 Server Runs on the Same HA Host</h2>
+        <p>Do not blindly use <code>localhost</code>. In containerized Home Assistant add-ons, <code>localhost</code> often means the manager container itself, not another add-on. Prefer the HA host IP, the TS6 add-on hostname if available, or the Docker/network name proven by logs.</p>
+        <pre><code># Safer examples
+Host: 192.168.x.y
+Port: 10080
+
+# Only use localhost if you have verified the manager container can reach TS6 there
+Host: localhost
+Port: 10080</code></pre>
+        <h2 id="connect-test"><a class="anchor" href="#connect-test" aria-label="Permalink">#</a>Connection Test Matrix</h2>
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>connection refused</code></td><td>Wrong host/port or WebQuery disabled.</td><td>Verify TS6 server log and port <code>10080</code>.</td></tr>
+            <tr><td><code>unauthorized</code> / invalid key</td><td>Wrong or outdated API key.</td><td>Generate/copy a fresh WebQuery API key.</td></tr>
+            <tr><td>Timeout</td><td>Routing or firewall issue.</td><td>Check LAN/VLAN, container network and host firewall.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="features" class="doc-section glass-card" data-search="features dashboard channel tree clients kick ban move poke permissions groups music bots yt-dlp bot flow engine widgets svg png json">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">✨</span><div><p class="eyebrow">Features</p><h2>What the Manager Can Do</h2></div></div>
+        <a class="section-link" href="#features">#features</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="features-server"><a class="anchor" href="#features-server" aria-label="Permalink">#</a>Server Management</h2>
+        <ul>
+          <li>Live dashboard with online users, channels, uptime, ping and bandwidth information.</li>
+          <li>Channel tree and client list.</li>
+          <li>Client actions such as kick, ban, move and poke.</li>
+          <li>Server groups, channel groups, permissions, ban list and token / privilege key management.</li>
+          <li>Server log viewing and administration panels, depending on upstream feature state.</li>
+        </ul>
+        <h2 id="features-bots"><a class="anchor" href="#features-bots" aria-label="Permalink">#</a>Music Bots</h2>
+        <ul>
+          <li>Multiple bots per server.</li>
+          <li>Radio streams, YouTube playback via <code>yt-dlp</code> and local music library.</li>
+          <li>Queue, volume, playback state and chat command control.</li>
+          <li>Persistent music storage under <code>/data/music</code> in the add-on wrapper.</li>
+        </ul>
+        <h2 id="features-flows"><a class="anchor" href="#features-flows" aria-label="Permalink">#</a>Bot Flow Engine</h2>
+        <ul>
+          <li>Visual node editor for automation workflows.</li>
+          <li>Triggers, conditions, variables, delays, loops and actions.</li>
+          <li>Useful for workflows such as AFK movers, temporary channels, group protection and online counters.</li>
+        </ul>
+        <h2 id="features-widgets"><a class="anchor" href="#features-widgets" aria-label="Permalink">#</a>Embeddable Widgets</h2>
+        <ul>
+          <li>Public server status widgets for websites or forums.</li>
+          <li>Output styles such as live page, SVG, PNG or JSON depending on upstream implementation.</li>
+          <li>Use token-based public access carefully; widgets are intended for status display, not admin access.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="ports" class="doc-section glass-card" data-search="ports networking 8066 10080 reverse proxy nginx npm cloudflare home assistant lan">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">Networking</p><h2>Ports & Exposure</h2></div></div>
+        <a class="section-link" href="#ports">#ports</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Port</th><th>Service</th><th>Expose publicly?</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>8066/tcp</code></td><td>TS6 Manager Web UI</td><td>Prefer no</td><td>Expose only behind trusted auth, VPN, Cloudflare Access or LAN.</td></tr>
+            <tr><td><code>10080/tcp</code></td><td>TeamSpeak 6 WebQuery HTTP API</td><td><strong>No</strong></td><td>Keep private. Only TS6 Manager should need access.</td></tr>
+            <tr><td><code>9987/udp</code></td><td>TeamSpeak voice traffic</td><td>Usually yes</td><td>Server voice port, separate from the manager.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="ports-reverse-proxy"><a class="anchor" href="#ports-reverse-proxy" aria-label="Permalink">#</a>Reverse Proxy Pattern</h2>
+        <pre><code>Public HTTPS → Reverse Proxy → Home Assistant host :8066 → TS6 Manager
+TS6 Manager → private LAN/container route → TS6 WebQuery :10080</code></pre>
+        <blockquote>Do not route public traffic directly to WebQuery port <code>10080</code>. If you publish anything, publish the manager UI behind authentication, not the TS6 API key endpoint.</blockquote>
+      </div>
+    </article>
+
+    <article id="persistence" class="doc-section glass-card" data-search="persistence backup data sqlite database secrets music ts6webui db home assistant backup restore">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Persistence</p><h2>Data Persistence & Backup</h2></div></div>
+        <a class="section-link" href="#persistence">#persistence</a>
+      </div>
+      <div class="doc-content">
+        <p>The add-on wrapper should keep important manager state under <code>/data</code>. That is the critical Home Assistant add-on data directory and the clean backup/rollback boundary.</p>
+        <pre><code>/data/
+├── ts6webui.db       # SQLite database: users, settings, connections, manager state
+├── secrets.env       # JWT_SECRET and ENCRYPTION_KEY
+└── music/            # Downloaded music and local library</code></pre>
+        <h2 id="persistence-table"><a class="anchor" href="#persistence-table" aria-label="Permalink">#</a>What Must Survive Updates</h2>
+        <table>
+          <thead><tr><th>Path</th><th>Content</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td><code>/data/ts6webui.db</code></td><td>SQLite database</td><td>Admin account, settings and connection profiles.</td></tr>
+            <tr><td><code>/data/secrets.env</code></td><td>JWT/encryption secrets</td><td>Stable secrets prevent token/session and credential encryption problems.</td></tr>
+            <tr><td><code>/data/music/</code></td><td>Music library</td><td>Preserves bot downloads and local files.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="persistence-backup"><a class="anchor" href="#persistence-backup" aria-label="Permalink">#</a>Backup Workflow</h2>
+        <ol>
+          <li>Go to <strong>Settings → System → Backups</strong>.</li>
+          <li>Create a full backup before large add-on updates.</li>
+          <li>For rollback, restore the TS6 Manager add-on data or the full backup.</li>
+          <li>After restore, start the add-on and verify the database and login.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article id="security" class="doc-section glass-card" data-search="security api key password jwt encryption reverse proxy public widget hardening secrets">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔐</span><div><p class="eyebrow">Security</p><h2>Hardening Notes</h2></div></div>
+        <a class="section-link" href="#security">#security</a>
+      </div>
+      <div class="doc-content">
+        <ul>
+          <li>Treat the WebQuery API key like a password.</li>
+          <li>Do not expose WebQuery port <code>10080</code> to the internet.</li>
+          <li>Keep the manager behind Home Assistant authentication, VPN, trusted LAN or an external access-control layer.</li>
+          <li>Never commit <code>secrets.env</code>, SQLite databases, API keys or backup archives to Git.</li>
+          <li>Use a strong admin password in the setup wizard.</li>
+          <li>Be careful with public widgets: they are status surfaces and should not leak private channel/client details you do not want public.</li>
+        </ul>
+        <h2 id="security-preflight"><a class="anchor" href="#security-preflight" aria-label="Permalink">#</a>Pre-Publication Checklist</h2>
+        <table>
+          <thead><tr><th>Item</th><th>Status target</th></tr></thead>
+          <tbody>
+            <tr><td>HTTPS enabled</td><td>Required for external access.</td></tr>
+            <tr><td>Manager auth enabled</td><td>Required.</td></tr>
+            <tr><td>WebQuery private</td><td>Required.</td></tr>
+            <tr><td>Backups encrypted/off-host</td><td>Recommended.</td></tr>
+            <tr><td>API key rotated after leaks</td><td>Required after any suspected exposure.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="updates" class="doc-section glass-card" data-search="updates rollback backup restore home assistant addon update safe workflow version changelog">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛡️</span><div><p class="eyebrow">Operations</p><h2>Update & Rollback Runbook</h2></div></div>
+        <a class="section-link" href="#updates">#updates</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="updates-before"><a class="anchor" href="#updates-before" aria-label="Permalink">#</a>Before Update</h2>
+        <ol>
+          <li>Create a Home Assistant backup.</li>
+          <li>Download/export the backup if the update is risky.</li>
+          <li>Open the add-on log and note the currently running version.</li>
+          <li>Confirm <code>/data/ts6webui.db</code> exists.</li>
+        </ol>
+        <h2 id="updates-after"><a class="anchor" href="#updates-after" aria-label="Permalink">#</a>After Update</h2>
+        <ol>
+          <li>Start the add-on.</li>
+          <li>Open the Web UI.</li>
+          <li>Verify login.</li>
+          <li>Verify TeamSpeak server connection.</li>
+          <li>Test one safe client/channel read-only action before doing admin actions.</li>
+        </ol>
+        <h2 id="updates-rollback"><a class="anchor" href="#updates-rollback" aria-label="Permalink">#</a>Rollback</h2>
+        <pre><code>1. Stop TS6 Manager add-on
+2. Restore known-good Home Assistant backup
+3. Start add-on
+4. Verify /data/ts6webui.db and login
+5. Re-test WebQuery connection</code></pre>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting web ui not open cannot connect webquery api key invalid database login broken music bot yt-dlp permission denied address already in use">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms & Fixes</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="troubleshooting-ui"><a class="anchor" href="#troubleshooting-ui" aria-label="Permalink">#</a>Web UI Does Not Open</h2>
+        <ul>
+          <li>Check if the add-on is started.</li>
+          <li>Check the add-on log for startup errors.</li>
+          <li>Confirm port <code>8066</code> is mapped in the Network tab.</li>
+          <li>Check if another add-on already uses the same host port.</li>
+          <li>Try direct URL: <code>http://homeassistant.local:8066</code>.</li>
+        </ul>
+        <h2 id="troubleshooting-connect"><a class="anchor" href="#troubleshooting-connect" aria-label="Permalink">#</a>Cannot Connect to TS6 Server</h2>
+        <ul>
+          <li>Confirm TeamSpeak 6 server is running.</li>
+          <li>Confirm WebQuery HTTP API is enabled.</li>
+          <li>Confirm host/IP is reachable from the add-on environment.</li>
+          <li>Confirm WebQuery port is <code>10080</code>.</li>
+          <li>Confirm API key is current and copied without spaces or line breaks.</li>
+        </ul>
+        <h2 id="troubleshooting-db"><a class="anchor" href="#troubleshooting-db" aria-label="Permalink">#</a>Database or Login Broken After Update</h2>
+        <ol>
+          <li>Stop the add-on.</li>
+          <li>Restore a known-good Home Assistant backup.</li>
+          <li>Start the add-on again.</li>
+          <li>Check whether <code>/data/ts6webui.db</code> exists.</li>
+        </ol>
+        <blockquote>If <code>/data/ts6webui.db</code> is missing, the manager behaves like a fresh installation.</blockquote>
+        <h2 id="troubleshooting-logs"><a class="anchor" href="#troubleshooting-logs" aria-label="Permalink">#</a>Log Pattern Matrix</h2>
+        <table>
+          <thead><tr><th>Symptom</th><th>Meaning</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><code>address already in use</code></td><td>Host port conflict.</td><td>Change mapped port or stop conflicting service.</td></tr>
+            <tr><td><code>permission denied</code></td><td>Data or music path not writable.</td><td>Check add-on data path and startup script permissions.</td></tr>
+            <tr><td><code>connection refused</code></td><td>TS6 WebQuery target not reachable.</td><td>Fix host, port, firewall or WebQuery setting.</td></tr>
+            <tr><td><code>invalid api key</code></td><td>Wrong TeamSpeak WebQuery API key.</td><td>Generate/copy a fresh key.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources codeberg github clusterzx home assistant teamspeak links license disclaimer">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Source Registry</p><h2>Linked Sources</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <p>This page intentionally keeps the source links visible and centralized so the wiki can be hosted as a standalone Codeberg Pages asset later.</p>
+        <div class="source-grid">
+          <a class="source-chip" href="https://codeberg.org/Pol4rFuchs/teamspeak6-manager-ha-app"><span>🧊</span><strong>Codeberg Add-on Repo</strong><small>Pol4rFuchs/teamspeak6-manager-ha-app</small></a>
+          <a class="source-chip" href="https://github.com/clusterzx/ts6-manager"><span>⬆️</span><strong>Upstream Project</strong><small>clusterzx/ts6-manager</small></a>
+          <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant Add-ons</strong><small>Supervisor add-on platform</small></a>
+          <a class="source-chip" href="https://teamspeak.com"><span>🎙️</span><strong>TeamSpeak</strong><small>Official TeamSpeak website</small></a>
+          <a class="source-chip" href="https://github.com/yt-dlp/yt-dlp"><span>🎵</span><strong>yt-dlp</strong><small>Used by upstream music features</small></a>
+        </div>
+        <h2 id="sources-disclaimer"><a class="anchor" href="#sources-disclaimer" aria-label="Permalink">#</a>Disclaimer</h2>
+        <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <code>clusterzx/ts6-manager</code>. It is not affiliated with or endorsed by TeamSpeak Systems, Inc. or the upstream project maintainer.</blockquote>
+      </div>
+    </article>
+
+    <article id="known-limitations" class="doc-section glass-card" data-search="known limitations ingress webquery architecture arm amd64 aarch64">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚠️</span><div><p class="eyebrow">LIMITATIONS.md</p><h2>Known Limitations</h2></div></div>
+        <a class="section-link" href="#known-limitations">#known-limitations</a>
+      </div>
+      <div class="doc-content">
+<h2>No HA Ingress Support</h2>
+<p>The TS6 Manager web UI cannot be served through Home Assistant Ingress. The React frontend uses absolute asset paths that break under HA's ingress proxy.</p>
+<p><strong>Workaround:</strong> Always access TS6 Manager via its direct URL: <code>http://&lt;HA-IP&gt;:8066</code></p>
+
+<h2>WebQuery Connection Required</h2>
+<p>TS6 Manager requires a running TeamSpeak 6 Server with HTTP WebQuery enabled on port <code>10080</code>. Without it, the Manager cannot connect and will show a connection error on the dashboard.</p>
+
+<h2>No Multi-Server Management</h2>
+<p>Each TS6 Manager instance connects to exactly one TeamSpeak 6 Server. Managing multiple servers requires multiple Manager instances.</p>
+
+<h2>SQLite Database Not Shared</h2>
+<p>The Manager's SQLite database (<code>/data/ts6manager/prisma.db</code>) is local to the container. It is not synced with the TeamSpeak 6 Server database. If you reinstall the Manager, connection profiles and settings are lost unless you have a backup.</p>
+
+<h2>No armhf / armv7 / i386 Support</h2>
+<p>The add-on only supports <code>amd64</code> and <code>aarch64</code>. Home Assistant has dropped official support for 32-bit architectures. If you are running one of these, consider migrating to a supported platform.</p>
+
+<h2>Music Bot Features Require yt-dlp</h2>
+<p>The upstream project's music bot features depend on <code>yt-dlp</code>. These work in the add-on, but may break if YouTube changes its API. This is an upstream dependency outside our control.</p>
+      </div>
+    </article>
+
+    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer license unofficial wrapper clusterzx teamspeak">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📜</span><div><p class="eyebrow">LEGAL.md</p><h2>Disclaimer & License</h2></div></div>
+        <a class="section-link" href="#disclaimer-license">#disclaimer-license</a>
+      </div>
+      <div class="doc-content">
+<h2>Disclaimer</h2>
+<blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <a href="https://github.com/clusterzx/ts6-manager">clusterzx/ts6-manager</a>. It is not affiliated with or endorsed by TeamSpeak Systems, Inc. or the upstream project maintainer.</blockquote>
+<h2>Wrapper License</h2>
+<pre><code>MIT License</code></pre>
+<p>The upstream TS6 Manager project by clusterzx is licensed under its own terms. The TeamSpeak 6 Server itself is subject to TeamSpeak licensing terms.</p>
+<h2>Useful Links</h2>
+<div class="source-grid">
+<a class="source-chip" href="https://codeberg.org/Pol4rFuchs/teamspeak6-manager-ha-app"><span>🧊</span><strong>Codeberg Repo</strong><small>Pol4rFuchs/teamspeak6-manager-ha-app</small></a>
+<a class="source-chip" href="https://github.com/clusterzx/ts6-manager"><span>⬆️</span><strong>Upstream Project</strong><small>clusterzx/ts6-manager</small></a>
+<a class="source-chip" href="https://teamspeak.com"><span>🎙️</span><strong>TeamSpeak</strong><small>Official TeamSpeak website</small></a>
+<a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>HA Add-ons</strong><small>Home Assistant Supervisor platform</small></a>
+</div>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://codeberg.org/Pol4rFuchs/teamspeak6-manager-ha-app">🧊 Codeberg</a>
+        <a href="https://github.com/clusterzx/ts6-manager">⬆️ Upstream</a>
+        <a href="https://www.home-assistant.io/addons/">🏠 HA Add-ons</a>
+      </div>
+      <div>TS6 Manager Home Assistant Add-on · Blue Glass Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
