@@ -98,7 +98,7 @@ jobs:
 
       - name: Checkout repository
         if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -248,7 +248,16 @@ jobs:
           else:
               print("No Dockerfile change required.")
 
-          # Do not auto-bump config.yaml version here. Add-on version remains an explicit maintainer decision.
+          # Auto-bump patch version in config.yaml so HA users see an update notification.
+          cfg_text = config.read_text(encoding="utf-8")
+          vm = re.search(r'(?m)^(version:\s*["\']?)(\d+)\.(\d+)\.(\d+)(["\']?)', cfg_text)
+          if vm:
+              new_version = f"{vm.group(2)}.{vm.group(3)}.{int(vm.group(4)) + 1}"
+              cfg_text = cfg_text[:vm.start()] + vm.group(1) + new_version + vm.group(5) + cfg_text[vm.end():]
+              config.write_text(cfg_text, encoding="utf-8")
+              print(f"Bumped config.yaml version to {new_version}")
+          else:
+              print("WARNING: could not parse version in config.yaml — skipping version bump")
           PY
 
       - name: Static validate changed add-on
@@ -320,7 +329,7 @@ jobs:
           - Target: \`${TARGET_VALUE}\`
           - Base branch: \`${BASE_BRANCH}\`
 
-          Add-on version in \`config.yaml\` was not auto-bumped. Review the Dockerfile diff, update the add-on version/changelog if required, then merge.
+          Add-on version in \`config.yaml\` was auto-bumped (patch). Review the Dockerfile diff and merge.
           EOF
           )"
 
