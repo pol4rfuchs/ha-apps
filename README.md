@@ -1,6 +1,6 @@
 # Pol4rFuchs Home Assistant Apps
 
-[![HA App Repository](https://img.shields.io/badge/HA-App-%20Repository-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![HA App Repository](https://img.shields.io/badge/HA%20App-Repository-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![HA App Wikis](https://img.shields.io/badge/WIKI-HA%20App%20Wikis-2ea44f?style=for-the-badge&logo=githubpages&logoColor=white)](https://pol4rfuchs.github.io/ha-appwikis/ha-appwikis/)
 
 Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64` + `amd64`).
