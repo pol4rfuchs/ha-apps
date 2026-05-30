@@ -16,18 +16,19 @@ permissions:
   id-token: write
 
 jobs:
+  # ── 1. Read config.yaml, resolve arch → runner matrix ──────────────────────
   prepare:
     name: Prepare ${{ inputs.app }}
     runs-on: ubuntu-latest
     outputs:
-      image: ${{ steps.info.outputs.image }}
-      version: ${{ steps.info.outputs.version }}
-      platforms: ${{ steps.info.outputs.platforms }}
-      name: ${{ steps.info.outputs.name }}
-      slug: ${{ steps.info.outputs.slug }}
+      image:    ${{ steps.info.outputs.image }}
+      version:  ${{ steps.info.outputs.version }}
+      name:     ${{ steps.info.outputs.name }}
+      slug:     ${{ steps.info.outputs.slug }}
+      matrix:   ${{ steps.info.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -37,13 +38,11 @@ jobs:
         run: |
           set -euo pipefail
           app="${{ inputs.app }}"
-          cfg="${app}/config.yaml"
-          dockerfile="${app}/Dockerfile"
-
-          test -f "${cfg}"
-          test -f "${dockerfile}"
+          test -f "${app}/config.yaml"
+          test -f "${app}/Dockerfile"
 
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
           import re
           from pathlib import Path
 
@@ -63,11 +62,11 @@ jobs:
                   return [x.strip().strip("'\"") for x in one[1:-1].split(",") if x.strip()]
               return [one] if one else []
 
-          image = scalar("image")
+          image   = scalar("image")
           version = scalar("version")
-          name = scalar("name")
-          slug = scalar("slug") or app
-          arch = list_value("arch")
+          name    = scalar("name")
+          slug    = scalar("slug") or app
+          arch    = list_value("arch")
 
           if not image.startswith("ghcr.io/pol4rfuchs/"):
               raise SystemExit(f"invalid image: {image}")
@@ -76,47 +75,51 @@ jobs:
           if not arch:
               raise SystemExit("missing arch")
 
-          arch_to_platform = {
-              "amd64": "linux/amd64",
-              "aarch64": "linux/arm64",
+          arch_map = {
+              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-latest",    "suffix": "amd64"},
+              "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64"},
           }
-          platforms = []
-          for item in arch:
-              if item not in arch_to_platform:
-                  raise SystemExit(f"unsupported arch for GHCR build: {item}")
-              platforms.append(arch_to_platform[item])
+          bad = sorted(set(arch) - set(arch_map))
+          if bad:
+              raise SystemExit(f"unsupported arch: {bad}")
+
+          matrix = [{"platform": arch_map[a]["platform"],
+                     "runner":   arch_map[a]["runner"],
+                     "suffix":   arch_map[a]["suffix"]} for a in arch]
 
           print(f"image={image}")
           print(f"version={version}")
           print(f"name={name}")
           print(f"slug={slug}")
-          print(f"platforms={','.join(platforms)}")
+          print(f"matrix={json.dumps(matrix)}")
           PY
 
       - name: Summary
         shell: bash
         run: |
-          echo "App: ${{ inputs.app }}"
-          echo "Image: ${{ steps.info.outputs.image }}"
+          echo "App:     ${{ inputs.app }}"
+          echo "Image:   ${{ steps.info.outputs.image }}"
           echo "Version: ${{ steps.info.outputs.version }}"
-          echo "Platforms: ${{ steps.info.outputs.platforms }}"
+          echo "Matrix:  ${{ steps.info.outputs.matrix }}"
 
+  # ── 2. Build each platform on its native runner ─────────────────────────────
   build:
-    name: Build ${{ inputs.app }}
+    name: Build ${{ inputs.app }} (${{ matrix.suffix }})
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
       id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -129,19 +132,109 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build image
+      - name: Build image (${{ matrix.suffix }})
         uses: docker/build-push-action@v7
         with:
           context: ./${{ inputs.app }}
-          platforms: ${{ needs.prepare.outputs.platforms }}
+          platforms: ${{ matrix.platform }}
+          # Push single-platform digest; manifest job merges them.
+          # On test builds (publish=false) we load locally to verify.
           push: ${{ inputs.publish }}
-          provenance: true
+          load: ${{ !inputs.publish }}
+          provenance: false
           sbom: false
           build-args: |
             BUILD_VERSION=${{ needs.prepare.outputs.version }}
             VERSION=${{ needs.prepare.outputs.version }}
           tags: |
-            ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}
-            ${{ needs.prepare.outputs.image }}:latest
-          cache-from: type=gha,scope=${{ inputs.app }}
-          cache-to: type=gha,mode=max,scope=${{ inputs.app }}
+            ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}-${{ matrix.suffix }}
+          cache-from: type=gha,scope=${{ inputs.app }}-${{ matrix.suffix }}
+          cache-to:   type=gha,mode=max,scope=${{ inputs.app }}-${{ matrix.suffix }}
+
+  # ── 3. Merge per-platform images into a single multi-arch manifest ───────────
+  manifest:
+    name: Manifest ${{ inputs.app }}
+    needs: [prepare, build]
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push multi-arch manifest
+        shell: bash
+        env:
+          IMAGE:   ${{ needs.prepare.outputs.image }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          MATRIX:  ${{ needs.prepare.outputs.matrix }}
+        run: |
+          set -euo pipefail
+
+          # Build list of per-suffix source tags from matrix JSON
+          suffixes=$(python3 -c "
+          import json, os
+          m = json.loads(os.environ['MATRIX'])
+          print(' '.join(e['suffix'] for e in m))
+          ")
+
+          sources=""
+          for suffix in $suffixes; do
+            sources="${sources} ${IMAGE}:${VERSION}-${suffix}"
+          done
+
+          docker buildx imagetools create \
+            --tag "${IMAGE}:${VERSION}" \
+            --tag "${IMAGE}:latest" \
+            $sources
+
+          echo "Manifest pushed:"
+          docker buildx imagetools inspect "${IMAGE}:${VERSION}"
+
+      - name: Delete intermediate platform tags
+        if: inputs.publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE:    ${{ needs.prepare.outputs.image }}
+          VERSION:  ${{ needs.prepare.outputs.version }}
+          MATRIX:   ${{ needs.prepare.outputs.matrix }}
+          OWNER:    ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+
+          # Extract package name from image (ghcr.io/owner/pkg → pkg)
+          pkg="${IMAGE##*/}"
+
+          suffixes=$(python3 -c "
+          import json, os
+          m = json.loads(os.environ['MATRIX'])
+          print(' '.join(e['suffix'] for e in m))
+          ")
+
+          for suffix in $suffixes; do
+            tag="${VERSION}-${suffix}"
+            echo "Deleting intermediate tag: ${pkg}:${tag}"
+
+            # Find the version ID for this tag
+            version_id=$(gh api \
+              "https://api.github.com/users/${OWNER}/packages/container/${pkg}/versions" \
+              --paginate \
+              --jq ".[] | select(.metadata.container.tags[] == \"${tag}\") | .id" \
+              2>/dev/null | head -1 || true)
+
+            if [[ -n "${version_id}" ]]; then
+              gh api --method DELETE \
+                "https://api.github.com/users/${OWNER}/packages/container/${pkg}/versions/${version_id}" \
+                && echo "Deleted version ID ${version_id} (${tag})" \
+                || echo "Warning: could not delete ${tag} (non-fatal)"
+            else
+              echo "Tag ${tag} not found or already gone — skipping"
+            fi
+          done
