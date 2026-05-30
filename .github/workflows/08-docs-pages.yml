@@ -5,11 +5,7 @@ on:
     branches:
       - main
     paths:
-      - README.md
-      - README_WORKFLOWS.md
-      - "**/README.md"
-      - "**/DOCS.md"
-      - docs/**
+      - wiki/**
       - ".github/workflows/08-docs-pages.yml"
   workflow_dispatch:
 
@@ -24,7 +20,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build static docs artifact
+    name: Build wiki artifact
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,18 +28,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build simple Pages site
+      - name: Prepare site
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p _site
-          cp README.md _site/index.md 2>/dev/null || printf '# ha-apps\n' > _site/index.md
-          {
-            echo "# ha-apps documentation index"
-            echo
-            find . -maxdepth 3 \( -name README.md -o -name DOCS.md \) -not -path './.git/*' -print | sort
-          } > _site/readmes.md
-          cp README_WORKFLOWS.md _site/workflows.md 2>/dev/null || true
+          if [[ ! -d wiki ]]; then
+            echo "ERROR: wiki/ directory not found in repo root" >&2
+            exit 1
+          fi
+          cp -r wiki _site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
