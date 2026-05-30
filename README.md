@@ -1,6 +1,7 @@
 # Pol4rFuchs Home Assistant Add-ons
 
 [![HA Add-on Repository](https://img.shields.io/badge/HA-Add--on%20Repository-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![HA App Wikis](https://img.shields.io/badge/WIKI-HA%20App%20Wikis-2ea44f?style=for-the-badge&logo=githubpages&logoColor=white)](https://pol4rfuchs.github.io/ha-appwikis/ha-appwikis/)
 
 Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64` + `amd64`).
 
@@ -18,7 +19,6 @@ Custom Home Assistant add-ons, prebuilt as multi-arch container images (`aarch64
 | [Nginx Proxy Manager](nginx_proxy_manager/) | ready | `jc21/nginx-proxy-manager` | Reverse proxy management UI |
 | [Intiface Central](intiface_central/) | ready | custom build | Intiface Central GUI application |
 
-[![HA App Wikis](https://img.shields.io/badge/WIKI-HA%20App%20Wikis-2ea44f?style=for-the-badge&logo=githubpages&logoColor=white)](https://pol4rfuchs.github.io/ha-appwikis/ha-appwikis/)
 
 ## Installation
 
