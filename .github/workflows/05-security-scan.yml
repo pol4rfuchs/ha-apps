@@ -32,7 +32,7 @@ jobs:
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@v0.2.0
         with:
-          persona: pedantic
+          persona: auditor
 
   trivy-fs:
     name: Trivy filesystem scan
