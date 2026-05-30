@@ -182,9 +182,11 @@ jobs:
           short="${safe:0:12}"
           branch="auto/${{ matrix.tag_prefix }}-${short}"
 
-          echo "value=${value}" >> "$GITHUB_OUTPUT"
-          echo "short=${short}" >> "$GITHUB_OUTPUT"
-          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          {
+            echo "value=${value}"
+            echo "short=${short}"
+            echo "branch=${branch}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Apply update candidate
         if: ${{ (env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon) && matrix.mode != 'noop' }}
