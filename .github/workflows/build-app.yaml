@@ -178,22 +178,22 @@ jobs:
           set -euo pipefail
 
           # Build list of per-suffix source tags from matrix JSON
-          suffixes=$(python3 -c "
+          # Build list of per-suffix source tags from matrix JSON
+          mapfile -t suffixes < <(python3 -c "
           import json, os
           m = json.loads(os.environ['MATRIX'])
-          print(' '.join(e['suffix'] for e in m))
+          print('\\n'.join(e['suffix'] for e in m))
           ")
 
-          sources=""
-          for suffix in $suffixes; do
-            sources="${sources} ${IMAGE}:${VERSION}-${suffix}"
+          sources=()
+          for suffix in "${suffixes[@]}"; do
+            sources+=("${IMAGE}:${VERSION}-${suffix}")
           done
 
           docker buildx imagetools create \
             --tag "${IMAGE}:${VERSION}" \
             --tag "${IMAGE}:latest" \
-            $sources
-
+            "${sources[@]}"
           echo "Manifest pushed:"
           docker buildx imagetools inspect "${IMAGE}:${VERSION}"
 
@@ -213,13 +213,13 @@ jobs:
           pkg="${IMAGE##*/}"
 
           suffixes=$(python3 -c "
+          mapfile -t suffixes < <(python3 -c "
           import json, os
           m = json.loads(os.environ['MATRIX'])
-          print(' '.join(e['suffix'] for e in m))
+          print('\\n'.join(e['suffix'] for e in m))
           ")
 
-          for suffix in $suffixes; do
-            tag="${VERSION}-${suffix}"
+          for suffix in "${suffixes[@]}"; do
             echo "Deleting intermediate tag: ${pkg}:${tag}"
 
             # Find the version ID for this tag
