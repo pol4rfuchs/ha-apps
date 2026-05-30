@@ -1,6 +1,6 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add ntfy/build.yaml.
-ARG NTFY_VERSION=2.22.0
+ARG NTFY_VERSION=2.23.0
 
 # Stage 1: ntfy binary from the official multi-arch image
 FROM binwiederhier/ntfy:v${NTFY_VERSION} AS ntfy-source
