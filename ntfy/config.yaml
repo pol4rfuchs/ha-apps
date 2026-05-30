@@ -5,28 +5,15 @@ slug: ntfy
 description: Self-hosted pub-sub notification service (ntfy.sh)
 url: https://github.com/pol4rfuchs/ha-apps
 image: "ghcr.io/pol4rfuchs/ntfy-ha-app"
-advanced: true
 arch:
   - aarch64
   - amd64
-stage: stable
 startup: application
-boot: auto
 init: false
-host_network: false
-hassio_api: false
-homeassistant_api: false
-privileged: []
-full_access: false
-apparmor: true
-auth_api: false
-ingress: false
 panel_icon: mdi:bell-badge
 panel_title: ntfy
-panel_admin: true
 webui: "http://[HOST]:[PORT:4280]/"
 map:
-  - data:rw
   - backup:rw
 ports:
   4280/tcp: 4280

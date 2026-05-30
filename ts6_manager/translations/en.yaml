@@ -1,0 +1,5 @@
+---
+configuration:
+  log_level:
+    name: Log Level
+    description: "Verbosity of the TS6 Manager log output. Use 'info' for normal operation, 'debug' for troubleshooting."

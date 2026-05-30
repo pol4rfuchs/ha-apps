@@ -8,8 +8,6 @@ image: "ghcr.io/pol4rfuchs/teamspeak6-ha-app"
 arch:
   - aarch64
   - amd64
-startup: application
-boot: auto
 init: false
 ports:
   "9987/udp": 9987
@@ -31,8 +29,5 @@ schema:
   license_accepted: "bool"
   query_admin_password: "str"
   log_level: "int(0,4)"
-map:
-  - type: data
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
-icon: icon.png

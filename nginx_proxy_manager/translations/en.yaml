@@ -1,0 +1,29 @@
+---
+configuration:
+  db_type:
+    name: Database Type
+    description: "Storage backend. Use 'sqlite' for simple setups. Use 'mariadb' for better performance with many proxy hosts."
+  mariadb_host:
+    name: MariaDB Host
+    description: "Hostname of the MariaDB add-on. Typically 'core-mariadb'."
+  mariadb_port:
+    name: MariaDB Port
+    description: "MariaDB port. Default: 3306."
+  mariadb_name:
+    name: MariaDB Database
+    description: "Name of the database to use. Must be created in MariaDB first."
+  mariadb_user:
+    name: MariaDB User
+    description: "MariaDB username with access to the database."
+  http_port:
+    name: HTTP Port
+    description: "Port for incoming HTTP traffic and Let's Encrypt ACME challenges. Default: 80."
+  https_port:
+    name: HTTPS Port
+    description: "Port for incoming HTTPS/SSL traffic. Default: 443."
+  disable_ipv6:
+    name: Disable IPv6
+    description: "Disable IPv6 support in Nginx. Enable if your network does not support IPv6."
+  log_level:
+    name: Log Level
+    description: "Nginx Proxy Manager log verbosity."

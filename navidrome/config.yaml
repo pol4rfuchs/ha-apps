@@ -10,16 +10,13 @@ arch:
 panel_icon: mdi:music-box-multiple
 webui: http://[HOST]:[PORT:4533]
 init: false
+hassio_api: true
 
 # --- Netzwerk ---
 ports:
   4533/tcp: 4533
 ports_description:
   4533/tcp: "Web UI / Subsonic API"
-
-# --- Berechtigungen ---
-privileged:
-  - SYS_ADMIN
 
 # --- Hardware-Transcoding + Jukebox ---
 devices:
@@ -32,14 +29,15 @@ devices:
 
 # --- Dateisystem-Mounts ---
 map:
-  - media:rw
-  - config:rw
-  - share:rw
+  - type: homeassistant_config
+    read_only: false
+  - type: media
+    read_only: false
+  - type: share
+    read_only: false
 
 # ============================================================
 # Optionen
-# str?/password? Felder: null = nicht gesetzt (HA Supervisor Pflicht)
-# Pflichtfelder (str): immer ein Wert
 # ============================================================
 options:
   # Core
@@ -48,8 +46,6 @@ options:
   ND_LOGLEVEL: "info"
   PUID: 0
   PGID: 0
-
-  # Multi-folder (optional)
 
   # UI
   ND_ENABLESTARRATING: true
@@ -88,8 +84,6 @@ options:
   # Scrobbling: ListenBrainz
   ND_LISTENBRAINZ_ENABLED: false
 
-  # Spotify (Artist-Images)
-
   # Jukebox
   ND_JUKEBOX_ENABLED: false
 
@@ -110,8 +104,6 @@ schema:
   ND_LOGLEVEL: "list(error|warn|info|debug|trace)"
   PUID: int
   PGID: int
-
-  # Multi-folder
 
   # UI
   ND_ENABLESTARRATING: bool
@@ -149,8 +141,6 @@ schema:
 
   # ListenBrainz
   ND_LISTENBRAINZ_ENABLED: bool
-
-  # Spotify
 
   # Jukebox
   ND_JUKEBOX_ENABLED: bool

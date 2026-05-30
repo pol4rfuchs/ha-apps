@@ -1,0 +1,38 @@
+---
+configuration:
+  engine_ws_port:
+    name: Engine WebSocket Port
+    description: "Port the Intiface Engine WebSocket server listens on. Default: 12345."
+  use_bluetooth_le:
+    name: Bluetooth LE
+    description: "Enable Bluetooth Low Energy device support."
+  use_hid:
+    name: HID Devices
+    description: "Enable USB/HID device support (gamepads, controllers, etc.)."
+  use_serial:
+    name: Serial Devices
+    description: "Enable serial port device support."
+  log_level:
+    name: Log Level
+    description: "Verbosity of the add-on log output."
+  mqtt_host:
+    name: MQTT Host
+    description: "Hostname or IP of your MQTT broker. Leave empty to disable the MQTT bridge."
+  mqtt_port:
+    name: MQTT Port
+    description: "MQTT broker port. Default: 1883."
+  mqtt_user:
+    name: MQTT Username
+    description: "MQTT broker username. Leave empty if no authentication is required."
+  mqtt_pass:
+    name: MQTT Password
+    description: "MQTT broker password."
+  mqtt_topic_prefix:
+    name: MQTT Topic Prefix
+    description: "Prefix for all MQTT topics. Default: buttplug."
+  ha_discovery:
+    name: HA MQTT Discovery
+    description: "Publish Home Assistant MQTT Discovery messages so devices appear as entities automatically."
+  ha_discovery_prefix:
+    name: HA Discovery Prefix
+    description: "MQTT discovery prefix. Must match the prefix configured in the HA MQTT integration. Default: homeassistant."

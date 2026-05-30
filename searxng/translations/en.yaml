@@ -1,0 +1,5 @@
+---
+configuration:
+  set_base_url_for_ingress:
+    name: Auto-set Base URL for Ingress
+    description: "Automatically configures SEARXNG_BASE_URL to match the HA Ingress path. Disable only when accessing SearXNG through an external reverse proxy with its own domain."

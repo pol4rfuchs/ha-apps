@@ -5,13 +5,12 @@ slug: "matrix_server"
 url: "https://github.com/pol4rfuchs/ha-apps"
 image: "ghcr.io/pol4rfuchs/matrix-synapse-ha-app"
 init: false
-homeassistant_api: false
 hassio_api: true
-hassio_role: default
 map:
-  - config:rw
-  - media:rw
-  - data:rw
+  - type: homeassistant_config
+    read_only: false
+  - type: media
+    read_only: false
 
 ports:
   7080/tcp: 7080    # Element Web
@@ -76,10 +75,9 @@ arch:
   - amd64
 
 startup: services
-boot: auto
 
-ingress: true
-ingress_port: 7080
+ingress: false
+webui: "http://[HOST]:[PORT:7080]"
 
 panel_icon: mdi:matrix
 panel_title: Matrix

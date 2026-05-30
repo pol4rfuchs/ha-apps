@@ -1,0 +1,23 @@
+---
+configuration:
+  ntfy_base_url:
+    name: ntfy Server URL
+    description: "URL of your ntfy server. Default: http://homeassistant.local:4280"
+  ntfy_auth_type:
+    name: Authentication Type
+    description: "'none' for open servers, 'basic' for username/password, 'bearer' for token authentication."
+  ntfy_username:
+    name: ntfy Username
+    description: "Username for basic authentication. Leave empty if not using basic auth."
+  ntfy_password:
+    name: ntfy Password
+    description: "Password for basic authentication."
+  ntfy_bearer_token:
+    name: ntfy Bearer Token
+    description: "API token for bearer authentication."
+  default_topics:
+    name: Default Topics
+    description: "Topics shown by default in the Messages and Debug pages."
+  allow_login_override:
+    name: Allow Login Override
+    description: "Show the login form so users can connect to a different ntfy server or use different credentials."

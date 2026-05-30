@@ -48,11 +48,7 @@ schema:
 #   npm_jwt_secret: "dein_jwt_secret"
 
 map:
-  - data:rw
-  - ssl:rw
+  - type: ssl
+    read_only: false
 
 apparmor: false
-
-#backup_exclude:
-  #- "*/logs"
-  

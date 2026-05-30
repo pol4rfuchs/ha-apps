@@ -78,9 +78,10 @@ jobs:
             tag_prefix: ntfy-manager
             reason: "Internal app add-on; no external upstream version/ref is declared in-repo."
           - addon: searxng
-            mode: noop
+            mode: dockerhub_from_tag
+            dockerhub_repo: searxng/searxng
+            image_prefix: searxng/searxng
             tag_prefix: searxng
-            reason: "Dockerfile currently uses searxng/searxng:latest; no pinned version exists to bump safely."
 
     env:
       BASE_BRANCH: main

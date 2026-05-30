@@ -5,6 +5,7 @@
 ARG BUILD_VERSION
 
 FROM deluan/navidrome:0.60.3
+ARG BUILD_VERSION
 
 LABEL \
   io.hass.name="Navidrome" \

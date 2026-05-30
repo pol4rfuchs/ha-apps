@@ -41,7 +41,7 @@ RUN cd packages/backend && DATABASE_URL="file:/tmp/ts6webui-template.db" npx pri
 FROM ghcr.io/hassio-addons/base:16.3.2
 
 ARG BUILD_ARCH=unknown
-ARG BUILD_VERSION=1.0.0
+ARG BUILD_VERSION=1.0.2
 ARG TS6_MANAGER_REF
 
 LABEL io.hass.name="TS6 Manager" \
