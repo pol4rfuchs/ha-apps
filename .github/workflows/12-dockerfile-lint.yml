@@ -37,13 +37,13 @@ jobs:
           - ts6_manager
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Run Hadolint
         if: ${{ hashFiles(format('{0}/Dockerfile', matrix.app)) != '' }}
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: ${{ matrix.app }}/Dockerfile
           failure-threshold: error
