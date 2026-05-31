@@ -1,9 +1,10 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/ts6_manager/icon.png" alt="TS6 Manager Icon" width="128">
+
 # TS6 Manager — Home Assistant Add-on
 
 </div>
-
 
 <div align="center">
 
