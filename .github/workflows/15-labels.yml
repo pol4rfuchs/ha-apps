@@ -1,0 +1,27 @@
+---
+# Synct Labels täglich + manuell (.github/labels.yml im Repo als Source of Truth)
+name: 15 Sync Labels
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/labels.yml"
+      - ".github/workflows/15-labels.yml"
+  schedule:
+    - cron: "34 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: labels-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  labels:
+    uses: hassio-addons/workflows/.github/workflows/labels.yaml@3846ae0fd09acec8ac1ac308ceacd052b9d01bec # v2.0.6

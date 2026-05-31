@@ -1,0 +1,107 @@
+---
+# Source of Truth für GitHub Labels — wird von 15-labels.yml synchronisiert
+
+# ── Typ ────────────────────────────────────────────────────────────────────────
+- name: "bug"
+  color: "d73a4a"
+  description: "Etwas funktioniert nicht"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "Neues Feature oder Verbesserung"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Verbesserungen oder Ergänzungen zur Dokumentation"
+
+- name: "question"
+  color: "d876e3"
+  description: "Weitere Informationen benötigt"
+
+- name: "refactor"
+  color: "e4e669"
+  description: "Code-Umbau ohne Funktionsänderung"
+
+# ── Status ─────────────────────────────────────────────────────────────────────
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "Issue oder PR existiert bereits"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "Kein gültiges Issue"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "Wird nicht bearbeitet"
+
+- name: "stale"
+  color: "ededed"
+  description: "Keine Aktivität seit längerer Zeit"
+
+- name: "blocked"
+  color: "b60205"
+  description: "Blockiert durch externes Problem"
+
+# ── Add-on ─────────────────────────────────────────────────────────────────────
+- name: "addon/intiface-central"
+  color: "7c3aed"
+  description: "Betrifft das Intiface Central Add-on"
+
+- name: "addon/matrix-synapse"
+  color: "0d9488"
+  description: "Betrifft das Matrix Synapse Add-on"
+
+- name: "addon/navidrome"
+  color: "ea580c"
+  description: "Betrifft das Navidrome Add-on"
+
+- name: "addon/nginx-proxy-manager"
+  color: "0ea5e9"
+  description: "Betrifft das Nginx Proxy Manager Add-on"
+
+- name: "addon/ntfy"
+  color: "16a34a"
+  description: "Betrifft das ntfy Add-on"
+
+- name: "addon/ntfy-manager"
+  color: "f59e0b"
+  description: "Betrifft das ntfy Manager Add-on"
+
+- name: "addon/searxng"
+  color: "22c55e"
+  description: "Betrifft das SearXNG Add-on"
+
+- name: "addon/teamspeak6"
+  color: "1589d2"
+  description: "Betrifft das TeamSpeak 6 Add-on"
+
+- name: "addon/ts6-manager"
+  color: "0ea5e9"
+  description: "Betrifft das TS6 Manager Add-on"
+
+# ── CI/Automation ───────────────────────────────────────────────────────────────
+- name: "dependencies"
+  color: "0366d6"
+  description: "Abhängigkeits-Updates"
+
+- name: "github_actions"
+  color: "000000"
+  description: "GitHub Actions Workflow-Änderungen"
+
+- name: "automated"
+  color: "bfd4f2"
+  description: "Automatisch erstellt (Bot/Upstream-Bump)"
+
+# ── Priorität ──────────────────────────────────────────────────────────────────
+- name: "priority/high"
+  color: "b60205"
+  description: "Hohe Priorität"
+
+- name: "priority/medium"
+  color: "e4e669"
+  description: "Mittlere Priorität"
+
+- name: "priority/low"
+  color: "0e8a16"
+  description: "Niedrige Priorität"

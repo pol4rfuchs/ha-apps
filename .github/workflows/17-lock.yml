@@ -1,0 +1,22 @@
+---
+# Geschlossene Issues/PRs nach 30 Tagen automatisch locken
+name: 17 Lock
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: lock
+  cancel-in-progress: true
+
+jobs:
+  lock:
+    uses: hassio-addons/workflows/.github/workflows/lock.yaml@3846ae0fd09acec8ac1ac308ceacd052b9d01bec # v2.0.6

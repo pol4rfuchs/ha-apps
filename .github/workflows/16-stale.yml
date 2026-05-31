@@ -1,0 +1,22 @@
+---
+# Stale Issues/PRs automatisch schließen nach 60/14 Tagen Inaktivität
+name: 16 Stale
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: stale
+  cancel-in-progress: true
+
+jobs:
+  stale:
+    uses: hassio-addons/workflows/.github/workflows/stale.yaml@3846ae0fd09acec8ac1ac308ceacd052b9d01bec # v2.0.6
