@@ -1,12 +1,12 @@
 <div align="center">
-  
+
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/ntfy/icon.png" alt="ntfy logo" width="128">
+
 ## ntfy Home Assistant App
 
 </div>
 
 <div align="center">
-
-![ntfy logo](https://github.com/pol4rfuchs/ha-apps/blob/main/ntfy/icon.png)
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
 [![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
