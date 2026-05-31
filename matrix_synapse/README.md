@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/matrix_synapse/icon.png" alt="Matrix Server Icon" width="128">
+
 # 🔷 Matrix Server — Home Assistant Add-on
 
 </div>
