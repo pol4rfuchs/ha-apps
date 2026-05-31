@@ -12,7 +12,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 ## Apps
 
-> Production-oriented Home Assistant add-on catalog.
+> Production-oriented Home Assistant app catalog.
 
 | App | Status | Runtime / Upstream | Category | Description |
 |---|---|---|---|---|
