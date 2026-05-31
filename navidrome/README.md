@@ -1,5 +1,5 @@
 <div align="center">
-
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/navidrome/icon.png" alt="Navidrome Server Icon" width="128">
 # 🎵 Navidrome — Home Assistant Add-on
 
 </div>
