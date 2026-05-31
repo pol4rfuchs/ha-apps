@@ -1,8 +1,16 @@
+<div align="center">
+
+<img src="./icon.png" alt="ntfy HAOS Admin Panel Icon" width="128">
+
 # ntfy HAOS Admin Panel
 
 Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on läuft.
 
-Liefert die komplette Feature-Parität des single-file HTML-Admin-Panels — als richtige Add-on-App mit Express-Backend, React/Tailwind-Frontend, Ingress-Sidebar und sauberer Auth.
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](#)
+[![ntfy](https://img.shields.io/badge/ntfy-Admin%20Panel-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](#)
+[![Ingress](https://img.shields.io/badge/HAOS-Ingress-2ea44f?style=for-the-badge)](#)
+
+</div>
 
 ## Features
 
