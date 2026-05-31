@@ -8,10 +8,11 @@
   "schedule": ["before 6am on monday"],
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "groupName": "github-actions (digest pinning)",
+	  "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest"],
+      "minimumReleaseAge": "0 days",
       "automerge": false,
-      "minimumReleaseAge": "3 days"
+      "groupName": "github-actions (digest pinning)"
     }
   ],
   "ignorePaths": [
