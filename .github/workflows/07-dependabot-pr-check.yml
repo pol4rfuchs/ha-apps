@@ -9,10 +9,14 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  group: dependabot-pr-check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   dependabot-metadata:
     name: Dependabot metadata
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Dependabot metadata
@@ -21,8 +25,13 @@ jobs:
 
       - name: Print update class
         shell: bash
+        env:
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DIRECTORY: ${{ steps.metadata.outputs.directory }}
+          PACKAGE_ECOSYSTEM: ${{ steps.metadata.outputs.package-ecosystem }}
         run: |
-          echo "dependency-names=${{ steps.metadata.outputs.dependency-names }}"
-          echo "update-type=${{ steps.metadata.outputs.update-type }}"
-          echo "directory=${{ steps.metadata.outputs.directory }}"
-          echo "package-ecosystem=${{ steps.metadata.outputs.package-ecosystem }}"
+          echo "dependency-names=${DEPENDENCY_NAMES}"
+          echo "update-type=${UPDATE_TYPE}"
+          echo "directory=${DIRECTORY}"
+          echo "package-ecosystem=${PACKAGE_ECOSYSTEM}"

@@ -26,6 +26,7 @@ jobs:
       name:     ${{ steps.info.outputs.name }}
       slug:     ${{ steps.info.outputs.slug }}
       matrix:   ${{ steps.info.outputs.matrix }}
+      app:      ${{ steps.info.outputs.app }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,9 +36,11 @@ jobs:
       - name: Read add-on config
         id: info
         shell: bash
+        env:
+          APP: ${{ inputs.app }}
         run: |
           set -euo pipefail
-          app="${{ inputs.app }}"
+          app="${APP}"
           test -f "${app}/config.yaml"
           test -f "${app}/Dockerfile"
 
@@ -46,7 +49,7 @@ jobs:
           import re
           from pathlib import Path
 
-          app = "${{ inputs.app }}"
+          app = os.environ["APP"]
           text = Path(app, "config.yaml").read_text(encoding="utf-8")
 
           def scalar(key: str) -> str:
@@ -92,12 +95,15 @@ jobs:
           print(f"name={name}")
           print(f"slug={slug}")
           print(f"matrix={json.dumps(matrix)}")
+          print(f"app={app}")
           PY
 
       - name: Summary
         shell: bash
+        env:
+          APP: ${{ inputs.app }}
         run: |
-          echo "App:     ${{ inputs.app }}"
+          echo "App:     ${APP}"
           echo "Image:   ${{ steps.info.outputs.image }}"
           echo "Version: ${{ steps.info.outputs.version }}"
           echo "Matrix:  ${{ steps.info.outputs.matrix }}"
@@ -135,7 +141,7 @@ jobs:
       - name: Build image (${{ matrix.suffix }})
         uses: docker/build-push-action@v7
         with:
-          context: ./${{ inputs.app }}
+          context: ./${{ needs.prepare.outputs.app }}
           platforms: ${{ matrix.platform }}
           # Push single-platform digest; manifest job merges them.
           # On test builds (publish=false) we load locally to verify.
@@ -148,8 +154,8 @@ jobs:
             VERSION=${{ needs.prepare.outputs.version }}
           tags: |
             ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}-${{ matrix.suffix }}
-          cache-from: type=gha,scope=${{ inputs.app }}-${{ matrix.suffix }}
-          cache-to:   type=gha,mode=max,scope=${{ inputs.app }}-${{ matrix.suffix }}
+          cache-from: type=gha,scope=${{ needs.prepare.outputs.app }}-${{ matrix.suffix }}
+          cache-to:   type=gha,mode=max,scope=${{ needs.prepare.outputs.app }}-${{ matrix.suffix }}
 
   # ── 3. Merge per-platform images into a single multi-arch manifest ───────────
   manifest:

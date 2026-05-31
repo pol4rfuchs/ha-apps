@@ -23,8 +23,7 @@ on:
         default: "auto"
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: addon-safe-auto-update-${{ github.ref }}
@@ -33,6 +32,9 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write      # required to push update branches
+      pull-requests: write # required to open/edit PRs
 
     strategy:
       fail-fast: false
@@ -98,9 +100,10 @@ jobs:
 
       - name: Checkout repository
         if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install tools
@@ -123,35 +126,37 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
+          UPSTREAM_REPO: ${{ matrix.upstream_repo || '' }}
+          UPSTREAM_BRANCH: ${{ matrix.upstream_branch || '' }}
+          DOCKERHUB_REPO: ${{ matrix.dockerhub_repo || '' }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
         run: |
           set -euo pipefail
 
-          mode="${{ matrix.mode }}"
-
-          if [[ "${mode}" == "github_branch_ref" ]]; then
+          if [[ "${MODE}" == "github_branch_ref" ]]; then
             if [[ -n "${TARGET_REF}" ]]; then
               value="${TARGET_REF}"
             else
-              value="$(git ls-remote "https://github.com/${{ matrix.upstream_repo }}.git" "refs/heads/${{ matrix.upstream_branch }}" | awk '{print $1}')"
+              value="$(git ls-remote "https://github.com/${UPSTREAM_REPO}.git" "refs/heads/${UPSTREAM_BRANCH}" | awk '{print $1}')"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve upstream ref" >&2; exit 1; }
-          elif [[ "${mode}" == "github_latest_release_arg" ]]; then
+          elif [[ "${MODE}" == "github_latest_release_arg" ]]; then
             if [[ -n "${TARGET_VERSION}" ]]; then
               value="${TARGET_VERSION}"
             else
-              value="$(gh api "repos/${{ matrix.upstream_repo }}/releases/latest" --jq '.tag_name' | sed 's/^v//')"
+              value="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' | sed 's/^v//')"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest GitHub release" >&2; exit 1; }
-          elif [[ "${mode}" == "dockerhub_from_tag" || "${mode}" == "dockerhub_arg_tag" ]]; then
+          elif [[ "${MODE}" == "dockerhub_from_tag" || "${MODE}" == "dockerhub_arg_tag" ]]; then
             if [[ -n "${TARGET_VERSION}" ]]; then
               value="${TARGET_VERSION}"
             else
               value="$(python3 - <<'PY'
-          import json
-          import re
-          import urllib.request
-
-          repo = "${{ matrix.dockerhub_repo }}"
+          import json, re, urllib.request
+          import os
+          repo = os.environ["DOCKERHUB_REPO"]
           url = f"https://registry.hub.docker.com/v2/repositories/{repo}/tags?page_size=100"
           data = json.load(urllib.request.urlopen(url, timeout=30))
           tags = []
@@ -159,12 +164,10 @@ jobs:
               name = item.get("name", "")
               if re.fullmatch(r"[0-9]+(\.[0-9]+){1,3}(-[0-9A-Za-z.]+)?|[0-9]+\.[0-9]+\.[0-9]+-beta[0-9]+", name):
                   tags.append(name)
-
           def key(tag):
               nums = [int(x) for x in re.findall(r"\d+", tag)]
               beta = -1 if "beta" in tag else 0
               return (*nums, beta)
-
           if not tags:
               raise SystemExit("no semver-like Docker Hub tags found")
           print(sorted(tags, key=key)[-1])
@@ -173,14 +176,14 @@ jobs:
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest Docker Hub tag" >&2; exit 1; }
           else
-            echo "ERROR: unsupported mode ${mode}" >&2
+            echo "ERROR: unsupported mode ${MODE}" >&2
             exit 1
           fi
 
           safe="${value//\//-}"
           safe="${safe//:/-}"
           short="${safe:0:12}"
-          branch="auto/${{ matrix.tag_prefix }}-${short}"
+          branch="auto/${TAG_PREFIX}-${short}"
 
           {
             echo "value=${value}"
@@ -193,6 +196,10 @@ jobs:
         shell: bash
         env:
           VALUE: ${{ steps.target.outputs.value }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
+          ARG_NAME: ${{ matrix.arg_name || '' }}
+          IMAGE_PREFIX: ${{ matrix.image_prefix || '' }}
         run: |
           set -euo pipefail
 
@@ -202,43 +209,55 @@ jobs:
           import sys
           from pathlib import Path
 
-          addon = "${{ matrix.addon }}"
-          mode = "${{ matrix.mode }}"
+          addon = os.environ["ADDON"]
+          mode  = os.environ["MODE"]
           value = os.environ["VALUE"]
+          arg_name     = os.environ.get("ARG_NAME", "")
+          image_prefix = os.environ.get("IMAGE_PREFIX", "")
           dockerfile = Path(addon, "Dockerfile")
-          config = Path(addon, "config.yaml")
+          config     = Path(addon, "config.yaml")
 
           if not dockerfile.is_file():
               print(f"ERROR: missing {dockerfile}", file=sys.stderr)
               raise SystemExit(1)
 
-          text = dockerfile.read_text(encoding="utf-8")
+          text     = dockerfile.read_text(encoding="utf-8")
           original = text
 
-          def replace_arg(arg_name: str, new_value: str) -> None:
+          def replace_arg(name: str, new_value: str) -> None:
               global text
-              pattern = rf"(?m)^(ARG\s+{re.escape(arg_name)}\s*=\s*).+$"
-              repl = rf"\g<1>{new_value}"
-              updated, count = re.subn(pattern, repl, text, count=1)
+              pattern = rf"(?m)^(ARG\s+{re.escape(name)}\s*=\s*).+$"
+              updated, count = re.subn(pattern, rf"\g<1>{new_value}", text)
               if count == 0:
-                  print(f"ERROR: ARG {arg_name}=... not found in {dockerfile}", file=sys.stderr)
+                  print(f"ERROR: ARG {name}=... not found in {dockerfile}", file=sys.stderr)
                   raise SystemExit(1)
               text = updated
 
-          def replace_from(image_prefix: str, new_tag: str) -> None:
+          def replace_from(prefix: str, new_tag: str) -> None:
               global text
-              pattern = rf"(?m)^(FROM\s+{re.escape(image_prefix)}:).+$"
-              repl = rf"\g<1>{new_tag}"
-              updated, count = re.subn(pattern, repl, text, count=1)
+              pattern = rf"(?m)^(FROM\s+{re.escape(prefix)}:).+$"
+              updated, count = re.subn(pattern, rf"\g<1>{new_tag}", text)
               if count == 0:
-                  print(f"ERROR: FROM {image_prefix}:... not found in {dockerfile}", file=sys.stderr)
+                  print(f"ERROR: FROM {prefix}:... not found in {dockerfile}", file=sys.stderr)
                   raise SystemExit(1)
               text = updated
 
           if mode in ("github_branch_ref", "github_latest_release_arg", "dockerhub_arg_tag"):
-              replace_arg("${{ matrix.arg_name }}", value)
+              replace_arg(arg_name, value)
           elif mode == "dockerhub_from_tag":
-              replace_from("${{ matrix.image_prefix }}", value)
+              replace_from(image_prefix, value)
+              # Also sync all ARG *_VERSION=... that reference the same image tag
+              text = re.sub(
+                  rf"(?m)^(ARG\s+\w*VERSION\s*=\s*){re.escape(image_prefix.split('/')[-1])}[^\n]*$",
+                  rf"\g<1>{value}",
+                  text,
+              )
+              # Generic: replace any ARG *VERSION= that looks like a prior tag of this image
+              tag_pattern = re.compile(rf"(?m)^(ARG\s+\w*VERSION\s*=\s*)(\S+)$")
+              for m in list(tag_pattern.finditer(text)):
+                  old_val = m.group(2)
+                  if re.match(r"\d{4}\.\d+\.\d+", old_val) or re.match(r"\d+\.\d+", old_val):
+                      text = text[:m.start()] + m.group(1) + value + text[m.end():]
           else:
               print(f"ERROR: unsupported mode {mode}", file=sys.stderr)
               raise SystemExit(1)
@@ -263,22 +282,25 @@ jobs:
       - name: Static validate changed add-on
         if: ${{ (env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon) && matrix.mode != 'noop' }}
         shell: bash
+        env:
+          ADDON: ${{ matrix.addon }}
         run: |
           set -euo pipefail
 
-          test -f "${{ matrix.addon }}/config.yaml"
-          test -f "${{ matrix.addon }}/Dockerfile"
+          test -f "${ADDON}/config.yaml"
+          test -f "${ADDON}/Dockerfile"
 
-          if [[ -f "${{ matrix.addon }}/build.yaml" ]]; then
-            echo "ERROR: ${{ matrix.addon }}/build.yaml exists but is deprecated." >&2
+          if [[ -f "${ADDON}/build.yaml" ]]; then
+            echo "ERROR: ${ADDON}/build.yaml exists but is deprecated." >&2
             exit 1
           fi
 
           python3 - <<'PY'
+          import os
           import yaml
           from pathlib import Path
 
-          addon = "${{ matrix.addon }}"
+          addon = os.environ["ADDON"]
           data = yaml.safe_load(Path(addon, "config.yaml").read_text(encoding="utf-8")) or {}
           for key in ("name", "version", "slug", "image", "arch"):
               if key not in data:
@@ -290,15 +312,17 @@ jobs:
         id: diff
         if: ${{ (env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon) && matrix.mode != 'noop' }}
         shell: bash
+        env:
+          ADDON: ${{ matrix.addon }}
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- "${{ matrix.addon }}/Dockerfile" "${{ matrix.addon }}/config.yaml" "${{ matrix.addon }}/CHANGELOG.md"; then
+          if git diff --quiet -- "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No update required for ${{ matrix.addon }}."
+            echo "No update required for ${ADDON}."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git diff -- "${{ matrix.addon }}/Dockerfile" "${{ matrix.addon }}/config.yaml" "${{ matrix.addon }}/CHANGELOG.md" || true
+            git diff -- "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md" || true
           fi
 
       - name: Create or update pull request
@@ -309,6 +333,8 @@ jobs:
           TARGET_BRANCH: ${{ steps.target.outputs.branch }}
           TARGET_VALUE: ${{ steps.target.outputs.value }}
           SHORT_VALUE: ${{ steps.target.outputs.short }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
         run: |
           set -euo pipefail
 
@@ -316,21 +342,21 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "${TARGET_BRANCH}"
-          git add "${{ matrix.addon }}/Dockerfile" "${{ matrix.addon }}/config.yaml" "${{ matrix.addon }}/CHANGELOG.md" 2>/dev/null || true
-          git commit -m "${{ matrix.addon }}: update upstream to ${SHORT_VALUE}"
+          git add "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md" 2>/dev/null || true
+          git commit -m "${ADDON}: update upstream to ${SHORT_VALUE}"
           git push --force-with-lease origin "${TARGET_BRANCH}"
 
-          title="${{ matrix.addon }}: update upstream to ${SHORT_VALUE}"
-          body="$(cat <<EOF
+          title="${ADDON}: update upstream to ${SHORT_VALUE}"
+          body="$(cat <<BODY
           Automated safe-update candidate.
 
-          - Add-on directory: \`${{ matrix.addon }}/\`
-          - Update mode: \`${{ matrix.mode }}\`
+          - Add-on directory: \`${ADDON}/\`
+          - Update mode: \`${MODE}\`
           - Target: \`${TARGET_VALUE}\`
           - Base branch: \`${BASE_BRANCH}\`
 
           Add-on version in \`config.yaml\` was auto-bumped (patch). Review the Dockerfile diff and merge.
-          EOF
+          BODY
           )"
 
           if gh pr view "${TARGET_BRANCH}" --json number >/dev/null 2>&1; then

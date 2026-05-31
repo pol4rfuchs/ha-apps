@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 concurrency:
   group: security-scan-${{ github.ref }}
@@ -23,6 +22,9 @@ jobs:
   zizmor:
     name: Zizmor GitHub Actions scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # required to upload SARIF results
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -37,6 +39,8 @@ jobs:
   trivy-fs:
     name: Trivy filesystem scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6

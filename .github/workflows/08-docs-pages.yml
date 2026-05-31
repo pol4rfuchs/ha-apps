@@ -11,8 +11,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: docs-pages
@@ -22,6 +20,8 @@ jobs:
   build:
     name: Build wiki artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -47,6 +47,9 @@ jobs:
     name: Deploy Pages
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write     # required to deploy to GitHub Pages
+      id-token: write  # required for OIDC token verification by Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

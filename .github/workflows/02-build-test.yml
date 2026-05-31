@@ -22,8 +22,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
-  id-token: write
 
 concurrency:
   group: build-test-${{ github.ref }}
@@ -83,7 +81,10 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.apps) }}
     uses: ./.github/workflows/build-app.yaml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     with:
       app: ${{ matrix.app }}
       publish: false
-    secrets: inherit
