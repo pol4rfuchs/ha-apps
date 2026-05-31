@@ -7,9 +7,6 @@ updates:
       day: monday
       time: "04:30"
     open-pull-requests-limit: 10
-    cooldown:
-      default-days: 7
-      semver-patch-days: 3
     groups:
       github-actions:
         patterns:

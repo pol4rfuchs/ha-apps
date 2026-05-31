@@ -46,6 +46,7 @@ jobs:
 
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json
+          import os
           import re
           from pathlib import Path
 
