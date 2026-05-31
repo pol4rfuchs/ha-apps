@@ -843,14 +843,26 @@ Optional desktop companion:
 
 ## 📜 License
 
-```text
-MIT
-```
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
 
-This add-on wrapper is licensed under the [MIT License](LICENSE).
+The upstream ntfy project is not relicensed by this repository and remains
+under its upstream license.
 
-ntfy is developed and licensed by its upstream project.  
-This repository only packages it as a Home Assistant add-on.
+Upstream:
+
+- ntfy: https://github.com/binwiederhier/ntfy
+- Upstream license: See upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)
 
 ---
 

@@ -153,5 +153,20 @@ HA MQTT Discovery creates entities automatically when `mqtt_discovery: true`.
 
 ## 📜 License
 
-MIT — this add-on wrapper.  
-intiface-engine is licensed under [BSD-3-Clause](https://github.com/intiface/intiface-engine/blob/main/LICENSE).
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
+
+The upstream Intiface / Buttplug components are not relicensed by this
+repository and remain under their respective upstream licenses.
+
+Upstream projects:
+
+- Intiface Engine: https://github.com/intiface/intiface-engine
+- Intiface / Buttplug ecosystem: https://github.com/intiface
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

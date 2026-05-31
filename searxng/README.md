@@ -155,5 +155,23 @@ addon_configs/<SLUG>_searxng/
 
 ## 📜 License
 
-MIT — this add-on wrapper.  
-SearXNG is licensed under [AGPL-3.0](https://github.com/searxng/searxng/blob/master/LICENSE).
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
+
+The upstream SearXNG project is not relicensed by this repository and
+remains under its upstream license.
+
+Upstream:
+
+- SearXNG: https://github.com/searxng/searxng
+- Upstream license: AGPL-3.0, see upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

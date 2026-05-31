@@ -124,5 +124,23 @@ HA backups include the add-on `/data` directory automatically.
 
 ## 📜 License
 
-MIT — this add-on wrapper.  
-Navidrome is licensed under [GPL-3.0](https://github.com/navidrome/navidrome/blob/master/LICENSE).
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
+
+The upstream Navidrome project is not relicensed by this repository
+and remains under its upstream license.
+
+Upstream:
+
+- Navidrome: https://github.com/navidrome/navidrome
+- Upstream license: GPL-3.0, see upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

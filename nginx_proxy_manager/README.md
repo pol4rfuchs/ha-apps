@@ -162,5 +162,23 @@ HA backups include the add-on `/data` directory automatically.
 
 ## 📜 License
 
-MIT — this add-on wrapper.  
-Nginx Proxy Manager is licensed under [MIT](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/LICENSE).
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
+
+The upstream Nginx Proxy Manager project is not relicensed by this
+repository and remains under its upstream license.
+
+Upstream:
+
+- Nginx Proxy Manager: https://github.com/NginxProxyManager/nginx-proxy-manager
+- Upstream license: MIT, see upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

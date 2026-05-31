@@ -216,5 +216,23 @@ https://federationtester.matrix.org/#your-domain.duckdns.org
 
 ## 📜 License
 
-MIT — this add-on wrapper.
-Synapse is licensed under [AGPL-3.0](https://github.com/element-hq/synapse/blob/develop/LICENSE).
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
+
+The upstream Matrix Synapse project is not relicensed by this repository
+and remains under its upstream license.
+
+Upstream:
+
+- Matrix Synapse: https://github.com/element-hq/synapse
+- Upstream license: AGPL-3.0, see upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

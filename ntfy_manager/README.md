@@ -97,3 +97,29 @@ Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on lä
 - **Kein Setup-Wizard** wie im alten Skeleton — der war in v0.1 das Login-System für die nicht-existente eigene User-DB. Nicht mehr nötig.
 - **Reservation-Bug** vom alten HTML-Panel ist gefixt: POST `/v1/account/reservation` mit `{topic, everyone}` im Body, nicht im Pfad.
 - **SSE läuft über `EventSource`** auf der Browser-Seite + `fetch` mit Stream-Reader im Backend. nginx passt den Buffer an (`proxy_buffering off`, `chunked_transfer_encoding off`, `proxy_read_timeout 24h`).
+
+
+---
+
+## 📜 License
+
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows, frontend, backend and documentation in this directory are
+licensed under the Apache License 2.0.
+
+The upstream ntfy project is not relicensed by this repository and remains
+under its upstream license.
+
+Upstream:
+
+- ntfy: https://github.com/binwiederhier/ntfy
+- Upstream license: See upstream repository
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)

@@ -479,14 +479,30 @@ If this file is missing, the manager starts like a fresh installation.
 
 ## 📜 License
 
-```text
-MIT
-```
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
 
-This add-on wrapper is licensed under the [MIT License](LICENSE).
+The upstream `clusterzx/ts6-manager` project is not relicensed by this
+repository and remains under its upstream license.
 
-`clusterzx/ts6-manager` is developed and licensed by its upstream maintainer.  
-TeamSpeak 6 Server is subject to the TeamSpeak license terms.
+TeamSpeak 6 Server itself is not relicensed by this repository and remains
+subject to the TeamSpeak Server License Agreement.
+
+Upstream:
+
+- TS6 Manager: https://github.com/clusterzx/ts6-manager
+- TeamSpeak 6 Server: https://github.com/teamspeak/teamspeak6-server
+- TeamSpeak legal terms: https://teamspeak.com/en/privacy-and-legal/ts-server-license-agreement/
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)
 
 ---
 

@@ -1,0 +1,17 @@
+ha-apps
+Copyright 2026 Pol4rFuchs
+
+This repository contains Home Assistant add-on wrappers, metadata,
+Dockerfiles, scripts, documentation and automation workflows maintained
+by Pol4rFuchs.
+
+The repository's own source code, add-on glue code, Dockerfiles, scripts,
+workflows and documentation are licensed under the Apache License 2.0.
+
+This repository may reference, package, wrap or integrate third-party
+applications and container images. Those third-party projects are not
+relicensed by this repository and remain under their respective upstream
+licenses.
+
+Third-party trademarks, logos, names and brands remain the property of
+their respective owners.

@@ -453,13 +453,26 @@ The startup script automatically searches for the TS6 binary. If it still can't 
 
 ## 📜 License
 
-```
-Apache License 2.0
-```
+The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+workflows and documentation in this directory are licensed under the
+Apache License 2.0.
 
-This add-on is licensed under the [Apache 2.0 License](LICENSE).  
-TeamSpeak 6 Server is subject to the [TeamSpeak Server License Agreement](https://teamspeak.com/en/privacy-and-legal/ts-server-license-agreement/).
+The upstream TeamSpeak 6 Server software is not relicensed by this
+repository and remains subject to the TeamSpeak Server License Agreement.
 
+Upstream:
+
+- TeamSpeak 6 Server: https://github.com/teamspeak/teamspeak6-server
+- Vendor legal terms: https://teamspeak.com/en/privacy-and-legal/ts-server-license-agreement/
+
+Third-party trademarks, logos, names and assets remain the property of
+their respective owners.
+
+See also:
+
+- [`../LICENSE`](../LICENSE)
+- [`../NOTICE`](../NOTICE)
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)
 ---
 
 <div align="center">
