@@ -12,7 +12,7 @@ RUN cd apps/web && npm run build
 RUN npm prune --production
 
 # ── Stage 2: Runtime (HA Add-on Base, s6-overlay v3, bashio) ─────────────────
-FROM ghcr.io/hassio-addons/base:16.3.2
+FROM ghcr.io/hassio-addons/base:16.3.6
 
 RUN apk add --no-cache \
     nodejs \

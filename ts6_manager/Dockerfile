@@ -38,7 +38,7 @@ RUN cd packages/backend && DATABASE_URL="file:/tmp/ts6webui-template.db" npx pri
 # ─────────────────────────────────────────────
 # Stage 2: Final image (HA hassio-addons base)
 # ─────────────────────────────────────────────
-FROM ghcr.io/hassio-addons/base:16.3.2
+FROM ghcr.io/hassio-addons/base:16.3.6
 
 ARG BUILD_ARCH=unknown
 ARG BUILD_VERSION=1.0.2

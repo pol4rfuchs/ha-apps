@@ -6,7 +6,7 @@ ARG NTFY_VERSION=2.23.0
 FROM binwiederhier/ntfy:v${NTFY_VERSION} AS ntfy-source
 
 # Stage 2: Home Assistant base image (multi-arch: amd64 + arm64)
-FROM ghcr.io/hassio-addons/base:16.3.2
+FROM ghcr.io/hassio-addons/base:16.3.6
 
 ARG BUILD_VERSION=dev
 ARG NTFY_VERSION=2.23.0
