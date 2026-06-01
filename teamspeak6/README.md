@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-teamspeak6--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/teamspeak6-ha-app)
-[![TS6 Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0.beta9-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://github.com/teamspeak/teamspeak6-server)
+[![TS6 Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0.beta10-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://github.com/teamspeak/teamspeak6-server)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 </div>
