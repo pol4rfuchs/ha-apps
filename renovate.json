@@ -8,11 +8,15 @@
   "schedule": ["before 6am on monday"],
   "packageRules": [
     {
-	  "matchManagers": ["github-actions"],
+      "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["digest"],
       "minimumReleaseAge": "0 days",
       "automerge": false,
       "groupName": "github-actions (digest pinning)"
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "enabled": false
     }
   ],
   "ignorePaths": [
