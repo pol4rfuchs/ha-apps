@@ -1,5 +1,7 @@
+---
 name: 06 Update Upstream Candidate
 
+# yamllint disable-line rule:truthy
 on:
   schedule:
     - cron: "30 4 * * 1"
@@ -104,7 +106,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.APP_TOKEN }}
 
       - name: Install tools
         if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
@@ -329,7 +331,7 @@ jobs:
         if: ${{ steps.diff.outputs.changed == 'true' }}
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
           TARGET_BRANCH: ${{ steps.target.outputs.branch }}
           TARGET_VALUE: ${{ steps.target.outputs.value }}
           SHORT_VALUE: ${{ steps.target.outputs.short }}

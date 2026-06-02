@@ -19,4 +19,45 @@ concurrency:
 
 jobs:
   lock:
-    uses: hassio-addons/workflows/.github/workflows/lock.yaml@3846ae0fd09acec8ac1ac308ceacd052b9d01bec # v2.0.6
+    name: 🔒 Lock closed issues and PRs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lock stale closed issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cutoff=$(date -d '30 days ago' --iso-8601=seconds)
+          gh issue list \
+            --repo "${REPO}" \
+            --state closed \
+            --json number,updatedAt,locked \
+            --limit 100 \
+            | jq -r --arg cutoff "${cutoff}" \
+              '.[] | select(.locked == false and .updatedAt < $cutoff) | .number' \
+          | while read -r num; do
+            echo "Locking issue #${num}"
+            gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
+          done
+
+      - name: Lock stale closed PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cutoff=$(date -d '30 days ago' --iso-8601=seconds)
+          gh pr list \
+            --repo "${REPO}" \
+            --state closed \
+            --json number,updatedAt,locked \
+            --limit 100 \
+            | jq -r --arg cutoff "${cutoff}" \
+              '.[] | select(.locked == false and .updatedAt < $cutoff) | .number' \
+          | while read -r num; do
+            echo "Locking PR #${num}"
+            gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
+          done
