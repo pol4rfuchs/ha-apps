@@ -30,13 +30,13 @@ jobs:
         run: |
           set -euo pipefail
           cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh issue list \
-            --repo "${REPO}" \
-            --state closed \
-            --json number,updatedAt,locked \
-            --limit 100 \
+          gh api "repos/${REPO}/issues?state=closed&per_page=100" \
             | jq -r --arg cutoff "${cutoff}" \
-              '.[] | select(.locked == false and .updatedAt < $cutoff) | .number' \
+              '.[] | select(
+                .locked == false
+                and .pull_request == null
+                and .updated_at < $cutoff
+              ) | .number' \
           | while read -r num; do
             echo "Locking issue #${num}"
             gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
@@ -50,13 +50,12 @@ jobs:
         run: |
           set -euo pipefail
           cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh pr list \
-            --repo "${REPO}" \
-            --state closed \
-            --json number,updatedAt,locked \
-            --limit 100 \
+          gh api "repos/${REPO}/pulls?state=closed&per_page=100" \
             | jq -r --arg cutoff "${cutoff}" \
-              '.[] | select(.locked == false and .updatedAt < $cutoff) | .number' \
+              '.[] | select(
+                .locked == false
+                and .updated_at < $cutoff
+              ) | .number' \
           | while read -r num; do
             echo "Locking PR #${num}"
             gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
