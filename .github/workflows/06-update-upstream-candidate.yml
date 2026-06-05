@@ -96,7 +96,7 @@ jobs:
             mode: noop
             tag_prefix: forgejo
             reason: >-
-              Forgejo binary sourced from codeberg.org/forgejo/forgejo —
+              Forgejo binary pulled from the official Forgejo container registry —
               no GitHub/DockerHub release tracking possible.
 
     env:
