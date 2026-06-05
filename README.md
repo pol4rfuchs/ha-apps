@@ -26,7 +26,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [SearXNG](searxng/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `searxng/searxng` | Search | Privacy-respecting metasearch engine |
 | [Nginx Proxy Manager](nginx_proxy_manager/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `jc21/nginx-proxy-manager` | Proxy | Reverse proxy management UI with SSL support |
 | [Intiface Central](intiface_central/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `custom build` | GUI | Intiface Central GUI application for device control |
-| [Forgejo](forgejo/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `codeberg.org/forgejo/forgejo` | Git | Self-hosted Git platform — free GitHub alternative with repos, issues, CI/CD and package registry |
+| [Forgejo](forgejo/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `forgejo/forgejo` | Git | Self-hosted Git platform — free GitHub alternative with repos, issues, CI/CD and package registry |
 
 ### Status
 
