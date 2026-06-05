@@ -23,6 +23,7 @@ jobs:
           - intiface_central
           - matrix_synapse
           - navidrome
+          - nextcloud
           - nginx_proxy_manager
           - ntfy
           - ntfy_manager

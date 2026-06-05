@@ -1,0 +1,49 @@
+name: Nextcloud
+description: "A safe home for all your data — full Nextcloud instance with unrestricted app store access"
+version: "33.0.5"
+slug: nextcloud
+url: https://github.com/pol4rfuchs/ha-apps/tree/main/nextcloud
+image: ghcr.io/pol4rfuchs/nextcloud-ha-app
+init: false
+arch:
+  - aarch64
+  - amd64
+
+map:
+  - data:rw
+
+ports:
+  80/tcp: 8080
+
+ports_description:
+  80/tcp: "Nextcloud Web UI"
+
+webui: "http://[HOST]:[PORT:80]"
+
+options:
+  admin_user: "admin"
+  admin_password: "changeme"
+  trusted_domains: ""
+  db_type: "mysql"
+  db_host: "core-mariadb"
+  db_port: 3306
+  db_name: "nextcloud"
+  db_user: "nextcloud"
+  db_password: ""
+  php_memory_limit: "512M"
+  max_upload_size: "16G"
+  max_execution_time: 3600
+
+schema:
+  admin_user: str
+  admin_password: str
+  trusted_domains: str
+  db_type: list(sqlite|mysql|pgsql)
+  db_host: str
+  db_port: int
+  db_name: str
+  db_user: str
+  db_password: str
+  php_memory_limit: str
+  max_upload_size: str
+  max_execution_time: int
