@@ -1,0 +1,70 @@
+---
+name: Forgejo
+version: "16.0.0"
+slug: forgejo
+description: >-
+  Self-hosted Git-Plattform – die freie GitHub-Alternative.
+  Repositories, Issues, Pull Requests, CI/CD Actions,
+  Package-Registry, Wiki, Projekte und mehr.
+url: "https://github.com/pol4rfuchs/ha-apps"
+
+arch:
+  - amd64
+  - aarch64
+
+# Prebuilt Multi-Arch Image von GHCR.
+# HAOS baut NICHT lokal – nur Pull. Kein lokaler Build auf dem Pi.
+# Zum lokalen Testen: build.yaml umbenennen zu build.yaml.bak entfernen,
+# und diese Zeile auskommentieren – dann baut HA Supervisor lokal.
+image: "ghcr.io/pol4rfuchs/forgejo-ha-app"
+
+init: false
+ingress: true
+ingress_port: 3000
+ingress_stream: true
+panel_icon: mdi:git
+panel_title: Forgejo
+
+homeassistant_api: false
+hassio_api: false
+hassio_role: default
+
+# addon_config: persistente Konfig unter /addon_configs/local_forgejo/
+# auf dem Host → gemountet als /config im Container.
+# Dort liegen app.ini, Repositories, Daten, Logs.
+# ssl: HA SSL-Zertifikate (Let's Encrypt etc.) → /ssl im Container.
+map:
+  - type: addon_config
+    read_only: false
+  - type: ssl
+    read_only: true
+
+ports:
+  3000/tcp: 3000
+  22/tcp: null
+ports_description:
+  3000/tcp: "Web-UI (Ingress bevorzugen – Port nur für direkten Zugriff)"
+  22/tcp: "SSH Git-Zugriff (nur bei ssh_enabled: true nötig)"
+
+# AppArmor-Profil für erhöhte Sicherheit
+image_name: forgejo_addon
+
+options:
+  app_name: "Forgejo"
+  domain: ""
+  ssl: false
+  certfile: "fullchain.pem"
+  keyfile: "privkey.pem"
+  ssh_enabled: false
+  ssh_port: 22
+  log_level: "Info"
+
+schema:
+  app_name: str
+  domain: str
+  ssl: bool
+  certfile: str
+  keyfile: str
+  ssh_enabled: bool
+  ssh_port: int
+  log_level: "list(Trace|Debug|Info|Warn|Error|Critical|Fatal)"

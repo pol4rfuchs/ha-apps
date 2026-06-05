@@ -86,13 +86,19 @@ jobs:
             dockerhub_repo: searxng/searxng
             image_prefix: searxng/searxng
             tag_prefix: searxng
-
           - addon: nextcloud
             mode: dockerhub_arg_tag
             dockerhub_repo: library/nextcloud
             arg_name: NEXTCLOUD_TAG
             tag_prefix: nextcloud
             tag_filter: '^\d+\.\d+\.\d+-apache$'
+          - addon: forgejo
+            mode: noop
+            tag_prefix: forgejo
+            reason: >-
+              Forgejo binary sourced from codeberg.org/forgejo/forgejo —
+              no GitHub/DockerHub release tracking possible.
+              Bump FORGEJO_VERSION ARG manually on new releases.
 
     env:
       BASE_BRANCH: main

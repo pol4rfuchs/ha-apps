@@ -1,0 +1,142 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Forgejo – s6 Run Script (Longrun Service)
+# Shebang with-contenv: lädt Container-Env, dann bashio (vom HA-Base-Image)
+#
+# Ablauf:
+#   1. HA-Addon-Optionen via bashio lesen
+#   2. FORGEJO__-Umgebungsvariablen setzen
+#   3. Ingress-URL dynamisch aus HA Supervisor API lesen (Simon-Ansatz)
+#   4. setup-Skript sourcen (app.ini, SSH-Keys, Permissions)
+#   5. Forgejo als git-User starten (gosu für korrektes Privilege-Dropping)
+# ==============================================================================
+set -e
+
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+bashio::log.info " Forgejo v16 – Home Assistant Addon"
+bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# ── 1. HA-Konfiguration lesen ─────────────────────────────────────────────────
+APP_NAME="$(bashio::config 'app_name')"
+DOMAIN="$(bashio::config 'domain')"
+SSL="$(bashio::config 'ssl')"
+CERTFILE="$(bashio::config 'certfile')"
+KEYFILE="$(bashio::config 'keyfile')"
+SSH_ENABLED="$(bashio::config 'ssh_enabled')"
+SSH_PORT="$(bashio::config 'ssh_port')"
+LOG_LEVEL="$(bashio::config 'log_level')"
+
+# ── 2. Basis-Umgebungsvariablen ───────────────────────────────────────────────
+export GITEA_CUSTOM="/config"
+export GITEA_WORK_DIR="/var/lib/gitea"
+export GITEA_TEMP="/tmp/gitea"
+export GITEA_APP_INI="/config/conf/app.ini"
+export HOME="/var/lib/gitea/git"
+export USER="git"
+
+export APP_NAME
+export HTTP_PORT=3000
+export DB_TYPE="sqlite3"
+export DB_PATH="/config/data/forgejo.db"
+
+# Forgejo Basis-Einstellungen via environment-to-ini Format
+export FORGEJO__server__HTTP_PORT=3000
+export FORGEJO__server__APP_DATA_PATH="/config/data"
+export FORGEJO__repository__ROOT="/config/repositories"
+export FORGEJO__log__ROOT_PATH="/config/log"
+export FORGEJO__log__LEVEL="${LOG_LEVEL}"
+export FORGEJO__database__DB_TYPE="sqlite3"
+export FORGEJO__database__PATH="/config/data/forgejo.db"
+export FORGEJO__session__PROVIDER="file"
+export FORGEJO__session__PROVIDER_CONFIG="/config/data/sessions"
+export FORGEJO__cache__ENABLED="true"
+export FORGEJO__cache__ADAPTER="memory"
+export FORGEJO__queue__TYPE="level"
+export FORGEJO__queue__DATADIR="/config/data/queues"
+export FORGEJO____APP_NAME="${APP_NAME}"
+
+# ── 3. SSH-Konfiguration ──────────────────────────────────────────────────────
+if [ "${SSH_ENABLED}" = "true" ]; then
+    bashio::log.info "SSH aktiviert auf Port ${SSH_PORT}"
+    export DISABLE_SSH="false"
+    export START_SSH_SERVER="true"
+    export SSH_PORT
+    export SSH_LISTEN_PORT="${SSH_PORT}"
+    export FORGEJO__server__DISABLE_SSH="false"
+    export FORGEJO__server__START_SSH_SERVER="true"
+    export FORGEJO__server__SSH_PORT="${SSH_PORT}"
+    export FORGEJO__server__SSH_LISTEN_PORT="${SSH_PORT}"
+    export FORGEJO__server__SSH_SERVER_HOST_KEYS="/config/ssh/forgejo_host_ed25519,/config/ssh/forgejo_host_rsa"
+else
+    bashio::log.info "SSH deaktiviert"
+    export DISABLE_SSH="true"
+    export START_SSH_SERVER="false"
+    export FORGEJO__server__DISABLE_SSH="true"
+fi
+
+# ── 4. Domain / ROOT_URL / SSL ────────────────────────────────────────────────
+if [ -n "${DOMAIN}" ] && [ "${DOMAIN}" != "null" ]; then
+    # Explizite Domain gesetzt → daraus ROOT_URL berechnen
+    export DOMAIN
+    export FORGEJO__server__DOMAIN="${DOMAIN}"
+
+    if [ "${SSL}" = "true" ]; then
+        bashio::log.info "SSL aktiviert für ${DOMAIN}"
+        export FORGEJO__server__ROOT_URL="https://${DOMAIN}/"
+        export FORGEJO__server__PROTOCOL="https"
+        export FORGEJO__server__CERT_FILE="/ssl/${CERTFILE}"
+        export FORGEJO__server__KEY_FILE="/ssl/${KEYFILE}"
+        export ROOT_URL="https://${DOMAIN}/"
+    else
+        export FORGEJO__server__ROOT_URL="http://${DOMAIN}:3000/"
+        export ROOT_URL="http://${DOMAIN}:3000/"
+    fi
+
+    bashio::log.info "ROOT_URL: ${ROOT_URL}"
+else
+    # Kein Domain → Ingress-URL dynamisch aus HA Supervisor API lesen
+    # Ansatz von simon-adriaanse: SUPERVISOR_TOKEN + /addons/self/info
+    # Das ist die korrekte Methode – URL ändert sich je nach HA-Installation.
+    if [ -n "${SUPERVISOR_TOKEN:-}" ]; then
+        ingress_url=$(curl -sSf \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+            http://supervisor/addons/self/info 2>/dev/null \
+            | jq -r '.data.ingress_url // ""' 2>/dev/null \
+            || echo "")
+
+        if [ -n "${ingress_url}" ] && [ "${ingress_url}" != "null" ]; then
+            bashio::log.info "Ingress-URL von Supervisor: ${ingress_url}"
+            export FORGEJO__server__ROOT_URL="${ingress_url}"
+            export ROOT_URL="${ingress_url}"
+        else
+            bashio::log.info "Ingress-URL nicht ermittelbar, nutze localhost"
+            export FORGEJO__server__ROOT_URL="http://localhost:3000/"
+            export ROOT_URL="http://localhost:3000/"
+        fi
+    else
+        export FORGEJO__server__ROOT_URL="http://localhost:3000/"
+        export ROOT_URL="http://localhost:3000/"
+    fi
+fi
+
+# ── 5. Setup ausführen (als root: Dirs, Keys, app.ini, Permissions) ──────────
+bashio::log.info "Führe Setup aus..."
+# shellcheck source=/etc/s6-overlay/s6-rc.d/forgejo/setup
+source /etc/s6-overlay/s6-rc.d/forgejo/setup
+
+# ── 6. Zusammenfassung ────────────────────────────────────────────────────────
+bashio::log.info "App-Name  : ${APP_NAME}"
+bashio::log.info "Root-URL  : ${ROOT_URL:-nicht gesetzt}"
+bashio::log.info "SSH       : ${SSH_ENABLED} $([ "${SSH_ENABLED}" = "true" ] && echo "(Port ${SSH_PORT})" || echo "")"
+bashio::log.info "SSL       : ${SSL}"
+bashio::log.info "Log-Level : ${LOG_LEVEL}"
+bashio::log.info "Daten     : /config (addon_config)"
+
+# ── 7. Forgejo starten ────────────────────────────────────────────────────────
+# gosu: sicheres Privilege-Dropping auf git-User (kein sudo, kein su)
+# cd: Forgejo erwartet Work-Dir als CWD
+bashio::log.info "Starte Forgejo als git-User..."
+cd /var/lib/gitea
+exec gosu git /app/gitea/gitea web \
+    --config "${GITEA_APP_INI}" \
+    --work-path "${GITEA_WORK_DIR}"

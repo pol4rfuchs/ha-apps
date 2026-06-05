@@ -1,0 +1,69 @@
+#include <tunables/global>
+
+profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Netzwerk (HTTP, SSH, DNS)
+  network udp,
+  network tcp,
+  network dgram,
+  network stream,
+  network inet,
+  network inet6,
+  network netlink raw,
+  network unix dgram,
+  network unix stream,
+
+  # Capabilities für s6 und gosu
+  capability setgid,
+  capability setuid,
+  capability dac_read_search,
+  capability sys_chroot,
+
+  # s6-Overlay Init-System
+  /init                     ix,
+  /run/{s6,s6-rc*,service}/** ix,
+  /package/**               ix,
+  /command/**               ix,
+  /run/{,**}                rwk,
+  /dev/tty                  rw,
+
+  # Binaries
+  /bin/**                   ix,
+  /usr/bin/**               ix,
+  /usr/sbin/**              ix,
+  /usr/local/bin/**         ix,
+  /app/gitea/**             ix,
+
+  # bashio
+  /usr/lib/bashio/**        ix,
+
+  # s6 Skripte
+  /etc/s6/**                rix,
+  /etc/s6-overlay/**        rix,
+  /run/s6/**                rix,
+
+  # Systemdaten
+  /var/run/**               mrwkl,
+  /tmp/**                   mrkwl,
+
+  # Addon-Daten (addon_config Mount)
+  /config/**                rw,
+
+  # SSL-Zertifikate (Read-only)
+  /ssl/**                   r,
+
+  # Git-User Home
+  /var/lib/gitea/**         rw,
+
+  # Proc (für gosu / Prozessinformationen)
+  @{PROC}/**                r,
+  @{PROC}/*/fd/             rw,
+  @{PROC}/*/status          r,
+
+  # ptrace für Docker-Introspection
+  ptrace (trace,read) peer=docker-default,
+
+  # Signal von Docker-Daemon
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

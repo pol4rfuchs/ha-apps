@@ -1,0 +1,87 @@
+#!/bin/bash
+# ==============================================================================
+# Forgejo – Setup Script
+# Läuft als root VOR dem Forgejo-Prozess (via source aus run)
+# Aufgaben:
+#   1. Verzeichnisse anlegen
+#   2. Persistente SSH-Host-Keys generieren (einmalig)
+#   3. app.ini aus Template erzeugen (einmalig, beim ersten Start)
+#   4. environment-to-ini: FORGEJO__SECTION__KEY Env-Vars → app.ini
+#   5. Permissions korrigieren
+# ==============================================================================
+set -e
+
+# ── 1. Verzeichnisse ──────────────────────────────────────────────────────────
+mkdir -p \
+    "${GITEA_CUSTOM}/conf" \
+    "${GITEA_CUSTOM}/data" \
+    "${GITEA_CUSTOM}/repositories" \
+    "${GITEA_CUSTOM}/log" \
+    "${GITEA_CUSTOM}/git/.ssh" \
+    "${GITEA_CUSTOM}/ssh" \
+    "${GITEA_TEMP}"
+
+chmod 700 "${GITEA_CUSTOM}/git/.ssh"
+
+# ── 2. SSH-Host-Keys (persistent, einmalig) ───────────────────────────────────
+# Persistente Keys verhindern "Host key changed"-Warnungen bei Neustart.
+# Werden in addon_config gespeichert (/config/ssh/) → überleben Updates.
+if [ ! -f "${GITEA_CUSTOM}/ssh/forgejo_host_ed25519" ]; then
+    echo "[setup] Generiere SSH-Host-Keys..."
+    ssh-keygen -t ed25519 \
+        -f "${GITEA_CUSTOM}/ssh/forgejo_host_ed25519" \
+        -N "" -q
+    ssh-keygen -t rsa -b 3072 \
+        -f "${GITEA_CUSTOM}/ssh/forgejo_host_rsa" \
+        -N "" -q
+    chown git:git "${GITEA_CUSTOM}/ssh/"*
+    chmod 600 "${GITEA_CUSTOM}/ssh/"*
+    echo "[setup] SSH-Host-Keys generiert"
+fi
+
+# ── 3. app.ini aus Template (einmalig beim ersten Start) ─────────────────────
+# Nur wenn noch keine app.ini existiert. Danach bleibt sie erhalten
+# und kann vom Nutzer direkt bearbeitet werden (via HA Datei-Editor).
+if [ ! -f "${GITEA_CUSTOM}/conf/app.ini" ]; then
+    echo "[setup] Erstelle app.ini aus Template..."
+
+    # Defaults für envsubst setzen (werden durch FORGEJO__ Vars überschrieben)
+    APP_NAME="${APP_NAME:-Forgejo}"                         \
+    DOMAIN="${DOMAIN:-localhost}"                           \
+    HTTP_PORT="${HTTP_PORT:-3000}"                          \
+    ROOT_URL="${ROOT_URL:-}"                                \
+    DISABLE_SSH="${DISABLE_SSH:-false}"                     \
+    START_SSH_SERVER="${START_SSH_SERVER:-false}"           \
+    SSH_PORT="${SSH_PORT:-22}"                              \
+    SSH_LISTEN_PORT="${SSH_LISTEN_PORT:-22}"                \
+    DB_TYPE="${DB_TYPE:-sqlite3}"                           \
+    DB_PATH="${DB_PATH:-${GITEA_CUSTOM}/data/forgejo.db}"  \
+    INSTALL_LOCK="${INSTALL_LOCK:-false}"                   \
+    SECRET_KEY="${SECRET_KEY:-}"                            \
+    DISABLE_REGISTRATION="${DISABLE_REGISTRATION:-false}"  \
+    REQUIRE_SIGNIN_VIEW="${REQUIRE_SIGNIN_VIEW:-false}"     \
+    LFS_START_SERVER="${LFS_START_SERVER:-false}"           \
+    envsubst < /etc/templates/app.ini > "${GITEA_CUSTOM}/conf/app.ini"
+
+    chown git:git "${GITEA_CUSTOM}/conf/app.ini"
+    echo "[setup] app.ini erstellt: ${GITEA_CUSTOM}/conf/app.ini"
+fi
+
+# ── 4. environment-to-ini: FORGEJO__SECTION__KEY → app.ini ───────────────────
+# Verarbeitet alle FORGEJO__-Umgebungsvariablen und schreibt sie in app.ini.
+# Das ist Forgejos eigenes Tool – sauber und korrekt.
+# run.sh setzt alle FORGEJO__-Vars bevor setup gesourct wird.
+echo "[setup] Wende FORGEJO__-Umgebungsvariablen auf app.ini an..."
+environment-to-ini --config "${GITEA_CUSTOM}/conf/app.ini"
+
+# ── 5. Permissions ────────────────────────────────────────────────────────────
+# Nur chown wenn nötig (spart Zeit bei großen Repos)
+if ! [[ "$(stat -c '%U' "${GITEA_CUSTOM}/data" 2>/dev/null)" = "git" ]]; then
+    chown -R git:git "${GITEA_CUSTOM}"
+fi
+if ! [[ "$(stat -c '%U' /var/lib/gitea 2>/dev/null)" = "git" ]]; then
+    chown -R git:git /var/lib/gitea
+fi
+chmod 0755 "${GITEA_CUSTOM}" /var/lib/gitea
+
+echo "[setup] Setup abgeschlossen"
