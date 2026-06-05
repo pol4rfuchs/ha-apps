@@ -29,7 +29,6 @@ RUN apt-get update \
 
 # ── Copy HA wrapper ───────────────────────────────────────────────────────────
 COPY rootfs /
-COPY ha-init.sh /ha-init.sh
 
 RUN chmod +x /ha-init.sh
 
