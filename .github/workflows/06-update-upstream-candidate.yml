@@ -98,7 +98,6 @@ jobs:
             reason: >-
               Forgejo binary sourced from codeberg.org/forgejo/forgejo —
               no GitHub/DockerHub release tracking possible.
-              Bump FORGEJO_VERSION ARG manually on new releases.
 
     env:
       BASE_BRANCH: main
