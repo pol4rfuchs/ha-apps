@@ -21,6 +21,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [ntfy](ntfy/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `binwiederhier/ntfy` | Notifications | Lightweight pub/sub push notification server |
 | [ntfy HAOS Admin Panel](ntfy_manager/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `custom build` | Management | Full-featured HAOS admin console for ntfy |
 | [Navidrome](navidrome/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `deluan/navidrome` | Media | Self-hosted music server with Subsonic API support |
+| [Nextcloud](nextcloud/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `nextcloud:X.X.X-apache` | Storage | Self-hosted cloud platform for files, calendar, and collaboration |
 | [Matrix Synapse](matrix_synapse/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `ghcr.io/element-hq/synapse` | Messaging | Matrix homeserver for secure messaging |
 | [SearXNG](searxng/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `searxng/searxng` | Search | Privacy-respecting metasearch engine |
 | [Nginx Proxy Manager](nginx_proxy_manager/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `jc21/nginx-proxy-manager` | Proxy | Reverse proxy management UI with SSL support |
