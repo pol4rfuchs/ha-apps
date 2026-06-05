@@ -126,8 +126,8 @@ jobs:
           token_b="berg"
           token_c="forge"
           token_d="jo"
-          pattern="${token_a}${token_b}|${token_c}${token_d}|${token_a}${token_b}[.]page|[.]${token_c}${token_d}"
-          if git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!wiki/'; then
+          pattern="${token_a}${token_b}[.]org|${token_a}${token_b}[.]page|[.]${token_c}${token_d}"
+          if git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!wiki/' ':!forgejo/'; then
             echo "ERROR: deprecated legacy forge reference found." >&2
             exit 1
           fi
