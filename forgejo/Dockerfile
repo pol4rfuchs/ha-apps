@@ -16,11 +16,12 @@
 # BUILD_FROM muss vor dem ersten FROM deklariert werden (Docker Multi-Stage Regel)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
 ARG BUILD_VERSION
-# Stage 1: Forgejo Binary holen (rootless = sauberes Binary-only Image)
-FROM codeberg.org/forgejo/forgejo:${BUILD_VERSION}-rootless AS forgejo
-# Stage 2: HA Base Image (Alpine, s6-overlay, bashio, with-contenv bereits enthalten)
+ARG FORGEJO_IMAGE_VERSION=15.0.2
+
+FROM codeberg.org/forgejo/forgejo:${FORGEJO_IMAGE_VERSION}-rootless AS forgejo
+
 FROM ${BUILD_FROM}
-# Build-Args (vom HA Builder / GitHub Actions befüllt)
+
 ARG BUILD_ARCH
 ARG BUILD_DATE
 ARG BUILD_DESCRIPTION
@@ -28,7 +29,8 @@ ARG BUILD_NAME
 ARG BUILD_REF
 ARG BUILD_REPOSITORY
 ARG BUILD_VERSION
-ARG FORGEJO_VERSION=16
+# FORGEJO_VERSION als Major-Tracking entfernt – FORGEJO_IMAGE_VERSION übernimmt
+
 # OCI Labels
 LABEL \
     io.hass.name="${BUILD_NAME}" \

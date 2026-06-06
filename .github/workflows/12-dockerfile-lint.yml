@@ -32,8 +32,12 @@ jobs:
       - name: Load addons.json
         id: addons
         run: |
-          echo "matrix=$(cat addons.json)" >> "$GITHUB_OUTPUT"
-
+          {
+            echo 'matrix<<EOF'
+            python3 -c "import json; print(json.dumps(json.load(open('addons.json'))))"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          
   hadolint:
     name: Hadolint ${{ matrix.app }}
     needs: prepare
