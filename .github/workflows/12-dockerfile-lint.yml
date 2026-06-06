@@ -59,4 +59,4 @@ jobs:
           dockerfile: ${{ matrix.app }}/Dockerfile
           failure-threshold: error
           no-fail: false
-          config: .hadolint.yaml
+          ignore: DL3008,DL3013,DL3018
