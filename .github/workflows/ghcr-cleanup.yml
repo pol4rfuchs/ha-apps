@@ -21,15 +21,17 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - searxng-ha-app
+          - forgejo  
           - intiface-ha-app
           - matrix-synapse-ha-app
           - npm-ha-app
           - teamspeak6-ha-app
           - ntfy-ha-app
           - teamspeak6-manager-ha-app
+          - searxng-ha-app
           - navidrome-ha-app
           - ntfy-manager-ha-app
+          - nextcloud
     steps:
       - name: Delete old untagged versions
         continue-on-error: true

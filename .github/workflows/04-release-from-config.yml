@@ -48,6 +48,7 @@ jobs:
           from pathlib import Path
 
           expected = [
+              "forgejo",
               "intiface_central",
               "matrix_synapse",
               "navidrome",
@@ -57,6 +58,7 @@ jobs:
               "searxng",
               "teamspeak6",
               "ts6_manager",
+              "nextcloud",
           ]
           wanted = os.environ.get("DISPATCH_APP", "all")
 

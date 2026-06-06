@@ -54,6 +54,7 @@ jobs:
           from pathlib import Path
 
           expected = [
+              "forgejo",
               "intiface_central",
               "matrix_synapse",
               "navidrome",
