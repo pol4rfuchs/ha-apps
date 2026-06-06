@@ -14,11 +14,13 @@
 # Kein manuelles Nachinstallieren dieser Tools nötig.
 # ==============================================================================
 
+# BUILD_FROM muss vor dem ersten FROM deklariert werden (Docker Multi-Stage Regel)
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
+
 # Stage 1: Forgejo Binary holen (rootless = sauberes Binary-only Image)
 FROM codeberg.org/forgejo/forgejo:16-rootless AS forgejo
 
 # Stage 2: HA Base Image (Alpine, s6-overlay, bashio, with-contenv bereits enthalten)
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
 FROM ${BUILD_FROM}
 
 # Build-Args (vom HA Builder / GitHub Actions befüllt)
