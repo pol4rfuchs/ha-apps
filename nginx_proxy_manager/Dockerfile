@@ -7,24 +7,20 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# ── s6-overlay Permissions ────────────────────────────────────────────────────
+# ── Permissions + NPM mountpoint-Check + Directories ─────────────────────────
+# DL3059: consolidated chmod, find-patch, and mkdir into one RUN
+# SC2038+DL4006: replaced pipe chain with -print0/-0 xargs; || true swallows
+#                expected failures on images without letsencrypt references.
+# hadolint ignore=DL4006
 RUN chmod -R 755 /package/ 2>/dev/null || true \
-    && chmod 755 /init 2>/dev/null || true
-
-# ── NPM mountpoint-Check patchen ─────────────────────────────────────────────
-# NPM prüft ob /etc/letsencrypt ein echter mountpoint ist → für HA ersetzen
-# wir durch eine einfache Verzeichnisprüfung
-RUN find /etc/s6-overlay /etc/cont-init.d -type f 2>/dev/null \
-    | xargs grep -l "letsencrypt is not mounted" 2>/dev/null \
-    | xargs sed -i \
-        's|mountpoint -q /etc/letsencrypt|[ -d /etc/letsencrypt ]|g' \
-    2>/dev/null || true
-
-# ── /etc/letsencrypt als echtes Verzeichnis anlegen ───────────────────────────
-RUN mkdir -p /etc/letsencrypt
-
-# ── Data Directories ──────────────────────────────────────────────────────────
-RUN mkdir -p /data/npm/data /data/npm/letsencrypt /data/npm/logs
+    && chmod 755 /init 2>/dev/null || true \
+    && find /etc/s6-overlay /etc/cont-init.d -type f -print0 2>/dev/null \
+       | xargs -0 grep -l "letsencrypt is not mounted" 2>/dev/null \
+       | xargs -0 sed -i \
+           's|mountpoint -q /etc/letsencrypt|[ -d /etc/letsencrypt ]|g' \
+       2>/dev/null || true \
+    && mkdir -p /etc/letsencrypt \
+    && mkdir -p /data/npm/data /data/npm/letsencrypt /data/npm/logs
 
 # ── HA Wrapper Entrypoint ─────────────────────────────────────────────────────
 COPY run.sh /usr/local/bin/ha-entrypoint.sh

@@ -1,0 +1,7 @@
+# Hadolint configuration for ha-apps monorepo
+# Version pinning rules are suppressed: HA base images manage Alpine/Debian/pip
+# package availability — pinning would break on every base image update.
+ignore:
+  - DL3008  # apt-get: pin package versions
+  - DL3013  # pip: pin package versions
+  - DL3018  # apk: pin package versions

@@ -27,6 +27,9 @@ COPY --from=ntfy-source /usr/bin/ntfy /usr/local/bin/ntfy
 
 ENV NTFY_AUTH_FILE=/data/ntfy/user.db
 
+# SC2016: $1/$2/$3 in single quotes is intentional — writing shell function
+# bodies to a script file; variables must not expand at build time.
+# hadolint ignore=SC2016
 RUN apk add --no-cache python3 \
     && chmod +x /usr/local/bin/ntfy \
     && mkdir -p \

@@ -7,8 +7,15 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 RUN npm install --no-audit --no-fund --include=dev
 COPY apps ./apps
-RUN cd apps/api && npm run build
-RUN cd apps/web && npm run build
+
+# DL3003: use WORKDIR instead of cd
+WORKDIR /opt/ntfy-admin/apps/api
+RUN npm run build
+
+WORKDIR /opt/ntfy-admin/apps/web
+RUN npm run build
+
+WORKDIR /opt/ntfy-admin
 RUN npm prune --production
 
 # ── Stage 2: Runtime (HA Add-on Base, s6-overlay v3, bashio) ─────────────────

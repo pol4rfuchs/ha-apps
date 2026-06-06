@@ -7,6 +7,8 @@ ARG BUILD_VERSION=dev
 ARG BUILD_ARCH=aarch64
 ARG TEAMSPEAK_VERSION=6.0.0-beta10
 
+# DL3002: root required — TS6 server process needs root for initial setup
+# hadolint ignore=DL3002
 USER root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

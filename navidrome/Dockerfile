@@ -14,6 +14,8 @@ LABEL \
   io.hass.version="${BUILD_VERSION}" \
   maintainer="Pol4rFuchs (https://github.com/pol4rfuchs)"
 
+# DL3002: root required — HA add-on runs as root, Navidrome drops privileges internally
+# hadolint ignore=DL3002
 USER root
 
 # curl TLS-Quirk in Alpine vermeiden
@@ -31,12 +33,15 @@ RUN apk add --no-cache \
   && chmod -R 755 /etc/cont-init.d
 
 ENV BASHIO_VERSION="0.16.2"
+
+# DL4006: pipe replaced with explicit download + extract to avoid pipefail requirement
 RUN mkdir -p /tmp/bashio \
   && curl -fsSL "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
-  | tar -xzf - --strip 1 -C /tmp/bashio \
+       -o /tmp/bashio.tgz \
+  && tar -xzf /tmp/bashio.tgz --strip 1 -C /tmp/bashio \
   && mv /tmp/bashio/lib /usr/lib/bashio \
   && ln -sf /usr/lib/bashio/bashio /usr/bin/bashio \
-  && rm -rf /tmp/bashio
+  && rm -rf /tmp/bashio /tmp/bashio.tgz
 
 COPY rootfs/ /
 
