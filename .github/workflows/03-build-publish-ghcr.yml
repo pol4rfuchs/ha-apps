@@ -53,18 +53,7 @@ jobs:
           import os
           from pathlib import Path
 
-          expected = [
-              "intiface_central",
-              "matrix_synapse",
-              "navidrome",
-              "nginx_proxy_manager",
-              "ntfy",
-              "ntfy_manager",
-              "searxng",
-              "teamspeak6",
-              "ts6_manager",
-              "nextcloud",
-          ]
+          expected = json.load(open("addons.json"))
           wanted = os.environ.get("DISPATCH_APP", "all")
           rows = []
           for app in expected:
