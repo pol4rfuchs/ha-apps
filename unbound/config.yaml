@@ -4,7 +4,7 @@ description: "Hardened recursive DNS resolver with built-in web UI"
 url: "https://github.com/pol4rfuchs/ha-apps"
 version: "1.24.2-ha38-pol4r1"
 slug: "unbound"
-image: "ghcr.io/pol4rfuchs/unbound-ha-app-{arch}"
+image: "ghcr.io/pol4rfuchs/unbound-ha-app"
 init: false
 ingress: true
 ingress_port: 2137
