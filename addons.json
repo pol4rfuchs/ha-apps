@@ -9,5 +9,6 @@
   "nextcloud",
   "searxng",
   "teamspeak6",
-  "ts6_manager"
+  "ts6_manager",
+  "unbound"
 ]
