@@ -39,19 +39,7 @@ jobs:
           from pathlib import Path
 
           root = Path(".")
-          expected = {
-              "forgejo",
-              "intiface_central",
-              "matrix_synapse",
-              "navidrome",
-              "nextcloud",
-              "nginx_proxy_manager",
-              "ntfy",
-              "ntfy_manager",
-              "searxng",
-              "teamspeak6",
-              "ts6_manager",
-          }
+          expected = set(json.load(open("addons.json")))
 
           def scalar(text: str, key: str) -> str:
               m = re.search(rf"(?m)^\s*{re.escape(key)}\s*:\s*['\"]?([^'\"\n#]+)", text)

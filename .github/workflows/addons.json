@@ -1,0 +1,13 @@
+[
+  "forgejo",
+  "intiface_central",
+  "matrix_synapse",
+  "navidrome",
+  "nginx_proxy_manager",
+  "ntfy",
+  "ntfy_manager",
+  "nextcloud",
+  "searxng",
+  "teamspeak6",
+  "ts6_manager"
+]
