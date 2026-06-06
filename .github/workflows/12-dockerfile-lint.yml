@@ -59,3 +59,4 @@ jobs:
           dockerfile: ${{ matrix.app }}/Dockerfile
           failure-threshold: error
           no-fail: false
+          config: .hadolint.yaml
