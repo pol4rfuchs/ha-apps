@@ -17,17 +17,20 @@ jobs:
     name: Read add-on list
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.addons.outputs.matrix }}
+      matrix: ${{ steps.load-matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
       - name: Load addons.json
-        id: addons
+        id: load-matrix
         run: |
-          echo "matrix=$(cat addons.json)" >> "$GITHUB_OUTPUT"
-
+          {
+            echo 'matrix<<EOF'
+            python3 -c "import json; print(json.dumps(json.load(open('addons.json'))))"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
   lint:
     name: Lint ${{ matrix.addon }}
     needs: prepare
