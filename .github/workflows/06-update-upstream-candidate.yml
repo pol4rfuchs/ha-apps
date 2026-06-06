@@ -98,6 +98,12 @@ jobs:
             reason: >-
               Forgejo binary pulled from the official Forgejo container registry —
               no GitHub/DockerHub release tracking possible.
+          - addon: unbound
+            mode: noop
+            tag_prefix: unbound
+            reason: >-
+              Hardened fork of fenio/ha-addons unbound — upstream tracking is
+              manual; version bumps require review of upstream security patches.
 
     env:
       BASE_BRANCH: main

@@ -1,0 +1,255 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+bashio::log.level "$(bashio::config 'log_level')"
+bashio::log.info "Starting Unbound DNS resolver ($(bashio::addon.version))..."
+
+CUSTOM_CONFIG_PATH="/config/unbound.conf"
+BLOCKLISTS_FILE="/data/blocklists.json"
+BLOCKLIST_CONF="/etc/unbound/blocklist.conf"
+WHITELIST_FILE="/data/whitelist.json"
+LOCAL_RECORDS_FILE="/data/local_records.json"
+LOCAL_RECORDS_CONF="/etc/unbound/local_records.conf"
+
+# Initialize blocklists file if it doesn't exist
+init_blocklists() {
+    if [ ! -f "${BLOCKLISTS_FILE}" ]; then
+        echo "[]" > "${BLOCKLISTS_FILE}"
+        bashio::log.info "Initialized empty blocklists file"
+    fi
+}
+
+# Download and apply blocklists
+apply_blocklists() {
+    bashio::log.info "Processing blocklists..."
+
+    if [ ! -f "${BLOCKLISTS_FILE}" ]; then
+        # No blocklists configured, write empty conf
+        : > "${BLOCKLIST_CONF}"
+        return
+    fi
+
+    local count
+    count=$(jq '. | length' "${BLOCKLISTS_FILE}")
+    if [ "${count}" = "0" ]; then
+        bashio::log.info "No blocklists configured"
+        : > "${BLOCKLIST_CONF}"
+        return
+    fi
+
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    for i in $(seq 0 $((count - 1))); do
+        local url
+        url=$(jq -r ".[$i]" "${BLOCKLISTS_FILE}")
+        bashio::log.info "  Downloading blocklist: ${url}"
+
+        if curl \
+            --fail \
+            --location \
+            --show-error \
+            --silent \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --max-filesize 5242880 \
+            --max-redirs 3 \
+            "${url}" 2>/dev/null | awk '
+            BEGIN {
+                skip["localhost"]=1; skip["localhost.localdomain"]=1
+                skip["local"]=1; skip["broadcasthost"]=1
+                skip["ip6-localhost"]=1; skip["ip6-loopback"]=1
+                skip["ip6-localnet"]=1; skip["ip6-mcastprefix"]=1
+                skip["ip6-allnodes"]=1; skip["ip6-allrouters"]=1
+                skip["ip6-allhosts"]=1
+            }
+            {
+                # Strip comments and carriage returns
+                sub(/#.*/, ""); gsub(/\r/, "")
+                if (NF < 2) next
+                ip = $1; domain = tolower($2)
+                if (ip != "0.0.0.0" && ip != "127.0.0.1") next
+                if (domain in skip) next
+                if (domain == "") next
+                printf "local-zone: \"%s.\" always_refuse\n", domain
+            }
+        ' >> "${tmpfile}"; then
+            :
+        else
+            bashio::log.warning "  Failed to download: ${url}"
+        fi
+    done
+
+    # Sort and deduplicate
+    sort -u "${tmpfile}" > "${BLOCKLIST_CONF}"
+    rm -f "${tmpfile}"
+
+    # Subtract whitelisted domains
+    if [ -f "${WHITELIST_FILE}" ]; then
+        local wl_count
+        wl_count=$(jq '. | length' "${WHITELIST_FILE}")
+        if [ "${wl_count}" != "0" ]; then
+            local wl_tmpfile
+            wl_tmpfile=$(mktemp)
+            # Build a file of patterns to exclude (domain lines from whitelist)
+            jq -r '.[]' "${WHITELIST_FILE}" | while IFS= read -r wl_domain; do
+                # Match the exact local-zone line for this domain
+                echo "local-zone: \"${wl_domain}.\" always_refuse"
+            done > "${wl_tmpfile}"
+
+            if [ -s "${wl_tmpfile}" ]; then
+                grep -v -F -f "${wl_tmpfile}" "${BLOCKLIST_CONF}" > "${BLOCKLIST_CONF}.tmp" || true
+                mv "${BLOCKLIST_CONF}.tmp" "${BLOCKLIST_CONF}"
+                bashio::log.info "  Whitelist applied: removed $(wc -l < "${wl_tmpfile}") domain pattern(s)"
+            fi
+            rm -f "${wl_tmpfile}"
+        fi
+    fi
+
+    local blocked
+    blocked=$(wc -l < "${BLOCKLIST_CONF}")
+    bashio::log.info "Blocklists applied: ${blocked} domains blocked"
+}
+
+# Initialize local records file if it doesn't exist
+init_local_records() {
+    if [ ! -f "${LOCAL_RECORDS_FILE}" ]; then
+        echo "[]" > "${LOCAL_RECORDS_FILE}"
+        bashio::log.info "Initialized empty local records file"
+    fi
+
+    local rec_count
+    rec_count=$(jq '. | length' "${LOCAL_RECORDS_FILE}")
+    {
+        echo "# Generated local records"
+        echo "# Do not edit manually"
+        echo
+        echo "server:"
+    } > "${LOCAL_RECORDS_CONF}"
+
+    if [ "${rec_count}" != "0" ]; then
+        bashio::log.info "Writing ${rec_count} local DNS record(s)..."
+        for i in $(seq 0 $((rec_count - 1))); do
+            local hostname rtype value ttl
+            hostname=$(jq -r ".[${i}].hostname // empty" "${LOCAL_RECORDS_FILE}" | sed 's/[.]$//')
+            rtype=$(jq -r ".[${i}].type // \"A\"" "${LOCAL_RECORDS_FILE}" | tr '[:lower:]' '[:upper:]')
+            value=$(jq -r ".[${i}].value // .[${i}].ip // empty" "${LOCAL_RECORDS_FILE}" | sed 's/[.]$//')
+            ttl=$(jq -r ".[${i}].ttl // 300" "${LOCAL_RECORDS_FILE}")
+
+            if [ -z "${hostname}" ] || [ -z "${value}" ]; then
+                bashio::log.warning "  Skipping invalid local record at index ${i}"
+                continue
+            fi
+
+            case "${rtype}" in
+                A|AAAA)
+                    bashio::log.info "  ${hostname} ${rtype} ${value}"
+                    echo "    local-zone: \"${hostname}.\" static" >> "${LOCAL_RECORDS_CONF}"
+                    echo "    local-data: \"${hostname}. ${ttl} IN ${rtype} ${value}\"" >> "${LOCAL_RECORDS_CONF}"
+                    ;;
+                CNAME)
+                    bashio::log.info "  ${hostname} CNAME ${value}"
+                    echo "    local-zone: \"${hostname}.\" transparent" >> "${LOCAL_RECORDS_CONF}"
+                    echo "    local-data: \"${hostname}. ${ttl} IN CNAME ${value}.\"" >> "${LOCAL_RECORDS_CONF}"
+                    ;;
+                PTR)
+                    bashio::log.info "  ${hostname} PTR ${value}"
+                    echo "    local-data-ptr: \"${hostname} ${value}.\"" >> "${LOCAL_RECORDS_CONF}"
+                    ;;
+                *)
+                    bashio::log.warning "  Skipping unsupported local record type: ${rtype}"
+                    ;;
+            esac
+        done
+    fi
+}
+
+# Update root hints (fallback to bundled copy on failure)
+bashio::log.info "Updating root hints..."
+if curl \
+    --fail \
+    --location \
+    --show-error \
+    --silent \
+    --connect-timeout 10 \
+    --max-time 30 \
+    --max-filesize 1048576 \
+    --max-redirs 3 \
+    --output /etc/unbound/root.hints.tmp \
+    https://www.internic.net/domain/named.root 2>/dev/null; then
+    mv /etc/unbound/root.hints.tmp /etc/unbound/root.hints
+    bashio::log.info "Root hints updated"
+else
+    rm -f /etc/unbound/root.hints.tmp
+    bashio::log.warning "Failed to update root hints, using bundled copy"
+fi
+
+# Seed config.json from options.json on first run
+python3 /web/config_gen.py --seed-if-needed
+
+# Check custom_config from config.json
+CUSTOM_CONFIG_WARNING="/data/custom_config_warning.txt"
+USE_CUSTOM=false
+if jq -e '.custom_config == true' /data/config.json >/dev/null 2>&1; then
+    bashio::log.info "Custom config mode enabled"
+
+    if [ ! -f "${CUSTOM_CONFIG_PATH}" ]; then
+        bashio::log.warning "Custom config enabled but ${CUSTOM_CONFIG_PATH} not found!"
+        bashio::log.warning "Place your unbound.conf at the host path /addon_configs/<slug>/unbound.conf"
+        bashio::log.warning "Falling back to web UI configuration..."
+        echo "Custom config file not found at ${CUSTOM_CONFIG_PATH}. Falling back to web UI configuration." \
+            > "${CUSTOM_CONFIG_WARNING}"
+    else
+        bashio::log.info "Using custom config from ${CUSTOM_CONFIG_PATH}"
+        cp "${CUSTOM_CONFIG_PATH}" /etc/unbound/unbound.conf
+
+        bashio::log.info "Validating custom configuration..."
+        CHECKCONF_OUTPUT=$(unbound-checkconf /etc/unbound/unbound.conf 2>&1) || true
+        if echo "${CHECKCONF_OUTPUT}" | grep -q "^unbound-checkconf: no errors"; then
+            USE_CUSTOM=true
+            rm -f "${CUSTOM_CONFIG_WARNING}"
+        else
+            bashio::log.warning "Custom config failed validation!"
+            bashio::log.warning "Falling back to web UI configuration..."
+            echo "Custom config failed validation: ${CHECKCONF_OUTPUT}" \
+                > "${CUSTOM_CONFIG_WARNING}"
+        fi
+    fi
+else
+    rm -f "${CUSTOM_CONFIG_WARNING}"
+fi
+
+if [ "${USE_CUSTOM}" = "false" ]; then
+    # Generated config mode: prepare include targets before --generate so the
+    # built-in validate-with-overlay-fallback step in config_gen.py sees them.
+    init_blocklists
+    apply_blocklists
+    init_local_records
+    [ -f /data/stub_zones.json ] || echo '[]' > /data/stub_zones.json
+
+    bashio::log.info "Generating and validating Unbound configuration..."
+    if ! python3 /web/config_gen.py --generate; then
+        bashio::log.error "Invalid Unbound configuration!"
+        bashio::log.error "Generated config:"
+        cat /etc/unbound/unbound.conf
+        exit 1
+    fi
+
+    if [ -f /data/overlay_warning.txt ]; then
+        bashio::log.warning "Overlay disabled — see web UI banner for details."
+    fi
+fi
+
+bashio::log.info "Configuration valid. Starting Unbound..."
+
+# Ensure query log exists and is writable by any user (for custom config mode)
+(umask 000; touch /data/unbound_queries.log)
+
+# Start web UI in background
+bashio::log.info "Starting web UI on port 2137..."
+INGRESS_PATH=$(bashio::addon.ingress_entry) \
+    python3 /web/app.py &
+
+# Run unbound in foreground
+exec unbound -d -c /etc/unbound/unbound.conf

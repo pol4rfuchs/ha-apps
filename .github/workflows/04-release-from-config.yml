@@ -59,6 +59,7 @@ jobs:
               "teamspeak6",
               "ts6_manager",
               "nextcloud",
+              "unbound",
           ]
           wanted = os.environ.get("DISPATCH_APP", "all")
 

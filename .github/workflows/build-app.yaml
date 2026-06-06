@@ -80,8 +80,8 @@ jobs:
               raise SystemExit("missing arch")
 
           arch_map = {
-              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-latest",    "suffix": "amd64"},
-              "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64"},
+              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-latest",    "suffix": "amd64",  "ha_base": "ghcr.io/home-assistant/amd64-base:3.23"},
+              "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64", "ha_base": "ghcr.io/home-assistant/aarch64-base:3.23"},
           }
           bad = sorted(set(arch) - set(arch_map))
           if bad:
@@ -89,7 +89,8 @@ jobs:
 
           matrix = [{"platform": arch_map[a]["platform"],
                      "runner":   arch_map[a]["runner"],
-                     "suffix":   arch_map[a]["suffix"]} for a in arch]
+                     "suffix":   arch_map[a]["suffix"],
+                     "ha_base":  arch_map[a]["ha_base"]} for a in arch]
 
           print(f"image={image}")
           print(f"version={version}")
@@ -151,6 +152,7 @@ jobs:
           provenance: false
           sbom: false
           build-args: |
+            BUILD_FROM=${{ matrix.ha_base }}
             BUILD_VERSION=${{ needs.prepare.outputs.version }}
             VERSION=${{ needs.prepare.outputs.version }}
           tags: |
