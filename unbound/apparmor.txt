@@ -126,8 +126,10 @@ profile unbound flags=(attach_disconnected,mediate_deleted) {
   owner /proc/*/fd/ r,
   owner /proc/*/fd/** r,
 
-  # Temp, scoped for blocklist/root-hints temp files and logs.
+  # Temp: bashio cache + blocklist/root-hints temp files and logs.
   /tmp/ rw,
+  /tmp/.bashio/ rw,
+  /tmp/.bashio/** rw,
   /tmp/unbound-* rw,
   /tmp/*.tmp rw,
   /tmp/*.log rw,
