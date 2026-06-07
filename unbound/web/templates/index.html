@@ -596,9 +596,13 @@
     </style>
     <script>
         // Restore theme before render to prevent flash
+        // Wrapped in try/catch: localStorage can throw SecurityError in
+        // Firefox strict mode, HA ingress iframes, or privacy browsers.
         (function() {
-            var t = localStorage.getItem("unbound-theme");
-            if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+            try {
+                var t = localStorage.getItem("unbound-theme");
+                if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+            } catch(e) {}
         })();
     </script>
 </head>
@@ -832,7 +836,7 @@
         <div class="section">
             <h2>Recent Queries</h2>
             <div class="filter-bar">
-                <input type="text" id="query-filter" placeholder="Filter by domain or client..." oninput="renderQueryLog()">
+                <input type="text" id="query-filter" placeholder="Filter by domain or client...">
                 <button class="btn-secondary" id="clear-query-log-btn">Clear Log</button>
             </div>
             <div id="query-log-status" class="status-msg"></div>
@@ -1166,7 +1170,27 @@
     </div>
 
     <script>
-        const BASE = "{{ ingress_path }}";
+        // Derive base URL from browser location — works in all HA ingress contexts.
+        const BASE = window.location.pathname.replace(/\/+$/, '');
+
+        // Safe localStorage wrapper — can throw SecurityError in Firefox strict
+        // mode, HA ingress iframes, or privacy-hardened browsers.
+        var _store = (function() {
+            try {
+                localStorage.setItem('__test', '1');
+                localStorage.removeItem('__test');
+                return {
+                    get: function(k) { try { return localStorage.getItem(k); } catch(e) { return null; } },
+                    set: function(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+                };
+            } catch(e) {
+                var mem = {};
+                return {
+                    get: function(k) { return mem[k] !== undefined ? mem[k] : null; },
+                    set: function(k, v) { mem[k] = v; }
+                };
+            }
+        })();
 
         function apiUrl(path) {
             return BASE + path;
@@ -1178,10 +1202,10 @@
             var isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (isDark) {
                 document.documentElement.removeAttribute("data-theme");
-                localStorage.setItem("unbound-theme", "light");
+                _store.set("unbound-theme", "light");
             } else {
                 document.documentElement.setAttribute("data-theme", "dark");
-                localStorage.setItem("unbound-theme", "dark");
+                _store.set("unbound-theme", "dark");
             }
             updateThemeButton();
         }
@@ -1203,7 +1227,7 @@
             if (btn) btn.classList.add("active");
             var content = document.getElementById("tab-" + tabId);
             if (content) content.classList.add("active");
-            localStorage.setItem("unbound-active-tab", tabId);
+            _store.set("unbound-active-tab", tabId);
 
             // Lazy-load data for tabs
             if (tabId === "query-log" && !queryLogLoaded) {
@@ -1221,7 +1245,7 @@
         });
 
         // Restore saved tab
-        var savedTab = localStorage.getItem("unbound-active-tab");
+        var savedTab = _store.get("unbound-active-tab");
         if (savedTab) showTab(savedTab);
 
         // --- Toast notifications ---
@@ -2108,6 +2132,10 @@
         _bind('flush-domain-btn',       function() { flushDomain(); });
         _bind('flush-all-cache-btn',    function() { flushAllCache(); });
         _bind('validate-custom-config-btn', function() { validateCustomConfig(); });
+
+        // Query log filter (was inline oninput — replaced for CSP/scope safety)
+        var qf = document.getElementById('query-filter');
+        if (qf) qf.addEventListener('input', function() { renderQueryLog(); });
 
         // Save / Reset buttons (multiple per page — use data-action delegation)
         document.addEventListener('click', function(e) {

@@ -299,19 +299,6 @@ def parse_query_log(text):
 
 # --- Helpers ---
 
-def get_ingress_path():
-    """Return the HA ingress base path.
-
-    Priority:
-    1. X-Ingress-Path request header (set by HA frontend per request)
-    2. INGRESS_PATH environment variable (set by run.sh via bashio::addon.ingress_entry)
-    3. Empty string fallback (direct access / local dev)
-    """
-    header = request.headers.get("X-Ingress-Path", "").rstrip("/")
-    if header:
-        return header
-    return os.environ.get("INGRESS_PATH", "").rstrip("/")
-
 
 def run_unbound_control(cmd, retries=0):
     """Run an unbound-control command and return (output, ok).
@@ -416,8 +403,7 @@ def parse_stats(raw_stats):
 @app.route("/")
 def index():
     """Serve the main dashboard."""
-    ingress_path = get_ingress_path()
-    return render_template("index.html", ingress_path=ingress_path)
+    return render_template("index.html")
 
 
 @app.route("/api/stats")
