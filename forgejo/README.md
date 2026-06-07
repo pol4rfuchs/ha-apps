@@ -79,3 +79,12 @@ Alternativ via Umgebungsvariablen (werden beim Start automatisch angewendet):
 FORGEJO__service__DISABLE_REGISTRATION=true
 FORGEJO__packages__ENABLED=true
 ```
+## 📜 License
+
+```text
+MIT
+```
+
+This add-on wrapper is licensed under the MIT License.
+
+> ⚠️ Upstream license not auto-detected. Please verify before publishing.
