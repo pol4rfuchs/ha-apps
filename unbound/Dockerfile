@@ -30,7 +30,7 @@ RUN mkdir -p \
       --output /etc/unbound/root.hints \
       https://www.internic.net/domain/named.root && \
     unbound-anchor -a /var/lib/unbound/root.key || true && \
-    chown -R unbound:unbound \
+    chown unbound:unbound \
       /var/lib/unbound \
       /var/run/unbound && \
     chmod 0755 /var/lib/unbound && \
@@ -43,7 +43,6 @@ RUN mkdir -p \
 
 # Set up unbound-control keys for stats access
 RUN unbound-control-setup && \
-    chown -R unbound:unbound /etc/unbound && \
     find /etc/unbound -type d -exec chmod 0755 {} \; && \
     find /etc/unbound -type f -exec chmod 0644 {} \;
 
