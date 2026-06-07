@@ -605,7 +605,7 @@
 <body>
     <div class="header-row">
         <h1>Unbound DNS Resolver</h1>
-        <button class="dark-toggle" onclick="toggleDarkMode()" id="theme-btn">Dark Mode</button>
+        <button class="dark-toggle" id="theme-btn">Dark Mode</button>
     </div>
 
     <!-- Toast notification -->
@@ -698,7 +698,7 @@
         <div class="section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
                 <h2 style="margin-bottom:0">Full Statistics</h2>
-                <button class="btn-primary btn-sm" onclick="toggleFullStats()">Show / Hide</button>
+                <button class="btn-primary btn-sm" id="toggle-full-stats-btn">Show / Hide</button>
             </div>
             <pre id="full-stats-output" style="display:none;background:var(--bg-input);border:1px solid var(--border-color);border-radius:6px;padding:14px;font-size:0.8rem;max-height:500px;overflow:auto;white-space:pre-wrap;word-break:break-all;color:var(--text-secondary)">Loading...</pre>
         </div>
@@ -711,10 +711,10 @@
             <div id="blocklist-status" class="status-msg"></div>
             <div class="add-form">
                 <input type="text" id="new-url" placeholder="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts">
-                <button class="btn-primary" onclick="addBlocklist()">Add</button>
+                <button class="btn-primary" id="add-blocklist-btn">Add</button>
             </div>
             <div class="actions-bar">
-                <button class="btn-success" onclick="refreshBlocklists()">Refresh &amp; Apply All</button>
+                <button class="btn-success" id="refresh-blocklists-btn">Refresh &amp; Apply All</button>
             </div>
             <table>
                 <thead>
@@ -741,7 +741,7 @@
             <div id="whitelist-status" class="status-msg"></div>
             <div class="add-form">
                 <input type="text" id="new-whitelist-domain" placeholder="example.com">
-                <button class="btn-primary" onclick="addWhitelist()">Add</button>
+                <button class="btn-primary" id="add-whitelist-btn">Add</button>
             </div>
             <table>
                 <thead>
@@ -774,7 +774,7 @@
                 </select>
                 <input type="text" id="new-record-value" placeholder="192.168.1.100" style="max-width:240px">
                 <input type="number" id="new-record-ttl" placeholder="TTL" value="300" min="30" max="86400" style="max-width:110px">
-                <button class="btn-primary" onclick="addLocalRecord()">Add</button>
+                <button class="btn-primary" id="add-local-record-btn">Add</button>
             </div>
             <table>
                 <thead>
@@ -803,7 +803,7 @@
             <div class="add-form">
                 <input type="text" id="new-stub-zone-name" placeholder="home.lan">
                 <input type="text" id="new-stub-zone-addr" placeholder="192.168.1.1" style="max-width:200px">
-                <button class="btn-primary" onclick="addStubZone()">Add</button>
+                <button class="btn-primary" id="add-stub-zone-btn">Add</button>
             </div>
             <table>
                 <thead>
@@ -833,7 +833,7 @@
             <h2>Recent Queries</h2>
             <div class="filter-bar">
                 <input type="text" id="query-filter" placeholder="Filter by domain or client..." oninput="renderQueryLog()">
-                <button class="btn-secondary" onclick="clearQueryLog()">Clear Log</button>
+                <button class="btn-secondary" id="clear-query-log-btn">Clear Log</button>
             </div>
             <div id="query-log-status" class="status-msg"></div>
             <div class="query-table-wrap">
@@ -866,7 +866,7 @@
                     <div id="acl-list" class="list-items"></div>
                     <div class="add-form" style="margin-bottom:0">
                         <input type="text" id="new-acl" placeholder="192.168.0.0/16">
-                        <button class="btn-primary btn-sm" onclick="addListItem('acl')">Add</button>
+                        <button class="btn-primary btn-sm" id="add-acl-btn">Add</button>
                     </div>
                 </div>
             </div>
@@ -878,7 +878,7 @@
                     <div id="forward-list" class="list-items"></div>
                     <div class="add-form" style="margin-bottom:0">
                         <input type="text" id="new-forward" placeholder="1.1.1.1 (empty = recursive)">
-                        <button class="btn-primary btn-sm" onclick="addListItem('forward')">Add</button>
+                        <button class="btn-primary btn-sm" id="add-forward-btn">Add</button>
                     </div>
                 </div>
             </div>
@@ -910,8 +910,8 @@
             </div>
         </div>
         <div class="save-bar">
-            <button class="btn-success" onclick="saveSettings()">Save &amp; Apply</button>
-            <button class="btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+            <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
@@ -958,8 +958,8 @@
             </div>
         </div>
         <div class="save-bar">
-            <button class="btn-success" onclick="saveSettings()">Save &amp; Apply</button>
-            <button class="btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+            <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
@@ -974,8 +974,8 @@
                     <label>Flush a specific domain</label>
                     <input type="text" id="flush-domain-input" placeholder="example.com">
                 </div>
-                <button class="btn-primary" onclick="flushDomain()">Flush Domain</button>
-                <button class="btn-danger" onclick="flushAllCache()">Flush Entire Cache</button>
+                <button class="btn-primary" id="flush-domain-btn">Flush Domain</button>
+                <button class="btn-danger" id="flush-all-cache-btn">Flush Entire Cache</button>
             </div>
         </div>
 
@@ -1042,8 +1042,8 @@
             </div>
         </div>
         <div class="save-bar">
-            <button class="btn-success" onclick="saveSettings()">Save &amp; Apply</button>
-            <button class="btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+            <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
@@ -1089,8 +1089,8 @@
             </div>
         </div>
         <div class="save-bar">
-            <button class="btn-success" onclick="saveSettings()">Save &amp; Apply</button>
-            <button class="btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+            <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
@@ -1105,7 +1105,7 @@
                 <div class="setting-input">
                     <label class="toggle"><input type="checkbox" id="cfg-custom_config"><span class="toggle-slider"></span></label>
                     <p class="text-muted" style="margin-top:6px">When enabled, place your config at the addon's <code>/config</code> mount (host path: <code>/addon_configs/&lt;slug&gt;_unbound/unbound.conf</code>). All other settings are ignored.</p>
-                    <button class="btn-primary btn-sm" style="margin-top:8px" onclick="validateCustomConfig()">Validate Custom Config</button>
+                    <button class="btn-primary btn-sm" style="margin-top:8px" id="validate-custom-config-btn">Validate Custom Config</button>
                     <div id="custom-config-validate-result" class="status-msg" style="margin-top:8px"></div>
                 </div>
             </div>
@@ -1160,8 +1160,8 @@
         </div>
 
         <div class="save-bar">
-            <button class="btn-success" onclick="saveSettings()">Save &amp; Apply</button>
-            <button class="btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+            <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
@@ -1455,7 +1455,7 @@
                         '<td class="url-cell">' + escapeHtml(item.url) + errorHtml + '</td>' +
                         '<td>' + domains + '</td>' +
                         '<td>' + lastRefresh + '</td>' +
-                        '<td><button class="btn-danger btn-sm" onclick="removeBlocklist(' + i + ')">Remove</button></td>' +
+                        '<td><button class="btn-danger btn-sm" data-action="removeBlocklist" data-index="' + i + '">Remove</button></td>' +
                         '</tr>';
                 }).join("");
             } catch (e) {
@@ -1536,7 +1536,7 @@
                     return '<tr>' +
                         '<td>' + i + '</td>' +
                         '<td>' + escapeHtml(domain) + '</td>' +
-                        '<td><button class="btn-danger btn-sm" onclick="removeWhitelist(' + i + ')">Remove</button></td>' +
+                        '<td><button class="btn-danger btn-sm" data-action="removeWhitelist" data-index="' + i + '">Remove</button></td>' +
                         '</tr>';
                 }).join("");
             } catch (e) {
@@ -1604,7 +1604,7 @@
                         '<td>' + escapeHtml(type) + '</td>' +
                         '<td>' + escapeHtml(value) + '</td>' +
                         '<td>' + escapeHtml(ttl) + '</td>' +
-                        '<td><button class="btn-danger btn-sm" onclick="removeLocalRecord(' + i + ')">Remove</button></td>' +
+                        '<td><button class="btn-danger btn-sm" data-action="removeLocalRecord" data-index="' + i + '">Remove</button></td>' +
                         '</tr>';
                 }).join("");
             } catch (e) {
@@ -1672,7 +1672,7 @@
                         '<td>' + i + '</td>' +
                         '<td>' + escapeHtml(zone.name) + '</td>' +
                         '<td>' + escapeHtml(zone.addr) + '</td>' +
-                        '<td><button class="btn-danger btn-sm" onclick="removeStubZone(' + i + ')">Remove</button></td>' +
+                        '<td><button class="btn-danger btn-sm" data-action="removeStubZone" data-index="' + i + '">Remove</button></td>' +
                         '</tr>';
                 }).join("");
             } catch (e) {
@@ -1935,7 +1935,7 @@
             }
             container.innerHTML = items.map(function(val, i) {
                 return '<span class="list-item">' + escapeHtml(val) +
-                    ' <button class="list-item-remove" onclick="removeListItem(\'' + prefix + '\',' + i + ')">&times;</button></span>';
+                    ' <button class="list-item-remove" data-action="removeListItem" data-prefix="' + prefix + '" data-index="' + i + '">&times;</button></span>';
             }).join("");
         }
 
@@ -2087,27 +2087,46 @@
         // Auto-refresh stats every 10 seconds
         setInterval(fetchStats, 10000);
     
-        // Expose functions used by inline HTML event handlers
-        // Required for compatibility with HA ingress iframe context (Firefox/Floorp)
-        if (typeof addBlocklist !== 'undefined') window.addBlocklist = addBlocklist;
-        if (typeof addListItem !== 'undefined') window.addListItem = addListItem;
-        if (typeof addLocalRecord !== 'undefined') window.addLocalRecord = addLocalRecord;
-        if (typeof addStubZone !== 'undefined') window.addStubZone = addStubZone;
-        if (typeof addWhitelist !== 'undefined') window.addWhitelist = addWhitelist;
-        if (typeof clearQueryLog !== 'undefined') window.clearQueryLog = clearQueryLog;
-        if (typeof flushAllCache !== 'undefined') window.flushAllCache = flushAllCache;
-        if (typeof flushDomain !== 'undefined') window.flushDomain = flushDomain;
-        if (typeof refreshBlocklists !== 'undefined') window.refreshBlocklists = refreshBlocklists;
-        if (typeof removeBlocklist !== 'undefined') window.removeBlocklist = removeBlocklist;
-        if (typeof removeListItem !== 'undefined') window.removeListItem = removeListItem;
-        if (typeof removeLocalRecord !== 'undefined') window.removeLocalRecord = removeLocalRecord;
-        if (typeof removeStubZone !== 'undefined') window.removeStubZone = removeStubZone;
-        if (typeof removeWhitelist !== 'undefined') window.removeWhitelist = removeWhitelist;
-        if (typeof resetSettings !== 'undefined') window.resetSettings = resetSettings;
-        if (typeof saveSettings !== 'undefined') window.saveSettings = saveSettings;
-        if (typeof toggleDarkMode !== 'undefined') window.toggleDarkMode = toggleDarkMode;
-        if (typeof toggleFullStats !== 'undefined') window.toggleFullStats = toggleFullStats;
-        if (typeof validateCustomConfig !== 'undefined') window.validateCustomConfig = validateCustomConfig;
+        // ── Event listeners (replaces all inline onclick for CSP compatibility) ─
+
+        // Static buttons
+        function _bind(id, fn) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('click', fn);
+        }
+
+        _bind('theme-btn',              function() { toggleDarkMode(); });
+        _bind('toggle-full-stats-btn',  function() { toggleFullStats(); });
+        _bind('add-blocklist-btn',      function() { addBlocklist(); });
+        _bind('refresh-blocklists-btn', function() { refreshBlocklists(); });
+        _bind('add-whitelist-btn',      function() { addWhitelist(); });
+        _bind('add-local-record-btn',   function() { addLocalRecord(); });
+        _bind('add-stub-zone-btn',      function() { addStubZone(); });
+        _bind('clear-query-log-btn',    function() { clearQueryLog(); });
+        _bind('add-acl-btn',            function() { addListItem('acl'); });
+        _bind('add-forward-btn',        function() { addListItem('forward'); });
+        _bind('flush-domain-btn',       function() { flushDomain(); });
+        _bind('flush-all-cache-btn',    function() { flushAllCache(); });
+        _bind('validate-custom-config-btn', function() { validateCustomConfig(); });
+
+        // Save / Reset buttons (multiple per page — use data-action delegation)
+        document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-action]');
+            if (!el) return;
+            var action = el.dataset.action;
+            var idx    = el.dataset.index !== undefined ? parseInt(el.dataset.index, 10) : null;
+            var prefix = el.dataset.prefix || null;
+
+            switch (action) {
+                case 'saveSettings':       saveSettings();              break;
+                case 'resetSettings':      resetSettings();             break;
+                case 'removeBlocklist':    removeBlocklist(idx);        break;
+                case 'removeWhitelist':    removeWhitelist(idx);        break;
+                case 'removeLocalRecord':  removeLocalRecord(idx);      break;
+                case 'removeStubZone':     removeStubZone(idx);         break;
+                case 'removeListItem':     removeListItem(prefix, idx); break;
+            }
+        });
 </script>
 </body>
 </html>
