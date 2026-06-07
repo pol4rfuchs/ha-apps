@@ -38,7 +38,7 @@ RUN mkdir -p \
     chmod 0644 /etc/unbound/root.hints && \
     if [ -f /var/lib/unbound/root.key ]; then \
       chown unbound:unbound /var/lib/unbound/root.key; \
-      chmod 0640 /var/lib/unbound/root.key; \
+      chmod 0644 /var/lib/unbound/root.key; \
     fi
 
 # Set up unbound-control keys for stats access
