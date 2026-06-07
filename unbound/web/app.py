@@ -300,11 +300,17 @@ def parse_query_log(text):
 # --- Helpers ---
 
 def get_ingress_path():
-    """Get the ingress base path from the X-Ingress-Path request header.
-    HA Supervisor passes the ingress path per-request as a header, not as
-    an environment variable.
+    """Return the HA ingress base path.
+
+    Priority:
+    1. X-Ingress-Path request header (set by HA frontend per request)
+    2. INGRESS_PATH environment variable (set by run.sh via bashio::addon.ingress_entry)
+    3. Empty string fallback (direct access / local dev)
     """
-    return request.headers.get("X-Ingress-Path", "").rstrip("/")
+    header = request.headers.get("X-Ingress-Path", "").rstrip("/")
+    if header:
+        return header
+    return os.environ.get("INGRESS_PATH", "").rstrip("/")
 
 
 def run_unbound_control(cmd, retries=0):

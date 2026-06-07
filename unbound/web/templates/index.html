@@ -2086,6 +2086,28 @@
 
         // Auto-refresh stats every 10 seconds
         setInterval(fetchStats, 10000);
-    </script>
+    
+        // Expose functions used by inline HTML event handlers
+        // Required for compatibility with HA ingress iframe context (Firefox/Floorp)
+        if (typeof addBlocklist !== 'undefined') window.addBlocklist = addBlocklist;
+        if (typeof addListItem !== 'undefined') window.addListItem = addListItem;
+        if (typeof addLocalRecord !== 'undefined') window.addLocalRecord = addLocalRecord;
+        if (typeof addStubZone !== 'undefined') window.addStubZone = addStubZone;
+        if (typeof addWhitelist !== 'undefined') window.addWhitelist = addWhitelist;
+        if (typeof clearQueryLog !== 'undefined') window.clearQueryLog = clearQueryLog;
+        if (typeof flushAllCache !== 'undefined') window.flushAllCache = flushAllCache;
+        if (typeof flushDomain !== 'undefined') window.flushDomain = flushDomain;
+        if (typeof refreshBlocklists !== 'undefined') window.refreshBlocklists = refreshBlocklists;
+        if (typeof removeBlocklist !== 'undefined') window.removeBlocklist = removeBlocklist;
+        if (typeof removeListItem !== 'undefined') window.removeListItem = removeListItem;
+        if (typeof removeLocalRecord !== 'undefined') window.removeLocalRecord = removeLocalRecord;
+        if (typeof removeStubZone !== 'undefined') window.removeStubZone = removeStubZone;
+        if (typeof removeWhitelist !== 'undefined') window.removeWhitelist = removeWhitelist;
+        if (typeof resetSettings !== 'undefined') window.resetSettings = resetSettings;
+        if (typeof saveSettings !== 'undefined') window.saveSettings = saveSettings;
+        if (typeof toggleDarkMode !== 'undefined') window.toggleDarkMode = toggleDarkMode;
+        if (typeof toggleFullStats !== 'undefined') window.toggleFullStats = toggleFullStats;
+        if (typeof validateCustomConfig !== 'undefined') window.validateCustomConfig = validateCustomConfig;
+</script>
 </body>
 </html>
