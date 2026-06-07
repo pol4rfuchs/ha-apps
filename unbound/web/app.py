@@ -300,8 +300,11 @@ def parse_query_log(text):
 # --- Helpers ---
 
 def get_ingress_path():
-    """Get the ingress base path from environment or headers."""
-    return os.environ.get("INGRESS_PATH", "")
+    """Get the ingress base path from the X-Ingress-Path request header.
+    HA Supervisor passes the ingress path per-request as a header, not as
+    an environment variable.
+    """
+    return request.headers.get("X-Ingress-Path", "").rstrip("/")
 
 
 def run_unbound_control(cmd, retries=0):
