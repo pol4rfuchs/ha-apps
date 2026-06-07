@@ -78,3 +78,13 @@ Then in Nextcloud admin → Overview fix the remaining warnings via `occ`:
 php /var/www/html/occ config:system:set overwriteprotocol --value="https"
 php /var/www/html/occ config:system:set overwrite.cli.url --value="https://nextcloud.example.com"
 ```
+
+## 📜 License
+
+```text
+MIT
+```
+
+This add-on wrapper is licensed under the MIT License.
+
+Nextcloud Server is licensed under [AGPL-3.0](https://github.com/nextcloud/server/blob/master/COPYING).

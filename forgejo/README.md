@@ -87,4 +87,4 @@ MIT
 
 This add-on wrapper is licensed under the MIT License.
 
-> ⚠️ Upstream license not auto-detected. Please verify before publishing.
+Forgejo is licensed under [MIT](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/LICENSE).
