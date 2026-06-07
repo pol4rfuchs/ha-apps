@@ -1250,9 +1250,7 @@
             if (ok) {
                 return successText || "Config valid. Reload successful.";
             }
-            return "Config validation/reload failed.
-
-" + (reload.message || payload.message || payload.error || "Unknown error");
+            return "Config validation/reload failed.\n\n" + (reload.message || payload.message || payload.error || "Unknown error");
         }
 
         function showReloadStatus(sectionId, payload, successText) {
