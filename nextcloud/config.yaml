@@ -1,6 +1,6 @@
 name: Nextcloud
 description: "A safe home for all your data — full Nextcloud instance with unrestricted app store access"
-version: "33.0.5"
+version: "33.0.6"
 slug: nextcloud
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/nextcloud-ha-app
