@@ -276,11 +276,13 @@ jobs:
                   text,
               )
               # Generic: replace any ARG *VERSION= that looks like a prior tag of this image
-              tag_pattern = re.compile(rf"(?m)^(ARG\s+\w*VERSION\s*=\s*)(\S+)$")
-              for m in list(tag_pattern.finditer(text)):
+              tag_pattern = re.compile(r"(?m)^(ARG\s+\w*VERSION\s*=\s*)(\S+)$")
+              def _replace_version_arg(m):
                   old_val = m.group(2)
                   if re.match(r"\d{4}\.\d+\.\d+", old_val) or re.match(r"\d+\.\d+", old_val):
-                      text = text[:m.start()] + m.group(1) + value + text[m.end():]
+                      return m.group(1) + value
+                  return m.group(0)
+              text = tag_pattern.sub(_replace_version_arg, text)
           else:
               print(f"ERROR: unsupported mode {mode}", file=sys.stderr)
               raise SystemExit(1)
