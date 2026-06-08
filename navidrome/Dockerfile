@@ -4,7 +4,7 @@
 
 ARG BUILD_VERSION
 
-FROM deluan/navidrome:0.61.2
+FROM deluan/navidrome:0.62.0
 ARG BUILD_VERSION
 
 LABEL \
