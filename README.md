@@ -33,9 +33,9 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 | Badge | Bedeutung |
 |-------|-----------|
-| ![stable](https://img.shields.io/badge/stable-yes-2ea44f?style=flat-square) | Produktiv getestet, stabil |
-| ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | Läuft, aber beta/community |
-| ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | Noch nicht auf HAOS getestet |
+| ![stable](https://img.shields.io/badge/stable-yes-2ea44f?style=flat-square) | Production-ready and actively used |
+| ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | Functional, but not yet production-validated |
+| ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | Work in progress — not yet validated on HAOS |
 
 ## Installation
 
