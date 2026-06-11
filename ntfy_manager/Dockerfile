@@ -36,6 +36,7 @@ WORKDIR /opt/ntfy-admin
 
 COPY --from=builder /opt/ntfy-admin/node_modules ./node_modules
 COPY --from=builder /opt/ntfy-admin/apps/api/dist ./apps/api/dist
+COPY --from=builder /opt/ntfy-admin/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /opt/ntfy-admin/apps/web/dist /usr/share/nginx/html/
 
 # s6-overlay v3 Services + nginx.conf
