@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — Full rewrite
+## 0.2.0 — 0.2.1 [Full rewrite]
 
 This is effectively a rewrite. The 0.1.x skeleton was a generic Express+Prisma+SQLite app with no actual ntfy integration. 0.2.0 is a real ntfy admin panel with the same feature surface as the original single-file HTML console.
 
