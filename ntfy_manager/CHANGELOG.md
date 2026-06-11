@@ -1,6 +1,21 @@
 # Changelog
 
-## 0.2.0 — 0.2.1 [Full rewrite]
+## 0.2.1 — Bugfixes
+
+### Fixed
+- **ESM crash on startup**: multi-stage Docker build copied `apps/api/dist/` into Stage 2
+  but omitted `apps/api/package.json`. Node.js could not detect `"type": "module"`
+  and crashed with `SyntaxError: Cannot use import statement outside a module`.
+  Fixed by adding `COPY --from=builder /opt/ntfy-admin/apps/api/package.json ./apps/api/package.json`
+  in Stage 2.
+- **openssl version conflict**: `apk add openssl` conflicted with the version already
+  present in `ghcr.io/hassio-addons/base:16.3.2` (`libcrypto3`/`libssl3` mismatch).
+  Removed `openssl` from explicit `apk add` — it is provided by the base image.
+- **AppArmor profile name mismatch**: profile declared as `ntfy_haos_admin_panel` but
+  HA Supervisor expects the `local_` prefix for local add-ons (`local_ntfy_haos_admin_panel`).
+  Resolved by setting `apparmor: false` in `config.yaml` and removing `apparmor.txt`.
+
+## 0.2.0 — Full rewrite
 
 This is effectively a rewrite. The 0.1.x skeleton was a generic Express+Prisma+SQLite app with no actual ntfy integration. 0.2.0 is a real ntfy admin panel with the same feature surface as the original single-file HTML console.
 
