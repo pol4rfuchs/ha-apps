@@ -128,10 +128,13 @@ if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
     export TSSERVER_QUERY_ADMIN_PASSWORD="${QUERY_ADMIN_PASSWORD}"
 fi
 
-# Unified shutdown handler: always forward SIGTERM to tsserver and sync data back.
-# TS_PID is set below in both branches before trap is armed.
+# Unified shutdown handler: forward SIGTERM to tsserver and sync data back.
+# Guard _CLEANUP_DONE prevents double execution (TERM fires cleanup, then EXIT fires again).
 TS_PID=""
+_CLEANUP_DONE=0
 cleanup() {
+    [ "${_CLEANUP_DONE}" = "1" ] && return
+    _CLEANUP_DONE=1
     if [ -n "${TS_PID}" ]; then
         kill -TERM "${TS_PID}" 2>/dev/null || true
         wait "${TS_PID}" 2>/dev/null || true
