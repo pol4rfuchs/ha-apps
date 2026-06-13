@@ -63,10 +63,10 @@ migrate_legacy_data() {
 }
 
 # Sync persisted data INTO /var/tsserver.
-# Always run on every start — /var/tsserver is part of the ephemeral container
-# filesystem and is reset to the image default on every container recreation.
-# The .sqlitedb-shm file is a process-local WAL index that is invalid across
-# container runs; delete it so SQLite rebuilds it cleanly from the WAL on open.
+# Always runs on every start — /var/tsserver is ephemeral container filesystem
+# and resets to the image default on every container recreation.
+# Remove .sqlitedb-shm (process-local WAL index) so SQLite rebuilds it cleanly
+# from the WAL file on open instead of using a stale index from a dead container.
 sync_to_runtime() {
     if has_dir_contents "${TS_SERVER_STORE}"; then
         echo "[INFO] Restoring persisted server data into ${TS_RUNTIME_DIR}..."
@@ -76,10 +76,17 @@ sync_to_runtime() {
 }
 
 # Sync runtime data BACK to persistent store after server stops.
-# The .sqlitedb-shm file is process-local and must not be kept between runs;
-# delete it from the persistent store so the next sync_to_runtime does not
-# carry a stale WAL index into the new container.
+# Before copying, force a WAL checkpoint so all committed transactions are
+# written from the WAL into the main DB file. Without this, a 4MB WAL with
+# uncommitted-looking frames causes SQLite to silently ignore recent changes
+# (new channels, deletions) on the next open — they appear lost after restart.
 sync_from_runtime() {
+    echo "[INFO] Checkpointing SQLite WAL before sync..."
+    sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
+        "PRAGMA wal_checkpoint(TRUNCATE);" 2>/dev/null \
+        && echo "[INFO] WAL checkpoint completed." \
+        || echo "[WARN] WAL checkpoint failed or DB not found — syncing anyway."
+
     echo "[INFO] Syncing server data back to persistent store..."
     if cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/"; then
         rm -f "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
@@ -158,8 +165,6 @@ trap cleanup EXIT TERM INT
 
 if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
     echo "[INFO] Fresh server — waiting for admin token..."
-    # Use a FIFO so tsserver runs as a background process (TS_PID known) while
-    # we still read its output line-by-line for token detection.
     _FIFO=$(mktemp -u /tmp/ts6_output.XXXXXX)
     mkfifo "${_FIFO}"
     set +o pipefail
@@ -187,9 +192,6 @@ if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
     rm -f "${_FIFO}"
 else
     echo "[INFO] Starting TeamSpeak 6 with persisted server data..."
-    # Do NOT use exec: exec replaces the shell, so the EXIT trap never fires and
-    # sync_from_runtime is never called — causing icons/assets to be lost on restart.
-    # Use || true so a SIGTERM exit code (143) is not treated as an error by HA.
     tsserver --log-path="${TS_LOG_DIR}" &
     TS_PID=$!
     wait "${TS_PID}" || true

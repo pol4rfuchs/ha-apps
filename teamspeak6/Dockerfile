@@ -12,7 +12,7 @@ ARG TEAMSPEAK_VERSION=6.0.0-beta10
 USER root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash curl jq ca-certificates \
+    bash curl jq ca-certificates sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY rootfs /

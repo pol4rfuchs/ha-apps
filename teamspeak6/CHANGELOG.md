@@ -1,3 +1,16 @@
+## [1.1.10] - 2026-06-13
+### Fixed
+- Channel renames, deletions and creations were silently lost on restart
+- Root cause: tsserver accumulates changes in a 4 MB WAL file and does not
+  checkpoint it on SIGTERM — the main DB stays at an older state; on next
+  start SQLite replays only fully committed WAL frames and ignores the rest,
+  so recent changes vanish (renamed channel reverted, new channel gone,
+  deleted channel reappeared)
+- Fix: PRAGMA wal_checkpoint(TRUNCATE) is now run via sqlite3 immediately
+  after tsserver stops and before syncing to /data; this flushes all
+  committed transactions from the WAL into the main DB and truncates the
+  WAL to zero, making the DB the single source of truth before the sync
+
 ## [1.1.9] - 2026-06-13
 ### Fixed
 - Newly created channels disappeared after every stop/restart (definitive fix)
