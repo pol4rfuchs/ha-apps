@@ -62,26 +62,13 @@ migrate_legacy_data() {
     fi
 }
 
-# Restore persisted data into /var/tsserver ONLY when the Docker volume is fresh.
-#
-# /var/tsserver is a persistent Docker volume that survives normal stop/start
-# cycles — its state is the current truth and must NOT be overwritten with the
-# /data backup on every start.
-#
-# The volume is fresh (empty DB) only on:
-#   - First ever install
-#   - Add-on update (HA Supervisor creates a new anonymous volume)
-#
-# We detect a fresh volume by checking for the absence of tsserver.sqlitedb.
-# Any other files that the base image places in /var/tsserver do NOT indicate
-# a live database.
+# Restore persisted data into /var/tsserver.
+# HA Supervisor removes the container on every stop and creates a new one on
+# start, so /var/tsserver is always a fresh empty volume. /data is the only
+# source of truth across restarts.
 sync_to_runtime() {
-    if [ -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ]; then
-        echo "[INFO] Runtime DB found — Docker volume is live, no restore needed."
-        return
-    fi
     if has_dir_contents "${TS_SERVER_STORE}"; then
-        echo "[INFO] Fresh volume — restoring persisted data from ${TS_SERVER_STORE}..."
+        echo "[INFO] Restoring persisted server data into ${TS_RUNTIME_DIR}..."
         cp -a "${TS_SERVER_STORE}/." "${TS_RUNTIME_DIR}/"
         # Remove stale WAL index so SQLite rebuilds it cleanly from the WAL
         rm -f "${TS_RUNTIME_DIR}/"*.sqlitedb-shm 2>/dev/null || true
@@ -89,23 +76,14 @@ sync_to_runtime() {
 }
 
 # Back up runtime data to /data after the server stops.
-# This backup is used to seed a fresh Docker volume after an add-on update.
-# We attempt a WAL checkpoint first so the main DB file is as current as
-# possible; the checkpoint may show 0 frames if tsserver already flushed the
-# WAL on its own clean exit.
+# Checkpoint must run BEFORE this to ensure the main DB is up to date.
 sync_from_runtime() {
-    echo "[INFO] Checkpointing SQLite WAL before backup..."
-    sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
-        "PRAGMA wal_checkpoint(TRUNCATE);" 2>/dev/null \
-        && echo "[INFO] WAL checkpoint completed." \
-        || echo "[WARN] WAL checkpoint skipped — syncing anyway."
-
     echo "[INFO] Backing up server data to persistent store..."
     if cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/"; then
         rm -f "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
         echo "[INFO] Backup completed."
     else
-        echo "[ERROR] Backup failed — /data may be outdated after an update!"
+        echo "[ERROR] Backup failed — /data may be outdated!"
     fi
 }
 
@@ -117,7 +95,7 @@ rm -f "${TS_LOG_DIR}"/*.log 2>/dev/null || true
 mkdir -p "${TS_LOG_DIR}"
 
 EXISTING_SERVER_STATE=0
-if [ -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ]; then
+if has_dir_contents "${TS_SERVER_STORE}"; then
     EXISTING_SERVER_STATE=1
 fi
 
@@ -161,14 +139,22 @@ if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
     export TSSERVER_QUERY_ADMIN_PASSWORD="${QUERY_ADMIN_PASSWORD}"
 fi
 
-# Unified shutdown handler: forward SIGTERM to tsserver and back up data.
-# Guard _CLEANUP_DONE prevents double execution.
+# Unified shutdown handler.
+# CRITICAL: WAL checkpoint runs BEFORE sending SIGTERM — while tsserver is still
+# alive the WAL is in a valid state and all committed frames can be flushed to
+# the main DB. After tsserver exits, SQLite invalidates the WAL header, making
+# the frames invisible to any external checkpoint tool (returns 0|0|0 uselessly).
 TS_PID=""
 _CLEANUP_DONE=0
 cleanup() {
     [ "${_CLEANUP_DONE}" = "1" ] && return
     _CLEANUP_DONE=1
     if [ -n "${TS_PID}" ]; then
+        echo "[INFO] Pre-shutdown WAL checkpoint (server still running)..."
+        sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
+            "PRAGMA wal_checkpoint(PASSIVE);" 2>/dev/null \
+            && echo "[INFO] WAL checkpoint completed." \
+            || echo "[WARN] WAL checkpoint failed — backup may miss recent changes."
         kill -TERM "${TS_PID}" 2>/dev/null || true
         wait "${TS_PID}" 2>/dev/null || true
     fi

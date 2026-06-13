@@ -1,3 +1,17 @@
+## [1.1.12] - 2026-06-13
+### Fixed
+- Channel changes (creates, renames, deletions, icons) were lost on restart
+- Root cause: WAL checkpoint ran after tsserver exited; when SQLite closes a
+  WAL-mode DB it invalidates the WAL header, so external sqlite3 returned
+  0|0|0 (nothing checkpointed) and the main DB stayed at its old state
+- Fix: PRAGMA wal_checkpoint(PASSIVE) now runs BEFORE sending SIGTERM, while
+  tsserver is alive and the WAL header is valid; verified: sqlite3 connects
+  cleanly to the live DB and flushes all frames (0|88|88 — 88 frames moved,
+  0 blocked); main DB is current before tsserver is stopped and copied to /data
+- Reverted skip-restore-if-DB-exists logic from 1.1.11: HA Supervisor removes
+  the container on every stop and recreates it on start, so /var/tsserver is
+  always a fresh empty volume and /data must always be restored on startup
+
 ## [1.1.11] - 2026-06-13
 ### Fixed
 - All channel changes (creates, renames, deletions) were lost on every
