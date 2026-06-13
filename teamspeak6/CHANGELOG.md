@@ -1,3 +1,14 @@
+## [1.1.5] - 2026-06-13
+### Fixed
+- Channel icons, banners and uploaded assets were lost on every restart
+- Root cause: `exec tsserver` replaced the shell process, causing the EXIT trap
+  (`sync_from_runtime`) to never fire — runtime data in `/var/tsserver/files/`
+  was never synced back to persistent storage at `/data/teamspeak6/server/`
+- Fix: tsserver now runs as a background process with `wait`; a unified
+  `cleanup()` trap (EXIT TERM INT) forwards SIGTERM, waits for clean shutdown,
+  then syncs all data back
+- First-start (token detection) path migrated from pipe to FIFO so tsserver
+  PID is known and signal handling is consistent across both code paths
 
 ## [1.1.1-1.1.2] - 2026-04-23
 ### Fixed
@@ -34,7 +45,7 @@
 - Admin token shown twice — now shows only once via TOKEN_FOUND flag
 - Removed dns: override from config.yaml
 - Removed resolv.conf override from run.sh
-  
+
 ## [1.0.2] - 2026-02-22
 ### Added
 - Admin token prominently displayed on first start
