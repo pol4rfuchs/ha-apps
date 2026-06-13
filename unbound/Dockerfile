@@ -2,7 +2,8 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
 FROM ${BUILD_FROM}
 
 # Install unbound, python/flask, and dependencies
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade libcrypto3 libssl3 && \
+    apk add --no-cache \
     unbound \
     bash \
     jq \
@@ -11,6 +12,7 @@ RUN apk add --no-cache \
     python3 \
     py3-flask \
     py3-waitress \
+    openssl \
     ca-certificates-bundle
 
 # Create necessary directories and download root hints
