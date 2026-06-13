@@ -1,3 +1,15 @@
+## [1.1.11] - 2026-06-13
+### Fixed
+- All channel changes (creates, renames, deletions) were lost on every
+  stop/start restart
+- Root cause: /var/tsserver is a persistent Docker volume that survives
+  normal stop/start cycles and holds the live server state; sync_to_runtime
+  was unconditionally copying /data (a backup from a previous stop) into
+  the volume on every start, overwriting current data with a stale snapshot
+- Fix: sync_to_runtime now checks for tsserver.sqlitedb in the volume;
+  if found the volume is live and no restore is performed; if absent the
+  volume is fresh (first install or add-on update) and /data is restored
+
 ## [1.1.10] - 2026-06-13
 ### Fixed
 - Channel renames, deletions and creations were silently lost on restart
