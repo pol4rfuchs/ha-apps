@@ -111,10 +111,10 @@ echo ""
 if [ -f "${TOKEN_SHOWN_FILE}" ]; then
     echo "╔═══════════════════════════════════════════════════════════════╗"
     echo "║  WARNING                                                      ║"
-    echo "║  The admin token is only visible in the log on FIRST start!  ║"
-    echo "║  If you lost it, create a new token via ServerQuery:         ║"
-    echo "║  telnet <pi-ip> 10011 -> login serveradmin <pw>              ║"
-    echo "║  -> use sid=1 -> tokenadd tokentype=0 tokenid1=6 tokenid2=0  ║"
+    echo "║  The admin token is only visible in the log on FIRST start!   ║"
+    echo "║  If you lost it, create a new token via ServerQuery:          ║"
+    echo "║  telnet <pi-ip> 10011 -> login serveradmin <pw>               ║"
+    echo "║  -> use sid=1 -> tokenadd tokentype=0 tokenid1=6 tokenid2=0   ║"
     echo "╚═══════════════════════════════════════════════════════════════╝"
     echo ""
 fi
@@ -128,32 +128,52 @@ if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
     export TSSERVER_QUERY_ADMIN_PASSWORD="${QUERY_ADMIN_PASSWORD}"
 fi
 
-# Trap to sync data back on shutdown
-trap sync_from_runtime EXIT
+# Unified shutdown handler: always forward SIGTERM to tsserver and sync data back.
+# TS_PID is set below in both branches before trap is armed.
+TS_PID=""
+cleanup() {
+    if [ -n "${TS_PID}" ]; then
+        kill -TERM "${TS_PID}" 2>/dev/null || true
+        wait "${TS_PID}" 2>/dev/null || true
+    fi
+    sync_from_runtime
+}
+trap cleanup EXIT TERM INT
 
 if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
     echo "[INFO] Fresh server — waiting for admin token..."
-    TOKEN_FOUND=0
+    # Use a FIFO so tsserver runs as a background process (TS_PID known) while
+    # we still read its output line-by-line for token detection.
+    _FIFO=$(mktemp -u /tmp/ts6_output.XXXXXX)
+    mkfifo "${_FIFO}"
     set +o pipefail
-    tsserver --log-path="${TS_LOG_DIR}" 2>&1 | while IFS= read -r line; do
+    tsserver --log-path="${TS_LOG_DIR}" >"${_FIFO}" 2>&1 &
+    TS_PID=$!
+    TOKEN_FOUND=0
+    while IFS= read -r line; do
         echo "$line"
         if [ "${TOKEN_FOUND}" = "0" ] && echo "$line" | grep -q "token="; then
             TOKEN="$(echo "$line" | grep -o 'token=[^ ]*' | head -1)"
             echo ""
             echo "╔═══════════════════════════════════════════════════════════════╗"
-            echo "║  ADMIN TOKEN — ONLY VISIBLE NOW! SAVE IT IMMEDIATELY!        ║"
+            echo "║  ADMIN TOKEN — ONLY VISIBLE NOW! SAVE IT IMMEDIATELY!         ║"
             echo "╠═══════════════════════════════════════════════════════════════╣"
             printf '║  %-59s║\n' "${TOKEN}"
             echo "╠═══════════════════════════════════════════════════════════════╣"
-            echo "║  Take a screenshot or write it down!                         ║"
-            echo "║  After a restart this token will NOT appear in the log!      ║"
+            echo "║  Take a screenshot or write it down!                          ║"
+            echo "║  After a restart this token will NOT appear in the log!       ║"
             echo "╚═══════════════════════════════════════════════════════════════╝"
             echo ""
             touch "${TOKEN_SHOWN_FILE}"
             TOKEN_FOUND=1
         fi
-    done
+    done < "${_FIFO}"
+    rm -f "${_FIFO}"
 else
     echo "[INFO] Starting TeamSpeak 6 with persisted server data..."
-    exec tsserver --log-path="${TS_LOG_DIR}"
+    # Do NOT use exec: exec replaces the shell, so the EXIT trap never fires and
+    # sync_from_runtime is never called — causing icons/assets to be lost on restart.
+    tsserver --log-path="${TS_LOG_DIR}" &
+    TS_PID=$!
+    wait "${TS_PID}"
 fi
