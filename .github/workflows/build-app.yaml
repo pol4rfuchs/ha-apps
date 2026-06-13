@@ -131,6 +131,8 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+        with:
+          driver-opts: image=ghcr.io/moby/buildkit:buildx-stable-1
 
       - name: Login to GHCR
         if: inputs.publish
@@ -201,4 +203,3 @@ jobs:
                           f'{image}:{version}'], check=True)
           print('Manifest pushed successfully')
           PY
-
