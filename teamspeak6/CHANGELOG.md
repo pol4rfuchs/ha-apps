@@ -1,3 +1,10 @@
+## [1.1.7] - 2026-06-13
+### Fixed
+- Add-on showed "Fehler" (error) status in HA after being stopped normally
+- tsserver exits with code 143 (SIGTERM) on shutdown; wait propagated this
+  non-zero code to the shell, which HA interpreted as a crash
+- Added `|| true` to wait so a signal-induced exit is treated as clean shutdown
+
 ## [1.1.6] - 2026-06-13
 
 ### Fixed

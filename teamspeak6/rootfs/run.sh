@@ -176,7 +176,8 @@ else
     echo "[INFO] Starting TeamSpeak 6 with persisted server data..."
     # Do NOT use exec: exec replaces the shell, so the EXIT trap never fires and
     # sync_from_runtime is never called — causing icons/assets to be lost on restart.
+    # Use || true so a SIGTERM exit code (143) is not treated as an error by HA.
     tsserver --log-path="${TS_LOG_DIR}" &
     TS_PID=$!
-    wait "${TS_PID}"
+    wait "${TS_PID}" || true
 fi
