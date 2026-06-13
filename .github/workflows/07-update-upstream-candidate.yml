@@ -1,5 +1,5 @@
 ---
-name: 06 Update Upstream Candidate
+name: 07 Update Upstream Candidate
 
 # yamllint disable-line rule:truthy
 on:

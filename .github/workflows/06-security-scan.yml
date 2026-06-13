@@ -1,4 +1,4 @@
-name: 05 Security Scan
+name: 06 Security Scan
 
 on:
   pull_request:
