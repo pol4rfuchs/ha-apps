@@ -1,0 +1,138 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "aee5755b0895b0706d0679d40eb97497d760a229",
+  "separate-pull-requests": true,
+  "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
+  "packages": {
+    "intiface_central": {
+      "release-type": "simple",
+      "component": "intiface_central",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "intiface_central/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "matrix_synapse": {
+      "release-type": "simple",
+      "component": "matrix_synapse",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "matrix_synapse/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "navidrome": {
+      "release-type": "simple",
+      "component": "navidrome",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "navidrome/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "nginx_proxy_manager": {
+      "release-type": "simple",
+      "component": "nginx_proxy_manager",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "nginx_proxy_manager/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "ntfy": {
+      "release-type": "simple",
+      "component": "ntfy",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "ntfy/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "ntfy_manager": {
+      "release-type": "simple",
+      "component": "ntfy_manager",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "ntfy_manager/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "nextcloud": {
+      "release-type": "simple",
+      "component": "nextcloud",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "nextcloud/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "searxng": {
+      "release-type": "simple",
+      "component": "searxng",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "searxng/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "teamspeak6": {
+      "release-type": "simple",
+      "component": "teamspeak6",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "teamspeak6/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "ts6_manager": {
+      "release-type": "simple",
+      "component": "ts6_manager",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "ts6_manager/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}

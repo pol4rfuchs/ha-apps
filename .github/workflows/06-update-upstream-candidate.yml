@@ -276,7 +276,7 @@ jobs:
                   text,
               )
               # Generic: replace any ARG *VERSION= that looks like a prior tag of this image
-              tag_pattern = re.compile(r"(?m)^(ARG\s+\w*VERSION\s*=\s*)(\S+)$")
+              tag_pattern = re.compile(rf"(?m)^(ARG\s+\w*VERSION\s*=\s*)(\S+)$")
               def _replace_version_arg(m):
                   old_val = m.group(2)
                   if re.match(r"\d{4}\.\d+\.\d+", old_val) or re.match(r"\d+\.\d+", old_val):
@@ -292,16 +292,9 @@ jobs:
           else:
               print("No Dockerfile change required.")
 
-          # Auto-bump patch version in config.yaml so HA users see an update notification.
-          cfg_text = config.read_text(encoding="utf-8")
-          vm = re.search(r'(?m)^(version:\s*["\']?)(\d+)\.(\d+)\.(\d+)(["\']?)', cfg_text)
-          if vm:
-              new_version = f"{vm.group(2)}.{vm.group(3)}.{int(vm.group(4)) + 1}"
-              cfg_text = cfg_text[:vm.start()] + vm.group(1) + new_version + vm.group(5) + cfg_text[vm.end():]
-              config.write_text(cfg_text, encoding="utf-8")
-              print(f"Bumped config.yaml version to {new_version}")
-          else:
-              print("WARNING: could not parse version in config.yaml — skipping version bump")
+          # Do not bump config.yaml here. Release Please owns add-on versions,
+          # CHANGELOG.md and GitHub releases via release-please-config.json extra-files.
+          print("Release Please will bump config.yaml in the release PR.")
           PY
 
       - name: Static validate changed add-on
@@ -342,12 +335,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md"; then
+          if git diff --quiet -- "${ADDON}/Dockerfile"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No update required for ${ADDON}."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git diff -- "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md" || true
+            git diff -- "${ADDON}/Dockerfile" || true
           fi
 
       - name: Create or update pull request
@@ -367,11 +360,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "${TARGET_BRANCH}"
-          git add "${ADDON}/Dockerfile" "${ADDON}/config.yaml" "${ADDON}/CHANGELOG.md" 2>/dev/null || true
-          git commit -m "${ADDON}: update upstream to ${SHORT_VALUE}"
+          git add "${ADDON}/Dockerfile"
+          git commit -m "fix(${ADDON}): update upstream to ${SHORT_VALUE}"
           git push --force-with-lease origin "${TARGET_BRANCH}"
 
-          title="${ADDON}: update upstream to ${SHORT_VALUE}"
+          title="fix(${ADDON}): update upstream to ${SHORT_VALUE}"
           body="$(cat <<BODY
           Automated safe-update candidate.
 
@@ -380,7 +373,7 @@ jobs:
           - Target: \`${TARGET_VALUE}\`
           - Base branch: \`${BASE_BRANCH}\`
 
-          Add-on version in \`config.yaml\` was auto-bumped (patch). Review the Dockerfile diff and merge.
+          Release Please will bump `config.yaml`, update `CHANGELOG.md`, tag the release and trigger GHCR publishing after this PR is merged.
           BODY
           )"
 

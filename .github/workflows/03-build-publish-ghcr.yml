@@ -1,20 +1,10 @@
 ---
 name: 03 Build Publish GHCR
 
-# yamllint disable-line rule:truthy
 on:
   push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/03-build-publish-ghcr.yml"
-      - ".github/workflows/build-app.yaml"
-      - "*/Dockerfile"
-      - "*/config.yaml"
-      - "*/rootfs/**"
-      - "*/scripts/**"
-      - "*/apps/**"
-      - "*/package*.json"
+    tags:
+      - '*-v*'
   workflow_dispatch:
     inputs:
       app:
@@ -26,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: build-publish-ghcr-${{ github.ref }}-${{ github.event.inputs.app || 'all' }}
+  group: build-publish-ghcr-${{ github.ref }}-${{ github.event.inputs.app || 'tag' }}
   cancel-in-progress: false
 
 jobs:
@@ -45,19 +35,44 @@ jobs:
         id: detect
         shell: bash
         env:
-          DISPATCH_APP: ${{ inputs.app || 'all' }}
+          DISPATCH_APP: ${{ inputs.app || '' }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json
           import os
+          import re
           from pathlib import Path
 
-          expected = json.load(open("addons.json"))
-          wanted = os.environ.get("DISPATCH_APP", "all")
+          expected = json.load(open("addons.json", encoding="utf-8"))
+          wanted = os.environ.get("DISPATCH_APP", "")
+          ref_type = os.environ.get("REF_TYPE", "")
+          ref_name = os.environ.get("REF_NAME", "")
+
+          selected = []
+          if wanted and wanted != "all":
+              selected = [wanted]
+          elif wanted == "all":
+              selected = expected
+          elif ref_type == "tag":
+              # Release Please tag format from release-please-config.json:
+              # <addon>-v<version>, e.g. ntfy-v1.1.8
+              match = re.match(r"^(.+)-v[^/]+$", ref_name)
+              if not match:
+                  raise SystemExit(f"unsupported release tag format: {ref_name}")
+              selected = [match.group(1)]
+          else:
+              selected = []
+
+          bad = sorted(set(selected) - set(expected))
+          if bad:
+              raise SystemExit(f"unknown add-on(s): {bad}; expected one of {expected}")
+
           rows = []
           for app in expected:
-              if wanted not in ("", "all") and app != wanted:
+              if app not in selected:
                   continue
               if Path(app, "Dockerfile").is_file() and Path(app, "config.yaml").is_file():
                   rows.append({"app": app})

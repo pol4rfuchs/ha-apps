@@ -1,0 +1,76 @@
+---
+name: 18 Conventional PR Title
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: conventional-pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate squash-merge title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        shell: bash
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+
+          title = os.environ["PR_TITLE"]
+          addon_scopes = (
+              "forgejo|intiface_central|matrix_synapse|navidrome|nginx_proxy_manager|"
+              "ntfy|ntfy_manager|nextcloud|searxng|teamspeak6|ts6_manager|unbound"
+          )
+          repo_scopes = "main|repo|ci|docs|deps|security|wiki"
+          all_scopes = f"{addon_scopes}|{repo_scopes}"
+
+          # Release-producing changes must be scoped to an add-on.
+          # This prevents accidental titles like "fix: update ntfy", which Release Please
+          # may classify ambiguously or ignore for package-specific releases.
+          pattern_release = re.compile(
+              rf"^(feat|fix)\(({addon_scopes})\)(!)?: .+"
+          )
+
+          # Non-release housekeeping may be repo-wide and therefore scopeless.
+          # Release Please bot PRs such as "chore(ntfy): release ntfy 1.1.8" are allowed.
+          pattern_housekeeping = re.compile(
+              rf"^(chore|docs|ci|build|refactor|test|perf|revert)"
+              rf"(\(({all_scopes})\))?(!)?: .+"
+          )
+
+          if not (pattern_release.match(title) or pattern_housekeeping.match(title)):
+              print("ERROR: PR title is not conventional enough for Release Please.", file=sys.stderr)
+              print("", file=sys.stderr)
+              print(f"Title: {title}", file=sys.stderr)
+              print("", file=sys.stderr)
+              print("Required examples:", file=sys.stderr)
+              print("  fix(ntfy): update upstream to 2.14.0", file=sys.stderr)
+              print("  feat(ts6_manager): add backup scheduler", file=sys.stderr)
+              print("  chore(ci): update pinned GitHub Actions", file=sys.stderr)
+              print("  chore: update repository metadata", file=sys.stderr)
+              print("", file=sys.stderr)
+              print("feat/fix require an add-on scope. Housekeeping commits may be scopeless.", file=sys.stderr)
+              print("Use fix(<addon>) for normal upstream bumps so Release Please creates a patch release.", file=sys.stderr)
+              sys.exit(1)
+          print(f"OK: {title}")
+          PY
