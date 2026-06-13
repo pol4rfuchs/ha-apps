@@ -1,4 +1,13 @@
+## [1.1.6] - 2026-06-13
+
+### Fixed
+- sync_from_runtime was called twice on shutdown: TERM trap fired cleanup(),
+  then EXIT trap fired it again — causing the sync log message to appear twice
+- Added _CLEANUP_DONE guard to ensure cleanup() runs exactly once
+
 ## [1.1.5] - 2026-06-13
+
+### Changes up to [1.1.3.-1.1.5]
 ### Fixed
 - Channel icons, banners and uploaded assets were lost on every restart
 - Root cause: `exec tsserver` replaced the shell process, causing the EXIT trap
@@ -10,7 +19,9 @@
 - First-start (token detection) path migrated from pipe to FIFO so tsserver
   PID is known and signal handling is consistent across both code paths
 
-## [1.1.1-1.1.2] - 2026-04-23
+## [1.1.1] - 2026-04-23
+
+### Changes up to [1.1.1.-1.1.2]
 ### Fixed
 - Persist TeamSpeak server state explicitly under `/data/teamspeak6/server`
 - Re-link `/var/tsserver` to the Home Assistant persistent storage on every start
@@ -29,8 +40,9 @@
 ### Added
 - ca-certificates for proper HTTPS support
 
-## [1.0.3.0-2] - 2026-03-04
-### Changed
+## [1.0.3.2] - 2026-03-08
+
+### Changes up to [1.0.3.0-1.0.3.2]  
 - UI simplified: only license, query admin password, log level
 - Ports removed from Options tab (use Network tab)
 - All UI text switched to English
