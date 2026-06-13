@@ -63,24 +63,27 @@ migrate_legacy_data() {
 }
 
 # Restore persisted data into /var/tsserver.
-# HA Supervisor removes the container on every stop and creates a new one on
-# start, so /var/tsserver is always a fresh empty volume. /data is the only
-# source of truth across restarts.
+# After copying, delete WAL and SHM so tsserver always starts from a clean
+# checkpointed main DB. A stale WAL copied from /data would be replayed by
+# SQLite on open and overwrite newer data that is already in the main DB.
 sync_to_runtime() {
     if has_dir_contents "${TS_SERVER_STORE}"; then
         echo "[INFO] Restoring persisted server data into ${TS_RUNTIME_DIR}..."
         cp -a "${TS_SERVER_STORE}/." "${TS_RUNTIME_DIR}/"
-        # Remove stale WAL index so SQLite rebuilds it cleanly from the WAL
-        rm -f "${TS_RUNTIME_DIR}/"*.sqlitedb-shm 2>/dev/null || true
+        rm -f "${TS_RUNTIME_DIR}/"*.sqlitedb-wal \
+              "${TS_RUNTIME_DIR}/"*.sqlitedb-shm 2>/dev/null || true
+        echo "[INFO] Restore completed (WAL/SHM removed for clean start)."
     fi
 }
 
 # Back up runtime data to /data after the server stops.
-# Checkpoint must run BEFORE this to ensure the main DB is up to date.
+# WAL and SHM are deleted from /data after the copy so the stored backup
+# never carries a stale WAL that could corrupt the next restore.
 sync_from_runtime() {
     echo "[INFO] Backing up server data to persistent store..."
     if cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/"; then
-        rm -f "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
+        rm -f "${TS_SERVER_STORE}/"*.sqlitedb-wal \
+              "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
         echo "[INFO] Backup completed."
     else
         echo "[ERROR] Backup failed — /data may be outdated!"
@@ -139,11 +142,12 @@ if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
     export TSSERVER_QUERY_ADMIN_PASSWORD="${QUERY_ADMIN_PASSWORD}"
 fi
 
-# Unified shutdown handler.
-# CRITICAL: WAL checkpoint runs BEFORE sending SIGTERM — while tsserver is still
-# alive the WAL is in a valid state and all committed frames can be flushed to
-# the main DB. After tsserver exits, SQLite invalidates the WAL header, making
-# the frames invisible to any external checkpoint tool (returns 0|0|0 uselessly).
+# Shutdown handler:
+# 1. PASSIVE checkpoint while tsserver is alive — WAL header is valid, all
+#    committed frames are flushed to the main DB (verified: 0|30|30, 0|116|116)
+# 2. Send SIGTERM, wait for clean exit
+# 3. Delete WAL + SHM from runtime so the backup contains only the clean main DB
+# 4. Copy to /data
 TS_PID=""
 _CLEANUP_DONE=0
 cleanup() {
@@ -154,9 +158,12 @@ cleanup() {
         sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
             "PRAGMA wal_checkpoint(PASSIVE);" 2>/dev/null \
             && echo "[INFO] WAL checkpoint completed." \
-            || echo "[WARN] WAL checkpoint failed — backup may miss recent changes."
+            || echo "[WARN] WAL checkpoint failed."
         kill -TERM "${TS_PID}" 2>/dev/null || true
         wait "${TS_PID}" 2>/dev/null || true
+        echo "[INFO] Removing WAL/SHM before backup..."
+        rm -f "${TS_RUNTIME_DIR}/"*.sqlitedb-wal \
+              "${TS_RUNTIME_DIR}/"*.sqlitedb-shm 2>/dev/null || true
     fi
     sync_from_runtime
 }

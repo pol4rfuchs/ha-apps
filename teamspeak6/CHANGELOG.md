@@ -1,3 +1,15 @@
+## [1.1.13] - 2026-06-13
+### Fixed
+- Channel creates, renames and edits reverted to old state after every restart
+- Root cause: PASSIVE checkpoint (verified 0|30|30 / 0|116|116) correctly
+  flushed all committed WAL frames to the main DB, but the WAL file itself
+  was not removed; on next start SQLite replayed the stale WAL on top of the
+  correct main DB, overwriting the new state with the old one
+- Fix: after checkpoint and tsserver exit, explicitly delete *.sqlitedb-wal
+  and *.sqlitedb-shm before copying to /data; also delete them from /data
+  after backup and from /var/tsserver after restore — tsserver now always
+  starts from a clean checkpointed main DB with no WAL to replay
+
 ## [1.1.12] - 2026-06-13
 ### Fixed
 - Channel changes (creates, renames, deletions, icons) were lost on restart

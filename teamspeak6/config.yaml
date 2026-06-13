@@ -1,6 +1,6 @@
 ---
 name: "TeamSpeak 6 Server"
-version: "1.1.12"
+version: "1.1.13"
 slug: "teamspeak6"
 description: "TeamSpeak 6 Voice Server for Raspberry Pi (ARM64/aarch64)"
 url: "https://github.com/pol4rfuchs/ha-apps"
