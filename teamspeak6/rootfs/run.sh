@@ -62,18 +62,31 @@ migrate_legacy_data() {
     fi
 }
 
-# Sync persisted data INTO /var/tsserver (which is a fixed volume mount, cannot be replaced)
+# Restore persisted data into /var/tsserver ONLY if the runtime dir is empty.
+# On a normal HA stop/start the Docker volume at /var/tsserver persists between
+# container runs, so the runtime already has the latest data — do not overwrite it.
+# On an add-on update or reinstall a fresh (empty) volume is created, so we
+# restore from /data then.
 sync_to_runtime() {
+    if has_dir_contents "${TS_RUNTIME_DIR}"; then
+        echo "[INFO] Runtime dir already has data — skipping restore (normal restart)."
+        return
+    fi
     if has_dir_contents "${TS_SERVER_STORE}"; then
-        echo "[INFO] Restoring persisted server data into ${TS_RUNTIME_DIR}..."
+        echo "[INFO] Fresh runtime dir — restoring persisted server data into ${TS_RUNTIME_DIR}..."
         cp -a "${TS_SERVER_STORE}/." "${TS_RUNTIME_DIR}/"
     fi
 }
 
-# Sync runtime data BACK to persistent store after server stops
+# Sync runtime data BACK to persistent store after server stops.
+# Always runs so /data stays up to date for future updates/reinstalls.
 sync_from_runtime() {
     echo "[INFO] Syncing server data back to persistent store..."
-    cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/" 2>/dev/null || true
+    if cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/"; then
+        echo "[INFO] Sync completed."
+    else
+        echo "[ERROR] Sync failed — data in ${TS_SERVER_STORE} may be outdated!"
+    fi
 }
 
 migrate_legacy_data
@@ -84,13 +97,13 @@ rm -f "${TS_LOG_DIR}"/*.log 2>/dev/null || true
 mkdir -p "${TS_LOG_DIR}"
 
 EXISTING_SERVER_STATE=0
-if has_dir_contents "${TS_SERVER_STORE}"; then
+if has_dir_contents "${TS_RUNTIME_DIR}"; then
     EXISTING_SERVER_STATE=1
 fi
 
 # Stale token marker cleanup
 if [ "${EXISTING_SERVER_STATE}" = "0" ] && [ -f "${TOKEN_SHOWN_FILE}" ]; then
-    echo "[WARN] Stale token marker found without persisted server data — removing marker."
+    echo "[WARN] Stale token marker found without server data — removing marker."
     rm -f "${TOKEN_SHOWN_FILE}"
 fi
 

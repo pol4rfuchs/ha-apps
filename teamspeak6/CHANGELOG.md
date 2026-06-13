@@ -1,3 +1,18 @@
+## [1.1.8] - 2026-06-13
+### Fixed
+- Newly created channels disappeared after a normal stop/start restart
+- Root cause: sync_to_runtime blindly overwrote /var/tsserver with data
+  from /data on every start; if sync_from_runtime had failed silently on
+  the previous stop, this restored stale data on top of the current runtime,
+  erasing any channels created in that session
+- Fix: sync_to_runtime now skips the restore when /var/tsserver already
+  has data (normal restart where Docker volume persists); restore only
+  runs when the volume is empty (after an update or reinstall)
+- sync_from_runtime no longer silently swallows errors — failures are now
+  visible as [ERROR] in the add-on log
+- EXISTING_SERVER_STATE now checks /var/tsserver (runtime) instead of
+  /data/teamspeak6/server to reflect what tsserver actually sees on startup
+
 ## [1.1.7] - 2026-06-13
 ### Fixed
 - Add-on showed "Fehler" (error) status in HA after being stopped normally
@@ -37,6 +52,7 @@
 - Fixed run.sh
 
 ## [1.1.0] - 2026-04-22
+
 ### Changed
 - Switched base image to official teamspeaksystems/teamspeak6-server:latest
 - Native ARM64 support via beta9 — Box64 and QEMU emulation no longer needed
