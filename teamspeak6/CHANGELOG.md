@@ -1,3 +1,19 @@
+## [1.1.9] - 2026-06-13
+### Fixed
+- Newly created channels disappeared after every stop/restart (definitive fix)
+- Root cause: tsserver does not checkpoint the SQLite WAL on SIGTERM — channel
+  data accumulates in tsserver.sqlitedb-wal (observed: 4 MB) rather than being
+  flushed to the main DB file
+- The .sqlitedb-shm file is a process-local WAL index that becomes invalid when
+  the container is destroyed; carrying a stale .shm into the next container run
+  caused SQLite to misinterpret or skip WAL replay → channels gone
+- Fix: delete *.sqlitedb-shm in both sync_from_runtime (after saving to
+  persistent store) and sync_to_runtime (after restoring to runtime dir);
+  SQLite rebuilds the WAL index cleanly from the WAL file on next open
+- Reverts the sync_to_runtime skip-if-has-data logic from 1.1.8: /var/tsserver
+  is ephemeral and pre-populated by the base image on every container start, so
+  the has_dir_contents check always returned true and /data was never restored
+
 ## [1.1.8] - 2026-06-13
 ### Fixed
 - Newly created channels disappeared after a normal stop/start restart

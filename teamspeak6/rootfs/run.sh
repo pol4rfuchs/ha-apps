@@ -62,27 +62,27 @@ migrate_legacy_data() {
     fi
 }
 
-# Restore persisted data into /var/tsserver ONLY if the runtime dir is empty.
-# On a normal HA stop/start the Docker volume at /var/tsserver persists between
-# container runs, so the runtime already has the latest data — do not overwrite it.
-# On an add-on update or reinstall a fresh (empty) volume is created, so we
-# restore from /data then.
+# Sync persisted data INTO /var/tsserver.
+# Always run on every start — /var/tsserver is part of the ephemeral container
+# filesystem and is reset to the image default on every container recreation.
+# The .sqlitedb-shm file is a process-local WAL index that is invalid across
+# container runs; delete it so SQLite rebuilds it cleanly from the WAL on open.
 sync_to_runtime() {
-    if has_dir_contents "${TS_RUNTIME_DIR}"; then
-        echo "[INFO] Runtime dir already has data — skipping restore (normal restart)."
-        return
-    fi
     if has_dir_contents "${TS_SERVER_STORE}"; then
-        echo "[INFO] Fresh runtime dir — restoring persisted server data into ${TS_RUNTIME_DIR}..."
+        echo "[INFO] Restoring persisted server data into ${TS_RUNTIME_DIR}..."
         cp -a "${TS_SERVER_STORE}/." "${TS_RUNTIME_DIR}/"
+        rm -f "${TS_RUNTIME_DIR}/"*.sqlitedb-shm 2>/dev/null || true
     fi
 }
 
 # Sync runtime data BACK to persistent store after server stops.
-# Always runs so /data stays up to date for future updates/reinstalls.
+# The .sqlitedb-shm file is process-local and must not be kept between runs;
+# delete it from the persistent store so the next sync_to_runtime does not
+# carry a stale WAL index into the new container.
 sync_from_runtime() {
     echo "[INFO] Syncing server data back to persistent store..."
     if cp -a "${TS_RUNTIME_DIR}/." "${TS_SERVER_STORE}/"; then
+        rm -f "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
         echo "[INFO] Sync completed."
     else
         echo "[ERROR] Sync failed — data in ${TS_SERVER_STORE} may be outdated!"
@@ -97,13 +97,13 @@ rm -f "${TS_LOG_DIR}"/*.log 2>/dev/null || true
 mkdir -p "${TS_LOG_DIR}"
 
 EXISTING_SERVER_STATE=0
-if has_dir_contents "${TS_RUNTIME_DIR}"; then
+if has_dir_contents "${TS_SERVER_STORE}"; then
     EXISTING_SERVER_STATE=1
 fi
 
 # Stale token marker cleanup
 if [ "${EXISTING_SERVER_STATE}" = "0" ] && [ -f "${TOKEN_SHOWN_FILE}" ]; then
-    echo "[WARN] Stale token marker found without server data — removing marker."
+    echo "[WARN] Stale token marker found without persisted server data — removing marker."
     rm -f "${TOKEN_SHOWN_FILE}"
 fi
 
