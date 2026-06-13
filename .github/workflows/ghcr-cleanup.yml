@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - forgejo
+          - forgejo-ha-app
           - intiface-ha-app
           - matrix-synapse-ha-app
           - npm-ha-app
@@ -31,7 +31,7 @@ jobs:
           - searxng-ha-app
           - navidrome-ha-app
           - ntfy-manager-ha-app
-          - nextcloud
+          - nextcloud-ha-app
           - unbound-ha-app
     steps:
       - name: Delete old untagged versions
