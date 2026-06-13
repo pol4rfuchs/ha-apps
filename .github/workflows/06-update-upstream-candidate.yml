@@ -373,7 +373,7 @@ jobs:
           - Target: \`${TARGET_VALUE}\`
           - Base branch: \`${BASE_BRANCH}\`
 
-          Release Please will bump `config.yaml`, update `CHANGELOG.md`, tag the release and trigger GHCR publishing after this PR is merged.
+          Release Please will bump \`config.yaml\`, update \`CHANGELOG.md\`, tag the release and trigger GHCR publishing after this PR is merged.
           BODY
           )"
 
