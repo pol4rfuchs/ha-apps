@@ -36,14 +36,14 @@ options:
 
 schema:
   admin_user: str
-  admin_password: str
+  admin_password: password
   trusted_domains: str
   db_type: list(sqlite|mysql|pgsql)
   db_host: str
   db_port: int
   db_name: str
   db_user: str
-  db_password: str
+  db_password: password
   php_memory_limit: str
   max_upload_size: str
   max_execution_time: int
