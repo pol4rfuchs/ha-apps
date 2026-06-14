@@ -4,6 +4,19 @@
   "separate-pull-requests": true,
   "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "packages": {
+    "forgejo": {
+      "release-type": "simple",
+      "component": "forgejo",
+      "include-component-in-tag": true,
+      "tag-separator": "-v",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "forgejo/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "intiface_central": {
       "release-type": "simple",
       "component": "intiface_central",
