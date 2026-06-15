@@ -25,10 +25,6 @@ ingress_stream: true
 panel_icon: mdi:git
 panel_title: Forgejo
 
-homeassistant_api: false
-hassio_api: false
-hassio_role: default
-
 # addon_config: persistente Konfig unter /addon_configs/local_forgejo/
 # auf dem Host → gemountet als /config im Container.
 # Dort liegen app.ini, Repositories, Daten, Logs.
@@ -46,8 +42,6 @@ ports_description:
   3000/tcp: "Web-UI (Ingress bevorzugen – Port nur für direkten Zugriff)"
   22/tcp: "SSH Git-Zugriff (nur bei ssh_enabled: true nötig)"
 
-# AppArmor-Profil für erhöhte Sicherheit
-image_name: forgejo_addon
 
 options:
   app_name: "Forgejo"
