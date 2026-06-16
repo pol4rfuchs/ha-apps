@@ -39,6 +39,9 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 ## Installation
 
+[![Add Repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
+
+
 1. Open Home Assistant
 2. Navigate to **Settings → Apps → App Store → ⋮ → Repositories**
 3. Add this URL:
