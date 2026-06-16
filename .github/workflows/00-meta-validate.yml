@@ -107,6 +107,60 @@ jobs:
           print("Validated monorepo app contract:", ", ".join(sorted(expected)))
           PY
 
+
+      - name: Validate options/schema consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          pip install pyyaml --quiet --break-system-packages
+          python3 - <<'PYINNER'
+          import json
+          import yaml
+          from pathlib import Path
+
+          expected = json.load(open("addons.json", encoding="utf-8"))
+          errors = []
+
+          for app in sorted(expected):
+              cfg_path = Path(app, "config.yaml")
+              if not cfg_path.is_file():
+                  continue
+              cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8"))
+              if not isinstance(cfg, dict):
+                  continue
+
+              options = cfg.get("options")
+              schema = cfg.get("schema")
+
+              if options is None and schema is None:
+                  continue
+
+              if options is not None and schema is None:
+                  errors.append(f"{app}: has options but no schema")
+                  continue
+
+              if schema is not None and options is None:
+                  errors.append(f"{app}: has schema but no options")
+                  continue
+
+              if not isinstance(options, dict) or not isinstance(schema, dict):
+                  continue
+
+              opt_keys = set(options.keys())
+              sch_keys = set(schema.keys())
+
+              for k in sorted(opt_keys - sch_keys):
+                  errors.append(f"{app}: options key '{k}' missing from schema")
+              for k in sorted(sch_keys - opt_keys):
+                  errors.append(f"{app}: schema key '{k}' missing from options")
+
+          if errors:
+              for e in errors:
+                  print(f"ERROR: {e}")
+              raise SystemExit("options/schema consistency check failed")
+
+          print("options/schema consistency OK for all add-ons")
+          PYINNER
       - name: Check for deprecated legacy forge references
         shell: bash
         run: |
