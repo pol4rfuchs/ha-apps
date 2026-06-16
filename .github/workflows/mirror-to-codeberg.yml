@@ -1,0 +1,38 @@
+---
+name: Mirror to Codeberg
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mirror-to-codeberg
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    name: Push mirror to Codeberg
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Push mirror to Codeberg
+        shell: bash
+        env:
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_MIRROR_TOKEN }}
+        run: |
+          set -euo pipefail
+          git remote add codeberg \
+            "https://Pol4rFuchs:${CODEBERG_TOKEN}@codeberg.org/Pol4rFuchs/ha-apps.git"
+          git push --force codeberg refs/heads/main:refs/heads/main
+          echo "Mirrored to codeberg.org/Pol4rFuchs/ha-apps"
