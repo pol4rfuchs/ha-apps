@@ -352,6 +352,18 @@ jobs:
             git diff -- "${ADDON}/Dockerfile" || true
           fi
 
+
+      - name: Close superseded PRs for this add-on
+        if: ${{ steps.diff.outputs.changed == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
+          ADDON: ${{ matrix.addon }}
+          TARGET_BRANCH: ${{ steps.target.outputs.branch }}
+        run: |
+          set -euo pipefail
+          gh pr list             --base main             --state open             --json number,headRefName             --jq ".[] | select(.headRefName | startswith(\"auto/${ADDON}-\")) | select(.headRefName != \"${TARGET_BRANCH}\") | .number"           | xargs -r -I{} gh pr close {} --comment "Superseded by a newer upstream candidate PR."
+
       - name: Create or update pull request
         if: ${{ steps.diff.outputs.changed == 'true' }}
         shell: bash

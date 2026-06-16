@@ -161,6 +161,17 @@ jobs:
 
           print("options/schema consistency OK for all add-ons")
           PYINNER
+
+      - name: Check for merge conflict markers in Dockerfiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -rn "^<<<<<<< \|^=======$\|^>>>>>>> " --include="Dockerfile" .; then
+            echo "ERROR: merge conflict markers found in one or more Dockerfiles." >&2
+            exit 1
+          fi
+          echo "No conflict markers found in Dockerfiles."
+
       - name: Check for deprecated legacy forge references
         shell: bash
         run: |
