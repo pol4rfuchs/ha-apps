@@ -1,0 +1,130 @@
+name: 09 Wiki Drift Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*/config.yaml"
+      - "wiki/.wiki-versions.json"
+      - ".github/workflows/09-wiki-drift-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: wiki-drift-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check wiki vs. add-on versions
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compare add-on versions against documented wiki versions
+        id: drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest="wiki/.wiki-versions.json"
+          mkdir -p wiki
+          [[ -f "$manifest" ]] || echo '{}' > "$manifest"
+
+          drift_lines=()
+          bootstrap_happened=false
+
+          for slug in $(jq -r '.[]' addons.json); do
+            cfg="${slug}/config.yaml"
+            [[ -f "$cfg" ]] || continue
+
+            wiki_dir="wiki/${slug//_/-}-ha-app"
+            [[ -d "$wiki_dir" ]] || continue   # kein Wiki-Eintrag für dieses Add-on -> ignorieren
+
+            current_version=$(grep -E '^version:' "$cfg" | head -1 | sed -E 's/version:[[:space:]]*"?([^"]*)"?/\1/' | xargs)
+            documented_version=$(jq -r --arg s "$slug" '.[$s] // empty' "$manifest")
+
+            if [[ -z "$documented_version" ]]; then
+              tmp=$(jq --arg s "$slug" --arg v "$current_version" '.[$s] = $v' "$manifest")
+              echo "$tmp" > "$manifest"
+              bootstrap_happened=true
+            elif [[ "$documented_version" != "$current_version" ]]; then
+              drift_lines+=("- **${slug}**: Wiki zeigt \`${documented_version}\`, Add-on ist auf \`${current_version}\`")
+            fi
+          done
+
+          drift_found=false
+          if [[ ${#drift_lines[@]} -gt 0 ]]; then
+            drift_found=true
+          fi
+
+          {
+            echo "drift_found=${drift_found}"
+            echo "bootstrap_happened=${bootstrap_happened}"
+          } >> "$GITHUB_OUTPUT"
+
+          printf '%s\n' "${drift_lines[@]+"${drift_lines[@]}"}" > /tmp/drift_body.md
+
+      - name: Commit baseline manifest
+        if: steps.drift.outputs.bootstrap_happened == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add wiki/.wiki-versions.json
+          git commit -m "chore(wiki): track baseline versions for documented add-ons" || exit 0
+          git push
+
+      - name: Open or update drift issue
+        if: steps.drift.outputs.drift_found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('/tmp/drift_body.md', 'utf8').trim();
+            const title = '📚 Wiki Drift — Add-ons brauchen Update';
+            const fullBody = `Folgende Add-ons haben sich seit der letzten Wiki-Aktualisierung geändert:\n\n${body}\n\n---\nLauf \`ha-app-wiki-forge\` für die betroffenen Add-ons neu, kopier die Seiten in \`wiki/\`, und aktualisier \`wiki/.wiki-versions.json\` entsprechend. Sobald die Versionen wieder matchen, schließt dieser Workflow das Issue automatisch.`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'wiki-drift'
+            });
+            if (issues.length > 0) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issues[0].number, body: fullBody
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body: fullBody, labels: ['wiki-drift']
+              });
+            }
+
+      - name: Close drift issue if resolved
+        if: steps.drift.outputs.drift_found == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'wiki-drift'
+            });
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed'
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ Alle Wiki-Seiten sind wieder auf dem aktuellen Stand.'
+              });
+            }
