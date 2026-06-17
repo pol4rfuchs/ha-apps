@@ -1,5 +1,14 @@
 # Changelog
 
+## [16.0.3](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.2...forgejo-v16.0.3) (2026-06-16)
+
+
+### Bug Fixes
+
+* **forgejo:** remove deprecated and invalid config fields ([0c15c83](https://github.com/pol4rfuchs/ha-apps/commit/0c15c839b3b5507fc57e876c07306fe6b854431f))
+* **forgejo:** update upstream to 15.0.3 ([56a191c](https://github.com/pol4rfuchs/ha-apps/commit/56a191c3cc6908d96bd12921764b69e121eba7f6))
+* **forgejo:** update upstream to 15.0.3 ([edc5066](https://github.com/pol4rfuchs/ha-apps/commit/edc50660ac6d1e9939cab5846ad382b6e6be286d))
+
 ## [16.0.2](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-vv16.0.1...forgejo-vv16.0.2) (2026-06-15)
 
 
