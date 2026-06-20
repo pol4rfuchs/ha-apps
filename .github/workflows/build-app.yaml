@@ -230,7 +230,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull pushed manifest
-        run: docker pull ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}
+        env:
+          IMAGE:   ${{ needs.prepare.outputs.image }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: docker pull "${IMAGE}:${VERSION}"
 
       # Most add-ons read /data/options.json via bashio::config at startup and
       # exit immediately when it's missing (not a code bug, just no Supervisor

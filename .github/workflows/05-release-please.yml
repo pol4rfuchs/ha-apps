@@ -7,9 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: release-please-${{ github.ref }}
@@ -19,6 +17,10 @@ jobs:
   release-please:
     name: Release Please monorepo
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     steps:
       - name: Run Release Please
         uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4.4.1
@@ -50,6 +52,9 @@ jobs:
         with:
           token: ${{ secrets.APP_TOKEN }}
           ref: main
+          # Intentional: this job needs the credential to git push the sync
+          # commit further down. persist-credentials: false would break that.
+          persist-credentials: true
 
       - name: Force-sync version fields from manifest
         shell: bash
