@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.4](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.3...forgejo-v16.0.4) (2026-06-20)
+
+
+### Bug Fixes
+
+* **forgejo:** disable apparmor to fix /init permission denied ([6c55409](https://github.com/pol4rfuchs/ha-apps/commit/6c55409ebedaa4a5f69c1b94b8333f13bbfb7213))
+
 ## [16.0.3](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.2...forgejo-v16.0.3) (2026-06-16)
 
 
