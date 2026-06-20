@@ -27,3 +27,72 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           target-branch: main
+
+  # Release Please's extra-files YAML updater does a regex partial-replace:
+  # it looks for the *previous* version string inside the file and swaps it.
+  # Once a config.yaml's version drifts from what release-please's manifest
+  # thinks the previous version was (manual edit, conflict, anything), that
+  # match fails silently and the file is never touched again. This job is a
+  # deterministic safety net: it force-writes each component's `version:`
+  # line to match .release-please-manifest.json, every run, regardless of
+  # why it drifted. Text-line replace only — no full YAML re-serialization,
+  # so comments and formatting in config.yaml are preserved untouched.
+  sync-versions:
+    name: Sync config.yaml versions to manifest
+    needs: release-please
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          token: ${{ secrets.APP_TOKEN }}
+          ref: main
+
+      - name: Force-sync version fields from manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+
+          manifest = json.loads(Path(".release-please-manifest.json").read_text())
+          changed = []
+
+          for component, version in manifest.items():
+              cfg_path = Path(component, "config.yaml")
+              if not cfg_path.exists():
+                  continue
+              text = cfg_path.read_text(encoding="utf-8")
+              new_text, n = re.subn(
+                  r'(?m)^(version:\s*)["\']?[^\s"\'#]+["\']?',
+                  rf'\g<1>"{version}"',
+                  text,
+                  count=1,
+              )
+              if n and new_text != text:
+                  cfg_path.write_text(new_text, encoding="utf-8")
+                  changed.append(f"{component} -> {version}")
+
+          Path("/tmp/sync_changed.txt").write_text("\n".join(changed))
+          print("Changed:", changed or "(none, all in sync)")
+          PY
+
+      - name: Commit and push if anything changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -s /tmp/sync_changed.txt ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -- '*/config.yaml'
+            git commit -m "chore: force-sync config.yaml versions to release-please manifest
+
+          $(cat /tmp/sync_changed.txt)"
+            git push origin main
+          else
+            echo "No drift detected, nothing to commit."
+          fi
