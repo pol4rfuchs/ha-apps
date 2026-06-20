@@ -16,13 +16,13 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 | App | Status | Runtime / Upstream | Category | Description |
 |---|---|---|---|---|
-| [TS6 Manager](ts6_manager/) | ![stable](https://img.shields.io/badge/stable-yes-2ea44f?style=flat-square) | `custom build` | Management | Web management interface for TeamSpeak 6 servers |
-| [TeamSpeak 6 Server](teamspeak6/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `teamspeaksystems/teamspeak6-server` | Voice | TeamSpeak 6 self-hosted voice server |
+| [TS6 Manager](ts6_manager/) | ![ready](https://img.shields.io/badge/stable-yes-2ea44f?style=flat-square) | `custom build` | Management | Web management interface for TeamSpeak 6 servers |
+| [TeamSpeak 6 Server](teamspeak6/) | ![stable](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `teamspeaksystems/teamspeak6-server` | Voice | TeamSpeak 6 self-hosted voice server |
 | [ntfy](ntfy/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `binwiederhier/ntfy` | Notifications | Lightweight pub/sub push notification server |
-| [ntfy HAOS Admin Panel](ntfy_manager/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `custom build` | Management | Full-featured HAOS admin console for ntfy |
-| [Navidrome](navidrome/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `deluan/navidrome` | Media | Self-hosted music server with Subsonic API support |
+| [ntfy HAOS Admin Panel](ntfy_manager/) | ![ready](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `custom build` | Management | Full-featured HAOS admin console for ntfy |
+| [Navidrome](navidrome/) | ![stable](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `deluan/navidrome` | Media | Self-hosted music server with Subsonic API support |
 | [Nextcloud](nextcloud/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `nextcloud:X.X.X-apache` | Storage | Self-hosted cloud platform for files, calendar, and collaboration |
-| [Matrix Synapse](matrix_synapse/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `ghcr.io/element-hq/synapse` | Messaging | Matrix homeserver for secure messaging |
+| [Matrix Synapse](matrix_synapse/) | ![wip](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `ghcr.io/element-hq/synapse` | Messaging | Matrix homeserver for secure messaging |
 | [SearXNG](searxng/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `searxng/searxng` | Search | Privacy-respecting metasearch engine |
 | [Nginx Proxy Manager](nginx_proxy_manager/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `jc21/nginx-proxy-manager` | Proxy | Reverse proxy management UI with SSL support |
 | [Intiface Central](intiface_central/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `custom build` | GUI | Intiface Central GUI application for device control |
