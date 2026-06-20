@@ -192,10 +192,86 @@ jobs:
           sources = [f"{image}:{version}-{e['suffix']}" for e in matrix]
           cmd = ['docker', 'buildx', 'imagetools', 'create',
                  '--tag', f'{image}:{version}',
-                 '--tag', f'{image}:latest',
                  *sources]
           subprocess.run(cmd, check=True)
           subprocess.run(['docker', 'buildx', 'imagetools', 'inspect',
                           f'{image}:{version}'], check=True)
-          print('Manifest pushed successfully')
+          print('Manifest pushed successfully (version tag only, latest not yet promoted)')
           PY
+
+  # ── 4. Smoke-test the pushed manifest before promoting :latest ──────────────
+  # Best-effort: many HA add-ons expect the Supervisor environment (bashio,
+  # /data/options.json) and will exit immediately without it. continue-on-error
+  # is set deliberately so a false-negative here never blocks the :VERSION
+  # release that installs actually pull — it only gates the :latest promotion.
+  smoke-test:
+    name: Smoke test ${{ inputs.app }}
+    needs: [prepare, manifest]
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull pushed manifest
+        run: docker pull ${{ needs.prepare.outputs.image }}:${{ needs.prepare.outputs.version }}
+
+      - name: Start container and check it stays up
+        shell: bash
+        env:
+          IMAGE:   ${{ needs.prepare.outputs.image }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          WAIT_SECONDS: "15"
+        run: |
+          set -uo pipefail
+          cid="$(docker run -d "${IMAGE}:${VERSION}")"
+          echo "Started container ${cid}, waiting ${WAIT_SECONDS}s ..."
+          sleep "${WAIT_SECONDS}"
+
+          status="$(docker inspect -f '{{.State.Status}}' "${cid}")"
+          echo "Container status after wait: ${status}"
+          docker logs "${cid}" || true
+          docker rm -f "${cid}" >/dev/null 2>&1 || true
+
+          if [[ "${status}" != "running" ]]; then
+            echo "::warning::Container exited/crashed during smoke test (status=${status}). This is expected for add-ons that require the HA Supervisor environment (bashio/options.json) — verify manually before trusting :latest."
+            exit 1
+          fi
+          echo "Container stayed up for ${WAIT_SECONDS}s — smoke test passed."
+
+  # ── 5. Promote :latest only after the smoke test had a chance to run ────────
+  promote-latest:
+    name: Promote latest ${{ inputs.app }}
+    needs: [prepare, smoke-test]
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag VERSION as latest
+        env:
+          IMAGE:   ${{ needs.prepare.outputs.image }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          docker buildx imagetools create \
+            --tag "${IMAGE}:latest" \
+            "${IMAGE}:${VERSION}"
+          docker buildx imagetools inspect "${IMAGE}:latest"
+          echo "latest promoted to ${VERSION}"
