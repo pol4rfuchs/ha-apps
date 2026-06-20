@@ -775,7 +775,10 @@ def api_cache_flush_domain():
     domain = data["domain"].strip()
     if not domain:
         return jsonify({"error": "Domain cannot be empty"}), 400
+    if not is_valid_domain(domain):
+        return jsonify({"error": "Invalid domain format"}), 400
 
+    domain = domain.rstrip(".")
     output, ok = run_unbound_control(["flush", domain])
     if not ok:
         return jsonify({"error": "Failed to flush domain", "detail": output}), 500
