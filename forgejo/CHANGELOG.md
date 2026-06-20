@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.5](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.4...forgejo-v16.0.5) (2026-06-20)
+
+
+### Bug Fixes
+
+* **forgejo:** sync version field to 16.0.4 ([7ebc916](https://github.com/pol4rfuchs/ha-apps/commit/7ebc91611cdb009641909a0e87b4dbd4090a911e))
+
 ## [16.0.4](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.3...forgejo-v16.0.4) (2026-06-20)
 
 
