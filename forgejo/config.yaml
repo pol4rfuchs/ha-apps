@@ -1,12 +1,13 @@
 ---
 name: Forgejo
-version: "16.0.3"
+version: "16.0.0"
 slug: forgejo
 description: >-
   Self-hosted Git-Plattform – die freie GitHub-Alternative.
   Repositories, Issues, Pull Requests, CI/CD Actions,
   Package-Registry, Wiki, Projekte und mehr.
 url: "https://github.com/pol4rfuchs/ha-apps"
+apparmor: false
 
 arch:
   - amd64
