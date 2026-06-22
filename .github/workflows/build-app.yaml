@@ -9,6 +9,17 @@ on:
       publish:
         required: true
         type: boolean
+      version_override:
+        description: >
+          Version pulled from the release tag (e.g. "1.1.14" out of
+          "teamspeak6-v1.1.14"). When set, this wins over config.yaml's
+          version field — config.yaml can briefly still hold the previous
+          version after a release-please merge, until the sync-versions
+          job in 05-release-please.yml lands its fix-up commit. Empty for
+          workflow_dispatch runs, where config.yaml is the only source.
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -38,6 +49,7 @@ jobs:
         shell: bash
         env:
           APP: ${{ inputs.app }}
+          VERSION_OVERRIDE: ${{ inputs.version_override }}
         run: |
           set -euo pipefail
           app="${APP}"
@@ -51,6 +63,7 @@ jobs:
           from pathlib import Path
 
           app = os.environ["APP"]
+          version_override = os.environ.get("VERSION_OVERRIDE", "").strip()
           text = Path(app, "config.yaml").read_text(encoding="utf-8")
 
           def scalar(key: str) -> str:
@@ -66,11 +79,22 @@ jobs:
                   return [x.strip().strip("'\"") for x in one[1:-1].split(",") if x.strip()]
               return [one] if one else []
 
-          image   = scalar("image")
-          version = scalar("version")
-          name    = scalar("name")
-          slug    = scalar("slug") or app
-          arch    = list_value("arch")
+          image    = scalar("image")
+          cfg_version = scalar("version")
+          name     = scalar("name")
+          slug     = scalar("slug") or app
+          arch     = list_value("arch")
+
+          # config.yaml can briefly lag the release tag right after a
+          # release-please merge (sync-versions commit hasn't landed yet).
+          # The tag itself is always correct the instant it's cut, so it
+          # wins whenever we have one — config.yaml is the only source left
+          # for manual workflow_dispatch reruns, where there is no tag.
+          version = version_override or cfg_version
+          if version_override and version_override != cfg_version:
+              print(f"::notice::config.yaml version ({cfg_version!r}) lags the release tag "
+                    f"({version_override!r}) — using the tag version, this is expected right "
+                    f"after a release-please merge and gets reconciled by sync-versions shortly after.")
 
           if not image.startswith("ghcr.io/pol4rfuchs/"):
               raise SystemExit(f"invalid image: {image}")
