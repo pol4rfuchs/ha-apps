@@ -10,6 +10,13 @@
   after backup and from /var/tsserver after restore — tsserver now always
   starts from a clean checkpointed main DB with no WAL to replay
 
+## [1.1.14](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.13...teamspeak6-v1.1.14) (2026-06-22)
+
+
+### Bug Fixes
+
+* **teamspeak6:** update upstream to 6.0.0-beta11 ([#51](https://github.com/pol4rfuchs/ha-apps/issues/51)) ([c8cde49](https://github.com/pol4rfuchs/ha-apps/commit/c8cde4937d5cb19cca3ff0aaa6e3444424c51d61))
+
 ## [1.1.12] - 2026-06-13
 ### Fixed
 - Channel changes (creates, renames, deletions, icons) were lost on restart
