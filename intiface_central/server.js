@@ -547,14 +547,39 @@ app.post('/bp/stop_all', (_, res) => {
 app.post('/bp/devices/:idx/pattern', async (req, res) => {
   const idx   = parseInt(req.params.idx, 10);
   const steps = req.body.steps;
+  const MAX_PATTERN_STEPS = 100;
+  const MIN_STEP_DURATION_MS = 50;
+  const MAX_STEP_DURATION_MS = 10000;
+
   if (!devices[idx])         return res.status(404).json({ error: 'Gerät nicht gefunden' });
   if (!Array.isArray(steps)) return res.status(400).json({ error: 'steps[] fehlt' });
-  res.json({ ok: true, steps: steps.length });
+  if (steps.length > MAX_PATTERN_STEPS) {
+    return res.status(400).json({ error: `Zu viele steps (max ${MAX_PATTERN_STEPS})` });
+  }
+
+  const safeSteps = [];
+  for (const rawStep of steps) {
+    const duration = Number(rawStep && rawStep.duration != null ? rawStep.duration : 500);
+    if (!Number.isFinite(duration) || duration < MIN_STEP_DURATION_MS || duration > MAX_STEP_DURATION_MS) {
+      return res.status(400).json({
+        error: `Ungültige step.duration (erlaubt ${MIN_STEP_DURATION_MS}-${MAX_STEP_DURATION_MS} ms)`
+      });
+    }
+
+    safeSteps.push({
+      duration,
+      speeds: Array.isArray(rawStep && rawStep.speeds)
+        ? rawStep.speeds
+        : [rawStep && rawStep.speed != null ? rawStep.speed : 0]
+    });
+  }
+
+  res.json({ ok: true, steps: safeSteps.length });
   (async () => {
-    for (const step of steps) {
+    for (const step of safeSteps) {
       if (!engineReady || !devices[idx]) break;
-      cmdVibrate(idx, step.speeds || [step.speed ?? 0]);
-      await new Promise(r => setTimeout(r, step.duration || 500));
+      cmdVibrate(idx, step.speeds);
+      await new Promise(r => setTimeout(r, step.duration));
     }
     if (devices[idx]) cmdStop(idx);
   })();
