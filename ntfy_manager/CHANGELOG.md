@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.1...ntfy_manager-v0.2.2) (2026-06-26)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add rate limiting and CSP configuration ([0b0c4b8](https://github.com/pol4rfuchs/ha-apps/commit/0b0c4b82d7a6d251a29bcedf2df18b59be6dca86))
+
 ## 0.2.1 — Bugfixes
 
 ### Fixed
