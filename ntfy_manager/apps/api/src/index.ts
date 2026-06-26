@@ -18,8 +18,24 @@ const app = express();
 app.disable("x-powered-by");
 app.use(
   helmet({
-    contentSecurityPolicy: false,        // SPA handles its own headers via nginx
-    crossOriginResourcePolicy: false     // We're served same-origin from nginx
+    // CodeQL #234 (js/insecure-helmet-configuration): explicit CSP instead
+    // of disabling it outright. Everything is same-origin (served by nginx
+    // alongside the SPA), so 'self' covers scripts/connects/images; inline
+    // styles stay allowed since React sets some styles via style props.
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'"], // fetch + SSE stream, both same-origin
+        imgSrc: ["'self'", "data:"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'self'"]
+      }
+    },
+    crossOriginResourcePolicy: false // We're served same-origin from nginx
   })
 );
 app.use(cors({ origin: false, credentials: true })); // same-origin only

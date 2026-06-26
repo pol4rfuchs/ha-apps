@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
 import { env } from "../env.js";
 import {
   basicAuthHeader,
@@ -12,6 +13,16 @@ import { attachSession, resolveSession } from "../middleware/auth.js";
 import { audit } from "../services/logger.js";
 
 export const authRouter = Router();
+
+// CodeQL #244 (js/missing-rate-limiting): /login validates credentials
+// against ntfy and must be protected against brute-force attempts.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,                   // max 10 attempts per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "too_many_attempts", message: "Zu viele Login-Versuche, bitte später erneut versuchen." }
+});
 
 const loginSchema = z.discriminatedUnion("authType", [
   z.object({
@@ -43,7 +54,7 @@ authRouter.get("/status", attachSession, async (req, res) => {
 });
 
 /** POST /api/auth/login — validate creds against ntfy `/v1/account`, set cookie. */
-authRouter.post("/login", async (req, res) => {
+authRouter.post("/login", loginLimiter, async (req, res) => {
   if (!env.ALLOW_LOGIN_OVERRIDE) {
     res.status(403).json({ error: "login_disabled_in_config" });
     return;
