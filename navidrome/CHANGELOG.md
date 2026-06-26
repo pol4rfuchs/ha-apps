@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.2...navidrome-v2.1.3) (2026-06-26)
+
+
+### Bug Fixes
+
+* **navidrome:** ND_DATAFOLDER auf persistenten /data-Pfad korrigiert ([b777d13](https://github.com/pol4rfuchs/ha-apps/commit/b777d1393d45f88d22e261e989634282362a8273))
+
 ## v2.1.0
 
 ### Bugfixes
