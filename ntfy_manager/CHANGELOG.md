@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.4...ntfy_manager-v0.2.5) (2026-06-26)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** update dependency zod to v4 ([#73](https://github.com/pol4rfuchs/ha-apps/issues/73)) ([772c677](https://github.com/pol4rfuchs/ha-apps/commit/772c6772f4a597544da6bdf752d6b697573200f5))
+
 ## [0.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.3...ntfy_manager-v0.2.4) (2026-06-26)
 
 
