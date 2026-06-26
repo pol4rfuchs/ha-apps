@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.2...ntfy_manager-v0.2.3) (2026-06-26)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** update dependency express-rate-limit to v8 ([#67](https://github.com/pol4rfuchs/ha-apps/issues/67)) ([d887628](https://github.com/pol4rfuchs/ha-apps/commit/d887628689f207bfa797af9de39ecb9fa1004dea))
+
 ## [0.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.1...ntfy_manager-v0.2.2) (2026-06-26)
 
 
