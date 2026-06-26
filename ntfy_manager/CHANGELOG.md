@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.5...ntfy_manager-v0.2.6) (2026-06-26)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** update dependency lucide-react to v1 ([#74](https://github.com/pol4rfuchs/ha-apps/issues/74)) ([93c0cd4](https://github.com/pol4rfuchs/ha-apps/commit/93c0cd4530bb56cb41d3abc20cb1120f92379dda))
+
 ## [0.2.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.4...ntfy_manager-v0.2.5) (2026-06-26)
 
 
