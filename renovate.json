@@ -5,17 +5,97 @@
     "helpers:pinGitHubActionDigestsToSemver"
   ],
   "dependencyDashboard": true,
-  "schedule": ["before 6am on wednesday"],
+  "schedule": [
+    "before 6am on wednesday"
+  ],
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["digest"],
+      "matchFileNames": [
+        "forgejo/**"
+      ],
+      "semanticCommitScope": "forgejo"
+    },
+    {
+      "matchFileNames": [
+        "intiface_central/**"
+      ],
+      "semanticCommitScope": "intiface_central"
+    },
+    {
+      "matchFileNames": [
+        "matrix_synapse/**"
+      ],
+      "semanticCommitScope": "matrix_synapse"
+    },
+    {
+      "matchFileNames": [
+        "navidrome/**"
+      ],
+      "semanticCommitScope": "navidrome"
+    },
+    {
+      "matchFileNames": [
+        "nginx_proxy_manager/**"
+      ],
+      "semanticCommitScope": "nginx_proxy_manager"
+    },
+    {
+      "matchFileNames": [
+        "ntfy/**"
+      ],
+      "semanticCommitScope": "ntfy"
+    },
+    {
+      "matchFileNames": [
+        "ntfy_manager/**"
+      ],
+      "semanticCommitScope": "ntfy_manager"
+    },
+    {
+      "matchFileNames": [
+        "nextcloud/**"
+      ],
+      "semanticCommitScope": "nextcloud"
+    },
+    {
+      "matchFileNames": [
+        "searxng/**"
+      ],
+      "semanticCommitScope": "searxng"
+    },
+    {
+      "matchFileNames": [
+        "teamspeak6/**"
+      ],
+      "semanticCommitScope": "teamspeak6"
+    },
+    {
+      "matchFileNames": [
+        "ts6_manager/**"
+      ],
+      "semanticCommitScope": "ts6_manager"
+    },
+    {
+      "matchFileNames": [
+        "unbound/**"
+      ],
+      "semanticCommitScope": "unbound"
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
       "minimumReleaseAge": "0 days",
       "automerge": false,
       "groupName": "github-actions (digest pinning)"
     },
     {
-      "matchManagers": ["dockerfile"],
+      "matchManagers": [
+        "dockerfile"
+      ],
       "enabled": false
     }
   ],
