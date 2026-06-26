@@ -60,6 +60,7 @@ jobs:
           import json
           import os
           import re
+          import sys
           from pathlib import Path
 
           app = os.environ["APP"]
@@ -94,8 +95,8 @@ jobs:
           if version_override and version_override != cfg_version:
               print(f"::notice::config.yaml version ({cfg_version!r}) lags the release tag "
                     f"({version_override!r}) — using the tag version, this is expected right "
-                    f"after a release-please merge and gets reconciled by sync-versions shortly after.")
-
+                    f"after a release-please merge and gets reconciled by sync-versions shortly after.",
+                    file=sys.stderr)
           if not image.startswith("ghcr.io/pol4rfuchs/"):
               raise SystemExit(f"invalid image: {image}")
           if not version:
