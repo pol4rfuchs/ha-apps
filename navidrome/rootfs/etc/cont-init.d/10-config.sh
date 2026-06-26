@@ -20,6 +20,32 @@ if bashio::var.is_empty "${ND_MUSICFOLDER}"; then
   exit 1
 fi
 
+# --- Migration: alter, NICHT persistenter Datenpfad (Bug bis v2.1.2) ---
+# Bis v2.1.2 zeigte der Default auf /config/addons_config/navidrome, ohne
+# dass "addon_config" im map-Block stand -> Pfad lag im ephemeren Container-
+# Layer und wurde bei jedem Neustart/Recreate geleert (DB + Adminuser weg).
+LEGACY_DATAFOLDER="/config/addons_config/navidrome"
+if [ "${ND_DATAFOLDER}" != "${LEGACY_DATAFOLDER}" ] && [ -f "${LEGACY_DATAFOLDER}/navidrome.db" ] && [ ! -f "${ND_DATAFOLDER}/navidrome.db" ]; then
+  bashio::log.warning "Migriere Altdaten von ${LEGACY_DATAFOLDER} nach ${ND_DATAFOLDER} (Datenordner-Bugfix)..."
+  mkdir -p "${ND_DATAFOLDER}"
+  cp -a "${LEGACY_DATAFOLDER}/." "${ND_DATAFOLDER}/"
+  bashio::log.warning "Migration abgeschlossen. Bitte prüfen, ob dein Admin-User wieder da ist."
+fi
+
+# --- Persistenz-Guard ---
+# Nur /data ist garantiert persistent ohne map-Eintrag. Jeder andere Pfad
+# braucht zwingend den passenden map-Eintrag in config.yaml, sonst geht die
+# DB beim nächsten Container-Recreate wieder verloren.
+case "${ND_DATAFOLDER}" in
+  /data|/data/*) : ;;
+  /config/addons_config/*)
+    bashio::log.warning "ND_DATAFOLDER=${ND_DATAFOLDER} -- stelle sicher, dass 'addon_config' im map-Block von config.yaml steht, sonst ist dieser Pfad NICHT persistent!"
+    ;;
+  *)
+    bashio::log.warning "ND_DATAFOLDER=${ND_DATAFOLDER} ist weder /data noch /config/addons_config/* -- dieser Pfad ist mit hoher Wahrscheinlichkeit NICHT persistent und die Datenbank geht beim nächsten Neustart verloren!"
+    ;;
+esac
+
 # --- Ordner anlegen ---
 mkdir -p "${ND_DATAFOLDER}"
 

@@ -37,7 +37,7 @@ Key options:
 | Option | Default | Description |
 |--------|---------|-------------|
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
-| `ND_DATAFOLDER` | `/config/addons_config/navidrome` | Database and cache location. |
+| `ND_DATAFOLDER` | `/data` | Database and cache location. **Must stay under `/data`** (always persistent) or under `/config/addons_config/navidrome` *only if* `addon_config` is in the add-on's `map` config — any other path is wiped on restart. |
 | `ND_SCANNER_SCHEDULE` | `@every 24h` | Auto-scan interval. `0` disables. |
 | `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware (requires sound device). |
@@ -52,3 +52,4 @@ Key options:
 | Music not showing | Verify `ND_MUSICFOLDER` path is correct and readable |
 | Scan not running | Trigger manually: UI → Settings → Scan Library |
 | Client can't connect | Use Subsonic API URL: `http://[HA-IP]:4533` |
+| Admin user / library gone after restart (pre-v2.1.3) | `ND_DATAFOLDER` pointed to a non-persistent path. Update the add-on, then check the log for an automatic migration message. If your data was already lost, recreate the admin user once. |

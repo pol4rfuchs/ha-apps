@@ -35,6 +35,8 @@ map:
     read_only: false
   - type: share
     read_only: false
+  - type: addon_config
+    read_only: false
 
 # ============================================================
 # Optionen
@@ -42,7 +44,7 @@ map:
 options:
   # Core
   ND_MUSICFOLDER: "/media/music"
-  ND_DATAFOLDER: "/config/addons_config/navidrome"
+  ND_DATAFOLDER: "/data"
   ND_LOGLEVEL: "info"
   PUID: 0
   PGID: 0
