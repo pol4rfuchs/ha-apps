@@ -1,6 +1,6 @@
 ---
 name: ntfy
-version: "1.1.8"
+version: "1.1.9"
 slug: ntfy
 description: Self-hosted pub-sub notification service (ntfy.sh)
 url: https://github.com/pol4rfuchs/ha-apps
