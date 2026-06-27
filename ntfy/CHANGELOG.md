@@ -1,0 +1,8 @@
+# Changelog
+
+## [1.1.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.9...ntfy-v1.1.10) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy:** remove integrated admin panel (port 4281), ntfy_manager is the replacement ([0042f64](https://github.com/pol4rfuchs/ha-apps/commit/0042f6476958ab7f5b2d7bcdf78a980616b61fc5))
