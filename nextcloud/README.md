@@ -1,7 +1,33 @@
-# Nextcloud — Home Assistant Add-on
+<div align="center">
 
-A full [Nextcloud](https://nextcloud.com/) instance for Home Assistant OS.
-Based on the **official Nextcloud Docker image** — no restrictions on installing apps from [apps.nextcloud.com](https://apps.nextcloud.com/).
+# ☁️ Nextcloud — Home Assistant Add-on
+
+</div>
+
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Nextcloud Version](https://img.shields.io/badge/Nextcloud-34.0.0-0082C9?style=for-the-badge&logo=nextcloud&logoColor=white)](https://github.com/nextcloud/server)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+**A full [Nextcloud](https://nextcloud.com/) instance for Home Assistant OS — based on the official Nextcloud Docker image, no restrictions on installing apps from [apps.nextcloud.com](https://apps.nextcloud.com/).**
+
+</div>
+
+---
+
+## 🧭 Overview
+
+| Property | Value |
+|---|---|
+| **Base image** | `nextcloud:apache` (official) |
+| **Nextcloud version** | `34.0.0` |
+| **Add-on version** | `33.0.11` |
+| **Default port** | `8080` |
+| **App store** | ✅ unrestricted |
+| **Arch** | `amd64`, `aarch64` |
+
+---
 
 ## Key differences from community alternatives
 

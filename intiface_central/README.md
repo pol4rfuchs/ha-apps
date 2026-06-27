@@ -1,5 +1,6 @@
 <div align="center">
-  
+
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/intiface_central/icon.png" alt="Intiface Central Icon" width="128">
 
 # 🎛️ Intiface Central / Lovense Control — Home Assistant Add-on
 
@@ -8,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Intiface](https://img.shields.io/badge/Intiface-Engine-8E44AD?style=for-the-badge&logoColor=white)](https://github.com/intiface/intiface-engine)
+[![Intiface Engine](https://img.shields.io/badge/Intiface%20Engine-4.0.2-8E44AD?style=for-the-badge&logoColor=white)](https://github.com/intiface/intiface-engine)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Buttplug/Intiface Central with browser WebGUI, MQTT bridge and Home Assistant entity auto-discovery — no VNC, no X11.**
@@ -22,6 +23,7 @@
 | Property | Value |
 |---|---|
 | **Engine** | `intiface-engine` (x64, via box64 on ARM) |
+| **Engine version** | `4.0.2` |
 | **Web UI port** | `12346` |
 | **Intiface port** | `12345` |
 | **Arch** | `amd64`, `aarch64` (via box64) |

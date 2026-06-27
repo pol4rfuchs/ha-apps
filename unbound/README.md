@@ -1,6 +1,35 @@
-# Unbound DNS Resolver
+<div align="center">
 
-A self-managed Home Assistant add-on providing a recursive DNS resolver using [Unbound](https://nlnetlabs.nl/projects/unbound/about/). Fully configured through the built-in web UI — no YAML editing required.
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/unbound/icon.png" alt="Unbound DNS Resolver Icon" width="128">
+
+# 🛡️ Unbound DNS Resolver — Home Assistant Add-on
+
+</div>
+
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Unbound Version](https://img.shields.io/badge/Unbound-1.24.2-2C3E50?style=for-the-badge&logoColor=white)](https://nlnetlabs.nl/projects/unbound/about/)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+**A self-managed Home Assistant add-on providing a recursive DNS resolver using [Unbound](https://nlnetlabs.nl/projects/unbound/about/). Fully configured through the built-in web UI — no YAML editing required.**
+
+</div>
+
+---
+
+## 🧭 Overview
+
+| Property | Value |
+|---|---|
+| **Upstream** | `nlnetlabs/unbound` |
+| **Unbound version** | `1.24.2` |
+| **Add-on version** | `1.24.2-ha38-pol4r1` |
+| **Default port** | `5053` (mapped from container `53`) |
+| **Config** | Web UI (no YAML editing) |
+| **Arch** | `amd64`, `aarch64` |
+
+---
 
 ## Features
 
@@ -37,9 +66,9 @@ A self-managed Home Assistant add-on providing a recursive DNS resolver using [U
 
 1. Add this repository to your Home Assistant add-on store:
 
-   [![Add repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/fenio/ha-addons)
+   [![Add repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/pol4rfuchs/ha-apps)
 
-   Or manually: **Settings** > **Add-ons** > **Add-on Store** > **⋮** > **Repositories** > Add `https://github.com/fenio/ha-addons`
+   Or manually: **Settings** > **Add-ons** > **Add-on Store** > **⋮** > **Repositories** > Add `https://github.com/pol4rfuchs/ha-apps`
 
 2. Find "Unbound DNS" in the add-on store and click **Install**
 3. Start the addon and open the **Web UI** to configure everything

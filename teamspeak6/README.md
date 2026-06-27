@@ -15,7 +15,7 @@
 </div>
 
 ### WIKI
-[TS6-Wiki](https://https://github.com/pol4rfuchs/ha-apps/wiki)
+[TS6-Wiki](https://github.com/pol4rfuchs/ha-apps/wiki)
 
 ## Installation
 
@@ -82,6 +82,7 @@ This repository contains a complete **Home Assistant Add-on** (formerly: Hass.io
 | Property | Value |
 |---|---|
 | **HA Addon Slug** | `teamspeak6` |
+| **Add-on version** | `1.1.14` |
 | **Architecture** | `aarch64` (ARM64) |
 | **Architecture** | `x64` (AMD64) |
 | **Startup** | `application` |
