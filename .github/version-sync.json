@@ -1,0 +1,138 @@
+{
+  "_comment": "Single source of truth for the 19-version-badges-sync workflow. Each entry maps a value extracted from a real repo file (Dockerfile/config.yaml/script) onto a badge and/or a README table row. Add a new addon here, no workflow YAML changes needed.",
+  "forgejo": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG FORGEJO_IMAGE_VERSION=(\\S+)" },
+        "badge": { "label": "Forgejo", "color": "609926" },
+        "table_row_label": "Forgejo version"
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "table_row_label": "Add-on version"
+      }
+    ]
+  },
+  "intiface_central": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG ENGINE_VERSION=(\\S+)" },
+        "badge": { "label": "Intiface%20Engine", "color": "8E44AD" },
+        "table_row_label": "Engine version"
+      }
+    ]
+  },
+  "nextcloud": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG NEXTCLOUD_TAG=([^\\s\"]+?)(?:-apache)?$" },
+        "badge": { "label": "Nextcloud", "color": "0082C9" },
+        "table_row_label": "Nextcloud version"
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "table_row_label": "Add-on version"
+      }
+    ]
+  },
+  "nginx_proxy_manager": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "FROM jc21/nginx-proxy-manager:(\\S+)" },
+        "badge": { "label": "NPM", "color": "E74C3C" },
+        "table_row_label": "NPM version"
+      }
+    ]
+  },
+  "ntfy": {
+    "readme": "readme.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG NTFY_VERSION=(\\S+)" },
+        "value_prefix": "v",
+        "badge": { "label": "based%20on%20ntfy", "color": "2ECC71" },
+        "table_row_label": "Based on",
+        "table_value_format": "`ntfy {value}`"
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "value_prefix": "v",
+        "badge": { "label": "ntfy--ha--app", "color": "2ECC71" },
+        "table_row_label": "App Version",
+        "table_value_format": "`{value}`"
+      }
+    ]
+  },
+  "searxng": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG SEARXNG_VERSION=(\\S+)" },
+        "badge": { "label": "SearXNG", "color": "3498DB" },
+        "table_row_label": "SearXNG version",
+        "table_value_format": "`{value}`"
+      }
+    ]
+  },
+  "teamspeak6": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG TEAMSPEAK_VERSION=(\\S+)" },
+        "value_prefix": "v",
+        "badge": { "label": "TeamSpeak%206", "color": "F39C12" }
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "table_row_label": "Add-on version"
+      }
+    ]
+  },
+  "ts6_manager": {
+    "readme": "readme.md",
+    "items": [
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "badge": { "label": "ts6--manager", "color": "F39C12" },
+        "table_row_label": "Add-on Version"
+      }
+    ]
+  },
+  "ntfy_manager": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "badge": { "label": "ntfy--manager", "color": "2eb67d" },
+        "table_row_label": "App Version"
+      }
+    ]
+  },
+  "unbound": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?(\\d+\\.\\d+\\.\\d+)" },
+        "badge": { "label": "Unbound", "color": "2C3E50" },
+        "table_row_label": "Unbound version"
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "table_row_label": "Add-on version"
+      }
+    ]
+  },
+  "matrix_synapse": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "rootfs/etc/cont-init.d/05-download-webapps.sh", "regex": "ADMIN_VERSION=\"([^\"]+)\"" },
+        "table_row_label": "Synapse Admin"
+      }
+    ]
+  }
+}

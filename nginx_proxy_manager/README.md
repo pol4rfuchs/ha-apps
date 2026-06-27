@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![NPM Version](https://img.shields.io/badge/NPM-2.14.0-E74C3C?style=for-the-badge&logo=nginx&logoColor=white)](https://github.com/NginxProxyManager/nginx-proxy-manager)
+[![NPM Version](https://img.shields.io/badge/NPM-2.15.1-E74C3C?style=for-the-badge&logo=nginx&logoColor=white)](https://github.com/NginxProxyManager/nginx-proxy-manager)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Reverse proxy management with a clean UI, SSL automation and native Home Assistant integration.**
@@ -23,7 +23,7 @@
 | Property | Value |
 |---|---|
 | **Upstream image** | `jc21/nginx-proxy-manager` |
-| **NPM version** | 2.14.0 |
+| **NPM version** | 2.15.1 |
 | **Admin UI port** | `81` |
 | **HTTP port** | `80` |
 | **HTTPS port** | `443` |
