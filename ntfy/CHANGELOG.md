@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.10...ntfy-v1.1.11) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy:** guard HA token provisioning against indefinite hang on boot ([fd35aa6](https://github.com/pol4rfuchs/ha-apps/commit/fd35aa67b0a497b85bd741fc306d2e1900ae20ec))
+
 ## [1.1.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.9...ntfy-v1.1.10) (2026-06-27)
 
 
