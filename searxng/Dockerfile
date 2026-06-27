@@ -1,8 +1,8 @@
-ARG SEARXNG_VERSION=2026.6.22-aeced6724
-FROM searxng/searxng:2026.6.22-aeced6724
+ARG SEARXNG_VERSION=2026.6.26-f8ffbf36f
+FROM searxng/searxng:2026.6.26-f8ffbf36f
 
 ARG BUILD_VERSION
-ARG SEARXNG_VERSION=2026.6.22-aeced6724
+ARG SEARXNG_VERSION=2026.6.26-f8ffbf36f
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
