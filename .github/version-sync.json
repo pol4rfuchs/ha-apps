@@ -6,11 +6,13 @@
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG FORGEJO_IMAGE_VERSION=(\\S+)" },
         "badge": { "label": "Forgejo", "color": "609926" },
-        "table_row_label": "Forgejo version"
+        "table_row_label": "Forgejo version",
+        "table_value_format": "`{value}`"
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version"
+        "table_row_label": "Add-on version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -20,7 +22,8 @@
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG ENGINE_VERSION=(\\S+)" },
         "badge": { "label": "Intiface%20Engine", "color": "8E44AD" },
-        "table_row_label": "Engine version"
+        "table_row_label": "Engine version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -30,11 +33,13 @@
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG NEXTCLOUD_TAG=([^\\s\"]+?)(?:-apache)?$" },
         "badge": { "label": "Nextcloud", "color": "0082C9" },
-        "table_row_label": "Nextcloud version"
+        "table_row_label": "Nextcloud version",
+        "table_value_format": "`{value}`"
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version"
+        "table_row_label": "Add-on version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -88,7 +93,8 @@
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version"
+        "table_row_label": "Add-on version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -98,7 +104,8 @@
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
         "badge": { "label": "ts6--manager", "color": "F39C12" },
-        "table_row_label": "Add-on Version"
+        "table_row_label": "Add-on Version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -108,7 +115,8 @@
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
         "badge": { "label": "ntfy--manager", "color": "2eb67d" },
-        "table_row_label": "App Version"
+        "table_row_label": "App Version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
@@ -118,11 +126,13 @@
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?(\\d+\\.\\d+\\.\\d+)" },
         "badge": { "label": "Unbound", "color": "2C3E50" },
-        "table_row_label": "Unbound version"
+        "table_row_label": "Unbound version",
+        "table_value_format": "`{value}`"
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version"
+        "table_row_label": "Add-on version",
+        "table_value_format": "`{value}`"
       }
     ]
   },
