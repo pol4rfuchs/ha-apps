@@ -146,6 +146,19 @@
           "jsonpath": "$.version"
         }
       ]
+    },
+    "unbound": {
+      "release-type": "simple",
+      "component": "unbound",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "unbound/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
     }
   }
 }
