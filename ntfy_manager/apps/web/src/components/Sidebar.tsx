@@ -59,7 +59,7 @@ export default function Sidebar({
     <aside className="hidden lg:flex flex-col w-72 sticky top-0 h-screen border-r border-white/10 bg-bg2/60 backdrop-blur p-4">
       {/* Brand */}
       <div className="flex items-center gap-3 px-2 py-3">
-        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand to-brand2 grid place-items-center shadow-soft">
+        <div className="h-9 w-9 rounded-xl bg-linear-to-br from-brand to-brand2 grid place-items-center shadow-soft">
           <Activity className="h-5 w-5" />
         </div>
         <div>
@@ -93,7 +93,7 @@ export default function Sidebar({
               onClick={() => onSelect(v.key)}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition text-sm font-bold ${
                 active
-                  ? "bg-gradient-to-r from-brand/40 to-brand2/20 border-brand/40"
+                  ? "bg-linear-to-r from-brand/40 to-brand2/20 border-brand/40"
                   : "border-transparent hover:bg-white/5 hover:border-white/10"
               }`}
             >

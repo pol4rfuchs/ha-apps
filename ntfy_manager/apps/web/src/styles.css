@@ -1,6 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #111815;
+  --color-bg2: #18231e;
+  --color-panel: #202c26;
+  --color-panel2: #24322b;
+  --color-panel3: #1b2621;
+  --color-brand: #467b69;
+  --color-brand2: #3f6f5f;
+  --color-ok: #7bc89a;
+  --color-warn: #d8a64e;
+  --color-bad: #d46a6a;
+  --color-info: #9ecfbc;
+  --color-muted: #c0cbc5;
+  --color-ring: #3a5046;
+
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
 
 @layer base {
   html, body, #root {

@@ -64,7 +64,7 @@ export default function TopBar({
         <button onClick={onQuickSend} className="btn btn-primary">
           <Send className="h-4 w-4" /> Quick Send
         </button>
-        <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10">
+        <div className="h-9 w-9 rounded-full bg-linear-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10">
           {initials}
         </div>
       </div>

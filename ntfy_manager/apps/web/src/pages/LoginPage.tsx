@@ -66,7 +66,7 @@ export default function LoginPage({ onSuccess }: { onSuccess: () => void }) {
     <div className="min-h-screen grid place-items-center px-4">
       <div className="card w-full max-w-md bg-panel/90">
         <div className="px-6 pt-6 pb-2 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand to-brand2 grid place-items-center">
+          <div className="h-10 w-10 rounded-xl bg-linear-to-br from-brand to-brand2 grid place-items-center">
             <Activity className="h-5 w-5" />
           </div>
           <div>
