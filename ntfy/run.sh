@@ -23,7 +23,6 @@ ATTACHMENT_EXPIRY=$(bashio::config 'attachment_expiry_duration' '3h')
 KEEPALIVE=$(bashio::config 'keepalive_interval' '45s')
 MANAGER=$(bashio::config 'manager_interval' '3m')
 UPSTREAM_URL=$(bashio::config 'upstream_base_url' '')
-ADMIN_PANEL=$(bashio::config 'admin_panel' 'false')
 ADMIN_USER=$(bashio::config 'admin_username' '')
 ADMIN_PASS=$(bashio::config 'admin_password' '')
 
@@ -56,7 +55,7 @@ enable-reservations: ${ENABLE_RESERVATIONS}
 keepalive-interval: "${KEEPALIVE}"
 manager-interval: "${MANAGER}"
 
-# CORS: allow admin panel on port 4281 to call ntfy API on port 4280
+# CORS: allow cross-origin API access (e.g. for ntfy_manager or other clients)
 access-control-allow-origin: "*"
 EOF
 
@@ -204,16 +203,6 @@ provision_ha_token() {
 create_admin "${ADMIN_USER}" "${ADMIN_PASS}"
 provision_admin_tier "${ADMIN_USER}"
 provision_ha_token "${ADMIN_USER}"
-
-# ---------------------------------------------------------------------------
-# Admin Panel — python3 HTTP server on port 4281
-# ---------------------------------------------------------------------------
-if bashio::var.true "${ADMIN_PANEL}"; then
-    bashio::log.info "Admin Panel enabled → http://homeassistant.local:4281"
-    cd /opt/ntfy-admin && python3 -m http.server 4281 --bind 0.0.0.0 &>/dev/null &
-else
-    bashio::log.info "Admin Panel disabled"
-fi
 
 bashio::log.info "Starting ntfy → http://homeassistant.local:4280"
 exec ntfy serve --config="${CONFIG_FILE}" 2>&1

@@ -16,10 +16,8 @@ map:
   - backup:rw
 ports:
   4280/tcp: 4280
-  4281/tcp: 4281
 ports_description:
   4280/tcp: ntfy Web UI & API
-  4281/tcp: ntfy Admin Panel (optional)
 options:
   log_level: INFO
   base_url: ""
@@ -35,7 +33,6 @@ options:
   keepalive_interval: "45s"
   manager_interval: "3m"
   upstream_base_url: ""
-  admin_panel: false
   admin_username: ""
   admin_password: ""
 schema:
@@ -53,6 +50,5 @@ schema:
   keepalive_interval: str
   manager_interval: str
   upstream_base_url: str?
-  admin_panel: bool
   admin_username: str?
   admin_password: password?

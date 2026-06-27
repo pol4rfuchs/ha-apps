@@ -42,9 +42,6 @@ configuration:
   upstream_base_url:
     name: Upstream Base URL
     description: "For iOS push notifications only. Set to 'https://ntfy.sh' to enable iOS support. Requires base_url."
-  admin_panel:
-    name: Enable Admin Panel
-    description: "Starts a web-based user management interface on port 4281. Disabled by default — enable only when needed."
   admin_username:
     name: Admin Username
     description: "Username for the first admin account. Created automatically on startup. Leave empty to skip."

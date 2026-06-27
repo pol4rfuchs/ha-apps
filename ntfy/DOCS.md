@@ -68,130 +68,23 @@ If the token is lost, delete `/data/ntfy/ha_token.txt` and restart the add-on to
 
 ---
 
-## Admin Panel
+## Admin / Management UI
 
-The admin panel is a full management interface included with this add-on.
+This add-on no longer ships its own management UI. For a full web-based admin interface, install the separate **ntfy_manager** add-on (same repository).
 
-### Enable it
+`ntfy_manager` talks to this add-on's API directly — no extra configuration needed here once both are running. It covers:
 
-In the **Configuration** tab, set:
+- **Overview** — health, version, stats, uptime, user count
+- **Send** — compose and send test notifications, with live preview
+- **Users** — create, delete, change password
+- **Tokens** — create personal access tokens
+- **Access Control** — per-user, per-topic permissions (wildcards supported, e.g. `ha-*` or `*`)
+- **Reservations** — reserve topics for your account
+- **Messages** — browse cached notifications across topics
+- **Server** — connection info + auto-generated `rest_command` snippet for `configuration.yaml`
+- **Debug** — live SSE connection monitor
 
-```yaml
-admin_panel: true
-```
-
-Then restart the add-on. Access at:
-
-```
-http://homeassistant.local:4281
-```
-
-> ⚠️ The white screen warning is also shown directly in the admin panel sidebar after login — no need to remember this from the docs.
-
-### Login
-
-Enter the ntfy server URL (`http://homeassistant.local:4280`), your admin username and password. You must have the **admin** role to log in.
-
----
-
-### Overview tab
-
-Shows live KPIs (server health, session uptime, message count, user count), system status probes against the ntfy API, and connection info. Click **Probe** to refresh.
-
----
-
-### Send tab
-
-Send a test notification:
-
-1. Enter a **Topic** (e.g. `ha-notify`)
-2. Optionally set **Title**, **Priority**, **Tags**, **Click URL**
-3. Enter a **Message**
-4. Click **Send**
-
-The live preview on the right updates as you type, showing exactly what recipients will see.
-
----
-
-### Users tab
-
-| Action | How |
-|--------|-----|
-| **Create user** | Click **Create user** → fill in username + password → confirm. New users always get the **user** role. |
-| **Change password** | Click **Change PW** next to a user. |
-| **Delete user** | Click **Delete** next to a user. |
-| **Change role** | Not supported via API. To promote a user to admin: add them as `admin_username` in config and restart. |
-
-> Admin accounts show **"managed via config"** — they cannot be deleted or have their password changed via the panel. Use the add-on configuration for that.
-
----
-
-### Tokens tab
-
-| Action | How |
-|--------|-----|
-| **Create token** | Click **Create token** → enter a label → confirm. Token is copied to clipboard automatically. |
-| **View / delete tokens** | Not available here due to browser CORS restrictions (port 4281 → 4280). Use ntfy Web UI → **Account → Access Tokens** instead. |
-
-> The HA integration token created at startup (`ha_token.txt`) does not appear here automatically. It is visible in the ntfy Web UI under Account → Access Tokens.
-
----
-
-### Access Control tab
-
-Manage per-user, per-topic permissions:
-
-| Action | How |
-|--------|-----|
-| **View rules** | Lists all ACL grants from all users. |
-| **Add / update rule** | Select user, enter topic (wildcards supported: `ha-*` or `*`), choose permission → **Save Rule**. |
-| **Delete rule** | Click **Delete** next to a row. |
-
-Permissions: `read-write` · `read-only` · `write-only` · `deny-all`
-
-> Admin users have global access — no ACL entries needed for them.
-> `*` (anonymous) controls what unauthenticated clients can do.
-
----
-
-### Reservations tab
-
-Reserve topics so only your admin account can publish to them:
-
-| Action | How |
-|--------|-----|
-| **Reserve topic** | Enter topic name, choose what everyone else can do → **Reserve**. |
-| **Delete reservation** | Click **Delete** next to a row. |
-
-Recommended topics to reserve: `ha-alerts` `ha-system` `ha-notify`
-
----
-
-### Messages tab
-
-Browse cached notifications without opening the ntfy web UI:
-
-- Enter one or more comma-separated topics
-- Set a time range and message limit
-- Click **Fetch Messages**
-
-Shows total count, topics hit, high-priority count, and a card per message with title, body, tags and timestamp.
-
----
-
-### Server tab
-
-Shows live server configuration (base URL, health, version, admin user, auth mode) and an auto-generated `rest_command` YAML snippet ready to paste into `configuration.yaml`.
-
----
-
-### Debug tab
-
-Two tools:
-
-**SSE Connection Monitor** — opens a live Server-Sent Events stream to one or more topics. Shows connection state, reconnect counter, and a live log of every message received. Useful for verifying that HA automations are delivering notifications correctly.
-
-**API Call Log** — records every API call made by the admin panel with method, URL, HTTP status and response body. Click **Run diagnostics** to probe all main endpoints at once.
+See the ntfy_manager add-on's own documentation for setup, login, and a page-by-page walkthrough.
 
 ---
 
@@ -205,7 +98,7 @@ Two tools:
 
 ### Option B — rest\_command (manual)
 
-The admin panel **Server tab** generates this snippet automatically with your actual base URL. Add to `configuration.yaml`:
+The **ntfy_manager** add-on's Server tab generates this snippet automatically with your actual base URL. Add to `configuration.yaml`:
 
 ```yaml
 rest_command:
@@ -258,7 +151,6 @@ action:
 | `attachment_total_size_limit` | 5G | Total attachment storage — requires `base_url` |
 | `keepalive_interval` | 45s | Keepalive for SSE/WebSocket connections |
 | `upstream_base_url` | — | iOS push: set to `https://ntfy.sh` — requires `base_url` |
-| `admin_panel` | false | Enable admin panel on port 4281 |
 | `admin_username` | — | Admin account username — created automatically on startup |
 | `admin_password` | — | Admin account password |
 
@@ -390,9 +282,9 @@ All data is stored in `/data/ntfy/` and included in HA backups automatically:
 
 | Issue | Explanation |
 |-------|-------------|
-| **White screen in HA sidebar** | ntfy's SPA uses absolute asset paths — incompatible with HA Ingress. Use direct URL `:4280`. The admin panel sidebar shows this warning and a direct link after login. |
-| **Token list not shown in admin panel** | Browser CORS restriction between port 4281 and 4280. Create tokens in the Tokens tab; view/delete in ntfy Web UI → Account → Access Tokens. |
-| **Cannot change role via admin panel** | ntfy API does not support role changes for existing users. Workaround: use `admin_username` in config for admin accounts. |
-| **Cannot delete/modify admin accounts via panel** | ntfy API returns 401 for admin-role accounts. Manage admins via add-on config only. |
+| **White screen in HA sidebar** | ntfy's SPA uses absolute asset paths — incompatible with HA Ingress. Use the direct URL `:4280` instead of the HA sidebar link. |
+| **Token listing not available via API** | ntfy's REST API has no endpoint to list a user's existing tokens. Create tokens via ntfy_manager's Tokens tab; view/revoke existing ones in the ntfy Web UI → Account → Access Tokens. |
+| **Cannot change a user's role after creation** | ntfy's API has no endpoint for role changes on existing users. Workaround: set `admin_username` in this add-on's config for admin accounts. |
+| **Cannot delete/modify admin accounts via the API** | ntfy returns 401 for admin-role accounts on these endpoints. Manage admin accounts via this add-on's configuration only. |
 | **`hijacked connection` in logs** | Harmless — appears when a client drops a WebSocket/SSE connection unexpectedly. No action needed. |
 | **Interactive password prompt in raw CLI** | `ntfy user add` and `ntfy user change-pass` prompt for a password when called directly. Use the `ntfy_adduser` / `ntfy_passwd` wrapper functions instead. |

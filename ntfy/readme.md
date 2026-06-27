@@ -42,7 +42,7 @@ Run a self-hosted ntfy server directly inside Home Assistant.
 - Push notifications to phone, desktop and browser
 - HTTP publish API
 - Authentication with users, passwords, tokens and ACL rules
-- Optional Admin Panel on port `4281`
+- Companion **ntfy_manager** add-on available for a full web admin UI
 - HA integration token auto-provisioning
 - Persistent data under `/data/ntfy`
 - Multi-arch support: `amd64`, `aarch64`
@@ -75,7 +75,7 @@ http://homeassistant.local:4280
 
 ![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)
-![Admin Panel](https://img.shields.io/badge/Admin%20Panel-Port%204281-F39C12?style=for-the-badge)
+![Admin UI](https://img.shields.io/badge/Admin%20UI-ntfy__manager%20add--on-F39C12?style=for-the-badge)
 ![API](https://img.shields.io/badge/API-HTTP%20Publish-8E44AD?style=for-the-badge)
 
 **Kurz gesagt: ntfy ist dein eigener Push-Server für Home Assistant — schnell, lokal kontrollierbar und ideal für Automationen, Alerts und Systemmeldungen.**
@@ -92,7 +92,7 @@ http://homeassistant.local:4280
 - [Installation](#-installation-1)
 - [First Start](#-first-start)
 - [Configuration](#-configuration)
-- [Admin Panel](#-admin-panel)
+- [Admin / Management UI](#-admin--management-ui)
 - [Home Assistant Integration](#-home-assistant-integration)
 - [Ports & Networking](#-ports--networking)
 - [CLI Reference](#-cli-reference)
@@ -119,7 +119,6 @@ This repository contains a complete **Home Assistant Add-on** that runs a self-h
 | **Based on** | `ntfy v2.22.0` |
 | **App Version** | `v1.1.6.6` |
 | **Web UI Port** | `4280` |
-| **Admin Panel Port** | `4281` |
 | **Main Data Path** | `/data/ntfy` |
 | **Auth Database** | `/data/ntfy/user.db` |
 | **HA Token File** | `/data/ntfy/ha_token.txt` |
@@ -167,13 +166,10 @@ Recommended:
 - Topic ACL rules
 - Topic reservations
 
-### 🛠️ Admin Panel
+### 🛠️ Admin / Management UI
 
-- Optional web-based admin panel on port `4281`
-- Live KPIs and health checks
-- Send notifications with preview
-- Manage users, tokens, ACLs and reservations
-- Debug helper with SSE stream and API call log
+- This add-on no longer ships its own admin panel
+- Install the separate **ntfy_manager** add-on for a full web UI: live KPIs, send with preview, users/tokens/ACLs/reservations, message browser, SSE debug monitor
 - Generates Home Assistant `rest_command` examples
 
 ### 💾 Persistence
@@ -300,7 +296,6 @@ http://<ha-ip>:4280
 | `admin_password` | `your-secure-password` | Admin account password |
 | `enable_signup` | `true` | Allows account creation if enabled |
 | `enable_login` | `true` | Enables login/auth in ntfy |
-| `admin_panel` | `true` | Enables the separate admin panel on port `4281` |
 
 ### Recommended starter config
 
@@ -309,35 +304,19 @@ admin_username: "admin"
 admin_password: "your-secure-password"
 enable_signup: true
 enable_login: true
-admin_panel: true
 ```
 
-> 💡 For a private HAOS setup, this is the clean starting point: login enabled, admin panel enabled, and tokens managed properly.
+> 💡 For a private HAOS setup, this is the clean starting point: login enabled and tokens managed properly. Install the **ntfy_manager** add-on alongside this one for a web admin UI.
 
 ---
 
-## 🛠️ Admin Panel
+## 🛠️ Admin / Management UI
 
-Enable it in the **Configuration** tab:
+This add-on no longer ships its own management UI. Install the separate **ntfy_manager** add-on (same repository) for a full web admin interface.
 
-```yaml
-admin_panel: true
-```
+`ntfy_manager` talks to this add-on's API directly — no extra configuration needed here once both are running.
 
-Restart the add-on and open:
-
-```text
-http://homeassistant.local:4281
-```
-
-Log in with:
-
-| Field | Value |
-|---|---|
-| **Username** | `admin_username` from add-on config |
-| **Password** | `admin_password` from add-on config |
-
-### What's in the admin panel?
+### What's in ntfy_manager?
 
 | View | What it does |
 |---|---|
@@ -349,10 +328,9 @@ Log in with:
 | **Reservations** | Reserve topics to prevent unauthorized publishing |
 | **Messages** | Browse and filter cached notifications per topic |
 | **Server** | Live config display and generated Home Assistant YAML |
-| **Debug** | SSE live monitor and full API call log with diagnostics |
+| **Debug** | SSE live monitor |
 
-> ⚠️ The admin panel is intentionally separate from the ntfy Web UI.  
-> ntfy itself runs on `4280`, the admin panel runs on `4281`.
+> ℹ️ See the **ntfy_manager** add-on's own documentation for installation, login and a page-by-page walkthrough.
 
 ---
 
@@ -432,14 +410,12 @@ action:
 | Port | Protocol | Purpose | Expose externally |
 |---|---|---|---|
 | `4280` | TCP | ntfy Web UI and HTTP API | Optional |
-| `4281` | TCP | Admin Panel | Prefer LAN/VPN only |
 
 ### Direct local URLs
 
 | Service | URL |
 |---|---|
 | ntfy Web UI/API | `http://homeassistant.local:4280` |
-| Admin Panel | `http://homeassistant.local:4281` |
 
 ### External access
 
@@ -450,7 +426,7 @@ If you expose ntfy outside your LAN:
 - Use strong passwords
 - Use ACLs
 - Prefer a reverse proxy
-- Do not expose the admin panel casually
+- Do not expose management UIs (e.g. ntfy_manager) casually
 
 > 🔒 ntfy on the internet without authentication is basically an open notification endpoint. Keep it locked down.
 
@@ -530,7 +506,7 @@ ntfy_token <username> "Label"
 | `ntfy access <username> <topic> deny` | Deny access |
 | `ntfy access --reset` | Remove all ACL rules |
 
-> ACL rules can also be managed in the admin panel under **Access Control**.
+> ACL rules can also be managed via the **ntfy_manager** add-on under Access Control.
 
 ---
 
@@ -602,8 +578,8 @@ A full backup should preserve:
 | Issue | Fix |
 |---|---|
 | White screen in HA sidebar | Use direct URL `http://homeassistant.local:4280` |
-| Token list not shown in admin panel | Browser CORS between `4281` and `4280`; use ntfy Web UI → Account → Access Tokens |
-| Cannot change user role via panel | ntfy API limitation; use CLI or `admin_username` config for admin accounts |
+| Token listing not available via API | ntfy's REST API has no endpoint to list existing tokens; create via ntfy_manager, view/revoke in ntfy Web UI → Account → Access Tokens |
+| Cannot change user role after creation | ntfy API limitation; use CLI or `admin_username` config for admin accounts |
 | `hijacked connection` in logs | Harmless; client dropped a WebSocket/SSE connection |
 | Push not arriving on phone | Check app battery optimization, topic subscription and network reachability |
 | `401 Unauthorized` | Token missing, wrong or user has no topic permission |
@@ -706,18 +682,6 @@ This is a HA Ingress/sidebar compatibility issue, not necessarily an ntfy server
 
 ---
 
-### ❌ Admin Panel does not open
-
-Checklist:
-
-- [ ] `admin_panel: true` set in Configuration?
-- [ ] Add-on restarted after changing the option?
-- [ ] Port `4281` mapped in the Network tab?
-- [ ] No other add-on is using port `4281`?
-- [ ] Log tab shows no startup errors?
-
----
-
 ### ❌ HA integration token missing
 
 Check the token file:
@@ -790,7 +754,6 @@ ntfy access
 | `HA integration token created` | Token for Home Assistant was generated |
 | `Saved to: /data/ntfy/ha_token.txt` | Token was persisted |
 | `listening on :4280` | ntfy Web UI/API is running |
-| `listening on :4281` | Admin Panel is running |
 | `401 Unauthorized` | Missing or invalid token |
 | `403 Forbidden` | ACL or reservation blocks access |
 | `hijacked connection` | Usually harmless client disconnect |
@@ -803,7 +766,7 @@ ntfy access
 - Use strong admin credentials.
 - Do not publish your tokens.
 - Do not commit `user.db`, `ha_token.txt` or generated secrets into Git.
-- Keep `4281` Admin Panel LAN/VPN-only if possible.
+- Keep management UIs (e.g. ntfy_manager) LAN/VPN-only if possible.
 - Use HTTPS when exposing ntfy publicly.
 - Use ACLs for sensitive topics.
 - Prefer separate tokens per integration/device.

@@ -30,13 +30,11 @@ ENV NTFY_AUTH_FILE=/data/ntfy/user.db
 # SC2016: $1/$2/$3 in single quotes is intentional — writing shell function
 # bodies to a script file; variables must not expand at build time.
 # hadolint ignore=SC2016
-RUN apk add --no-cache python3 \
-    && chmod +x /usr/local/bin/ntfy \
+RUN chmod +x /usr/local/bin/ntfy \
     && mkdir -p \
         /data/ntfy/cache \
         /data/ntfy/attachments \
         /etc/ntfy \
-        /opt/ntfy-admin \
         /etc/profile.d \
     && printf '# ntfy CLI environment — auto-configured by HA add-on\n\
 export NTFY_AUTH_FILE=/data/ntfy/user.db\n\
@@ -59,7 +57,6 @@ ntfy_token() {\n\
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:4280/v1/health || exit 1
 
-COPY admin/index.html /opt/ntfy-admin/index.html
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
