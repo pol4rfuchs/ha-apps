@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Copy, ExternalLink, Info } from "lucide-react";
 import { ntfy, ntfyErrorText } from "../lib/ntfy";
 import { toast } from "../lib/toast";
+import { copyToClipboard } from "../lib/clipboard";
 import Modal from "../components/Modal";
 
 export default function TokensPage({ ntfyUrl }: { ntfyUrl: string | null }) {
@@ -45,8 +46,9 @@ export default function TokensPage({ ntfyUrl }: { ntfyUrl: string | null }) {
                 <code className="flex-1 font-mono text-sm break-all">{lastToken}</code>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(lastToken).then(() => {
-                      toast.success("Token copied");
+                    copyToClipboard(lastToken).then((ok) => {
+                      if (ok) toast.success("Token copied");
+                      else toast.error("Copy failed — select and copy manually");
                     });
                   }}
                   className="btn btn-ghost text-xs"

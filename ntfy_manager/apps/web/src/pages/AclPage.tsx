@@ -71,9 +71,6 @@ export default function AclPage({
   async function add() {
     if (!user) return toast.error("Select a user");
     if (!topic.trim()) return toast.error("Enter a topic");
-    if (topic !== "*" && /[*?]/.test(topic)) {
-      return toast.error("ntfy ACL doesn't support wildcards. Use exact topic or *.");
-    }
     setBusy(true);
     try {
       const r = await ntfy.setAccess(user, topic.trim(), perm);
@@ -197,13 +194,13 @@ export default function AclPage({
           </div>
           <div>
             <label className="text-xs font-extrabold uppercase tracking-wider text-muted block mb-1.5">
-              Topic (or * for all)
+              Topic (supports * wildcard, e.g. ha-*)
             </label>
             <input
               className="input font-mono"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="ha-notify"
+              placeholder="ha-* or ha-notify"
             />
           </div>
           <div>

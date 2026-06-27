@@ -58,7 +58,7 @@ Admin users can't be deleted from the panel — they're managed via your ntfy se
 Create new API tokens. ntfy's REST API doesn't expose existing tokens server-wide, so the listing has to happen in ntfy's own web UI. We show a clear notice and link there. Newly created tokens are displayed once with a copy button.
 
 ### Access Control
-Lists ACL grants per user/topic. Add new rules with the right-hand form. Wildcards in topics aren't supported by ntfy — use exact topic names or `*` for all.
+Lists ACL grants per user/topic. Add new rules with the right-hand form. Topics support the `*` wildcard anywhere in the pattern (e.g. `ha-*` matches all topics starting with `ha-`), same as ntfy's own `ntfy access` CLI command.
 
 ### Reservations
 Topic reservations for the current account. Reserved topics can be configured to allow or deny access for everyone else.
@@ -78,7 +78,19 @@ The "Topics" button opens a modal where you can edit the comma-separated topic l
 
 **Audit Log** — in-memory ring buffer (max 500 entries). Logs API actions like user created, ACL changed, reservation removed. Cleared on add-on restart; mirrored to Supervisor log via console.
 
+## Known Limitations
+
+These are ntfy API limitations, not bugs in this panel — they applied to the old built-in ntfy admin panel too and will apply to any UI built on top of the same API.
+
+- **Token listing** — ntfy's REST API has no endpoint to list a user's existing tokens. Create new ones here; view/revoke existing ones in the ntfy Web UI → Account → Access Tokens.
+- **Role changes** — ntfy's API has no endpoint to change an existing user's role. To promote someone to admin, recreate them with `role: admin`, or set them as `admin_username` in the ntfy add-on's own config.
+- **Admin accounts** — ntfy returns 401 on delete/modify for admin-role accounts via the API. Manage admin accounts through the ntfy add-on's configuration instead.
+- **ntfy's own Web UI and HA Ingress** — opening the "Open ntfy web UI" link takes you to ntfy's own interface (port `4280` directly, not through Ingress). ntfy's SPA uses absolute asset paths and shows a white screen if loaded through the HA sidebar/Ingress — this is unrelated to this add-on.
+
 ## Troubleshooting
+
+**Copy button doesn't seem to do anything**
+`navigator.clipboard` requires a secure context (HTTPS or `localhost`). Most HAOS installs are plain HTTP on the LAN, where the browser API is simply unavailable. The Copy buttons fall back to a legacy copy method automatically; if both fail, select the text manually and copy it.
 
 **Login says "ntfy unreachable"**
 The backend tried `GET /v1/account` against `ntfy_base_url` and got a network error. Check that the URL is correct and reachable from this add-on's container — try `http://<addon-slug>` if hostname resolution fails.

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Copy, ExternalLink } from "lucide-react";
 import { ntfy, ntfyErrorText } from "../lib/ntfy";
 import { toast } from "../lib/toast";
+import { copyToClipboard } from "../lib/clipboard";
 
 export default function ServerPage({
   refreshKey,
@@ -76,7 +77,10 @@ export default function ServerPage({
           <h3 className="font-bold">Home Assistant Snippet</h3>
           <button
             onClick={() => {
-              navigator.clipboard.writeText(haYaml).then(() => toast.success("Copied"));
+              copyToClipboard(haYaml).then((ok) => {
+                if (ok) toast.success("Copied");
+                else toast.error("Copy failed — select and copy manually");
+              });
             }}
             className="btn btn-ghost text-xs"
           >
