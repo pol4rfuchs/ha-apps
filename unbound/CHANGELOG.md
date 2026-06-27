@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.24.2-ha39-pol4r1](https://github.com/pol4rfuchs/ha-apps/compare/unbound-v1.24.2-ha38-pol4r1...unbound-v1.24.2-ha39-pol4r1) (2026-06-27)
+
+### Bug Fixes
+
+* **unbound:** drop privileges to unbound user to prevent root.key permission crash ([8a11628](https://github.com/pol4rfuchs/ha-apps/commit/8a11628880d1d33f9bf8812d0bb55b6987447646))
+
 ## [1.24.2-ha38] - 2026/05/23
 
 - Fix DNS-over-TLS forwarding: emit `tls-cert-bundle: "/etc/ssl/cert.pem"` when forward TLS is enabled so upstream certs validate against the system CA store — without this, every DoT handshake failed with "self-signed certificate in certificate chain" (issue #19)
