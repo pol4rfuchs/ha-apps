@@ -21,8 +21,8 @@
 | Property | Value |
 |---|---|
 | **Base image** | `nextcloud:apache` (official) |
-| **Nextcloud version** | 34.0.0 |
-| **Add-on version** | 33.0.11 |
+| **Nextcloud version** | `34.0.0` |
+| **Add-on version** | `33.0.11` |
 | **Default port** | `8080` |
 | **App store** | ✅ unrestricted |
 | **Arch** | `amd64`, `aarch64` |
