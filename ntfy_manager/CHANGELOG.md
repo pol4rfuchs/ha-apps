@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.8...ntfy_manager-v0.2.9) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** update react monorepo to v19 ([#87](https://github.com/pol4rfuchs/ha-apps/issues/87)) ([271b200](https://github.com/pol4rfuchs/ha-apps/commit/271b2002e8d3d88312f5b58e9b297393c1cee293))
+
 ## [0.2.8](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.7...ntfy_manager-v0.2.8) (2026-06-27)
 
 
