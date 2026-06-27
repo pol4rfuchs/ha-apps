@@ -1,9 +1,3 @@
-## 1.1.6.6 — 2026-04-25 (ntfy 2.22.0)
-
-- Candidate update to ntfy `2.22.0`.
-- Upstream release: [v2.22.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.22.0)
-- Safety: this version is generated on branch `auto/ntfy-v2.22.0` first. Home Assistant does not see it until merged into `main`.
-
 # Changelog
 
 ---
@@ -14,6 +8,24 @@
 ### Bug Fixes
 
 * **ntfy:** update upstream to 2.25.0 ([#78](https://github.com/pol4rfuchs/ha-apps/issues/78)) ([7b45c30](https://github.com/pol4rfuchs/ha-apps/commit/7b45c3081dd92ad06d7449b5cff1dfe09f32db49))
+
+## 1.1.8 — 2026-06-08 (ntfy 2.24.0)
+
+- Candidate update to ntfy `2.24.0`.
+- Upstream release: [v2.24.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.24.0)
+- Backfilled entry: original update PR ([#19](https://github.com/pol4rfuchs/ha-apps/pull/19)) predated the Release Please commit-format fix (2026-06-13), so no changelog entry was generated automatically at the time.
+
+## 1.1.7 — 2026-05-30 (ntfy 2.23.0)
+
+- Candidate update to ntfy `2.23.0`.
+- Upstream release: [v2.23.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.23.0)
+- Backfilled entry: original update PR ([#4](https://github.com/pol4rfuchs/ha-apps/pull/4)) predated the Release Please commit-format fix (2026-06-13), so no changelog entry was generated automatically at the time.
+
+## 1.1.6.6 — 2026-04-25 (ntfy 2.22.0)
+
+- Candidate update to ntfy `2.22.0`.
+- Upstream release: [v2.22.0](https://github.com/binwiederhier/ntfy/releases/tag/v2.22.0)
+- Safety: this version is generated on branch `auto/ntfy-v2.22.0` first. Home Assistant does not see it until merged into `main`.
 
 ## 1.1.6.4 > 1.1.6.5 — 2026-03-20
 
