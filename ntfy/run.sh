@@ -108,17 +108,17 @@ create_admin() {
     if [ -z "${username}" ] || [ -z "${password}" ]; then
         return
     fi
-    if NTFY_AUTH_FILE="${AUTH_FILE}" ntfy user list 2>/dev/null | grep -q "^user ${username}"; then
+    if NTFY_AUTH_FILE="${AUTH_FILE}" ntfy user list </dev/null 2>/dev/null | grep -q "^user ${username}"; then
         bashio::log.info "Admin user '${username}' already exists — syncing password + role"
         NTFY_AUTH_FILE="${AUTH_FILE}" NTFY_PASSWORD="${password}" \
-            ntfy user change-pass "${username}" 2>/dev/null || true
+            ntfy user change-pass "${username}" </dev/null 2>/dev/null || true
     else
         bashio::log.info "Creating admin user '${username}' …"
         NTFY_AUTH_FILE="${AUTH_FILE}" NTFY_PASSWORD="${password}" \
-            ntfy user add --role=admin "${username}" 2>/dev/null || true
+            ntfy user add --role=admin "${username}" </dev/null 2>/dev/null || true
     fi
     NTFY_AUTH_FILE="${AUTH_FILE}" \
-        ntfy user change-role "${username}" admin 2>/dev/null || true
+        ntfy user change-role "${username}" admin </dev/null 2>/dev/null || true
     bashio::log.info "Admin user '${username}' ready"
 }
 
@@ -131,7 +131,7 @@ provision_admin_tier() {
     [ -z "${username}" ] && return
 
     # Create tier if it doesn't exist yet
-    if ! NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier list 2>/dev/null | grep -q "^tier admin"; then
+    if ! NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier list </dev/null 2>/dev/null | grep -q "^tier admin"; then
         bashio::log.info "Creating 'admin' tier …"
         NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier add \
             --message-limit=0 \
@@ -140,13 +140,13 @@ provision_admin_tier() {
             --reservation-limit=100 \
             --attachment-file-size-limit=100M \
             --attachment-total-size-limit=10G \
-            admin 2>/dev/null || true
+            admin </dev/null 2>/dev/null || true
     fi
 
     # Assign tier to admin user
     bashio::log.info "Assigning 'admin' tier to '${username}' …"
     NTFY_AUTH_FILE="${AUTH_FILE}" \
-        ntfy user change-tier "${username}" admin 2>/dev/null || true
+        ntfy user change-tier "${username}" admin </dev/null 2>/dev/null || true
 }
 
 # ---------------------------------------------------------------------------
@@ -174,8 +174,16 @@ provision_ha_token() {
 
     bashio::log.info "Provisioning HA integration token for '${username}' …"
     local token_output
+    local token_rc
     token_output=$(NTFY_AUTH_FILE="${AUTH_FILE}" \
-        ntfy token add --label="Home Assistant" "${username}" 2>&1) || true
+        timeout 15 ntfy token add --label="Home Assistant" "${username}" </dev/null 2>&1)
+    token_rc=$?
+
+    if [ "${token_rc}" -eq 124 ]; then
+        bashio::log.warning "Token provisioning timed out after 15s — skipping for now."
+        bashio::log.warning "Run manually: ntfy_token ${username} 'Home Assistant'"
+        return
+    fi
 
     # ntfy token add output format: "token tk_XXXX (label) expires never"
     local token
