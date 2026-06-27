@@ -9,6 +9,5 @@
   "nextcloud": "33.0.11",
   "searxng": "1.0.6",
   "teamspeak6": "1.1.14",
-  "ts6_manager": "1.0.4",
-  "unbound": "1.24.2-ha39-pol4r1"
+  "ts6_manager": "1.0.4"
 }
