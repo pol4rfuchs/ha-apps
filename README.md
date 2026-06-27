@@ -16,15 +16,15 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 | App | Status | Runtime / Upstream | Category | Description |
 |---|---|---|---|---|
-| [TS6 Manager](ts6_manager/) | ![ready](https://img.shields.io/badge/ready-yes-41BDF5?style=flat-square) | `custom build` | Management | Web management interface for TeamSpeak 6 servers |
+| [TS6 Manager](ts6_manager/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `custom build` | Management | Web management interface for TeamSpeak 6 servers |
 | [TeamSpeak 6 Server](teamspeak6/) | ![stable](https://img.shields.io/badge/stable-yes-2ea44f?style=flat-square) | `teamspeaksystems/teamspeak6-server` | Voice | TeamSpeak 6 self-hosted voice server |
-| [ntfy](ntfy/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square)  | `binwiederhier/ntfy` | Notifications | Lightweight pub/sub push notification server |
-| [ntfy HAOS Admin Panel](ntfy_manager/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square)  | `custom build` | Management | Full-featured HAOS admin console for ntfy |
-| [Navidrome](navidrome/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square)  | `deluan/navidrome` | Media | Self-hosted music server with Subsonic API support |
+| [ntfy](ntfy/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `binwiederhier/ntfy` | Notifications | Lightweight pub/sub push notification server |
+| [ntfy HAOS Admin Panel](ntfy_manager/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `custom build` | Management | Full-featured HAOS admin console for ntfy |
+| [Navidrome](navidrome/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `deluan/navidrome` | Media | Self-hosted music server with Subsonic API support |
 | [Nextcloud](nextcloud/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `nextcloud:X.X.X-apache` | Storage | Self-hosted cloud platform for files, calendar, and collaboration |
 | [Matrix Synapse](matrix_synapse/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `ghcr.io/element-hq/synapse` | Messaging | Matrix homeserver for secure messaging |
-| [SearXNG](searxng/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square)  | `searxng/searxng` | Search | Privacy-respecting metasearch engine |
-| [Nginx Proxy Manager](nginx_proxy_manager/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square)  | `jc21/nginx-proxy-manager` | Proxy | Reverse proxy management UI with SSL support |
+| [SearXNG](searxng/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `searxng/searxng` | Search | Privacy-respecting metasearch engine |
+| [Nginx Proxy Manager](nginx_proxy_manager/) | ![stable](https://img.shields.io/badge/status-stable-2ea44f?style=flat-square) | `jc21/nginx-proxy-manager` | Proxy | Reverse proxy management UI with SSL support |
 | [Intiface Central](intiface_central/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `custom build` | GUI | Intiface Central GUI application for device control |
 | [Forgejo](forgejo/) | ![wip](https://img.shields.io/badge/status-wip-FFA500?style=flat-square) | `forgejo/forgejo` | Git | Self-hosted Git platform — free GitHub alternative with repos, issues, CI/CD and package registry |
 | [Unbound](unbound/) | ![ready](https://img.shields.io/badge/status-ready-41BDF5?style=flat-square) | `custom build` | DNS | Validating, recursive DNS resolver with DNSSEC support |
