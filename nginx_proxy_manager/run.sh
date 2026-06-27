@@ -49,6 +49,35 @@ fi
 ) &
 trap "cp -ru /etc/letsencrypt/. /data/npm/letsencrypt/ 2>/dev/null || true" EXIT INT TERM
 
+# ── Self-Healing: fehlende Zertifikate (Dummy statt Crash-Loop) ──────────────
+# Falls ein Certbot-Request fehlschlägt (z.B. DuckDNS DNS-01 Fehler), generiert
+# NPM trotzdem eine nginx-Config, die auf das (nie erzeugte) Zertifikat zeigt.
+# nginx crasht dann in einer Endlosschleife und reißt ALLE Proxy Hosts mit,
+# nicht nur den fehlerhaften. Dieser Watcher patcht fehlende Zertifikatsdateien
+# mit einem kurzlebigen Self-Signed-Dummy, damit nginx startet — der Host mit
+# dem kaputten Zertifikat zeigt dann nur eine Browser-Warnung statt den
+# kompletten Reverse Proxy lahmzulegen. Sobald ein echtes Zertifikat erfolg-
+# reich ausgestellt wird, überschreibt Certbot den Dummy automatisch.
+(
+    for _ in $(seq 1 40); do
+        grep -rhoE 'ssl_certificate[[:space:]]+/etc/letsencrypt/live/[^;[:space:]]+' \
+            /data/nginx /etc/nginx/conf.d 2>/dev/null \
+            | awk '{print $2}' \
+            | while read -r CERT_PATH; do
+                CERT_DIR="$(dirname "${CERT_PATH}")"
+                KEY_PATH="${CERT_DIR}/privkey.pem"
+                if [ ! -s "${CERT_PATH}" ] || [ ! -s "${KEY_PATH}" ]; then
+                    mkdir -p "${CERT_DIR}"
+                    openssl req -x509 -nodes -newkey rsa:2048 \
+                        -keyout "${KEY_PATH}" -out "${CERT_PATH}" \
+                        -days 1 -subj "/CN=localhost" 2>/dev/null \
+                        && log "Self-healed missing certificate: ${CERT_PATH} (dummy, will be replaced by a real one once issuance succeeds)"
+                fi
+            done || true
+        sleep 3
+    done
+) &
+
 export DATA_PATH="/data/npm/data"
 export LETSENCRYPT_PATH="/etc/letsencrypt"
 
