@@ -1,14 +1,13 @@
----
-name: "Unbound"
-description: "Hardened recursive DNS resolver with built-in web UI"
-url: "https://github.com/pol4rfuchs/ha-apps"
-version: "1.24.2-ha39-pol4r1"
-slug: "unbound"
-image: "ghcr.io/pol4rfuchs/unbound-ha-app"
+name: Unbound
+description: Hardened recursive DNS resolver with built-in web UI
+url: https://github.com/pol4rfuchs/ha-apps
+version: 1.24.3-ha39-pol4r1
+slug: unbound
+image: ghcr.io/pol4rfuchs/unbound-ha-app
 init: false
 ingress: true
 ingress_port: 2137
-panel_icon: "mdi:dns"
+panel_icon: mdi:dns
 arch:
   - amd64
   - aarch64
@@ -24,7 +23,6 @@ options:
   log_level: info
 schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)
-
 startup: system
 apparmor: true
 homeassistant_api: false
