@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.24.2-ha39-pol4r1](https://github.com/pol4rfuchs/ha-apps/compare/unbound-v1.24.2-ha38-pol4r1...unbound-v1.24.2-ha39-pol4r1) (2026-06-27)
+## [1.25.1-ha1-pol4r1] - 2026-06-27
+
+- Rebase on Alpine 3.24 (hassio-addons/base v20.2.0) and bump Unbound 1.24.2 → 1.25.1
+- Security release upstream: 11 CVEs fixed, including a remote-code-execution risk in DNSSEC validation (CVE-2026-33278), cache-poisoning fixes, several crash fixes, and a mitigation for the "Jiggle Attack"
+- No add-on config schema changes — existing settings keep working as-is
+
+## [1.24.2-ha39-pol4r1] (2026-06-27)
 
 ### Bug Fixes
 
