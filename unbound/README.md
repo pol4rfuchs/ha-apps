@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Unbound Version](https://img.shields.io/badge/Unbound-1.24.2-2C3E50?style=for-the-badge&logoColor=white)](https://nlnetlabs.nl/projects/unbound/about/)
+[![Unbound Version](https://img.shields.io/badge/Unbound-1.25.1-2C3E50?style=for-the-badge&logoColor=white)](https://nlnetlabs.nl/projects/unbound/about/)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **A self-managed Home Assistant add-on providing a recursive DNS resolver using [Unbound](https://nlnetlabs.nl/projects/unbound/about/). Fully configured through the built-in web UI — no YAML editing required.**
@@ -23,8 +23,8 @@
 | Property | Value |
 |---|---|
 | **Upstream** | `nlnetlabs/unbound` |
-| **Unbound version** | `1.24.2` |
-| **Add-on version** | `1.24.2-ha39-pol4r1` |
+| **Unbound version** | `1.25.1` |
+| **Add-on version** | `1.25.1-ha1-pol4r1` |
 | **Default port** | `5053` (mapped from container `53`) |
 | **Config** | Web UI (no YAML editing) |
 | **Arch** | `amd64`, `aarch64` |
