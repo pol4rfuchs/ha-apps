@@ -23,7 +23,7 @@
 | Property | Value |
 |---|---|
 | **Engine** | `intiface-engine` (x64, via box64 on ARM) |
-| **Engine version** | `4.0.2` |
+| **Engine version** | 4.0.2 |
 | **Web UI port** | `12346` |
 | **Intiface port** | `12345` |
 | **Arch** | `amd64`, `aarch64` (via box64) |

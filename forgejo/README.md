@@ -23,8 +23,8 @@
 | Property | Value |
 |---|---|
 | **Upstream image** | `codeberg.org/forgejo/forgejo` (rootless) |
-| **Forgejo version** | `15.0.3` |
-| **Add-on version** | `16.0.5` |
+| **Forgejo version** | 15.0.3 |
+| **Add-on version** | 16.0.5 |
 | **SSH Git access** | optional (`ssh_enabled`) |
 | **Arch** | `amd64`, `aarch64` |
 

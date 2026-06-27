@@ -90,7 +90,7 @@ This repository contains a complete **Home Assistant Add-on** that wraps [`clust
 |---|---|
 | **HA Add-on Name** | `TS6 Manager` |
 | **HA Add-on Slug** | `ts6_manager` |
-| **Add-on Version** | `1.0.4` |
+| **Add-on Version** | 1.0.4 |
 | **Default Web UI Port** | `8066` |
 | **Backend Target** | TeamSpeak 6 WebQuery HTTP API |
 | **TS6 WebQuery Port** | `10080` |
