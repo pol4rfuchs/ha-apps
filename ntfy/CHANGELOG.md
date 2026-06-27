@@ -8,6 +8,13 @@
 
 ---
 
+## [1.1.9](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.8...ntfy-v1.1.9) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy:** update upstream to 2.25.0 ([#78](https://github.com/pol4rfuchs/ha-apps/issues/78)) ([7b45c30](https://github.com/pol4rfuchs/ha-apps/commit/7b45c3081dd92ad06d7449b5cff1dfe09f32db49))
+
 ## 1.1.6.4 > 1.1.6.5 — 2026-03-20
 
 - matrix integration for unified push
