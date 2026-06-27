@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.8](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.7...ntfy_manager-v0.2.8) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add missing vite-env.d.ts for TS6 compatibility, bump typescript to v6 ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
+* **ntfy_manager:** align vite to v8 for @vitejs/plugin-react v6 peer dep ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
+
 ## [0.2.7](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.6...ntfy_manager-v0.2.7) (2026-06-27)
 
 
