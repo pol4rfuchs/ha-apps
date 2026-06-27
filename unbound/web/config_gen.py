@@ -319,7 +319,7 @@ def generate_unbound_conf(config, include_overlays=True):
     lines.append("server:")
     lines.append("    # Daemon settings")
     lines.append("    do-daemonize: no")
-    lines.append('    username: ""')
+    lines.append('    username: "unbound"')
     lines.append('    chroot: ""')
     lines.append("")
     lines.append("    # Network settings")
