@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.9...ntfy_manager-v0.2.10) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** migrate to Tailwind v4 (Vite plugin, CSS-first [@theme](https://github.com/theme)) ([60725a8](https://github.com/pol4rfuchs/ha-apps/commit/60725a85d8a4af454103244a00cdda452a0d319d))
+
 ## [0.2.9](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.8...ntfy_manager-v0.2.9) (2026-06-27)
 
 
