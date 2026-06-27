@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.7](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.6...ntfy_manager-v0.2.7) (2026-06-27)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** allow * wildcard in ACL topic patterns ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
+* **ntfy_manager:** clipboard fallback for insecure (HTTP) contexts ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
+
 ## [0.2.6](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.5...ntfy_manager-v0.2.6) (2026-06-26)
 
 
