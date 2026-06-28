@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.25.1-ha2-pol4r1] - 2026-06-28
+
+- No functional change — re-tag to force Supervisor to detect an update.
+  The 1.25.1-ha1-pol4r1 image was rebuilt after a Dockerfile fix
+  (multi-stage ARG/FROM ordering, see commit fixing the
+  "base name (${BUILD_FROM}) should not be blank" build failure),
+  but Supervisor compares version strings, not image digests, so the
+  unchanged version number never surfaced as an available update.
+  
 ## [1.25.1-ha1-pol4r1] - 2026-06-27
 
 - Rebase on Alpine 3.24 (hassio-addons/base v20.2.0) and bump Unbound 1.24.2 → 1.25.1
