@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.0...ntfy-v1.2.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* **ntfy:** quote message-size-limit as string in server.yml ([9466146](https://github.com/pol4rfuchs/ha-apps/commit/946614631af98f1c1e7d1d9340113cfd9657a7ee))
+
 ## [1.2.0](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.11...ntfy-v1.2.0) (2026-06-28)
 
 
