@@ -66,7 +66,7 @@ visitor-request-limit-burst: ${VISITOR_REQUEST_LIMIT_BURST}
 visitor-request-limit-replenish: "${VISITOR_REQUEST_LIMIT_REPLENISH}"
 visitor-message-daily-limit: ${VISITOR_MESSAGE_DAILY_LIMIT}
 
-message-size-limit: ${MESSAGE_SIZE_LIMIT}
+message-size-limit: "${MESSAGE_SIZE_LIMIT}"
 
 # CORS: allow cross-origin API access (e.g. for ntfy_manager or other clients)
 access-control-allow-origin: "*"
