@@ -35,6 +35,10 @@ RUN set -euo pipefail && \
       --output "/tmp/unbound-${UNBOUND_VERSION}.tar.gz.sha256" \
       "https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz.sha256" && \
     cd /tmp && \
+    echo "=== Expected (from NLnet Labs .sha256 file) ===" && \
+    cat "unbound-${UNBOUND_VERSION}.tar.gz.sha256" && \
+    echo "=== Actual (computed locally) ===" && \
+    sha256sum "unbound-${UNBOUND_VERSION}.tar.gz" && \
     sha256sum -c "unbound-${UNBOUND_VERSION}.tar.gz.sha256" && \
     mkdir -p /tmp/src && \
     tar -xzf "/tmp/unbound-${UNBOUND_VERSION}.tar.gz" -C /tmp/src --strip-components=1 && \
