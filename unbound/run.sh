@@ -12,6 +12,15 @@ WHITELIST_FILE="/data/whitelist.json"
 LOCAL_RECORDS_FILE="/data/local_records.json"
 LOCAL_RECORDS_CONF="/etc/unbound/local_records.conf"
 
+# /run (and therefore /var/run) gets reset fresh by s6-overlay on every
+# container start, regardless of what was chowned at build time. Unbound
+# needs to chdir into its run-dir and write its pidfile there *after*
+# dropping privileges to the unbound user, so this has to be ensured at
+# every startup, not just baked into the image.
+mkdir -p /var/run/unbound
+chown unbound:unbound /var/run/unbound
+chmod 0750 /var/run/unbound
+
 # Initialize blocklists file if it doesn't exist
 init_blocklists() {
     if [ ! -f "${BLOCKLISTS_FILE}" ]; then

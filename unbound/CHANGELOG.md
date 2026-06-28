@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.25.1-ha3-pol4r1] - 2026-06-28
+
+- Fix Unbound startup crash: `cannot open pidfile ... Permission denied` /
+  `Could not chdir to /var/run/unbound: Permission denied`. s6-overlay
+  resets `/run` fresh on every container start, so the build-time
+  chown/chmod on `/var/run/unbound` never survived into the running
+  container. Now recreated and chowned at the top of `run.sh` on
+  every start.
+
 ## [1.25.1-ha2-pol4r1] - 2026-06-28
 
 - No functional change — re-tag to force Supervisor to detect an update.
