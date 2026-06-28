@@ -29,10 +29,15 @@ RUN apk add --no-cache \
 
 RUN set -euo pipefail && \
     curl --fail --location --show-error --silent \
-      --output /tmp/unbound.tar.gz \
+      --output "/tmp/unbound-${UNBOUND_VERSION}.tar.gz" \
       "https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz" && \
+    curl --fail --location --show-error --silent \
+      --output "/tmp/unbound-${UNBOUND_VERSION}.tar.gz.sha256" \
+      "https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz.sha256" && \
+    cd /tmp && \
+    sha256sum -c "unbound-${UNBOUND_VERSION}.tar.gz.sha256" && \
     mkdir -p /tmp/src && \
-    tar -xzf /tmp/unbound.tar.gz -C /tmp/src --strip-components=1 && \
+    tar -xzf "/tmp/unbound-${UNBOUND_VERSION}.tar.gz" -C /tmp/src --strip-components=1 && \
     cd /tmp/src && \
     ./configure \
       --prefix=/usr \
