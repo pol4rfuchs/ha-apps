@@ -1,10 +1,74 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:20.2.0
+# ---------------------------------------------------------------------------
+# Stage 1: build Unbound from source.
+#
+# Alpine 3.24 stable's apk repo still ships Unbound 1.24.2 (1.25.1 only
+# landed in the `edge` branch on 2026-05-20, after the 3.24 stable freeze).
+# 1.25.1 fixes 11 CVEs including a DNSSEC-validation RCE (CVE-2026-33278),
+# so we build it ourselves instead of waiting for a stable apk backport.
+#
+# Built against the same Alpine 3.24 userland as the runtime stage, so no
+# musl/openssl/libevent ABI mismatch versus a mixed apk@edge install.
+# ---------------------------------------------------------------------------
+FROM alpine:3.24 AS unbound-builder
+
+ARG UNBOUND_VERSION=1.25.1
+
+RUN apk add --no-cache \
+    build-base \
+    openssl-dev \
+    libevent-dev \
+    expat-dev \
+    curl
+
+RUN set -euo pipefail && \
+    curl --fail --location --show-error --silent \
+      --output /tmp/unbound.tar.gz \
+      "https://nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz" && \
+    mkdir -p /tmp/src && \
+    tar -xzf /tmp/unbound.tar.gz -C /tmp/src --strip-components=1 && \
+    cd /tmp/src && \
+    ./configure \
+      --prefix=/usr \
+      --sysconfdir=/etc \
+      --localstatedir=/var \
+      --with-pidfile=/var/run/unbound/unbound.pid \
+      --with-run-dir=/var/run/unbound \
+      --with-username=unbound \
+      --with-libevent \
+      --with-pthreads \
+      --with-ssl \
+      --enable-subnet \
+      --disable-rpath && \
+    make -j"$(nproc)" && \
+    make DESTDIR=/build-out install
+
+# ---------------------------------------------------------------------------
+# Stage 2: runtime image.
+#
+# Base bumped 20.2.0 -> 21.0.0: this is the release that fixes the addon
+# startup banner to call bashio::app.* instead of the deprecated
+# bashio::addon.* functions (which were hitting a now-403'd Supervisor
+# store endpoint on every start). See hassio-addons/app-base PR #389.
+# ---------------------------------------------------------------------------
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 FROM ${BUILD_FROM}
 
-# Install unbound, python/flask, and dependencies
+# Bring in the self-built Unbound (binaries, libs, man pages, default conf).
+COPY --from=unbound-builder /build-out/ /
+
+# apk's `unbound` package normally creates this system user via its
+# pre-install script; since we no longer install that package, create it
+# ourselves so --with-username=unbound (and our own chown calls below)
+# resolve to a real, stable user.
+RUN addgroup -S unbound && \
+    adduser -S -D -H -h /var/run/unbound -s /sbin/nologin -G unbound -g unbound unbound
+
+# Runtime libraries for the self-built Unbound, plus python/flask and the
+# rest of the web UI stack. No `unbound` apk package here anymore.
 RUN apk add --no-cache --upgrade libcrypto3 libssl3 && \
     apk add --no-cache \
-    unbound \
+    libevent \
+    libexpat \
     bash \
     jq \
     curl \

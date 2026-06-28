@@ -3,7 +3,7 @@
 set -euo pipefail
 
 bashio::log.level "$(bashio::config 'log_level')"
-bashio::log.info "Starting Unbound DNS resolver ($(bashio::addon.version))..."
+bashio::log.info "Starting Unbound DNS resolver ($(bashio::app.version))..."
 
 CUSTOM_CONFIG_PATH="/config/unbound.conf"
 BLOCKLISTS_FILE="/data/blocklists.json"
@@ -248,7 +248,7 @@ bashio::log.info "Configuration valid. Starting Unbound..."
 
 # Start web UI in background
 bashio::log.info "Starting web UI on port 2137..."
-INGRESS_PATH=$(bashio::addon.ingress_entry) \
+INGRESS_PATH=$(bashio::app.ingress_entry) \
     python3 /web/app.py &
 
 # Run unbound in foreground
