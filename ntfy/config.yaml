@@ -1,17 +1,16 @@
----
 name: ntfy
-version: "1.2.0"
+version: 1.2.1
 slug: ntfy
 description: Self-hosted pub-sub notification service (ntfy.sh)
 url: https://github.com/pol4rfuchs/ha-apps
-image: "ghcr.io/pol4rfuchs/ntfy-ha-app"
+image: ghcr.io/pol4rfuchs/ntfy-ha-app
 arch:
   - aarch64
   - amd64
 init: false
 panel_icon: mdi:bell-badge
 panel_title: ntfy
-webui: "http://[HOST]:[PORT:4280]/"
+webui: http://[HOST]:[PORT:4280]/
 map:
   - backup:rw
 ports:
@@ -20,32 +19,32 @@ ports_description:
   4280/tcp: ntfy Web UI & API
 options:
   log_level: INFO
-  base_url: ""
+  base_url: ''
   behind_proxy: false
   auth_default_access: deny-all
   enable_signup: true
   enable_login: true
   enable_reservations: true
-  cache_duration: "12h"
-  attachment_total_size_limit: "5G"
-  attachment_file_size_limit: "15M"
-  attachment_expiry_duration: "3h"
-  visitor_attachment_total_size_limit: "1G"
-  visitor_attachment_daily_bandwidth_limit: "5G"
-  keepalive_interval: "45s"
-  manager_interval: "3m"
+  cache_duration: 12h
+  attachment_total_size_limit: 5G
+  attachment_file_size_limit: 15M
+  attachment_expiry_duration: 3h
+  visitor_attachment_total_size_limit: 1G
+  visitor_attachment_daily_bandwidth_limit: 5G
+  keepalive_interval: 45s
+  manager_interval: 3m
   visitor_request_limit_burst: 1000
-  visitor_request_limit_replenish: "1s"
+  visitor_request_limit_replenish: 1s
   visitor_message_daily_limit: 0
-  message_size_limit: "4096"
-  upstream_base_url: ""
-  admin_username: ""
-  admin_password: ""
+  message_size_limit: '4096'
+  upstream_base_url: ''
+  admin_username: ''
+  admin_password: ''
 schema:
-  log_level: "list(TRACE|DEBUG|INFO|WARN|ERROR)"
+  log_level: list(TRACE|DEBUG|INFO|WARN|ERROR)
   base_url: str?
   behind_proxy: bool
-  auth_default_access: "list(deny-all|read-write|write-only|read-only)"
+  auth_default_access: list(deny-all|read-write|write-only|read-only)
   enable_signup: bool
   enable_login: bool
   enable_reservations: bool
