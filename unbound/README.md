@@ -24,7 +24,7 @@
 |---|---|
 | **Upstream** | `nlnetlabs/unbound` |
 | **Unbound version** | `1.25.1` |
-| **Add-on version** | `1.25.1-ha6-pol4r1` |
+| **Add-on version** | `1.25.1-ha7-pol4r1` |
 | **Default port** | `5053` (mapped from container `53`) |
 | **Config** | Web UI (no YAML editing) |
 | **Arch** | `amd64`, `aarch64` |
