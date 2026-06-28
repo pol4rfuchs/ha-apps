@@ -1,3 +1,10 @@
+# ARGs used in a FROM instruction must be declared before the *first* FROM
+# in the whole file, or buildx silently fails to resolve them in later
+# stages ("base name (${BUILD_FROM}) should not be blank" — see
+# moby/moby#38379). Both belong here, not next to their respective stages.
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
+ARG UNBOUND_VERSION=1.25.1
+
 # ---------------------------------------------------------------------------
 # Stage 1: build Unbound from source.
 #
@@ -11,7 +18,7 @@
 # ---------------------------------------------------------------------------
 FROM alpine:3.24 AS unbound-builder
 
-ARG UNBOUND_VERSION=1.25.1
+ARG UNBOUND_VERSION
 
 RUN apk add --no-cache \
     build-base \
@@ -50,7 +57,6 @@ RUN set -euo pipefail && \
 # bashio::addon.* functions (which were hitting a now-403'd Supervisor
 # store endpoint on every start). See hassio-addons/app-base PR #389.
 # ---------------------------------------------------------------------------
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 FROM ${BUILD_FROM}
 
 # Bring in the self-built Unbound (binaries, libs, man pages, default conf).
