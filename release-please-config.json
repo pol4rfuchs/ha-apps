@@ -12,7 +12,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "forgejo/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -25,7 +25,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "intiface_central/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -38,7 +38,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "matrix_synapse/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -51,7 +51,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "navidrome/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -64,7 +64,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "nginx_proxy_manager/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -77,7 +77,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "ntfy/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -90,7 +90,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "ntfy_manager/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -103,7 +103,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "nextcloud/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -116,7 +116,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "searxng/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -129,7 +129,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "teamspeak6/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -142,7 +142,7 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "ts6_manager/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
