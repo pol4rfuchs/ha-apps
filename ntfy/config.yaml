@@ -30,8 +30,14 @@ options:
   attachment_total_size_limit: "5G"
   attachment_file_size_limit: "15M"
   attachment_expiry_duration: "3h"
+  visitor_attachment_total_size_limit: "1G"
+  visitor_attachment_daily_bandwidth_limit: "5G"
   keepalive_interval: "45s"
   manager_interval: "3m"
+  visitor_request_limit_burst: 1000
+  visitor_request_limit_replenish: "1s"
+  visitor_message_daily_limit: 0
+  message_size_limit: 4096
   upstream_base_url: ""
   admin_username: ""
   admin_password: ""
@@ -47,8 +53,14 @@ schema:
   attachment_total_size_limit: str
   attachment_file_size_limit: str
   attachment_expiry_duration: str
+  visitor_attachment_total_size_limit: str
+  visitor_attachment_daily_bandwidth_limit: str
   keepalive_interval: str
   manager_interval: str
+  visitor_request_limit_burst: int
+  visitor_request_limit_replenish: str
+  visitor_message_daily_limit: int
+  message_size_limit: int
   upstream_base_url: str?
   admin_username: str?
   admin_password: password?
