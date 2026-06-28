@@ -38,14 +38,33 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Build test matrix
         id: detect
         shell: bash
         env:
           DISPATCH_APP: ${{ inputs.app || 'all' }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
+
+          # On pull_request events, only build add-ons whose folder actually
+          # changed in the diff. Shared/workflow-level files (e.g. the
+          # build-app.yaml reusable workflow itself) still fall through to
+          # "build everything", since a change there could affect every app.
+          if [ "${EVENT_NAME}" = "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}")
+            SHARED_CHANGED=$(printf '%s\n' "${CHANGED_FILES}" | grep -E '^\.github/workflows/' || true)
+          else
+            CHANGED_FILES=""
+            SHARED_CHANGED=""
+          fi
+          export CHANGED_FILES
+          export SHARED_CHANGED
+
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json
           import os
@@ -53,9 +72,16 @@ jobs:
 
           expected = json.load(open("addons.json"))
           wanted = os.environ.get("DISPATCH_APP", "all")
+          event = os.environ.get("EVENT_NAME", "")
+          changed = [f for f in os.environ.get("CHANGED_FILES", "").splitlines() if f]
+          shared_changed = bool(os.environ.get("SHARED_CHANGED", "").strip())
+
           rows = []
           for app in expected:
-              if wanted not in ("", "all") and app != wanted:
+              if event == "pull_request" and not shared_changed:
+                  if not any(f.startswith(f"{app}/") for f in changed):
+                      continue
+              elif event != "pull_request" and wanted not in ("", "all") and app != wanted:
                   continue
               if Path(app, "Dockerfile").is_file() and Path(app, "config.yaml").is_file():
                   rows.append({"app": app})
