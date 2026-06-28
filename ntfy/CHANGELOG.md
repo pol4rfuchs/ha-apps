@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.11...ntfy-v1.2.0) (2026-06-28)
+
+
+### Features
+
+* **ntfy:** add rate limits, message size limit and visitor attachment limits ([7d06b66](https://github.com/pol4rfuchs/ha-apps/commit/7d06b66da5d99fe04450556fd03f017ba3e53e16))
+
 ## [1.1.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.1.10...ntfy-v1.1.11) (2026-06-27)
 
 
