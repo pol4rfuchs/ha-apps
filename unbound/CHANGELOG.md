@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.25.1-ha6-pol4r1] - 2026-06-28
+
+- Verify the Unbound source tarball against NLnet Labs' official
+  sha256 checksum before building (supply-chain hardening for the
+  source-build introduced in ha1).
+- Replace world-writable (umask 000) query log creation with a
+  group-owned, mode-0660 file — closes an undocumented exception to
+  our own "no chmod 666" baseline.
+- Add `harden-algo-downgrade` and `harden-below-nxdomain` to the
+  generated unbound.conf. The latter is config-level defense-in-depth
+  for the ghost-domain CVE class (CVE-2026-40622) fixed in the 1.25.1
+  binary.
+- AppArmor: drop the unused `sys_chroot` capability (chroot is
+  disabled), and restrict `/etc/unbound/**` to owner-only write so
+  the privilege-dropped daemon can no longer modify its own config.
+- Give `run.sh`'s two `mktemp` calls explicit templates matching the
+  AppArmor `/tmp/unbound-*` glob, instead of relying on the bare
+  `/tmp/ rw` rule for unmatched default mktemp filenames.
+
 ## [1.25.1-ha5-pol4r1] - 2026-06-28
 
 - Cosmetic: disable Unbound's pidfile entirely (`--with-pidfile=""`).
