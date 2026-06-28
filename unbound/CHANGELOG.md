@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.25.1-ha4-pol4r1] - 2026-06-28
+
+- Fix Unbound startup crash from the ha3 fix attempt: runtime `chown` on
+  `/var/run/unbound` failed with "Operation not permitted" — the
+  container lacks `CAP_CHOWN` at runtime (same AppArmor capability gap
+  as the original root.key fix). Switched Unbound's pidfile/run-dir to
+  `/var/lib/unbound` instead, which is already proven to keep its
+  ownership across restarts without needing any runtime chown.
+
 ## [1.25.1-ha3-pol4r1] - 2026-06-28
 
 - Fix Unbound startup crash: `cannot open pidfile ... Permission denied` /

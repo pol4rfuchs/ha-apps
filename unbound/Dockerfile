@@ -38,8 +38,8 @@ RUN set -euo pipefail && \
       --prefix=/usr \
       --sysconfdir=/etc \
       --localstatedir=/var \
-      --with-pidfile=/var/run/unbound/unbound.pid \
-      --with-run-dir=/var/run/unbound \
+      --with-pidfile=/var/lib/unbound/unbound.pid \
+      --with-run-dir=/var/lib/unbound \
       --with-username=unbound \
       --with-libevent \
       --with-pthreads \
@@ -87,7 +87,6 @@ RUN apk add --no-cache --upgrade libcrypto3 libssl3 && \
 
 # Create necessary directories and download root hints
 RUN mkdir -p \
-      /var/run/unbound \
       /etc/unbound \
       /var/lib/unbound \
       /data && \
@@ -102,10 +101,8 @@ RUN mkdir -p \
       https://www.internic.net/domain/named.root && \
     unbound-anchor -a /var/lib/unbound/root.key || true && \
     chown unbound:unbound \
-      /var/lib/unbound \
-      /var/run/unbound && \
+      /var/lib/unbound && \
     chmod 0755 /var/lib/unbound && \
-    chmod 0750 /var/run/unbound && \
     chmod 0644 /etc/unbound/root.hints && \
     if [ -f /var/lib/unbound/root.key ]; then \
       chown unbound:unbound /var/lib/unbound/root.key; \
