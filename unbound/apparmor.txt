@@ -8,7 +8,6 @@ profile unbound flags=(attach_disconnected,mediate_deleted) {
   capability net_bind_service,
   capability setgid,
   capability setuid,
-  capability sys_chroot,
   capability sys_resource,
 
   # Network access
@@ -85,8 +84,9 @@ profile unbound flags=(attach_disconnected,mediate_deleted) {
   /usr/sbin/unbound-anchor rix,
   /usr/sbin/unbound-checkconf rix,
   /usr/sbin/unbound-control rix,
-  /etc/unbound/ rw,
-  /etc/unbound/** rw,
+  /etc/unbound/ r,
+  /etc/unbound/** r,
+  owner /etc/unbound/** rw,
   /var/lib/unbound/ rw,
   /var/lib/unbound/** rw,
   /var/run/unbound/ rw,

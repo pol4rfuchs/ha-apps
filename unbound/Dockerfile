@@ -72,7 +72,8 @@ COPY --from=unbound-builder /build-out/ /
 # ourselves so --with-username=unbound (and our own chown calls below)
 # resolve to a real, stable user.
 RUN addgroup -S unbound && \
-    adduser -S -D -H -h /var/run/unbound -s /sbin/nologin -G unbound -g unbound unbound
+    adduser -S -D -H -h /var/run/unbound -s /sbin/nologin -G unbound -g unbound unbound && \
+    addgroup root unbound
 
 # Runtime libraries for the self-built Unbound, plus python/flask and the
 # rest of the web UI stack. No `unbound` apk package here anymore.

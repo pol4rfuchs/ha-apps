@@ -39,7 +39,7 @@ apply_blocklists() {
     fi
 
     local tmpfile
-    tmpfile=$(mktemp)
+    tmpfile=$(mktemp /tmp/unbound-blocklist.XXXXXX)
 
     for i in $(seq 0 $((count - 1))); do
         local url
@@ -91,7 +91,7 @@ apply_blocklists() {
         wl_count=$(jq '. | length' "${WHITELIST_FILE}")
         if [ "${wl_count}" != "0" ]; then
             local wl_tmpfile
-            wl_tmpfile=$(mktemp)
+            wl_tmpfile=$(mktemp /tmp/unbound-whitelist.XXXXXX)
             # Build a file of patterns to exclude (domain lines from whitelist)
             jq -r '.[]' "${WHITELIST_FILE}" | while IFS= read -r wl_domain; do
                 # Match the exact local-zone line for this domain
@@ -243,8 +243,14 @@ fi
 
 bashio::log.info "Configuration valid. Starting Unbound..."
 
-# Ensure query log exists and is writable by any user (for custom config mode)
-(umask 000; touch /data/unbound_queries.log)
+# Ensure query log exists (custom config mode needs it too). Owned
+# group "unbound", mode 0660: unbound (the daemon, after privilege
+# drop) and root (this script, and app.py) are both in that group, so
+# no need for world-writable permissions. Only initialize on first
+# run — re-running install would truncate an existing log on restart.
+if [ ! -f /data/unbound_queries.log ]; then
+    install -m 0660 -g unbound /dev/null /data/unbound_queries.log
+fi
 
 # Start web UI in background
 bashio::log.info "Starting web UI on port 2137..."

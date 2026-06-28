@@ -371,6 +371,8 @@ def generate_unbound_conf(config, include_overlays=True):
     lines.append("    harden-glue: yes")
     lines.append("    harden-dnssec-stripped: yes")
     lines.append("    harden-referral-path: yes")
+    lines.append("    harden-algo-downgrade: yes")
+    lines.append("    harden-below-nxdomain: yes")
     if config.get("forward_tls", False):
         # Required for DoT: unbound does not auto-discover system CAs, so without
         # a bundle every handshake fails with "self-signed certificate in chain".
