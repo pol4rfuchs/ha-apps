@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.25.1-ha5-pol4r1] - 2026-06-28
+
+- Cosmetic: disable Unbound's pidfile entirely (`--with-pidfile=""`).
+  It was written before the privilege drop to `unbound`, and the
+  container's missing CAP_DAC_OVERRIDE made that fail with
+  "Permission denied" — non-fatal (Unbound started fine regardless),
+  but noisy. Not needed under s6 process supervision anyway.
+
 ## [1.25.1-ha4-pol4r1] - 2026-06-28
 
 - Fix Unbound startup crash from the ha3 fix attempt: runtime `chown` on

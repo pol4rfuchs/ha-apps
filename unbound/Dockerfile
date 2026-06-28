@@ -38,7 +38,7 @@ RUN set -euo pipefail && \
       --prefix=/usr \
       --sysconfdir=/etc \
       --localstatedir=/var \
-      --with-pidfile=/var/lib/unbound/unbound.pid \
+      --with-pidfile="" \
       --with-run-dir=/var/lib/unbound \
       --with-username=unbound \
       --with-libevent \
