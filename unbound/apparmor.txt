@@ -133,6 +133,7 @@ profile unbound flags=(attach_disconnected,mediate_deleted) {
   /tmp/unbound-* rw,
   /tmp/*.tmp rw,
   /tmp/*.log rw,
+  /tmp/tmp.* rw,
 
   # Explicit denies for sensitive HA mounts
   deny /ssl/** rwklx,
