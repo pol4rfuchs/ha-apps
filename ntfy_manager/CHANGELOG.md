@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.10...ntfy_manager-v0.2.11) (2026-06-29)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** real logout, clearer admin-role limit, request timeout ([222a9e8](https://github.com/pol4rfuchs/ha-apps/commit/222a9e811089a170a06c925a973067cb4b613c2c))
+
 ## [0.2.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.9...ntfy_manager-v0.2.10) (2026-06-27)
 
 
