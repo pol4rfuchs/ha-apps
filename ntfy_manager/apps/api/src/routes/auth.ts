@@ -9,7 +9,7 @@ import {
   type SessionPayload
 } from "../services/auth.js";
 import { ntfyRequest } from "../ntfy/client.js";
-import { attachSession, resolveSession } from "../middleware/auth.js";
+import { attachSession, resolveSession, LOGGED_OUT_COOKIE_NAME } from "../middleware/auth.js";
 import { audit } from "../services/logger.js";
 
 export const authRouter = Router();
@@ -128,6 +128,7 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
     secure: false, // ingress is HTTP internally
     maxAge: 12 * 3600 * 1000
   });
+  res.clearCookie(LOGGED_OUT_COOKIE_NAME);
 
   audit("INFO", "auth", `Login OK: ${session.username} (${session.authType})`);
   res.json({
@@ -140,9 +141,17 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
   });
 });
 
-/** POST /api/auth/logout — clear cookie. */
+/** POST /api/auth/logout — clear cookie and block fallback to add-on
+ *  config defaults (e.g. the static HA bearer token), so this is a
+ *  real logout instead of an instant silent re-login. */
 authRouter.post("/logout", (req, res) => {
   res.clearCookie(env.SESSION_COOKIE_NAME);
+  res.cookie(LOGGED_OUT_COOKIE_NAME, "1", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    maxAge: 12 * 3600 * 1000
+  });
   audit("INFO", "auth", "User logged out");
   res.json({ ok: true });
 });

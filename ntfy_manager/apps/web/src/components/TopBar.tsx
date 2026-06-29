@@ -31,7 +31,12 @@ export default function TopBar({
   user: string | null;
 }) {
   const t = TITLES[view];
-  const initials = (user ?? "AD").slice(0, 2).toUpperCase();
+  // Sessions that fall back to add-on config defaults (bearer token, basic
+  // defaults, anonymous) carry placeholder usernames like "(token)" —
+  // slicing those gives nonsense initials like "(T". Show a neutral
+  // service-account marker instead for any placeholder-style name.
+  const isPlaceholder = !!user && user.startsWith("(") && user.endsWith(")");
+  const initials = isPlaceholder ? "•" : (user ?? "AD").slice(0, 2).toUpperCase();
   return (
     <div className="sticky top-0 z-20 backdrop-blur bg-bg/70 border-b border-white/10">
       <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
@@ -64,7 +69,10 @@ export default function TopBar({
         <button onClick={onQuickSend} className="btn btn-primary">
           <Send className="h-4 w-4" /> Quick Send
         </button>
-        <div className="h-9 w-9 rounded-full bg-linear-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10">
+        <div
+          title={user ?? undefined}
+          className="h-9 w-9 rounded-full bg-linear-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10"
+        >
           {initials}
         </div>
       </div>

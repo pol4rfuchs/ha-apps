@@ -30,11 +30,17 @@ export async function ntfyRequest<T = unknown>(
     body?: unknown;
     headers?: Record<string, string>;
     raw?: boolean;
+    /** Request timeout in ms. Default 10s — overridable for slow endpoints. */
+    timeoutMs?: number;
   } = {}
 ): Promise<NtfyResult<T>> {
   const url = `${NTFY_BASE}${path.startsWith("/") ? path : `/${path}`}`;
   const headers = buildHeaders(opts.session, opts.headers);
-  const init: RequestInit = { method, headers };
+  const init: RequestInit = {
+    method,
+    headers,
+    signal: AbortSignal.timeout(opts.timeoutMs ?? 10_000)
+  };
 
   if (opts.body !== undefined) {
     if (typeof opts.body === "string" || opts.body instanceof Uint8Array) {
@@ -59,7 +65,12 @@ export async function ntfyRequest<T = unknown>(
     }
     return { ok: r.ok, status, data, rawText: text };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const msg =
+      err instanceof Error && err.name === "TimeoutError"
+        ? `Timed out after ${opts.timeoutMs ?? 10_000}ms`
+        : err instanceof Error
+        ? err.message
+        : String(err);
     audit("ERROR", "ntfy", `Request failed: ${method} ${path} → ${msg}`);
     return { ok: false, status: 0, data: null, error: msg };
   }

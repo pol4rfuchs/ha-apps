@@ -187,7 +187,13 @@ function CreateUserModal({
     try {
       const r = await ntfy.createUser(u, p, role);
       if (r.ok) {
-        toast.success(`Created ${u}`);
+        if (role === "admin") {
+          toast.success(
+            `Created ${u} — but ntfy's API ignores the admin role on create. Run via SSH: ntfy user change-role ${u} admin`
+          );
+        } else {
+          toast.success(`Created ${u}`);
+        }
         setU("");
         setP("");
         setRole("user");
@@ -246,6 +252,14 @@ function CreateUserModal({
           <option value="user">user</option>
           <option value="admin">admin</option>
         </select>
+        {role === "admin" && (
+          <p className="text-[11px] text-muted mt-1.5">
+            ntfy's API doesn't support setting the admin role on create —
+            the user will be created as a regular user. Run this via SSH
+            afterwards: <code className="font-mono">ntfy user change-role
+            &lt;username&gt; admin</code>
+          </p>
+        )}
       </div>
     </Modal>
   );

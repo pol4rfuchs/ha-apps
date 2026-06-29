@@ -15,13 +15,21 @@ declare global {
   }
 }
 
+/** Set after an explicit /logout call. Blocks falling back to add-on
+ *  config defaults until a fresh /login happens or this cookie expires.
+ *  Without this, logout was a no-op whenever default creds (e.g. the
+ *  HA bearer token) were configured — the very next request would just
+ *  re-authenticate via step 2 below. */
+export const LOGGED_OUT_COOKIE_NAME = `${env.SESSION_COOKIE_NAME}_loggedout`;
+
 /**
  * Resolve effective session for a request.
  *
  * Order:
  *   1. Encrypted cookie (interactive login)        — if present and valid
- *   2. Add-on-config defaults (NTFY_USERNAME etc.) — if configured
- *   3. null                                        — anonymous, blocked
+ *   2. Explicit logout flag                        — blocks fallback to defaults
+ *   3. Add-on-config defaults (NTFY_USERNAME etc.) — if configured
+ *   4. null                                        — anonymous, blocked
  */
 export function resolveSession(req: Request): SessionPayload | null {
   // 1) cookie?
@@ -31,7 +39,12 @@ export function resolveSession(req: Request): SessionPayload | null {
     if (session) return session;
   }
 
-  // 2) defaults?
+  // 2) explicitly logged out? then don't fall back to defaults.
+  if (req.cookies?.[LOGGED_OUT_COOKIE_NAME]) {
+    return null;
+  }
+
+  // 3) defaults?
   if (hasDefaultCredentials()) {
     const now = Math.floor(Date.now() / 1000);
     if (env.NTFY_AUTH_TYPE === "basic") {
