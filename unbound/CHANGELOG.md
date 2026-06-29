@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.25.1-ha8-pol4r1
+
+- Fix: AppArmor profile blocked bashio's default `mktemp` temp files
+  (`/tmp/tmp.*`), causing `cannot create temp file for here-document:
+  Permission denied` in `jq.sh` on container restart and leaving the
+  startup banner's app name/version blank. Added explicit allow rule
+  for bashio's default mktemp naming pattern.
+
 ## [1.25.1-ha7-pol4r1] - 2026-06-28
 
 - Verify the Unbound source tarball against NLnet Labs' official
