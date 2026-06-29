@@ -101,5 +101,20 @@
   ],
   "ignorePaths": [
     "wiki/**"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track NLnetLabs/unbound upstream releases for ARG UNBOUND_VERSION in unbound/Dockerfile. Tag-Format auf GitHub ist 'release-X.Y.Z', daher extractVersionTemplate. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "managerFilePatterns": [
+        "/^unbound/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG UNBOUND_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "NLnetLabs/unbound",
+      "extractVersionTemplate": "^release-(?<version>.*)$"
+    }
   ]
 }
