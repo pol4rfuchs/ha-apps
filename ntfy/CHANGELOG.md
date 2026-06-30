@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.1...ntfy-v1.2.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* **ntfy:** message-limit=0 is not unlimited on ntfy v2.25.0 ([b6c581b](https://github.com/pol4rfuchs/ha-apps/commit/b6c581bfac427bacc7d6965dac8fae12dab3623c))
+
 ## [1.2.1](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.0...ntfy-v1.2.1) (2026-06-28)
 
 
