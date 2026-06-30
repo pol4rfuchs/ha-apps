@@ -35,7 +35,7 @@ options:
   manager_interval: 3m
   visitor_request_limit_burst: 1000
   visitor_request_limit_replenish: 1s
-  visitor_message_daily_limit: 0
+  visitor_message_daily_limit: 1000000
   message_size_limit: '4096'
   upstream_base_url: ''
   admin_username: ''

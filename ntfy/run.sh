@@ -26,7 +26,7 @@ KEEPALIVE=$(bashio::config 'keepalive_interval' '45s')
 MANAGER=$(bashio::config 'manager_interval' '3m')
 VISITOR_REQUEST_LIMIT_BURST=$(bashio::config 'visitor_request_limit_burst' '1000')
 VISITOR_REQUEST_LIMIT_REPLENISH=$(bashio::config 'visitor_request_limit_replenish' '1s')
-VISITOR_MESSAGE_DAILY_LIMIT=$(bashio::config 'visitor_message_daily_limit' '0')
+VISITOR_MESSAGE_DAILY_LIMIT=$(bashio::config 'visitor_message_daily_limit' '1000000')
 MESSAGE_SIZE_LIMIT=$(bashio::config 'message_size_limit' '4096')
 UPSTREAM_URL=$(bashio::config 'upstream_base_url' '')
 ADMIN_USER=$(bashio::config 'admin_username' '')
@@ -148,14 +148,30 @@ provision_admin_tier() {
     # Create tier if it doesn't exist yet
     if ! NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier list </dev/null 2>/dev/null | grep -q "^tier admin"; then
         bashio::log.info "Creating 'admin' tier …"
+        # NOTE: message-limit=0 is NOT "unlimited" despite the docs/UI saying
+        # so — observed on ntfy v2.25.0, a real publish gets rejected with
+        # HTTP 429 "limit reached: daily message quota reached" even though
+        # the account page shows "Unlimited". Using a high concrete number
+        # instead actually behaves as unlimited in practice.
         NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier add \
-            --message-limit=0 \
+            --message-limit=1000000 \
             --message-expiry-duration=8760h \
             --email-limit=0 \
             --reservation-limit=100 \
             --attachment-file-size-limit=100M \
             --attachment-total-size-limit=10G \
             admin </dev/null 2>/dev/null || true
+    else
+        # Migration for installs created before this fix: an existing
+        # 'admin' tier may still carry the broken message-limit=0. Detect
+        # and repair it in place so upgrades self-heal without manual CLI
+        # intervention.
+        if NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier list </dev/null 2>/dev/null \
+            | awk '/^tier admin/{f=1} f && /^tier /&&!/^tier admin/{f=0} f' \
+            | grep -q "Message limit: 0$"; then
+            bashio::log.warning "Existing 'admin' tier has message-limit=0 (broken on this ntfy version) — fixing to 1000000"
+            NTFY_AUTH_FILE="${AUTH_FILE}" ntfy tier change --message-limit=1000000 admin </dev/null 2>/dev/null || true
+        fi
     fi
 
     # Assign tier to admin user
