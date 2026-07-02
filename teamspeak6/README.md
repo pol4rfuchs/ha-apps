@@ -82,7 +82,7 @@ This repository contains a complete **Home Assistant Add-on** (formerly: Hass.io
 | Property | Value |
 |---|---|
 | **HA Addon Slug** | `teamspeak6` |
-| **Add-on version** | `1.1.14` |
+| **Add-on version** | `1.1.15` |
 | **Architecture** | `aarch64` (ARM64) |
 | **Architecture** | `x64` (AMD64) |
 | **Startup** | `application` |
