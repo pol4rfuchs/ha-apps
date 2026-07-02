@@ -1,6 +1,6 @@
 ---
 name: "TeamSpeak 6 Server"
-version: "1.1.14"
+version: "1.1.15"
 slug: "teamspeak6"
 description: "TeamSpeak 6 Voice Server for Raspberry Pi (ARM64/aarch64)"
 url: "https://github.com/pol4rfuchs/ha-apps"
@@ -27,7 +27,7 @@ options:
   log_level: 3
 schema:
   license_accepted: "bool"
-  query_admin_password: "str"
+  query_admin_password: "password"
   log_level: "int(0,4)"
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
