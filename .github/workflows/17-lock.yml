@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh api "repos/${REPO}/issues?state=closed&per_page=100" \
+          gh api "repos/${REPO}/issues?state=closed&per_page=100" --paginate \
             | jq -r --arg cutoff "${cutoff}" \
               '.[] | select(
                 .locked == false
@@ -50,7 +50,7 @@ jobs:
         run: |
           set -euo pipefail
           cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh api "repos/${REPO}/pulls?state=closed&per_page=100" \
+          gh api "repos/${REPO}/pulls?state=closed&per_page=100" --paginate \
             | jq -r --arg cutoff "${cutoff}" \
               '.[] | select(
                 .locked == false

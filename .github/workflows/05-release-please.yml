@@ -97,6 +97,11 @@ jobs:
             git commit -m "chore: force-sync config.yaml versions to release-please manifest
 
           $(cat /tmp/sync_changed.txt)"
+          # Intentionally no [skip ci]: this push touches */config.yaml, and
+          # 20-wiki-drift-check.yml needs to run on exactly this push to
+          # catch drift introduced (or fixed) by the version sync itself.
+          # [skip ci] would suppress every workflow for this push, not just
+          # the heavy build/lint ones.
             git push origin main
           else
             echo "No drift detected, nothing to commit."

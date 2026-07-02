@@ -1,4 +1,4 @@
-name: 09 Wiki Drift Check
+name: 20 Wiki Drift Check
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       - "*/config.yaml"
       - "wiki/.wiki-versions.json"
-      - ".github/workflows/09-wiki-drift-check.yml"
+      - ".github/workflows/20-wiki-drift-check.yml"
   workflow_dispatch:
 
 permissions:

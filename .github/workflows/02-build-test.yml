@@ -100,7 +100,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write
     with:
       app: ${{ matrix.app }}
       publish: false

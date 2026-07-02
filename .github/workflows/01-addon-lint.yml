@@ -46,16 +46,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install validation tooling
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m pip install --user --disable-pip-version-check PyYAML
-
       - name: Static add-on layout lint
         shell: bash
         run: |
           set -euo pipefail
+          # Field-level checks (required keys, image prefix, url, arch validity)
+          # live in 00-meta-validate.yml, which runs once for the whole repo.
+          # This step stays deliberately narrow: file-layout presence/absence
+          # per add-on, so a broken add-on shows up directly in the matrix.
           addon="${{ matrix.addon }}"
           test -d "$addon"
           test -f "$addon/config.yaml"
@@ -63,38 +61,7 @@ jobs:
           test ! -f "$addon/build.yaml"
           test ! -f "$addon/repository.yaml"
           test ! -d "$addon/rootfs/etc/services.d"
-          python3 - "$addon" <<'PY'
-          import pathlib
-          import sys
-          import yaml
-
-          addon = pathlib.Path(sys.argv[1])
-          cfg_path = addon / "config.yaml"
-          cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-
-          required = ["name", "version", "slug", "description", "arch", "image", "url"]
-          missing = [key for key in required if key not in cfg or cfg[key] in (None, "", [])]
-          if missing:
-              raise SystemExit(f"{cfg_path}: missing required keys: {missing}")
-
-          arch = cfg.get("arch")
-          if not isinstance(arch, list) or not arch:
-              raise SystemExit(f"{cfg_path}: arch must be a non-empty list")
-          allowed_arch = {"aarch64", "amd64"}
-          invalid_arch = sorted(set(arch) - allowed_arch)
-          if invalid_arch:
-              raise SystemExit(f"{cfg_path}: unsupported arch entries: {invalid_arch}")
-
-          image = str(cfg.get("image", ""))
-          if not image.startswith("ghcr.io/pol4rfuchs/"):
-              raise SystemExit(f"{cfg_path}: image must point to ghcr.io/pol4rfuchs/...")
-
-          url = str(cfg.get("url", ""))
-          if "github.com/pol4rfuchs/ha-apps" not in url.lower():
-              raise SystemExit(f"{cfg_path}: url must point to github.com/pol4rfuchs/ha-apps")
-
-          print(f"{addon}: static lint OK")
-          PY
+          echo "${addon}: layout OK"
 
       - name: Home Assistant add-on linter advisory
         uses: frenck/action-addon-linter@f995494fd84fae6310d23617e66d0e37de4f14eb # v2.21

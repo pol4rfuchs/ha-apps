@@ -14,5 +14,5 @@ jobs:
       - name: Explain replacement
         run: |
           echo "This workflow is intentionally disabled."
-          echo "Release creation is handled by 04-release-please.yml."
+          echo "Release creation is handled by 05-release-please.yml."
           echo "GHCR publishing is handled by 03-build-publish-ghcr.yml on Release Please tags."
