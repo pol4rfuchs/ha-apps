@@ -1,9 +1,9 @@
-name: "Intiface Central"
-description: "Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities"
-version: "1.0.2"
-slug: "intiface_central"
-image: "ghcr.io/pol4rfuchs/intiface-ha-app"
-url: "https://github.com/pol4rfuchs/ha-apps"
+name: Intiface Central
+description: Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities
+version: 1.0.3
+slug: intiface_central
+image: ghcr.io/pol4rfuchs/intiface-ha-app
+url: https://github.com/pol4rfuchs/ha-apps
 init: false
 arch:
   - amd64
@@ -13,40 +13,36 @@ ports:
   8199/tcp: 8199
   12345/tcp: 12345
 ports_description:
-  8199/tcp: "Intiface WebGUI"
-  12345/tcp: "Buttplug WebSocket (externe Clients)"
+  8199/tcp: Intiface WebGUI
+  12345/tcp: Buttplug WebSocket (externe Clients)
 host_dbus: true
 host_network: true
 full_access: true
 udev: true
 apparmor: false
-
-# /data/options.json ist automatisch verfügbar – kein map-Eintrag nötig
-
 schema:
-  engine_ws_port: "int(1024,65535)"
+  engine_ws_port: int(1024,65535)
   use_bluetooth_le: bool
   use_hid: bool
   use_serial: bool
-  log_level: "match(error|warn|info|debug)"
+  log_level: match(error|warn|info|debug)
   mqtt_host: str?
-  mqtt_port: "int(1,65535)?"
+  mqtt_port: int(1,65535)?
   mqtt_user: str?
   mqtt_pass: password?
   mqtt_topic_prefix: str?
   ha_discovery: bool
   ha_discovery_prefix: str?
-
 options:
   engine_ws_port: 12345
   use_bluetooth_le: true
   use_hid: true
   use_serial: false
   log_level: info
-  mqtt_host: ""
+  mqtt_host: ''
   mqtt_port: 1883
-  mqtt_user: ""
-  mqtt_pass: ""
-  mqtt_topic_prefix: "buttplug"
+  mqtt_user: ''
+  mqtt_pass: ''
+  mqtt_topic_prefix: buttplug
   ha_discovery: false
-  ha_discovery_prefix: "homeassistant"
+  ha_discovery_prefix: homeassistant
