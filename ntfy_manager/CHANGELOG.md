@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.12](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.11...ntfy_manager-v0.2.12) (2026-07-03)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add missing vite-env.d.ts for TS6 compatibility, bump typescript to v6 ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
+* **ntfy_manager:** add rate limiting and CSP configuration ([0b0c4b8](https://github.com/pol4rfuchs/ha-apps/commit/0b0c4b82d7a6d251a29bcedf2df18b59be6dca86))
+* **ntfy_manager:** align vite to v8 for @vitejs/plugin-react v6 peer dep ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
+* **ntfy_manager:** allow * wildcard in ACL topic patterns ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
+* **ntfy_manager:** clipboard fallback for insecure (HTTP) contexts ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
+* **ntfy_manager:** migrate to Tailwind v4 (Vite plugin, CSS-first [@theme](https://github.com/theme)) ([60725a8](https://github.com/pol4rfuchs/ha-apps/commit/60725a85d8a4af454103244a00cdda452a0d319d))
+* **ntfy_manager:** real logout, clearer admin-role limit, request timeout ([222a9e8](https://github.com/pol4rfuchs/ha-apps/commit/222a9e811089a170a06c925a973067cb4b613c2c))
+* **ntfy_manager:** update dependency express to v5 ([#29](https://github.com/pol4rfuchs/ha-apps/issues/29)) ([c7a3150](https://github.com/pol4rfuchs/ha-apps/commit/c7a3150a83a9b1107698bd961fd80552e353735f))
+* **ntfy_manager:** update dependency express-rate-limit to v8 ([#67](https://github.com/pol4rfuchs/ha-apps/issues/67)) ([d887628](https://github.com/pol4rfuchs/ha-apps/commit/d887628689f207bfa797af9de39ecb9fa1004dea))
+* **ntfy_manager:** update dependency lucide-react to v1 ([#74](https://github.com/pol4rfuchs/ha-apps/issues/74)) ([93c0cd4](https://github.com/pol4rfuchs/ha-apps/commit/93c0cd4530bb56cb41d3abc20cb1120f92379dda))
+* **ntfy_manager:** update dependency zod to v4 ([#73](https://github.com/pol4rfuchs/ha-apps/issues/73)) ([772c677](https://github.com/pol4rfuchs/ha-apps/commit/772c6772f4a597544da6bdf752d6b697573200f5))
+* **ntfy_manager:** update react monorepo to v19 ([#87](https://github.com/pol4rfuchs/ha-apps/issues/87)) ([271b200](https://github.com/pol4rfuchs/ha-apps/commit/271b2002e8d3d88312f5b58e9b297393c1cee293))
+
 ## [0.2.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.10...ntfy_manager-v0.2.11) (2026-06-29)
 
 
