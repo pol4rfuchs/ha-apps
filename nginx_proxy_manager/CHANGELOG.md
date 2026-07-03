@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.4...nginx_proxy_manager-v2.1.5) (2026-07-03)
+
+
+### Bug Fixes
+
+* **nginx_proxy_manager:** self-heal missing SSL cert files to prevent nginx crash-loop ([1ab86a8](https://github.com/pol4rfuchs/ha-apps/commit/1ab86a86a815c77935db20902127996e0901f1c6))
+
 ## [2.1.4](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.3...nginx_proxy_manager-v2.1.4) (2026-06-27)
 
 
