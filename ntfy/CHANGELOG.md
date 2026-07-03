@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.0](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.2...ntfy-v1.3.0) (2026-07-03)
+
+
+### Features
+
+* **ntfy:** add rate limits, message size limit and visitor attachment limits ([7d06b66](https://github.com/pol4rfuchs/ha-apps/commit/7d06b66da5d99fe04450556fd03f017ba3e53e16))
+
+
+### Bug Fixes
+
+* **ntfy:** guard HA token provisioning against indefinite hang on boot ([fd35aa6](https://github.com/pol4rfuchs/ha-apps/commit/fd35aa67b0a497b85bd741fc306d2e1900ae20ec))
+* **ntfy:** message-limit=0 is not unlimited on ntfy v2.25.0 ([b6c581b](https://github.com/pol4rfuchs/ha-apps/commit/b6c581bfac427bacc7d6965dac8fae12dab3623c))
+* **ntfy:** quote message-size-limit as string in server.yml ([9466146](https://github.com/pol4rfuchs/ha-apps/commit/946614631af98f1c1e7d1d9340113cfd9657a7ee))
+* **ntfy:** remove integrated admin panel (port 4281), ntfy_manager is the replacement ([0042f64](https://github.com/pol4rfuchs/ha-apps/commit/0042f6476958ab7f5b2d7bcdf78a980616b61fc5))
+* **ntfy:** update upstream to 2.25.0 ([#78](https://github.com/pol4rfuchs/ha-apps/issues/78)) ([7b45c30](https://github.com/pol4rfuchs/ha-apps/commit/7b45c3081dd92ad06d7449b5cff1dfe09f32db49))
+
 ## [1.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.1...ntfy-v1.2.2) (2026-06-30)
 
 
