@@ -6,6 +6,14 @@
 * **teamspeak6:** update upstream to 6.0.0-beta11 ([#51](https://github.com/pol4rfuchs/ha-apps/issues/51)) ([c8cde49](https://github.com/pol4rfuchs/ha-apps/commit/c8cde4937d5cb19cca3ff0aaa6e3444424c51d61))
 
 
+## [1.1.16](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.15...teamspeak6-v1.1.16) (2026-07-03)
+
+
+### Bug Fixes
+
+* **teamspeak6:** update upstream to 6.0.0-beta11 ([#51](https://github.com/pol4rfuchs/ha-apps/issues/51)) ([c8cde49](https://github.com/pol4rfuchs/ha-apps/commit/c8cde4937d5cb19cca3ff0aaa6e3444424c51d61))
+* use password schema type for query_admin_password to show reveal icon ([0ab8805](https://github.com/pol4rfuchs/ha-apps/commit/0ab88053456fa1c1e5797206c593983bc89883db))
+
 ## [1.1.15](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.14...teamspeak6-v1.1.15) (2026-07-02)
 
 
