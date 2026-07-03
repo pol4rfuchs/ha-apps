@@ -1,33 +1,32 @@
----
-name: "TeamSpeak 6 Server"
-version: "1.1.15"
-slug: "teamspeak6"
-description: "TeamSpeak 6 Voice Server for Raspberry Pi (ARM64/aarch64)"
-url: "https://github.com/pol4rfuchs/ha-apps"
-image: "ghcr.io/pol4rfuchs/teamspeak6-ha-app"
+name: TeamSpeak 6 Server
+version: 1.1.16
+slug: teamspeak6
+description: TeamSpeak 6 Voice Server for Raspberry Pi (ARM64/aarch64)
+url: https://github.com/pol4rfuchs/ha-apps
+image: ghcr.io/pol4rfuchs/teamspeak6-ha-app
 arch:
   - aarch64
   - amd64
 init: false
 ports:
-  "9987/udp": 9987
-  "30033/tcp": 30033
-  "10011/tcp": 10011
-  "10022/tcp": 10022
-  "10080/tcp": 10080
+  9987/udp: 9987
+  30033/tcp: 30033
+  10011/tcp: 10011
+  10022/tcp: 10022
+  10080/tcp: 10080
 ports_description:
-  "9987/udp": "Voice Port (UDP)"
-  "30033/tcp": "File Transfer Port (TCP)"
-  "10011/tcp": "Server Query Port (TCP)"
-  "10022/tcp": "SSH Query Port (TCP)"
-  "10080/tcp": "HTTP Web Query Port (TCP)"
+  9987/udp: Voice Port (UDP)
+  30033/tcp: File Transfer Port (TCP)
+  10011/tcp: Server Query Port (TCP)
+  10022/tcp: SSH Query Port (TCP)
+  10080/tcp: HTTP Web Query Port (TCP)
 options:
   license_accepted: false
-  query_admin_password: ""
+  query_admin_password: ''
   log_level: 3
 schema:
-  license_accepted: "bool"
-  query_admin_password: "password"
-  log_level: "int(0,4)"
+  license_accepted: bool
+  query_admin_password: password
+  log_level: int(0,4)
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
