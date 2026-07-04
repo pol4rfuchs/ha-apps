@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.150.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
+[![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.121.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) + Ketesa — as a single Home Assistant Add-on.**
@@ -22,7 +22,7 @@
 
 | Component | Version | Purpose |
 |---|---|---|
-| **Synapse** | ≥1.150.0 (pip, always latest at build time) | Matrix homeserver |
+| **Synapse** | ≥1.121.0 (pip floor, Renovate-tracked) | Matrix homeserver |
 | **PostgreSQL 15** | Debian pkg | Database |
 | **Element Web** | latest (auto-fetched, version-tracked) | Web client |
 | **Element Call** | latest (auto-fetched, version-tracked) | Voice / Video calls |
@@ -31,6 +31,8 @@
 | **S6-Overlay** | — | Multi-service init |
 
 > ℹ️ The admin UI is [Ketesa](https://github.com/etkecc/ketesa) — the etke.cc project formerly known as Synapse Admin, renamed in 2026. It's a drop-in replacement of the original Awesome-Technologies fork, with wider Synapse compatibility and active maintenance. Element Web, Element Call, and Ketesa are all downloaded at first start and re-checked against upstream `latest` on every subsequent start — no manual updates needed.
+>
+> ℹ️ Synapse itself works differently: it's `pip install`ed at **Docker build time**, not fetched at container start. A new Synapse release only lands once the image is rebuilt — Renovate opens a PR when a new PyPI release appears, and merging it triggers that rebuild.
 
 ---
 
