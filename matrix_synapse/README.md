@@ -217,6 +217,7 @@ https://federationtester.matrix.org/#your-domain.duckdns.org
 | Web apps not loading | Extraction failed | Delete the relevant `.{app}_version` file in `/data/matrix/` + restart add-on |
 | Synapse token invalid | Add-on reinstalled, DB empty | Re-create admin user |
 | Federation broken | Port 8448 not forwarded | Router: 8448 → HA-IP:8448 |
+| Login stuck loading / blank screen via `http://<LAN-IP>:7080` | Plain HTTP has no "secure context" — browsers disable WebCrypto (needed for E2E encryption) on anything that isn't HTTPS or `localhost` | Use the HTTPS domain (e.g. `https://element.your-domain`) instead, even from the LAN — most routers support NAT hairpinning so this works without leaving the network. Direct `:7080` IP access is a convenience fallback only and won't fully work by design. |
 
 ---
 

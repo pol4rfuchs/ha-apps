@@ -313,14 +313,39 @@ fi
 # ── Element Web config.json ───────────────────────────────────────────────
 bashio::log.info "Schreibe Element Web config.json..."
 
+# Primär: Home Assistant Supervisor Network API fragen — das ist die einzige
+# zuverlässige, netzwerk-unabhängige Quelle für die echte LAN-IP des Hosts.
+# Innerhalb des Containers sieht `hostname -I` / /proc/net/fib_trie nur das
+# interne Docker-Bridge-Netz des Supervisors (z.B. 172.30.x.x), NIEMALS die
+# tatsächliche LAN-IP — das funktioniert unabhängig vom Subnetz nie zuverlässig.
 LOCAL_IP=""
-if [ -f /proc/net/fib_trie ]; then
-    LOCAL_IP=$(awk '/32 HOST/ { print last } { last=$2 }' /proc/net/fib_trie 2>/dev/null | grep "^192\.168\." | head -1)
+NETWORK_INFO=$(curl -sf --max-time 5 \
+    -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+    "http://supervisor/network/info" 2>/dev/null)
+if [ -n "${NETWORK_INFO}" ]; then
+    LOCAL_IP=$(echo "${NETWORK_INFO}" \
+        | jq -r '.data.interfaces[]? | select(.primary == true) | .ip_address?' 2>/dev/null \
+        | cut -d'/' -f1)
 fi
-if [ -z "${LOCAL_IP}" ]; then
-    LOCAL_IP=$(hostname -I 2>/dev/null | tr ' ' '\n' | grep "^192\.168\." | head -1)
+
+# Fallback 1: alte Heuristik (funktioniert nur, falls Supervisor-API nicht
+# erreichbar ist UND der Container zufällig doch im Host-Netz hängt).
+if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
+    bashio::log.warning "Supervisor Network API nicht erreichbar — versuche Fallback-Erkennung"
+    if [ -f /proc/net/fib_trie ]; then
+        LOCAL_IP=$(awk '/32 HOST/ { print last } { last=$2 }' /proc/net/fib_trie 2>/dev/null \
+            | grep -E "^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)" | head -1)
+    fi
 fi
-if [ -z "${LOCAL_IP}" ]; then
+if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
+    LOCAL_IP=$(hostname -I 2>/dev/null | tr ' ' '\n' \
+        | grep -E "^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)" | head -1)
+fi
+
+# Fallback 2: hartcodierter Platzhalter — letzte Instanz, config.<IP>.json
+# wird dann zwar geschrieben, aber vom Browser nie unter diesem Hostnamen
+# angefragt und daher folgenlos ignoriert.
+if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
     LOCAL_IP="192.168.1.100"
     bashio::log.warning "Konnte LAN-IP nicht ermitteln — Fallback: ${LOCAL_IP}"
 fi
