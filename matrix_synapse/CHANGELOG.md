@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.2.11...matrix_synapse-v1.3.0) (2026-07-04)
+
+
+### Features
+
+* **matrix_synapse:** version-aware auto-update for embedded webapps ([dc2d191](https://github.com/pol4rfuchs/ha-apps/commit/dc2d19189dd00984d401e85fc4eeec10c982b79b))
+
 ## [1.2.11] — 2026-05-xx
 
 ### Changed / Geändert
