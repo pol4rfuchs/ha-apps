@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.2...matrix_synapse-v1.3.3) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** pin pyOpenSSL to fix Synapse startup crash ([f060cb3](https://github.com/pol4rfuchs/ha-apps/commit/f060cb37b6bcb0e0b7a3da59652adafec7c33faa))
+
 ## [1.3.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.1...matrix_synapse-v1.3.2) (2026-07-04)
 
 
