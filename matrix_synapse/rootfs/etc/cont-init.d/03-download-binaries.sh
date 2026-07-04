@@ -7,7 +7,11 @@
 # "latest" per GitHub API abgefragt und mit der installierten Version
 # verglichen — nur bei Unterschied wird neu geladen.
 # Immer exit 0 — Container darf nie wegen diesem Script crashen.
+# set +e: bashio-Umgebung läuft mit set -e, das würde sonst schon bei einem
+# einzelnen fehlgeschlagenen Befehl das Script (und per s6 den Container)
+# abbrechen, bevor der abschließende exit 0 erreicht wird.
 # ============================================================================
+set +e
 
 if ! bashio::config.true 'enable_voice_calls'; then
     bashio::log.info "Voice Calls deaktiviert — Binaries werden nicht geladen"

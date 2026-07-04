@@ -7,7 +7,13 @@
 # "latest" Version per GitHub API abgefragt und mit der installierten
 # verglichen — nur bei Unterschied (oder fehlender Installation) wird neu
 # heruntergeladen. Kein "einmal installiert, für immer eingefroren" mehr.
+#
+# set +e: bashio-Umgebung läuft mit set -e, d.h. ein einzelner fehlgeschlagener
+# Befehl (z.B. cp auf nicht existierenden Pfad) killt sonst sofort das ganze
+# Script und damit per s6 den ganzen Container. Alle Fehlerfälle werden
+# stattdessen explizit per if/else behandelt und geloggt.
 # ============================================================================
+set +e
 
 EW_VERSION_FILE="/data/matrix/.element-web_version"
 ADMIN_VERSION_FILE="/data/matrix/.ketesa_version"
@@ -58,14 +64,26 @@ if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
     bashio::log.info "📥 Lade Ketesa ${ADMIN_LATEST} (installiert: ${ADMIN_INSTALLED:-keine})..."
     if wget -q "https://github.com/etkecc/ketesa/releases/download/${ADMIN_LATEST}/ketesa.tar.gz" \
         -O /tmp/synapse-admin.tar.gz 2>/dev/null; then
-        mkdir -p /data/matrix/synapse-admin
-        tar -xzf /tmp/synapse-admin.tar.gz -C /tmp/ 2>/dev/null
-        rm -rf /data/matrix/synapse-admin/*
-        cp -r /tmp/synapse-admin/. /data/matrix/synapse-admin/
-        rm -rf /tmp/synapse-admin /tmp/synapse-admin.tar.gz
-        echo "${ADMIN_LATEST}" > "${ADMIN_VERSION_FILE}"
-        COUNT=$(find /data/matrix/synapse-admin -type f | wc -l)
-        bashio::log.info "✅ Ketesa ${ADMIN_LATEST} installiert (${COUNT} Dateien)"
+        mkdir -p /tmp/admin-extract /data/matrix/synapse-admin
+        tar -xzf /tmp/synapse-admin.tar.gz -C /tmp/admin-extract 2>/dev/null
+
+        # Ketesa packt teils flach, teils in einem Unterordner — robust suchen
+        if [ -f /tmp/admin-extract/index.html ]; then
+            ADMINDIR="/tmp/admin-extract"
+        else
+            ADMINDIR=$(find /tmp/admin-extract -maxdepth 2 -name "index.html" | head -1 | xargs dirname 2>/dev/null)
+        fi
+
+        if [ -n "${ADMINDIR}" ] && [ -f "${ADMINDIR}/index.html" ]; then
+            rm -rf /data/matrix/synapse-admin/*
+            cp -r "${ADMINDIR}/." /data/matrix/synapse-admin/
+            echo "${ADMIN_LATEST}" > "${ADMIN_VERSION_FILE}"
+            COUNT=$(find /data/matrix/synapse-admin -type f | wc -l)
+            bashio::log.info "✅ Ketesa ${ADMIN_LATEST} installiert (${COUNT} Dateien)"
+        else
+            bashio::log.error "❌ Ketesa: index.html nicht gefunden!"
+        fi
+        rm -f /tmp/synapse-admin.tar.gz && rm -rf /tmp/admin-extract
     else
         bashio::log.error "❌ Ketesa Download fehlgeschlagen!"
     fi
