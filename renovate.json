@@ -127,6 +127,18 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "etkecc/ketesa"
+    },
+    {
+      "customType": "regex",
+      "description": "Track matrix-synapse PyPI releases for die Mindestversion in matrix_synapse/Dockerfile. pip install ohne Renovate-PR bekommt beim naechsten Image-Build zwar automatisch die neueste Version >= dieser Untergrenze, aber ohne Trigger findet gar kein Rebuild statt. Dieser Manager sorgt fuer PRs bei neuen Synapse-Releases und stoesst damit den Rebuild an.",
+      "managerFilePatterns": [
+        "/^matrix_synapse/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "\"matrix-synapse\\[all\\]>=(?<currentValue>[0-9.]+)\""
+      ],
+      "datasourceTemplate": "pypi",
+      "packageNameTemplate": "matrix-synapse"
     }
   ]
 }
