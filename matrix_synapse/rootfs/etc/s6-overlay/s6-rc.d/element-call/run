@@ -5,11 +5,10 @@ if ! bashio::config.true 'enable_voice_calls'; then
     exec sleep infinity
 fi
 
-VOICE_MARKER="/data/matrix/.voice_downloaded"
 EC_DIR="/data/matrix/element-call"
 
 WAIT=0
-while [ ! -f "${VOICE_MARKER}" ] || [ ! -f "${EC_DIR}/index.html" ]; do
+while [ ! -f "${EC_DIR}/index.html" ]; do
     if [ $WAIT -eq 0 ]; then
         bashio::log.info "Warte auf Element Call Download..."
     fi

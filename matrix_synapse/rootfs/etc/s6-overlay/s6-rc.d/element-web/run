@@ -2,11 +2,11 @@
 # S6 Service: Element Web (Python HTTP Server)
 # Port 7080 — statische Files, kein nginx nötig
 
-MARKER="/data/matrix/.webapps_downloaded"
+READY_FILE="/data/matrix/element-web/index.html"
 
 # Warten bis Element Web heruntergeladen wurde
 WAIT=0
-while [ ! -f "${MARKER}" ]; do
+while [ ! -f "${READY_FILE}" ]; do
     if [ $WAIT -eq 0 ]; then
         bashio::log.info "Warte auf Element Web Download..."
     fi

@@ -1,10 +1,10 @@
 #!/usr/bin/with-contenv bashio
 # S6 Service: Synapse Admin UI (Python HTTP Server Port 8090)
 
-MARKER="/data/matrix/.webapps_downloaded"
+READY_FILE="/data/matrix/synapse-admin/index.html"
 
 WAIT=0
-while [ ! -f "${MARKER}" ]; do
+while [ ! -f "${READY_FILE}" ]; do
     if [ $WAIT -eq 0 ]; then
         bashio::log.info "Warte auf Synapse Admin Download..."
     fi
