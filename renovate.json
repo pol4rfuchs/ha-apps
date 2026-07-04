@@ -115,6 +115,18 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "NLnetLabs/unbound",
       "extractVersionTemplate": "^release-(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track etkecc/ketesa (ehem. Synapse Admin) releases. Das Script holt die Version zur Laufzeit live per GitHub API, dieser Fallback-Wert wird nur genutzt falls der API-Call fehlschlägt — Renovate haelt ihn trotzdem aktuell als Referenz/Dashboard-Sichtbarkeit.",
+      "managerFilePatterns": [
+        "/^matrix_synapse/rootfs/etc/cont-init\\.d/05-download-webapps\\.sh$/"
+      ],
+      "matchStrings": [
+        "ADMIN_VERSION=\"(?<currentValue>v.*?)\"\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "etkecc/ketesa"
     }
   ]
 }
