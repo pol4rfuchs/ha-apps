@@ -515,34 +515,46 @@ nginx   → proxies :80/:443 to internal services</code></pre>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="configuration sqlite mariadb jwt secret password secrets yaml npm options">
+    <article id="configuration" class="doc-section glass-card" data-search="configuration sqlite mariadb db_type secret password secrets yaml npm options http_port https_port disable_ipv6 log_level">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Options & Secrets</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
         <h2 id="config-sqlite"><a class="anchor" href="#config-sqlite">#</a>SQLite (Default)</h2>
-        <p>No configuration required. NPM creates its own SQLite database on first start.</p>
+        <p>No configuration required. NPM creates its own SQLite database under <code>/data/npm/</code> on first start.</p>
         <h2 id="config-mariadb"><a class="anchor" href="#config-mariadb">#</a>MariaDB Backend</h2>
-        <pre><code>use_mariadb: true
-mariadb_host: "core-mariadb"
+        <p>Install and start the HA <strong>MariaDB</strong> add-on, then create the database and user before enabling this option.</p>
+        <pre><code>db_type: mariadb
+mariadb_host: core-mariadb
 mariadb_port: 3306
-mariadb_database: "npm"
-mariadb_username: !secret npm_db_user
-mariadb_password: !secret npm_db_password
-npm_jwt_secret: !secret npm_jwt_secret</code></pre>
-        <blockquote>Create the MariaDB database and user before enabling this option. Use <code>!secret</code> references to keep credentials out of the add-on config.</blockquote>
+mariadb_name: npm
+mariadb_user: npm</code></pre>
+        <p>Password goes in <code>secrets.yaml</code>, not the add-on config:</p>
+        <pre><code>mariadb_password: "dein_passwort"
+npm_jwt_secret: "einlangesrandommjwtsecret"</code></pre>
+        <blockquote>The DB password and JWT secret are no longer add-on config options — they were moved out of <code>options</code>/<code>schema</code> into <code>secrets.yaml</code> for security.</blockquote>
         <h2 id="config-table"><a class="anchor" href="#config-table">#</a>All Options</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>use_mariadb</code></td><td><code>false</code></td><td>Use MariaDB instead of SQLite.</td></tr>
-            <tr><td><code>mariadb_host</code></td><td><code>core-mariadb</code></td><td>MariaDB add-on hostname.</td></tr>
+            <tr><td><code>db_type</code></td><td><code>sqlite</code></td><td><code>sqlite</code> or <code>mariadb</code>. (Replaces the old <code>use_mariadb</code> boolean.)</td></tr>
+            <tr><td><code>mariadb_host</code></td><td><em>empty</em></td><td>MariaDB add-on hostname, e.g. <code>core-mariadb</code>.</td></tr>
             <tr><td><code>mariadb_port</code></td><td><code>3306</code></td><td>MariaDB port.</td></tr>
-            <tr><td><code>mariadb_database</code></td><td><code>npm</code></td><td>Database name.</td></tr>
-            <tr><td><code>mariadb_username</code></td><td>—</td><td>MariaDB user.</td></tr>
-            <tr><td><code>mariadb_password</code></td><td>—</td><td>MariaDB password.</td></tr>
-            <tr><td><code>npm_jwt_secret</code></td><td>—</td><td>JWT secret for session tokens.</td></tr>
+            <tr><td><code>mariadb_name</code></td><td><code>npm</code></td><td>Database name. (Renamed from <code>mariadb_database</code>.)</td></tr>
+            <tr><td><code>mariadb_user</code></td><td><code>npm</code></td><td>MariaDB user. (Renamed from <code>mariadb_username</code>.)</td></tr>
+            <tr><td><code>http_port</code></td><td><code>80</code></td><td>HTTP port.</td></tr>
+            <tr><td><code>https_port</code></td><td><code>443</code></td><td>HTTPS port.</td></tr>
+            <tr><td><code>disable_ipv6</code></td><td><code>false</code></td><td>Disable IPv6.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>info / warning / error / debug</code>.</td></tr>
+          </tbody>
+        </table>
+        <h3 id="config-secrets"><a class="anchor" href="#config-secrets">#</a>Secrets (<code>secrets.yaml</code>)</h3>
+        <table>
+          <thead><tr><th>Key</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>mariadb_password</code></td><td>Password for the MariaDB connection.</td></tr>
+            <tr><td><code>npm_jwt_secret</code></td><td>Custom JWT secret (optional).</td></tr>
           </tbody>
         </table>
       </div>

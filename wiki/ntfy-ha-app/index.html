@@ -818,21 +818,20 @@
 <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>Options, auth, cache, iOS, admin panel</small></span></a>
 <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Initial login and first notification</small></span></a>
 <a class="nav-item" href="#home-assistant-integration" data-target="home-assistant-integration"><span class="nav-icon">🏡</span><span><strong>Home Assistant Integration</strong><small>Official integration and rest_command</small></span></a>
-<a class="nav-item" href="#admin-panel" data-target="admin-panel"><span class="nav-icon">🧩</span><span><strong>Admin Panel</strong><small>Users, tokens, send tests, info tab</small></span></a>
+<a class="nav-item" href="#admin-panel" data-target="admin-panel"><span class="nav-icon">🧩</span><span><strong>Admin Panel</strong><small>Removed — see ntfy_manager</small></span></a>
 <a class="nav-item" href="#ios-push-notifications" data-target="ios-push-notifications"><span class="nav-icon">📱</span><span><strong>iOS Push Notifications</strong><small>Native iOS push via upstream signal relay</small></span></a>
 <a class="nav-item" href="#default-topics" data-target="default-topics"><span class="nav-icon">🔔</span><span><strong>Default Topics</strong><small>Monitor topic defaults</small></span></a>
 <a class="nav-item" href="#reverse-proxy" data-target="reverse-proxy"><span class="nav-icon">🌐</span><span><strong>Reverse Proxy</strong><small>Nginx, Traefik, Caddy, NPM</small></span></a>
 <a class="nav-item" href="#backup-and-restore" data-target="backup-and-restore"><span class="nav-icon">🛡️</span><span><strong>Backup &amp; Restore</strong><small>HA backups, restore and migration</small></span></a>
 <a class="nav-item" href="#cli-reference" data-target="cli-reference"><span class="nav-icon">⌨️</span><span><strong>CLI Reference</strong><small>Container access, users, tokens, ACL</small></span></a>
 <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Known symptoms and fixes</small></span></a>
-<a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, API, admin limitations</small></span></a>
+<a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, CLI, architecture</small></span></a>
 <a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer & License</strong><small>Unofficial wrapper, MIT license</small></span></a>
     </nav>
 
     <div class="sidebar-footer">
       <strong style="color:var(--ntfy-2)">Runtime hints</strong><br>
       Direct UI: <code>4280</code><br>
-      Admin Panel: <code>4281</code><br>
       Supported archs: <code>amd64</code> · <code>aarch64</code>
     </div>
   </aside>
@@ -854,7 +853,7 @@
 
         <div class="metric-grid">
           <div class="metric"><small>ntfy Server</small><strong>http://homeassistant.local:4280</strong></div>
-          <div class="metric"><small>Admin Panel</small><strong>http://homeassistant.local:4281</strong></div>
+          <div class="metric"><small>Admin Console</small><strong>ntfy_manager add-on</strong></div>
           <div class="metric"><small>Auth DB</small><strong>/data/ntfy/user.db</strong></div>
           <div class="metric"><small>Generated</small><strong>2026-04-27</strong></div>
         </div>
@@ -891,7 +890,7 @@ admin_password: your-secure-password</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p>Self-hosted push notification service for Home Assistant, based on <a href="https://github.com/binwiederhier/ntfy">ntfy v2.17.0</a>.</p>
+        <p>Self-hosted push notification service for Home Assistant, based on <a href="https://github.com/binwiederhier/ntfy">ntfy v2.25.0</a>.</p>
 <hr />
 <h2 id="home--pages"><a class="anchor" href="#home--pages" aria-label="Permalink">#</a>Pages</h2>
 <table>
@@ -971,10 +970,6 @@ admin_password: your-secure-password
 <tr>
   <td>4280</td>
   <td>ntfy server (web UI + API)</td>
-</tr>
-<tr>
-  <td>4281</td>
-  <td>Admin Panel (optional, enable via <code>admin_panel: true</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -1127,7 +1122,7 @@ Starting ntfy → http://homeassistant.local:4280
 </tr>
 <tr>
   <td><code>enable_reservations</code></td>
-  <td><code>false</code></td>
+  <td><code>true</code></td>
   <td>Allow users to reserve topic names.</td>
 </tr>
 </tbody>
@@ -1158,6 +1153,26 @@ Starting ntfy → http://homeassistant.local:4280
   <td><code>3m</code></td>
   <td>How often the manager prunes old messages and prints stats.</td>
 </tr>
+<tr>
+  <td><code>message_size_limit</code></td>
+  <td><code>4096</code></td>
+  <td>Maximum message body size in bytes.</td>
+</tr>
+<tr>
+  <td><code>visitor_request_limit_burst</code></td>
+  <td><code>1000</code></td>
+  <td>Burst allowance for the per-visitor request rate limit.</td>
+</tr>
+<tr>
+  <td><code>visitor_request_limit_replenish</code></td>
+  <td><code>1s</code></td>
+  <td>How often one burst slot is replenished.</td>
+</tr>
+<tr>
+  <td><code>visitor_message_daily_limit</code></td>
+  <td><code>1000000</code></td>
+  <td>Max messages a single visitor (IP) can publish per day. Set to a large concrete value — <code>0</code> is <strong>not</strong> unlimited on ntfy v2.25.0.</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1182,6 +1197,21 @@ Starting ntfy → http://homeassistant.local:4280
   <td><code>5G</code></td>
   <td>Total disk space used for all attachments.</td>
 </tr>
+<tr>
+  <td><code>attachment_expiry_duration</code></td>
+  <td><code>3h</code></td>
+  <td>How long attachments remain downloadable before being deleted.</td>
+</tr>
+<tr>
+  <td><code>visitor_attachment_total_size_limit</code></td>
+  <td><code>1G</code></td>
+  <td>Total attachment storage allowed per visitor (IP).</td>
+</tr>
+<tr>
+  <td><code>visitor_attachment_daily_bandwidth_limit</code></td>
+  <td><code>5G</code></td>
+  <td>Daily attachment bandwidth allowed per visitor (IP).</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1205,22 +1235,7 @@ Starting ntfy → http://homeassistant.local:4280
 <p>See <a href="#ios-push-notifications">iOS-Push-Notifications</a> for details.</p>
 <hr />
 <h2 id="configuration--admin-panel"><a class="anchor" href="#configuration--admin-panel" aria-label="Permalink">#</a>Admin Panel</h2>
-<table>
-<thead>
-<tr>
-  <th>Option</th>
-  <th>Default</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>admin_panel</code></td>
-  <td><code>false</code></td>
-  <td>Enable the web-based admin panel on port 4281.</td>
-</tr>
-</tbody>
-</table>
+<p>The built-in admin panel (port <code>4281</code>) has been <strong>removed</strong> from this add-on. Its functionality — user/token management, dashboard, send tests — now lives in the separate <a href="../ntfy-manager-ha-app/">ntfy_manager</a> add-on. Install that add-on if you want a web-based admin console.</p>
 <hr />
 <h2 id="configuration--example-full-configuration"><a class="anchor" href="#configuration--example-full-configuration" aria-label="Permalink">#</a>Example: Full Configuration</h2>
 <pre><code class="language-yaml">log_level: INFO
@@ -1229,13 +1244,15 @@ behind_proxy: true
 auth_default_access: deny-all
 enable_signup: false
 enable_login: true
-enable_reservations: false
+enable_reservations: true
 cache_duration: &quot;12h&quot;
 attachment_file_size_limit: &quot;15M&quot;
 attachment_total_size_limit: &quot;5G&quot;
+attachment_expiry_duration: &quot;3h&quot;
 keepalive_interval: &quot;45s&quot;
+message_size_limit: &quot;4096&quot;
+visitor_message_daily_limit: 1000000
 upstream_base_url: &quot;https://ntfy.sh&quot;
-admin_panel: true
 admin_username: admin
 admin_password: &quot;super-secret-password&quot;
 </code></pre>
@@ -1309,11 +1326,9 @@ Starting ntfy → http://homeassistant.local:4280
 <li><strong>iOS:</strong> <a href="https://apps.apple.com/us/app/ntfy/id1625396347">App Store</a></li>
 </ul>
 <p>In the app, add your server: <code>http://homeassistant.local:4280</code> and subscribe to your topics.</p>
-<h2 id="first-start--7-enable-the-admin-panel-optional"><a class="anchor" href="#first-start--7-enable-the-admin-panel-optional" aria-label="Permalink">#</a>7. Enable the Admin Panel (Optional)</h2>
-<p>Set <code>admin_panel: true</code> in the configuration and restart. The admin panel will be available at:</p>
-<pre><code>http://homeassistant.local:4281
-</code></pre>
-<p>See <a href="#admin-panel">Admin-Panel</a> for details.</p>
+<h2 id="first-start--7-enable-the-admin-panel-optional"><a class="anchor" href="#first-start--7-enable-the-admin-panel-optional" aria-label="Permalink">#</a>7. Web-Based Admin Console (Optional)</h2>
+<p>The built-in admin panel was removed from this add-on. If you want a web UI for managing users, tokens and sending test messages, install the separate <strong>ntfy_manager</strong> add-on and point it at this ntfy server.</p>
+<p>See <a href="#admin-panel">Admin Panel</a> for details.</p>
 
       </div>
     </article>
@@ -1360,7 +1375,7 @@ Starting ntfy → http://homeassistant.local:4280
 <li>Log in → <strong>Account → Access Tokens → Create token</strong></li>
 <li>Label it <code>Home Assistant</code> and copy the token</li>
 </ol>
-<p>Or use the <a href="#admin-panel">Admin Panel</a> → Tokens tab.</p>
+<p>Or use the ntfy_manager add-on's Tokens tab — see <a href="#admin-panel">Admin Panel</a>.</p>
 <h3 id="home-assistant-integration--step-2-add-to-configuration-yaml"><a class="anchor" href="#home-assistant-integration--step-2-add-to-configuration-yaml" aria-label="Permalink">#</a>Step 2: Add to configuration.yaml</h3>
 <pre><code class="language-yaml">rest_command:
   ntfy_send:
@@ -1486,7 +1501,7 @@ Starting ntfy → http://homeassistant.local:4280
 
       </div>
     </article>
-<article id="admin-panel" class="doc-section glass-card" data-search="admin panel users, tokens, send tests, info tab admin panel the admin panel is a separate web interface for managing users and tokens without using the ntfy command line. it runs on port 4281 . enable in the add on configuration: yaml admin panel: true restart the add on. the panel is then available at: http://homeassistant.local:4281 login enter: server url: http://homeassistant.local:4280 username: your admin username password: your admin password you must have the admin role to log in. dashboard shows a quick overview: field description status ok ✓ if ntfy is healthy version ntfy server version users number of regular users in the database messages total messages published click ↺ refresh to update the stats. users tab view users all users in the ntfy database are listed with their role. the built in anonymous user is automatically hidden. create a user 1. enter a username and password 2. click ＋ create user new users are always created with the user role. to create admin accounts, use admin username in the add on configuration. change password click change pw next to a user, or scroll down to the change password card, enter the username and new password. admin accounts cannot have their password changed via the panel — manage them via the add on configuration. delete a user click 🗑 delete next to a regular user and confirm. admin accounts cannot be deleted via the panel. the ntfy api returns 401 for admin account operations. use the add on configuration to manage admin accounts. why admin accounts show &quot;manage via config&quot; the ntfy rest api restricts modification of admin accounts as a security measure. admin accounts can only be managed via: admin username / admin password in the add on config restarting the add on to apply changes tokens tab create a token 1. enter a label e.g. home assistant 2. optionally set an expiry date 3. click ⬡ create token the token is automatically copied to your clipboard. use it in home assistant automations with authorization: bearer tk your token . view / delete tokens token listing is not available in the admin panel due to browser cross origin restrictions between port 4281 and port 4280. to view or delete existing tokens: 1. open the ntfy web ui at http://homeassistant.local:4280 2. log in with the user whose tokens you want to manage 3. go to account → access tokens send tab use this to send a test notification: field description topic the topic name to publish to e.g. test title optional notification title priority 1 min to 5 urgent , default 3 default tags comma separated emoji tags e.g. warning,door click url url to open when notification is tapped message the notification body required click ▷ send to publish. check the ntfy web ui or your phone to confirm receipt. info tab shows server connection details and an auto generated rest command example for your configuration.yaml , pre filled with your server url.">
+<article id="admin-panel" class="doc-section glass-card" data-search="admin panel removed moved to ntfy_manager add-on">
       <div class="section-topline">
         <div class="section-title-wrap">
           <span class="section-icon">🧩</span>
@@ -1498,138 +1513,7 @@ Starting ntfy → http://homeassistant.local:4280
         <a class="section-link" href="#admin-panel">#admin-panel</a>
       </div>
       <div class="doc-content">
-        <p>The Admin Panel is a separate web interface for managing users and tokens without using the ntfy command line. It runs on port <strong>4281</strong>.</p>
-<h2 id="admin-panel--enable"><a class="anchor" href="#admin-panel--enable" aria-label="Permalink">#</a>Enable</h2>
-<p>In the add-on configuration:</p>
-<pre><code class="language-yaml">admin_panel: true
-</code></pre>
-<p>Restart the add-on. The panel is then available at:</p>
-<pre><code>http://homeassistant.local:4281
-</code></pre>
-<h2 id="admin-panel--login"><a class="anchor" href="#admin-panel--login" aria-label="Permalink">#</a>Login</h2>
-<p>Enter:</p>
-<ul>
-<li><strong>Server URL:</strong> <code>http://homeassistant.local:4280</code></li>
-<li><strong>Username:</strong> your admin username</li>
-<li><strong>Password:</strong> your admin password</li>
-</ul>
-<p>You must have the <strong>admin</strong> role to log in.</p>
-<hr />
-<h2 id="admin-panel--dashboard"><a class="anchor" href="#admin-panel--dashboard" aria-label="Permalink">#</a>Dashboard</h2>
-<p>Shows a quick overview:</p>
-<table>
-<thead>
-<tr>
-  <th>Field</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Status</td>
-  <td><code>OK ✓</code> if ntfy is healthy</td>
-</tr>
-<tr>
-  <td>Version</td>
-  <td>ntfy server version</td>
-</tr>
-<tr>
-  <td>Users</td>
-  <td>Number of regular users in the database</td>
-</tr>
-<tr>
-  <td>Messages</td>
-  <td>Total messages published</td>
-</tr>
-</tbody>
-</table>
-<p>Click <strong>↺ Refresh</strong> to update the stats.</p>
-<hr />
-<h2 id="admin-panel--users-tab"><a class="anchor" href="#admin-panel--users-tab" aria-label="Permalink">#</a>Users Tab</h2>
-<h3 id="admin-panel--view-users"><a class="anchor" href="#admin-panel--view-users" aria-label="Permalink">#</a>View Users</h3>
-<p>All users in the ntfy database are listed with their role. The built-in <code>*</code> (anonymous) user is automatically hidden.</p>
-<h3 id="admin-panel--create-a-user"><a class="anchor" href="#admin-panel--create-a-user" aria-label="Permalink">#</a>Create a User</h3>
-<ol>
-<li>Enter a <strong>Username</strong> and <strong>Password</strong></li>
-<li>Click <strong>＋ Create User</strong></li>
-</ol>
-<blockquote>
-<p>New users are always created with the <strong>user</strong> role. To create admin accounts, use <code>admin_username</code> in the add-on configuration.</p>
-</blockquote>
-<h3 id="admin-panel--change-password"><a class="anchor" href="#admin-panel--change-password" aria-label="Permalink">#</a>Change Password</h3>
-<p>Click <strong>Change PW</strong> next to a user, or scroll down to the <strong>Change Password</strong> card, enter the username and new password.</p>
-<blockquote>
-<p>Admin accounts cannot have their password changed via the panel — manage them via the add-on configuration.</p>
-</blockquote>
-<h3 id="admin-panel--delete-a-user"><a class="anchor" href="#admin-panel--delete-a-user" aria-label="Permalink">#</a>Delete a User</h3>
-<p>Click <strong>🗑 Delete</strong> next to a regular user and confirm.</p>
-<blockquote>
-<p>Admin accounts cannot be deleted via the panel. The ntfy API returns <code>401</code> for admin account operations. Use the add-on configuration to manage admin accounts.</p>
-</blockquote>
-<h3 id="admin-panel--why-admin-accounts-show-quot-manage-via-config-quot"><a class="anchor" href="#admin-panel--why-admin-accounts-show-quot-manage-via-config-quot" aria-label="Permalink">#</a>Why Admin Accounts Show &quot;manage via config&quot;</h3>
-<p>The ntfy REST API restricts modification of admin accounts as a security measure. Admin accounts can only be managed via:</p>
-<ul>
-<li><code>admin_username</code> / <code>admin_password</code> in the add-on config</li>
-<li>Restarting the add-on to apply changes</li>
-</ul>
-<hr />
-<h2 id="admin-panel--tokens-tab"><a class="anchor" href="#admin-panel--tokens-tab" aria-label="Permalink">#</a>Tokens Tab</h2>
-<h3 id="admin-panel--create-a-token"><a class="anchor" href="#admin-panel--create-a-token" aria-label="Permalink">#</a>Create a Token</h3>
-<ol>
-<li>Enter a <strong>Label</strong> (e.g. <code>Home Assistant</code>)</li>
-<li>Optionally set an <strong>Expiry</strong> date</li>
-<li>Click <strong>⬡ Create Token</strong></li>
-</ol>
-<p>The token is automatically copied to your clipboard. Use it in Home Assistant automations with <code>Authorization: Bearer tk_YOUR_TOKEN</code>.</p>
-<h3 id="admin-panel--view-delete-tokens"><a class="anchor" href="#admin-panel--view-delete-tokens" aria-label="Permalink">#</a>View / Delete Tokens</h3>
-<p>Token listing is not available in the admin panel due to browser cross-origin restrictions between port 4281 and port 4280. To view or delete existing tokens:</p>
-<ol>
-<li>Open the ntfy web UI at <code>http://homeassistant.local:4280</code></li>
-<li>Log in with the user whose tokens you want to manage</li>
-<li>Go to <strong>Account → Access Tokens</strong></li>
-</ol>
-<hr />
-<h2 id="admin-panel--send-tab"><a class="anchor" href="#admin-panel--send-tab" aria-label="Permalink">#</a>Send Tab</h2>
-<p>Use this to send a test notification:</p>
-<table>
-<thead>
-<tr>
-  <th>Field</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Topic</td>
-  <td>The topic name to publish to (e.g. <code>test</code>)</td>
-</tr>
-<tr>
-  <td>Title</td>
-  <td>Optional notification title</td>
-</tr>
-<tr>
-  <td>Priority</td>
-  <td>1 (min) to 5 (urgent), default 3 (default)</td>
-</tr>
-<tr>
-  <td>Tags</td>
-  <td>Comma-separated emoji tags (e.g. <code>warning,door</code>)</td>
-</tr>
-<tr>
-  <td>Click URL</td>
-  <td>URL to open when notification is tapped</td>
-</tr>
-<tr>
-  <td>Message</td>
-  <td>The notification body (required)</td>
-</tr>
-</tbody>
-</table>
-<p>Click <strong>▷ Send</strong> to publish. Check the ntfy web UI or your phone to confirm receipt.</p>
-<hr />
-<h2 id="admin-panel--info-tab"><a class="anchor" href="#admin-panel--info-tab" aria-label="Permalink">#</a>Info Tab</h2>
-<p>Shows server connection details and an auto-generated <code>rest_command</code> example for your <code>configuration.yaml</code>, pre-filled with your server URL.</p>
-
+        <p><strong>Removed.</strong> The built-in admin panel (port <code>4281</code>) was removed from the ntfy add-on. Its Dashboard, Users, Tokens, Send and Info tabs now live in the separate <strong>ntfy_manager</strong> add-on, which talks to this ntfy server over its API. Install and configure ntfy_manager if you need a web-based admin console — see its wiki page for the full walkthrough.</p>
       </div>
     </article>
 <article id="ios-push-notifications" class="doc-section glass-card" data-search="ios push notifications native ios push via upstream signal relay ios push notifications by default, the ntfy ios app polls your server for new messages background fetch . for instant push notifications without polling, you need to route through ntfy.sh&#x27;s firebase/apns infrastructure. requirements a publicly accessible server url base url a ntfy.sh https://ntfy.sh account free tier is sufficient configuration yaml base url: &quot;https://ntfy.your domain.com&quot; upstream base url: &quot;https://ntfy.sh&quot; restart the add on after saving. how it works when a message is published to your self hosted ntfy server, it sends a lightweight &quot;poll request&quot; to ntfy.sh. ntfy.sh then triggers an apns push to the ios device, which wakes the ntfy app. the app then fetches the actual message content from your server — ntfy.sh never sees the message body. this means: ✅ instant push without polling ✅ message content stays on your server ✅ free uses ntfy.sh only as a signal relay ios app setup 1. install the ntfy ios app https://apps.apple.com/us/app/ntfy/id1625396347 2. open the app → settings → default server → enter your server url 3. subscribe to your topics 4. notifications will now arrive instantly troubleshooting notifications not arriving instantly: confirm base url is publicly accessible test from outside your network confirm upstream base url: &quot;https://ntfy.sh&quot; is set and the add on has been restarted check the add on log for upstream base url confirmation notifications delayed: the ios app may fall back to polling if push is not configured correctly check if the ntfy.sh servers are reachable from your server">
@@ -2153,34 +2037,6 @@ ntfy access '*' HAOS deny
 </tbody>
 </table>
 <hr />
-<h2 id="troubleshooting--admin-panel-login-fails"><a class="anchor" href="#troubleshooting--admin-panel-login-fails" aria-label="Permalink">#</a>Admin Panel login fails</h2>
-<table>
-<thead>
-<tr>
-  <th>Error</th>
-  <th>Cause</th>
-  <th>Fix</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>Wrong credentials</code></td>
-  <td>Wrong username or password</td>
-  <td>Use the same credentials as the ntfy web UI</td>
-</tr>
-<tr>
-  <td><code>Not an admin account</code></td>
-  <td>User has <code>user</code> role, not <code>admin</code></td>
-  <td>Create the account via <code>admin_username</code> config</td>
-</tr>
-<tr>
-  <td><code>Connection failed</code></td>
-  <td>Wrong server URL</td>
-  <td>Use <code>http://homeassistant.local:4280</code> (port 4280, not 4281)</td>
-</tr>
-</tbody>
-</table>
-<hr />
 <h2 id="troubleshooting--hijacked-connection-in-the-logs"><a class="anchor" href="#troubleshooting--hijacked-connection-in-the-logs" aria-label="Permalink">#</a><code>hijacked connection</code> in the logs</h2>
 <p><strong>This is harmless.</strong> It appears when a client (ntfy app, browser) drops a WebSocket or SSE connection. No action needed.</p>
 <p>To reduce the frequency, increase <code>keepalive_interval</code>:</p>
@@ -2197,7 +2053,7 @@ ntfy access '*' HAOS deny
 <h2 id="troubleshooting--notifications-not-arriving-on-phone"><a class="anchor" href="#troubleshooting--notifications-not-arriving-on-phone" aria-label="Permalink">#</a>Notifications not arriving on phone</h2>
 <ol>
 <li>Confirm the ntfy app is subscribed to the correct topic on the correct server</li>
-<li>Send a test message from the <a href="#admin-panel">Admin Panel</a> → Send tab</li>
+<li>Send a test message via the ntfy web UI, curl, or the ntfy_manager add-on's Send tab — see <a href="#admin-panel">Admin Panel</a></li>
 <li>Check if the message appears in the ntfy <strong>web UI</strong> — if yes, the server is working and the issue is with the app/subscription</li>
 <li>For iOS: confirm <a href="#ios-push-notifications">iOS Push</a> is configured correctly</li>
 </ol>
@@ -2206,9 +2062,6 @@ ntfy access '*' HAOS deny
 <p>Attachments require <code>base_url</code> to be set. Without it, the attachment storage is disabled.</p>
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 </code></pre>
-<hr />
-<h2 id="troubleshooting--version-shows-in-admin-panel-dashboard"><a class="anchor" href="#troubleshooting--version-shows-in-admin-panel-dashboard" aria-label="Permalink">#</a>Version shows <code>?</code> in Admin Panel Dashboard</h2>
-<p>This is normal if you're running ntfy older than v2.17.0. The <code>/v1/version</code> endpoint was added in v2.17.0. The current add-on uses v2.17.0 so this should not occur.</p>
 <hr />
 <h2 id="troubleshooting--still-stuck"><a class="anchor" href="#troubleshooting--still-stuck" aria-label="Permalink">#</a>Still stuck?</h2>
 <ol>
@@ -2239,28 +2092,6 @@ ntfy access '*' HAOS deny
 </code></pre>
 <p><strong>Fix status:</strong> Cannot be fixed in this add-on without a change in ntfy upstream to support a configurable <code>base-path</code>. This is a <a href="https://github.com/binwiederhier/ntfy/issues">known ntfy issue</a>.</p>
 <hr />
-<h2 id="known-limitations--token-list-not-available-in-admin-panel"><a class="anchor" href="#known-limitations--token-list-not-available-in-admin-panel" aria-label="Permalink">#</a>Token List Not Available in Admin Panel</h2>
-<p><strong>Symptom:</strong> The Tokens tab in the Admin Panel cannot display existing tokens.</p>
-<p><strong>Cause:</strong> The token listing API (<code>GET /v1/account/token</code>) is a user-scoped endpoint that requires the request to come from the same origin as the server. The admin panel runs on port 4281 while ntfy is on port 4280 — the browser blocks the cross-origin request for security reasons.</p>
-<p><strong>Workaround:</strong> To view or delete tokens, use the ntfy web UI:</p>
-<pre><code>http://homeassistant.local:4280 → Account → Access Tokens
-</code></pre>
-<p><strong>Fix status:</strong> Would require either a dedicated admin token endpoint in ntfy, or serving the admin panel from the same port as ntfy (which would require significant architectural changes).</p>
-<hr />
-<h2 id="known-limitations--cannot-change-user-roles-via-admin-panel"><a class="anchor" href="#known-limitations--cannot-change-user-roles-via-admin-panel" aria-label="Permalink">#</a>Cannot Change User Roles via Admin Panel</h2>
-<p><strong>Symptom:</strong> There is no &quot;Change Role&quot; button in the user table.</p>
-<p><strong>Cause:</strong> The ntfy v2 REST API (<code>PUT /v1/users</code>) only creates new users. It rejects the request if the user already exists. There is no dedicated endpoint for updating the role of an existing user.</p>
-<p><strong>Workaround:</strong></p>
-<ul>
-<li>To promote a <code>user</code> to <code>admin</code>: set <code>admin_username</code> in the add-on config to their username, restart → the account gets the admin role.</li>
-<li>To demote an <code>admin</code> to <code>user</code>: delete and recreate the account as a regular user.</li>
-</ul>
-<hr />
-<h2 id="known-limitations--cannot-delete-or-modify-admin-accounts-via-api"><a class="anchor" href="#known-limitations--cannot-delete-or-modify-admin-accounts-via-api" aria-label="Permalink">#</a>Cannot Delete or Modify Admin Accounts via API</h2>
-<p><strong>Symptom:</strong> Delete and Change Password buttons are hidden for admin accounts.</p>
-<p><strong>Cause:</strong> The ntfy API returns <code>401 unauthorized: can only remove regular users from API</code> when attempting to delete or modify admin accounts. This is a deliberate security restriction in ntfy.</p>
-<p><strong>Workaround:</strong> Admin accounts can only be managed via the add-on configuration (<code>admin_username</code> / <code>admin_password</code>). Change the config and restart to update the admin password.</p>
-<hr />
 <h2 id="known-limitations--only-one-admin-account-in-config"><a class="anchor" href="#known-limitations--only-one-admin-account-in-config" aria-label="Permalink">#</a>Only One Admin Account in Config</h2>
 <p><strong>Symptom:</strong> There is only one <code>admin_username</code> / <code>admin_password</code> field in the configuration.</p>
 <p><strong>Cause:</strong> To keep the config simple, we support bootstrapping one admin at a time.</p>
@@ -2268,60 +2099,9 @@ ntfy access '*' HAOS deny
 <hr />
 <h2 id="known-limitations--no-multi-architecture-support-for-armhf-armv7-i386"><a class="anchor" href="#known-limitations--no-multi-architecture-support-for-armhf-armv7-i386" aria-label="Permalink">#</a>No Multi-Architecture Support for armhf / armv7 / i386</h2>
 <p>The add-on only supports <code>amd64</code> and <code>aarch64</code>. Home Assistant has dropped official support for armhf, armv7 and i386 hardware. If you are running one of these architectures, it is recommended to migrate to a supported platform.</p>
-<p>Here are the current CLI limitations in our add-on and whether they're fixable:</p>
 <hr />
-<p><strong>1. No interactive CLI access for the user</strong>
-The add-on has no shell or terminal exposed. You have to go through <code>docker exec</code> via the HA SSH add-on every time. It's clunky and not documented anywhere visible.
-→ <em>Fixable:</em> We could add a small shell script wrapper or a button in the admin panel that generates the correct <code>docker exec</code> command pre-filled with the container ID.</p>
-<hr />
-<p><strong>2. <code>NTFY_AUTH_FILE</code> must be set manually every time</strong>
-The CLI doesn't auto-detect the database path — if you forget <code>export NTFY_AUTH_FILE=/data/ntfy/user.db</code> every command silently fails or errors.
-→ <em>Fixable:</em> Could be solved by adding a shell profile (<code>/etc/profile.d/ntfy.sh</code>) inside the container that exports it automatically on login. One line in the Dockerfile.</p>
-<hr />
-<p><strong>3. No token auto-provisioning</strong>
-Tokens for HA rest_commands have to be created manually via CLI or Web UI after every fresh install. If the database resets, the token is gone and HA automations break silently with 403.
-→ <em>Fixable:</em> We could generate a fixed HA token at startup in <code>run.sh</code> (same way we create the admin user), log it once, and optionally write it to a known file in <code>/data/ntfy/</code>.</p>
-<hr />
-<p><strong>4. Password input is interactive</strong>
-<code>ntfy user add</code> and <code>ntfy user change-pass</code> prompt for a password interactively. In scripts you have to pass <code>NTFY_PASSWORD=...</code> as an env var — that's not obvious and not documented for users.
-→ <em>Already partially solved</em> in our <code>run.sh</code> via <code>NTFY_PASSWORD</code> env var for the admin bootstrap. But not documented anywhere for manual use.</p>
-<hr />
-<p><strong>5. No ACL management in the admin panel</strong>
-Topic-level access control (<code>ntfy access</code>) is entirely CLI-only — there's no UI for it, not even in the official ntfy Web UI.
-→ <em>Fixable in our admin panel:</em> We could add an ACL section that calls the ntfy API to read and write access rules. Would be a meaningful addition over Farmer Ed's setup.</p>
-<hr />
-<p><strong>Summary — what's worth fixing:</strong></p>
-<table>
-<thead>
-<tr>
-  <th>Limitation</th>
-  <th>Fix effort</th>
-  <th>Impact</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>Token auto-provisioning at startup</td>
-  <td>Low — few lines in <code>run.sh</code></td>
-  <td>High — prevents 403 after reinstall</td>
-</tr>
-<tr>
-  <td>Auto-set <code>NTFY_AUTH_FILE</code> in container profile</td>
-  <td>Very low — one Dockerfile line</td>
-  <td>Medium</td>
-</tr>
-<tr>
-  <td>ACL management in admin panel</td>
-  <td>Medium</td>
-  <td>High — currently CLI-only</td>
-</tr>
-<tr>
-  <td>Interactive password annoyance</td>
-  <td>Already solved internally</td>
-  <td>Low</td>
-</tr>
-</tbody>
-</table>
+<h2 id="known-limitations--cli-requires-container-access"><a class="anchor" href="#known-limitations--cli-requires-container-access" aria-label="Permalink">#</a>ntfy CLI Requires Container Access</h2>
+<p>There is no shell or terminal exposed by the add-on itself. CLI commands (user/token/ACL management) require <code>docker exec</code> via the HA SSH add-on, and <code>NTFY_AUTH_FILE=/data/ntfy/user.db</code> must be exported manually in each session. See <a href="#cli-reference">CLI Reference</a> for the exact commands.</p>
 
       </div>
     </article>

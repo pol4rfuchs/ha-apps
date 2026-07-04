@@ -408,7 +408,7 @@
 <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔐</span><span><strong>Security Notes</strong><small>Ports, query, passwords, public exposure</small></span></a>
 <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Startup, token, ports, clients</small></span></a>
 <a class="nav-item" href="#maintenance" data-target="maintenance"><span class="nav-icon">🧰</span><span><strong>Update &amp; Rollback Runbook</strong><small>Beta-safe update path</small></span></a>
-<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.2 add-on and beta9 server</small></span></a>
+<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.15 add-on and beta11 server</small></span></a>
 <a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, beta, architecture</small></span></a>
 <a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer &amp; License</strong><small>Unofficial wrapper and licenses</small></span></a>
     </nav>
@@ -484,7 +484,7 @@ query_http_port: 10080</code></pre>
 <tr><td>HA Add-on Slug</td><td><code>teamspeak6</code></td></tr>
 <tr><td>Official Upstream</td><td><a href="https://github.com/teamspeak/teamspeak6-server">teamspeak/teamspeak6-server</a></td></tr>
 <tr><td>Docker Image</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server"><code>teamspeaksystems/teamspeak6-server</code></a></td></tr>
-<tr><td>Target Version</td><td><code>6.0.0-beta9</code></td></tr>
+<tr><td>Target Version</td><td><code>6.0.0-beta11</code></td></tr>
 <tr><td>Voice Port</td><td><code>9987/udp</code></td></tr>
 <tr><td>Filetransfer</td><td><code>30033/tcp</code></td></tr>
 <tr><td>HTTP WebQuery</td><td><code>10080/tcp</code></td></tr>
@@ -526,10 +526,10 @@ Data:       /data/teamspeak6</code></pre>
 <h2>Official Image Status</h2>
 <ul>
 <li><code>teamspeaksystems/teamspeak6-server:latest</code> points to the current beta.</li>
-<li><code>teamspeaksystems/teamspeak6-server:6.0.0-beta9</code> is the versioned beta-9 tag.</li>
-<li>Docker Hub lists images for <code>linux/amd64</code> and <code>linux/arm64</code> under both <code>latest</code> and <code>6.0.0-beta9</code>.</li>
+<li><code>teamspeaksystems/teamspeak6-server:6.0.0-beta11</code> is the versioned beta-11 tag.</li>
+<li>Docker Hub lists images for <code>linux/amd64</code> and <code>linux/arm64</code> under both <code>latest</code> and <code>6.0.0-beta11</code>.</li>
 </ul>
-<pre><code>docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
+<pre><code>docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta11</code></pre>
 <blockquote>This means the old community ARM workaround is no longer required for your HA add-on, as long as your build/config points to the official multi-arch image.</blockquote>
 
       </div>
@@ -961,9 +961,9 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <table>
 <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
 <tbody>
-<tr><td>teamspeak6-ha-app</td><td><code>v1.1.14</code></td><td>Version from your README/badge.</td></tr>
+<tr><td>teamspeak6-ha-app</td><td><code>v1.1.15</code></td><td>Version from your README/badge.</td></tr>
 <tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta11</code></td><td>Current target from your README and official upstream.</td></tr>
-<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></td><td>Versioned official container tag.</td></tr>
+<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta11</code></td><td>Versioned official container tag.</td></tr>
 </tbody>
 </table>
 <h2>v6.0.0-beta9 Highlights</h2>
@@ -973,6 +973,12 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <li>Crash fix on flush with invalid database connections.</li>
 <li>S3 performance optimization.</li>
 <li>Updated default license.</li>
+</ul>
+<h2>Recent Add-on Fixes</h2>
+<ul>
+<li><strong>v1.1.15:</strong> <code>query_admin_password</code> now uses the <code>password</code> schema type so Home Assistant shows a reveal icon instead of a plain text field.</li>
+<li><strong>v1.1.13:</strong> Fixed channel creates/renames/edits being reverted after every restart — a stale <code>.sqlitedb-wal</code> file was replayed on top of the checkpointed database. The WAL/SHM files are now deleted after checkpoint and after backup/restore.</li>
+<li><strong>v1.1.14:</strong> Upstream bumped to <code>6.0.0-beta11</code>.</li>
 </ul>
 
       </div>

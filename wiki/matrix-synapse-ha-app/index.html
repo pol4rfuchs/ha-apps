@@ -549,7 +549,11 @@ enable_registration: false</code></pre>
             <tr><td><code>livekit_jwt_url</code></td><td>—</td><td>HTTPS URL for LiveKit JWT bridge.</td></tr>
             <tr><td><code>ntfy_url</code></td><td>—</td><td>Optional external ntfy URL for UnifiedPush.</td></tr>
             <tr><td><code>enable_registration</code></td><td><code>false</code></td><td>Allow public registration.</td></tr>
+            <tr><td><code>registration_shared_secret</code></td><td>—</td><td>Shared secret for <code>register_new_matrix_user</code>-style admin registration. Leave empty to disable.</td></tr>
             <tr><td><code>enable_federation</code></td><td><code>true</code></td><td>Connect to the Matrix federation.</td></tr>
+            <tr><td><code>enable_synapse_admin</code></td><td><code>true</code></td><td>Enable the built-in Synapse Admin UI (see <a href="#synapse-admin">Synapse Admin</a>).</td></tr>
+            <tr><td><code>enable_voice_calls</code></td><td><code>false</code></td><td>Enable Element Call / LiveKit voice &amp; video. Requires <code>livekit_secret</code>, <code>element_call_url</code>, <code>livekit_url</code> and <code>livekit_jwt_url</code>.</td></tr>
+            <tr><td><code>livekit_secret</code></td><td>—</td><td>Shared secret between Synapse and the LiveKit SFU.</td></tr>
             <tr><td><code>max_upload_size_mb</code></td><td><code>50</code></td><td>Max media upload size in MB.</td></tr>
             <tr><td><code>log_level</code></td><td><code>WARNING</code></td><td><code>DEBUG / INFO / WARNING / ERROR</code></td></tr>
           </tbody>

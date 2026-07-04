@@ -1,0 +1,39 @@
+name: 21 Wiki Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - wiki/**
+      - scripts/validate_wiki.py
+      - ".github/workflows/21-wiki-validate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - wiki/**
+      - scripts/validate_wiki.py
+      - ".github/workflows/21-wiki-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wiki-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate wiki/ structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Run wiki structure checks
+        shell: bash
+        run: python3 scripts/validate_wiki.py

@@ -515,7 +515,7 @@ Data       → /data (database, cache)</code></pre>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="configuration options ND_MUSICFOLDER ND_DATAFOLDER scan schedule loglevel downloads jukebox lastfm spotify">
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options ND_MUSICFOLDER ND_DATAFOLDER scan schedule loglevel downloads jukebox lastfm listenbrainz podcasts scanner extractor transcoding sessions playlists puid pgid">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>All Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
@@ -534,28 +534,95 @@ Data       → /data (database, cache)</code></pre>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>ND_DATAFOLDER</code></td><td><code>/data</code></td><td>Database and cache location.</td></tr>
-            <tr><td><code>ND_SCANSCHEDULE</code></td><td><code>@every 24h</code></td><td>Auto-scan schedule. <code>0</code> = disabled.</td></tr>
             <tr><td><code>ND_LOGLEVEL</code></td><td><code>info</code></td><td><code>error / warn / info / debug / trace</code></td></tr>
-            <tr><td><code>ND_ENABLEDOWNLOADS</code></td><td><code>true</code></td><td>Allow track downloads from the UI.</td></tr>
-            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio on server hardware.</td></tr>
+            <tr><td><code>PUID</code></td><td><code>0</code></td><td>User ID Navidrome runs as. Match your music share's owner to avoid permission issues.</td></tr>
+            <tr><td><code>PGID</code></td><td><code>0</code></td><td>Group ID Navidrome runs as.</td></tr>
           </tbody>
         </table>
-        <h2 id="config-integrations"><a class="anchor" href="#config-integrations">#</a>External Integrations</h2>
+        <h2 id="config-ui"><a class="anchor" href="#config-ui">#</a>UI</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_ENABLESTARRATING</code></td><td><code>true</code></td><td>Show star-rating controls in the UI.</td></tr>
+            <tr><td><code>ND_ENABLEFAVOURITES</code></td><td><code>true</code></td><td>Enable the favourites/heart feature.</td></tr>
+            <tr><td><code>ND_ENABLEDOWNLOADS</code></td><td><code>true</code></td><td>Allow track downloads from the UI.</td></tr>
+            <tr><td><code>ND_ENABLESHARING</code></td><td><code>false</code></td><td>Allow generating public share links.</td></tr>
+            <tr><td><code>ND_ENABLEGRAVATAR</code></td><td><code>false</code></td><td>Use Gravatar images for user avatars.</td></tr>
+            <tr><td><code>ND_MAXSIDEBARPLAYLISTS</code></td><td><code>100</code></td><td>Maximum number of playlists shown in the sidebar.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-library"><a class="anchor" href="#config-library">#</a>Library</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_SCANNER_SCHEDULE</code></td><td><code>@every 24h</code></td><td>Auto-scan schedule. Empty = disabled. (Renamed from <code>ND_SCANSCHEDULE</code>.)</td></tr>
+            <tr><td><code>ND_AUTOIMPORTPLAYLISTS</code></td><td><code>true</code></td><td>Import <code>.m3u</code> playlist files found in the music folder.</td></tr>
+            <tr><td><code>ND_IGNOREDARTICLES</code></td><td><code>The El La Los Las Le Les Os As O A</code></td><td>Articles ignored when sorting artist/album names.</td></tr>
+            <tr><td><code>ND_INDEXGROUPS</code></td><td><code>A B C D E F G H I J K L M N O P Q R S T U V W X-Z(XYZ) #([^A-Za-z].*)</code></td><td>Grouping used for the A-Z index.</td></tr>
+            <tr><td><code>ND_COVERARTPRIORITY</code></td><td><code>embedded, cover.*, folder.*, front.*</code></td><td>Priority order for picking cover art.</td></tr>
+            <tr><td><code>ND_IMAGECACHESIZE</code></td><td><code>100MB</code></td><td>Disk cache size for resized cover art.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-scanner"><a class="anchor" href="#config-scanner">#</a>Scanner / Extractor</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_SCANNER_EXTRACTOR</code></td><td><code>taglib</code></td><td>Metadata extractor backend: <code>taglib</code> or <code>ffmpeg</code>.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-transcoding"><a class="anchor" href="#config-transcoding">#</a>Transcoding</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_TRANSCODINGCACHESIZE</code></td><td><code>100MB</code></td><td>Disk cache size for transcoded audio.</td></tr>
+            <tr><td><code>ND_DEFAULTDOWNSAMPLINGFORMAT</code></td><td><code>opus</code></td><td>Default format used when downsampling on the fly.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-podcasts"><a class="anchor" href="#config-podcasts">#</a>Podcasts</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_PODCAST_EPISODEKEEPCOUNT</code></td><td><code>0</code></td><td>Number of downloaded episodes to keep per podcast. <code>0</code> = unlimited.</td></tr>
+            <tr><td><code>ND_PODCAST_EPISODEDOWNLOADCOUNT</code></td><td><code>0</code></td><td>Number of episodes to auto-download per podcast. <code>0</code> = disabled.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-sessions"><a class="anchor" href="#config-sessions">#</a>Sessions / Security</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_SESSIONTIMEOUT</code></td><td><code>30m</code></td><td>Idle timeout before a web UI session expires.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-integrations"><a class="anchor" href="#config-integrations">#</a>Scrobbling</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>ND_LASTFM_ENABLED</code></td><td><code>false</code></td><td>Last.fm scrobbling and metadata.</td></tr>
+            <tr><td><code>ND_LASTFM_LANGUAGE</code></td><td><code>en</code></td><td>Language used for Last.fm metadata lookups.</td></tr>
             <tr><td><code>ND_LISTENBRAINZ_ENABLED</code></td><td><code>false</code></td><td>ListenBrainz scrobbling.</td></tr>
-            <tr><td><code>ND_SPOTIFY_ID</code></td><td>—</td><td>Spotify Client ID for artist images.</td></tr>
-            <tr><td><code>ND_SPOTIFY_SECRET</code></td><td>—</td><td>Spotify Client Secret.</td></tr>
           </tbody>
         </table>
-        <h2 id="config-proxy"><a class="anchor" href="#config-proxy">#</a>Reverse Proxy / SSO</h2>
+        <p><strong>Removed:</strong> Spotify integration (<code>ND_SPOTIFY_ID</code> / <code>ND_SPOTIFY_SECRET</code>) and the reverse-proxy SSO options (<code>ND_REVERSEPROXYUSERHEADER</code> / <code>ND_REVERSEPROXYWHITELIST</code>) are no longer exposed as add-on options.</p>
+        <h2 id="config-jukebox"><a class="anchor" href="#config-jukebox">#</a>Jukebox</h2>
         <table>
-          <thead><tr><th>Option</th><th>Description</th></tr></thead>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>ND_REVERSEPROXYUSERHEADER</code></td><td>SSO header for transparent login (e.g. <code>Remote-User</code>).</td></tr>
-            <tr><td><code>ND_REVERSEPROXYWHITELIST</code></td><td>CIDRs allowed to send the proxy header.</td></tr>
+            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio directly on the server's sound hardware. Requires <code>privileged: true</code> and ALSA device access.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-playlists"><a class="anchor" href="#config-playlists">#</a>Playlists</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_DEFAULTPLAYLISTPUBLICVISIBILITY</code></td><td><code>false</code></td><td>New playlists are public by default when enabled.</td></tr>
+            <tr><td><code>ND_SMARTPLAYLISTREFRESHDELAY</code></td><td><code>5s</code></td><td>Delay before a smart playlist is refreshed after a change.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="config-analytics"><a class="anchor" href="#config-analytics">#</a>Analytics</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ND_ENABLEINSIGHTSCOLLECTOR</code></td><td><code>false</code></td><td>Send anonymous usage insights to the Navidrome project.</td></tr>
           </tbody>
         </table>
       </div>

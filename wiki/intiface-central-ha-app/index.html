@@ -538,9 +538,12 @@ Bluetooth/USB  → Host kernel → intiface-engine</code></pre>
         <p>If you want MQTT integration, configure in the Configuration tab:</p>
         <pre><code>mqtt_host: "core-mosquitto"
 mqtt_port: 1883
-mqtt_username: "your_user"
-mqtt_password: "your_password"
-mqtt_discovery: true</code></pre>
+mqtt_user: "your_user"
+mqtt_pass: "your_password"
+mqtt_topic_prefix: "buttplug"
+ha_discovery: true
+ha_discovery_prefix: "homeassistant"</code></pre>
+        <p>Other options: <code>engine_ws_port</code> (<code>12345</code>), <code>use_bluetooth_le</code> (<code>true</code>), <code>use_hid</code> (<code>true</code>), <code>use_serial</code> (<code>false</code>), <code>log_level</code> (<code>info</code>).</p>
         <h2 id="inti-step-4"><a class="anchor" href="#inti-step-4">#</a>Step 4 — Start</h2>
         <ol>
           <li>Click <strong>Start</strong>.</li>
@@ -562,10 +565,10 @@ mqtt_discovery: true</code></pre>
         <pre><code># Example: set device 0, motor 0 to 50% intensity
 mosquitto_pub -t "intiface/devices/0/motor/0/vibrate" -m "0.5"</code></pre>
         <h2 id="mqtt-ha"><a class="anchor" href="#mqtt-ha">#</a>Home Assistant MQTT Discovery</h2>
-        <p>When <code>mqtt_discovery: true</code>, entities appear in HA automatically after the add-on starts and detects devices.</p>
+        <p>When <code>ha_discovery: true</code>, entities appear in HA automatically after the add-on starts and detects devices.</p>
         <pre><code># Example HA automation
 action:
-  - service: mqtt.publish
+  - action: mqtt.publish
     data:
       topic: "intiface/devices/0/motor/0/vibrate"
       payload: "0.8"</code></pre>
