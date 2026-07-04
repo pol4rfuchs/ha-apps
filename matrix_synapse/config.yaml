@@ -1,9 +1,11 @@
-name: "Matrix Server (ESS CE)"
-description: "Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS Community Edition Style"
-version: "1.2.11"
-slug: "matrix_server"
-url: "https://github.com/pol4rfuchs/ha-apps"
-image: "ghcr.io/pol4rfuchs/matrix-synapse-ha-app"
+name: Matrix Server (ESS CE)
+description: >-
+  Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS
+  Community Edition Style
+version: 1.3.0
+slug: matrix_server
+url: https://github.com/pol4rfuchs/ha-apps
+image: ghcr.io/pol4rfuchs/matrix-synapse-ha-app
 init: false
 hassio_api: true
 map:
@@ -11,48 +13,44 @@ map:
     read_only: false
   - type: media
     read_only: false
-
 ports:
-  7080/tcp: 7080    # Element Web
-  7081/tcp: 7081    # Element Call WebApp
-  7880/tcp: 7880    # LiveKit API/WebSocket (→ NPM)
-  7881/tcp: 7881    # LiveKit WebRTC TCP intern
-  8008/tcp: 8008    # Synapse API (→ NPM)
-  8089/tcp: 8089    # lk-jwt-service (→ NPM)
-  8448/tcp: 8448    # Matrix Federation
-  8090/tcp: 8090    # Synapse Admin UI
-  3478/udp: 3478    # TURN UDP — direkt im Router freigeben
-  5349/tcp: 5349    # TURN TLS  — direkt im Router freigeben
-
+  7080/tcp: 7080
+  7081/tcp: 7081
+  7880/tcp: 7880
+  7881/tcp: 7881
+  8008/tcp: 8008
+  8089/tcp: 8089
+  8448/tcp: 8448
+  8090/tcp: 8090
+  3478/udp: 3478
+  5349/tcp: 5349
 ports_description:
-  7080/tcp: "Element Web Client"
-  7081/tcp: "Element Call Voice/Video WebApp"
-  7880/tcp: "LiveKit SFU API (NPM → hier für WSS)"
-  7881/tcp: "LiveKit WebRTC TCP Fallback (intern)"
-  8008/tcp: "Synapse Matrix API (NPM → hier für HTTPS)"
-  8089/tcp: "lk-jwt-service Token Bridge (NPM → hier)"
-  8448/tcp: "Matrix Federation Port"
-  8090/tcp: "Synapse Admin UI"
-  3478/udp: "TURN UDP (direkt, kein NPM)"
-  5349/tcp: "TURN TLS Fallback (direkt, kein NPM)"
-
+  7080/tcp: Element Web Client
+  7081/tcp: Element Call Voice/Video WebApp
+  7880/tcp: LiveKit SFU API (NPM → hier für WSS)
+  7881/tcp: LiveKit WebRTC TCP Fallback (intern)
+  8008/tcp: Synapse Matrix API (NPM → hier für HTTPS)
+  8089/tcp: lk-jwt-service Token Bridge (NPM → hier)
+  8448/tcp: Matrix Federation Port
+  8090/tcp: Synapse Admin UI
+  3478/udp: TURN UDP (direkt, kein NPM)
+  5349/tcp: TURN TLS Fallback (direkt, kein NPM)
 options:
-  server_name: "deine-domain.duckdns.org"
-  element_web_url: "https://deine-domain.duckdns.org:7080"
+  server_name: deine-domain.duckdns.org
+  element_web_url: https://deine-domain.duckdns.org:7080
   enable_registration: false
-  registration_shared_secret: ""
+  registration_shared_secret: ''
   enable_federation: true
   max_upload_size_mb: 50
   enable_synapse_admin: true
-  postgres_password: "changeme_bitte_aendern"
-  log_level: "WARNING"
-  ntfy_url: ""
+  postgres_password: changeme_bitte_aendern
+  log_level: WARNING
+  ntfy_url: ''
   enable_voice_calls: false
-  livekit_secret: ""
-  element_call_url: "https://call.deine-domain.duckdns.org"
-  livekit_url: "wss://livekit.deine-domain.duckdns.org"
-  livekit_jwt_url: "https://livekit-jwt.deine-domain.duckdns.org"
-
+  livekit_secret: ''
+  element_call_url: https://call.deine-domain.duckdns.org
+  livekit_url: wss://livekit.deine-domain.duckdns.org
+  livekit_jwt_url: https://livekit-jwt.deine-domain.duckdns.org
 schema:
   server_name: str
   element_web_url: url
@@ -69,18 +67,13 @@ schema:
   element_call_url: str
   livekit_url: str
   livekit_jwt_url: str
-
 arch:
   - aarch64
   - amd64
-
 startup: services
-
 ingress: false
-webui: "http://[HOST]:[PORT:7080]"
-
+webui: http://[HOST]:[PORT:7080]
 panel_icon: mdi:matrix
 panel_title: Matrix
-
 backup_exclude:
   - data/postgresql/pg_wal
