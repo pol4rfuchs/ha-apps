@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.1...matrix_synapse-v1.3.2) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** fix Ketesa extraction crashing the container ([c2142b6](https://github.com/pol4rfuchs/ha-apps/commit/c2142b686a3309e64d53b9edc9474926bdf5cd9e))
+
 ## [1.3.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.0...matrix_synapse-v1.3.1) (2026-07-04)
 
 
