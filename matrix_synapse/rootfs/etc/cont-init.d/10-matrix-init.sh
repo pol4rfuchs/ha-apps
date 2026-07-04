@@ -351,7 +351,7 @@ cat > /data/matrix/element-web/config.json << EOF
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "${ELEMENT_WEB_URL}",
+            "base_url": "https://${SERVER_NAME}",
             "server_name": "${SERVER_NAME}"
         }
     },
@@ -383,7 +383,7 @@ cat > /data/matrix/element-web/config.${ELEMENT_DOMAIN}.json << EOF
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "${ELEMENT_WEB_URL}",
+            "base_url": "https://${SERVER_NAME}",
             "server_name": "${SERVER_NAME}"
         }
     },
@@ -409,7 +409,7 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "${ELEMENT_WEB_URL}",
+            "base_url": "https://${SERVER_NAME}",
             "server_name": "${SERVER_NAME}"
         }
     },
