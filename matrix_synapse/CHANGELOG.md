@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.3...matrix_synapse-v1.3.4) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** set LIVEKIT_FULL_ACCESS_HOMESERVERS for lk-jwt-service ([80d1ff5](https://github.com/pol4rfuchs/ha-apps/commit/80d1ff5cf569df320b2e3e1374b7178b8616c439))
+
 ## [1.3.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.2...matrix_synapse-v1.3.3) (2026-07-04)
 
 
