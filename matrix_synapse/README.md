@@ -26,7 +26,7 @@
 | **PostgreSQL 15** | Debian pkg | Database |
 | **Element Web** | latest (auto-fetched, version-tracked) | Web client |
 | **Element Call** | latest (auto-fetched, version-tracked) | Voice / Video calls |
-| **LiveKit SFU** | latest | WebRTC media server |
+| **LiveKit SFU** | latest (auto-fetched, version-tracked) | WebRTC media server |
 | **Ketesa** (formerly Synapse Admin) | latest (auto-fetched, version-tracked) | Admin UI |
 | **S6-Overlay** | — | Multi-service init |
 
