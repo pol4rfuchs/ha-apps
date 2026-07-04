@@ -17,7 +17,8 @@ RUN python3 -m venv /opt/synapse && \
     /opt/synapse/bin/pip install --upgrade pip wheel && \
     /opt/synapse/bin/pip install \
         "matrix-synapse[all]>=1.121.0" \
-        "psycopg2-binary"
+        "psycopg2-binary" \
+        "pyOpenSSL>=24.0.0"
 
 # LiveKit + lk-jwt-service werden zur LAUFZEIT geladen (nicht im Build)
 # Grund: GitHub ist im HA Build-Netzwerk geblockt
