@@ -52,6 +52,8 @@ for i in $(seq 1 60); do
     sleep 2
 done
 
+SERVER_NAME=$(bashio::config 'server_name')
+
 bashio::log.info "🚀 Starte lk-jwt-service auf Port 8089..."
 exec env \
     LIVEKIT_URL="ws://127.0.0.1:7880" \
@@ -59,4 +61,5 @@ exec env \
     LIVEKIT_SECRET="${LIVEKIT_SECRET}" \
     HOMESERVER_URL="http://127.0.0.1:8008" \
     LIVEKIT_JWT_BIND=":8089" \
+    LIVEKIT_FULL_ACCESS_HOMESERVERS="${SERVER_NAME}" \
     lk-jwt-service 2>&1
