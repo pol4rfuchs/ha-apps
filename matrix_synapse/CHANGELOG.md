@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.4...matrix_synapse-v1.3.5) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** fix synapse-admin/element-web/element-call services waiting on removed marker files ([f585627](https://github.com/pol4rfuchs/ha-apps/commit/f5856275fa8ae1ac24696f5d9cf16829d27c38c4))
+
 ## [1.3.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.3...matrix_synapse-v1.3.4) (2026-07-04)
 
 
