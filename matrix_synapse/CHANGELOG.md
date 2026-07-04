@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.5...matrix_synapse-v1.3.6) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** fix Element Web/Call base_url pointing to wrong port ([8c71c7e](https://github.com/pol4rfuchs/ha-apps/commit/8c71c7e27f339b695a8ceecebe1fb808fdbfc5b6))
+
 ## [1.3.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.4...matrix_synapse-v1.3.5) (2026-07-04)
 
 
