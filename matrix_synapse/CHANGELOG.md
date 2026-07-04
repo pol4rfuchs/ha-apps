@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.0...matrix_synapse-v1.3.1) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** version-aware auto-update for LiveKit binaries ([9f03c50](https://github.com/pol4rfuchs/ha-apps/commit/9f03c505272f9654a60b6b31556e1e6edebf68d3))
+
 ## [1.3.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.2.11...matrix_synapse-v1.3.0) (2026-07-04)
 
 
