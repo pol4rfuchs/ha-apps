@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.6...matrix_synapse-v1.3.7) (2026-07-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** detect real LAN IP via Supervisor Network API + document secure-context limitation ([5e0638f](https://github.com/pol4rfuchs/ha-apps/commit/5e0638f830058465f85ac8794e11cb0f4bcd449a))
+
 ## [1.3.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.5...matrix_synapse-v1.3.6) (2026-07-04)
 
 
