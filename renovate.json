@@ -59,6 +59,12 @@
     },
     {
       "matchFileNames": [
+        "restic_backup/**"
+      ],
+      "semanticCommitScope": "restic_backup"
+    },
+    {
+      "matchFileNames": [
         "searxng/**"
       ],
       "semanticCommitScope": "searxng"

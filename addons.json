@@ -5,6 +5,7 @@
   "navidrome",
   "nginx_proxy_manager",
   "ntfy",
+  "restic_backup",
   "ntfy_manager",
   "nextcloud",
   "searxng",

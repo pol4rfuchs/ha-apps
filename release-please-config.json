@@ -69,6 +69,19 @@
         }
       ]
     },
+    "restic_backup": {
+      "release-type": "simple",
+      "component": "restic_backup",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "ntfy": {
       "release-type": "simple",
       "component": "ntfy",
