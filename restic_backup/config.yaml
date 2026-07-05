@@ -1,10 +1,11 @@
----
-name: "Restic Backup"
-description: "Scheduled restic backups of HA config/media/addon data with ntfy alerting on failure"
-url: "https://github.com/pol4rfuchs/ha-apps"
-version: "0.1.0"
-slug: "restic_backup"
-image: "ghcr.io/pol4rfuchs/restic-backup-ha-app"
+name: Restic Backup
+description: >-
+  Scheduled restic backups of HA config/media/addon data with ntfy alerting on
+  failure
+url: https://github.com/pol4rfuchs/ha-apps
+version: 0.2.0
+slug: restic_backup
+image: ghcr.io/pol4rfuchs/restic-backup-ha-app
 init: false
 panel_icon: mdi:archive-lock-outline
 arch:
@@ -18,27 +19,27 @@ map:
   - ssl:ro
 options:
   log_level: info
-  cron_schedule: "0 3 * * *"
-  repository: "/share/restic-backup/repo"
-  restic_password: ""
+  cron_schedule: 0 3 * * *
+  repository: /share/restic-backup/repo
+  restic_password: ''
   backup_paths:
     - /homeassistant
     - /addon_configs
     - /ssl
   exclude_patterns:
-    - "*.log"
-    - "**/__pycache__"
+    - '*.log'
+    - '**/__pycache__'
   retention_daily: 7
   retention_weekly: 4
   retention_monthly: 6
   run_on_start: false
-  aws_access_key_id: ""
-  aws_secret_access_key: ""
-  aws_default_region: ""
-  ntfy_url: ""
-  ntfy_topic: ""
-  ntfy_username: ""
-  ntfy_password: ""
+  aws_access_key_id: ''
+  aws_secret_access_key: ''
+  aws_default_region: ''
+  ntfy_url: ''
+  ntfy_topic: ''
+  ntfy_username: ''
+  ntfy_password: ''
 schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)
   cron_schedule: str
