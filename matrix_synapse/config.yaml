@@ -24,6 +24,27 @@ ports:
   8090/tcp: 8090
   3478/udp: 3478
   5349/tcp: 5349
+  30000/udp: 30000
+  30001/udp: 30001
+  30002/udp: 30002
+  30003/udp: 30003
+  30004/udp: 30004
+  30005/udp: 30005
+  30006/udp: 30006
+  30007/udp: 30007
+  30008/udp: 30008
+  30009/udp: 30009
+  30010/udp: 30010
+  30011/udp: 30011
+  30012/udp: 30012
+  30013/udp: 30013
+  30014/udp: 30014
+  30015/udp: 30015
+  30016/udp: 30016
+  30017/udp: 30017
+  30018/udp: 30018
+  30019/udp: 30019
+  30020/udp: 30020
 ports_description:
   7080/tcp: Element Web Client
   7081/tcp: Element Call Voice/Video WebApp
@@ -35,6 +56,27 @@ ports_description:
   8090/tcp: Synapse Admin UI
   3478/udp: TURN UDP (direkt, kein NPM)
   5349/tcp: TURN TLS Fallback (direkt, kein NPM)
+  30000/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30001/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30002/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30003/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30004/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30005/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30006/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30007/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30008/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30009/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30010/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30011/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30012/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30013/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30014/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30015/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30016/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30017/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30018/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30019/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  30020/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
 options:
   server_name: deine-domain.duckdns.org
   element_web_url: https://deine-domain.duckdns.org:7080

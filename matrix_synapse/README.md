@@ -73,15 +73,17 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 |---|---|---|
 | `server_name` | — | Your Matrix domain. **No trailing slash.** |
 | `element_web_url` | — | External HTTPS URL for Element Web. |
-| `element_call_url` | — | External HTTPS URL for Element Call. |
-| `livekit_url` | — | WebSocket URL for LiveKit SFU. |
-| `livekit_jwt_url` | — | HTTPS URL for LiveKit JWT bridge. |
-| `ntfy_url` | — | Optional: external ntfy URL for UnifiedPush. |
 | `postgres_password` | — | PostgreSQL password — set before first start. |
 | `enable_registration` | `false` | Allow public registration. |
 | `enable_federation` | `true` | Connect to the Matrix federation. |
 | `max_upload_size_mb` | `50` | Max media upload size in MB. |
 | `log_level` | `WARNING` | `DEBUG / INFO / WARNING / ERROR` |
+| `ntfy_url` | — | Optional: external ntfy URL for UnifiedPush. |
+| `enable_voice_calls` | `false` | Enable Element Call (MSC3401) with LiveKit SFU. Downloads LiveKit and lk-jwt-service on first start. |
+| `livekit_secret` | — | Shared secret for LiveKit. Leave empty to auto-generate on first start (stored in `/data/matrix/.livekit_secret`). |
+| `element_call_url` | — | External HTTPS URL for Element Call. Only used if `enable_voice_calls` is `true`. |
+| `livekit_url` | — | WebSocket URL for LiveKit SFU (`wss://...`). Only used if `enable_voice_calls` is `true`. |
+| `livekit_jwt_url` | — | HTTPS URL for the LiveKit JWT bridge. Only used if `enable_voice_calls` is `true`. |
 
 > ⚠️ `server_name` cannot be changed after the first start — it becomes the permanent Matrix ID (`@user:server_name`).
 
@@ -92,11 +94,17 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | Port | Service | Access |
 |---|---|---|
 | `7080` | Element Web | Via NPM → `element.your-domain` |
+| `7081` | Element Call | Via NPM → `element-call.your-domain` |
 | `8008` | Synapse API | Via NPM → `matrix.your-domain` |
 | `8090` | Ketesa (Admin UI) | Via NPM → `admin.your-domain` |
 | `8448` | Matrix Federation | Direct — port-forward required |
-| `7880` | LiveKit SFU | Via NPM (WebSocket) |
+| `7880` | LiveKit SFU | Via NPM (WebSocket required) |
 | `8089` | LiveKit JWT Bridge | Via NPM |
+| `3478/udp` | TURN (media control) | **Direct — port-forward required, cannot go via NPM** |
+| `5349/tcp` | TURN TLS fallback | Direct — port-forward required (only needed for strict corporate firewalls) |
+| `30000-30020/udp` | TURN Relay Range (media) | **Direct — port-forward required, cannot go via NPM** |
+
+> ⚠️ The three TURN/relay rows are the most commonly missed step in setup — most guides only mention Federation as needing a direct router forward. Without UDP 3478 and the 30000-30020 relay range forwarded, calls will connect (signaling works fine over NPM) but carry no audio or video at all — even between two devices on the same LAN, since LiveKit always routes media through its built-in TURN server by design. The relay range is intentionally kept to 21 ports rather than LiveKit's 10,000-port default; see `NPM_SETUP.md` for why.
 
 See [`NPM_SETUP.md`](NPM_SETUP.md) for the full Nginx Proxy Manager configuration.
 
@@ -118,6 +126,13 @@ Or use the helper script included in the add-on:
 docker exec -it addon_local_matrix_server matrix-create-admin.sh
 ```
 
+> ℹ️ This creates a **new** admin user. To promote an existing user to admin instead, update the database directly:
+> ```bash
+> docker exec -it addon_local_matrix_server \
+>   gosu postgres psql -d synapse -c "UPDATE users SET admin = 1 WHERE name = '@username:your-domain.duckdns.org';"
+> ```
+> Log out and back in afterwards — an already-active session won't pick up the change automatically.
+
 ---
 
 ## 💾 Data persistence
@@ -133,10 +148,14 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 ├── synapse-admin/                  ← Ketesa / Admin UI (persistent, folder name kept for compat)
 ├── .element-web_version            ← Installed Element Web version
 ├── .ketesa_version                 ← Installed Ketesa version
-└── .element-call_version           ← Installed Element Call version (if voice enabled)
+├── .element-call_version           ← Installed Element Call version (if voice enabled)
+├── .livekit-server_version         ← Installed LiveKit binary version (if voice enabled)
+├── .lk-jwt-service_version         ← Installed lk-jwt-service binary version (if voice enabled)
+├── .livekit_secret                 ← Auto-generated LiveKit shared secret (if voice enabled)
+└── .registration_secret            ← Auto-generated registration_shared_secret
 ```
 
-Element Web, Ketesa, and Element Call each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch — no manual action needed.
+Element Web, Ketesa, Element Call, and (if voice is enabled) the LiveKit/lk-jwt-service binaries each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch — no manual action needed.
 
 To force a re-download of a specific component (e.g. after a corrupted extraction):
 
@@ -194,7 +213,8 @@ See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full exampl
 | Synapse | ~300–500 MB | 1–3% |
 | Element Web | ~10 MB | <1% |
 | Ketesa | ~10 MB | <1% |
-| **Total** | **~450–650 MB** | **~3–5%** |
+| LiveKit + lk-jwt-service (if enabled) | ~50–100 MB | 1–2% idle, more during calls |
+| **Total** | **~450–650 MB** (~550–750 MB with voice) | **~3–5%** |
 
 ---
 
@@ -217,6 +237,7 @@ https://federationtester.matrix.org/#your-domain.duckdns.org
 | Web apps not loading | Extraction failed | Delete the relevant `.{app}_version` file in `/data/matrix/` + restart add-on |
 | Synapse token invalid | Add-on reinstalled, DB empty | Re-create admin user |
 | Federation broken | Port 8448 not forwarded | Router: 8448 → HA-IP:8448 |
+| Call connects but no audio/video | TURN UDP 3478 and/or the relay range 30000-30020 not forwarded on the router | Forward both directly (not via NPM) to the HA host. Needed even for calls between devices on the same LAN, since LiveKit always routes media through TURN. |
 | Login stuck loading / blank screen via `http://<LAN-IP>:7080` | Plain HTTP has no "secure context" — browsers disable WebCrypto (needed for E2E encryption) on anything that isn't HTTPS or `localhost` | Use the HTTPS domain (e.g. `https://element.your-domain`) instead, even from the LAN — most routers support NAT hairpinning so this works without leaving the network. Direct `:7080` IP access is a convenience fallback only and won't fully work by design. |
 
 ---

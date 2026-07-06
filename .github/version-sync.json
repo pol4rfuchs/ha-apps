@@ -140,8 +140,13 @@
     "readme": "README.md",
     "items": [
       {
-        "value_from": { "file": "rootfs/etc/cont-init.d/05-download-webapps.sh", "regex": "ADMIN_VERSION=\"([^\"]+)\"" },
-        "table_row_label": "Synapse Admin"
+        "value_from": { "file": "rootfs/etc/cont-init.d/05-download-webapps.sh", "regex": "ADMIN_LATEST=\"([^\"]+)\"" },
+        "table_row_label": "Ketesa"
+      },
+      {
+        "value_from": { "file": "Dockerfile", "regex": "\"matrix-synapse\\[all\\]>=([^\"]+)\"" },
+        "value_prefix": "%3E%3D",
+        "badge": { "label": "Synapse", "color": "0DBD8B" }
       }
     ]
   }

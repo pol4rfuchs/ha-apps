@@ -12,6 +12,7 @@
 | `element-call.deine-domain.duckdns.org` | 7081 | Element Call (Voice/Video) |
 | `livekit.deine-domain.duckdns.org` | 7880 | LiveKit SFU — **WebSocket required / WebSocket Pflicht!** |
 | `livekit-jwt.deine-domain.duckdns.org` | 8089 | LiveKit JWT Token Bridge |
+| `admin.deine-domain.duckdns.org` | 8090 | Ketesa (Admin UI) |
 
 ## Router Port Forwards (not via NPM / nicht über NPM)
 
@@ -19,9 +20,10 @@
 |------|----------|---------------|-----------------|
 | 3478 | **UDP** | Pi-IP | TURN Standard — Mobil + Heimnetz |
 | 5349 | **TCP** | Pi-IP | TURN TLS Fallback — strict firewalls / strenge Firewalls |
+| 30000-30020 | **UDP** | Pi-IP | TURN Relay Range — Media (Audio/Video) |
 
-> EN: These two ports go **directly** to the Pi — NPM cannot proxy UDP or raw TCP.
-> DE: Diese zwei Ports gehen **direkt** zum Pi — NPM kann kein UDP und kein raw TCP proxyen.
+> EN: These ports go **directly** to the Pi — NPM cannot proxy UDP or raw WebRTC media traffic. Without the 30000-30020 relay range forwarded, calls will connect (signaling works) but carry no audio/video at all — even between two devices on the same LAN, since LiveKit always routes media through TURN by design. This range is deliberately kept small (21 ports) rather than LiveKit's 10,000-port default, since Home Assistant's add-on port schema requires each port to be listed individually — see the add-on's `config.yaml`.
+> DE: Diese Ports gehen **direkt** zum Pi — NPM kann kein UDP und keinen rohen WebRTC-Medienverkehr proxyen. Ohne die weitergeleitete Relay-Range 30000-30020 verbindet sich der Call zwar (Signaling funktioniert), überträgt aber weder Ton noch Bild — auch zwischen zwei Geräten im selben LAN, da LiveKit Medien grundsätzlich über TURN routet. Die Range ist bewusst klein gehalten (21 Ports statt LiveKits 10.000-Port-Default), weil Home Assistants Add-on-Port-Schema jeden Port einzeln in der `config.yaml` auflisten muss.
 
 ---
 
@@ -70,8 +72,8 @@ add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
 
 ## 4. LiveKit SFU (livekit.*) — ⚠️ WebSocket required / WebSocket Pflicht
 
-EN: Without WebSocket support enabled, **no calls will work at all**.
-DE: Ohne WebSocket-Support funktioniert **kein einziger Call**.
+EN: Without WebSocket support enabled, signaling won't connect at all. Note that this is separate from the TURN/relay port forwards above — WebSocket gets you the signaling connection, the router forwards get you the actual audio/video.
+DE: Ohne WebSocket-Support verbindet sich nicht mal die Signalisierung. Das ist unabhängig von den TURN/Relay-Portweiterleitungen oben — WebSocket sorgt für die Signalisierungsverbindung, die Router-Freigaben für Ton und Bild.
 
 **Details Tab:** Websockets Support → **ON / AN**
 
@@ -97,6 +99,12 @@ if ($request_method = OPTIONS) {
     return 204;
 }
 ```
+
+---
+
+## 6. Ketesa / Admin UI (admin.*) — Port 8090
+
+**Access List:** must be set to **Publicly Accessible** — authentication comes from Matrix login itself, not NPM.
 
 ---
 
@@ -129,7 +137,7 @@ cp /ssl/livekit.deine-domain.duckdns.org/privkey.pem   /data/matrix/tls/livekit.
 # Addon neu starten / restart addon
 ```
 
-> EN: TURN UDP 3478 works without TLS and covers home + mobile networks.
+> EN: TURN UDP 3478 + relay range 30000-30020 work without TLS and cover home + mobile networks.
 > TCP 5349 (TLS) is only needed for colleagues behind very strict corporate firewalls.
-> DE: TURN UDP 3478 funktioniert ohne TLS und deckt Heimnetz + Mobilnetz ab.
+> DE: TURN UDP 3478 + Relay-Range 30000-30020 funktionieren ohne TLS und decken Heimnetz + Mobilnetz ab.
 > TCP 5349 (TLS) nur für Kollegen hinter sehr strikten Firmen-Firewalls nötig.

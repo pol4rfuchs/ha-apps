@@ -279,7 +279,7 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
 
     bashio::log.info "⚙️  Schreibe LiveKit Konfiguration (TURN: ${LK_DOMAIN})..."
     cat > "${LK_CONFIG}" << EOF
-# LiveKit Server Config — generiert von Matrix Addon v1.2.0
+# LiveKit Server Config — generiert von Matrix Addon v1.3.8
 port: 7880
 bind_addresses:
   - "0.0.0.0"
@@ -299,15 +299,23 @@ logging:
   level: info
 
 # TURN built-in — nur UDP 3478 (kein TLS ohne Zertifikat)
-# Router: UDP 3478 → Pi freigeben
+# Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben
+# Relay-Range explizit klein gehalten (21 Ports statt LiveKit-Default
+# 30000-40000 = 10.000 Ports). Grund: Docker/HA Supervisor muss jeden Port
+# einzeln im config.yaml "ports:"-Mapping deklarieren — 10.000 Ports sind
+# unpraktikabel und laut LiveKit-eigener Doku auch für den Container-Start
+# ein Problem (separate iptables-Regel pro Port). 21 Ports reichen für
+# mehrere gleichzeitige Calls.
 turn:
   enabled: true
   domain: "${LK_DOMAIN}"
   udp_port: 3478
+  relay_range_start: 30000
+  relay_range_end: 30020
 EOF
     bashio::log.info "✅ LiveKit Config: ${LK_CONFIG}"
     bashio::log.info "   TURN UDP 3478 → ${LK_DOMAIN}"
-    bashio::log.info "   ⚠️  Router: UDP 3478 → Pi freigeben"
+    bashio::log.info "   ⚠️  Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
 fi
 
 # ── Element Web config.json ───────────────────────────────────────────────
@@ -460,6 +468,6 @@ bashio::log.info "  Admin UI:    http://[HA-IP]:8090"
 if [ "${ENABLE_VOICE}" = "true" ]; then
 bashio::log.info "  Element Call: http://[HA-IP]:7081"
 bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"
-bashio::log.info "  ⚠️  Router: UDP 3478 + TCP 5349 → Pi freigeben!"
+bashio::log.info "  ⚠️  Router: UDP 3478 + UDP 30000-30020 + TCP 5349 → Pi freigeben!"
 fi
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
