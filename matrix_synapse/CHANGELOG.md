@@ -5,6 +5,14 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.8](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.7...matrix_synapse-v1.3.8) (2026-07-06)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** expose LiveKit TURN relay range, shrink from 10000 to 21 ports ([a0f5022](https://github.com/pol4rfuchs/ha-apps/commit/a0f50223650e27685992ba468f03c65f105954dc))
+* **version-sync:** repair matrix_synapse entry, add Synapse badge tracking ([a0f5022](https://github.com/pol4rfuchs/ha-apps/commit/a0f50223650e27685992ba468f03c65f105954dc))
+
 ## [1.3.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.6...matrix_synapse-v1.3.7) (2026-07-04)
 
 
