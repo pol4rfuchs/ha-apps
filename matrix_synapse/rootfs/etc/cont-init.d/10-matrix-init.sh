@@ -98,7 +98,8 @@ if [ -z "${REG_SECRET}" ]; then
     else
         REG_SECRET=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
         echo "${REG_SECRET}" > "${SECRET_FILE}"
-        bashio::log.info "✅ registration_shared_secret generiert: ${REG_SECRET}"
+        bashio::log.info "✅ registration_shared_secret generiert und gespeichert"
+        bashio::log.info "   → Wert: ${SECRET_FILE} (nicht im Log, siehe Sicherheitshinweis)"
     fi
 fi
 
