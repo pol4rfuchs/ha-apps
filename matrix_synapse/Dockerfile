@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m venv /opt/synapse && \
     /opt/synapse/bin/pip install --upgrade pip wheel && \
     /opt/synapse/bin/pip install \
-        "matrix-synapse[all]>=1.155.0" \
+        "matrix-synapse[all]>=1.156.0" \
         "psycopg2-binary" \
         "pyOpenSSL>=24.0.0"
 
