@@ -29,6 +29,16 @@
     },
     {
       "matchFileNames": [
+        "matrix_synapse/Dockerfile"
+      ],
+      "matchDepNames": [
+        "matrix-synapse"
+      ],
+      "semanticCommitType": "fix",
+      "description": "matrix-synapse floor bumps default to 'chore', which never triggers a Release Please release/rebuild. Force 'fix' here so every new Synapse release actually reaches the built image, not just the README badge."
+    },
+    {
+      "matchFileNames": [
         "navidrome/**"
       ],
       "semanticCommitScope": "navidrome"
@@ -129,7 +139,7 @@
         "/^matrix_synapse/rootfs/etc/cont-init\\.d/05-download-webapps\\.sh$/"
       ],
       "matchStrings": [
-        "ADMIN_VERSION=\"(?<currentValue>v.*?)\"\\n"
+        "ADMIN_LATEST=\"(?<currentValue>v.*?)\"\\n"
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "etkecc/ketesa"
