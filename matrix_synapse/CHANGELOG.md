@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.9](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.8...matrix_synapse-v1.3.9) (2026-07-08)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** stop logging registration_shared_secret in plaintext ([8f463e8](https://github.com/pol4rfuchs/ha-apps/commit/8f463e88d2ea3f6c72edafa4cbb5053d63996720))
+
 ## [1.3.8](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.7...matrix_synapse-v1.3.8) (2026-07-06)
 
 
