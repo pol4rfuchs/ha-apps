@@ -140,12 +140,16 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 ```text
 /data/matrix/
 ├── postgresql/             ← PostgreSQL database
+├── .pg_initialized         ← Marker: Postgres cluster already initialized (skip re-init on restart)
 ├── synapse/
-│   ├── homeserver.yaml     ← Synapse config
+│   ├── homeserver.yaml     ← Synapse config (rewritten on every start)
+│   ├── log.yaml            ← Synapse logging config (rewritten on every start)
 │   ├── signing.key         ← ⚠️ Back this up — loss = loss of federation identity
 │   └── media_store/        ← Uploaded media
-├── element-web/                    ← Element Web (persistent)
+├── element-web/                    ← Element Web (persistent), incl. config.json + per-domain variants
+├── element-call/                   ← Element Call (persistent, only if enable_voice_calls), incl. config.json + per-domain variants
 ├── synapse-admin/                  ← Ketesa / Admin UI (persistent, folder name kept for compat)
+├── livekit.yaml                     ← LiveKit server config (rewritten on every start, only if enable_voice_calls)
 ├── .element-web_version            ← Installed Element Web version
 ├── .ketesa_version                 ← Installed Ketesa version
 ├── .element-call_version           ← Installed Element Call version (if voice enabled)
