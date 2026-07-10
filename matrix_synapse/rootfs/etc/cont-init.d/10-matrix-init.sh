@@ -327,20 +327,32 @@ bashio::log.info "Schreibe Element Web config.json..."
 # Innerhalb des Containers sieht `hostname -I` / /proc/net/fib_trie nur das
 # interne Docker-Bridge-Netz des Supervisors (z.B. 172.30.x.x), NIEMALS die
 # tatsächliche LAN-IP — das funktioniert unabhängig vom Subnetz nie zuverlässig.
+#
+# Kurz nach Container-Start ist die Supervisor-API oft noch nicht routbar
+# (Supervisor braucht selbst noch einen Moment, um das interne Netzwerk für
+# den gerade gestarteten Container fertig einzurichten) — deshalb 3 Versuche
+# mit kurzer Pause statt sofort beim ersten Fehlschlag aufzugeben.
 LOCAL_IP=""
-NETWORK_INFO=$(curl -sf --max-time 5 \
-    -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
-    "http://supervisor/network/info" 2>/dev/null)
+NETWORK_INFO=""
+for attempt in 1 2 3; do
+    NETWORK_INFO=$(curl -sf --max-time 5 \
+        -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+        "http://supervisor/network/info" 2>/dev/null)
+    if [ -n "${NETWORK_INFO}" ]; then
+        break
+    fi
+    [ "${attempt}" -lt 3 ] && sleep 2
+done
 if [ -n "${NETWORK_INFO}" ]; then
     LOCAL_IP=$(echo "${NETWORK_INFO}" \
-        | jq -r '.data.interfaces[]? | select(.primary == true) | .ip_address?' 2>/dev/null \
+        | jq -r '.data.interfaces[]? | select(.primary == true) | .ipv4.address[0]?' 2>/dev/null \
         | cut -d'/' -f1)
 fi
 
 # Fallback 1: alte Heuristik (funktioniert nur, falls Supervisor-API nicht
 # erreichbar ist UND der Container zufällig doch im Host-Netz hängt).
 if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
-    bashio::log.warning "Supervisor Network API nicht erreichbar — versuche Fallback-Erkennung"
+    bashio::log.warning "Supervisor Network API nach 3 Versuchen nicht erreichbar — versuche Fallback-Erkennung"
     if [ -f /proc/net/fib_trie ]; then
         LOCAL_IP=$(awk '/32 HOST/ { print last } { last=$2 }' /proc/net/fib_trie 2>/dev/null \
             | grep -E "^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)" | head -1)
