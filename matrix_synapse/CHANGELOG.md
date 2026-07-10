@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.3.11](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.10...matrix_synapse-v1.3.11) (2026-07-10)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** use legacy-cont-init instead of legacy-services for startup ordering ([fc9453b](https://github.com/pol4rfuchs/ha-apps/commit/fc9453b70419216271e61ca3e386fb6ace2ce3fa))
+
 ## [1.3.10](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.9...matrix_synapse-v1.3.10) (2026-07-10)
 
 
