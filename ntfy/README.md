@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/ntfy/logo.png" alt="ntfy logo" width="256">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/ntfy/logo.png" alt="ntfy Logo" width="500">
 
 ## ntfy Home Assistant App
 

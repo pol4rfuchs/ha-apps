@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/nextcloud/logo.png" alt="Nextcloud Icon" width="256">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/nextcloud/logo.png" alt="Nextcloud Logo" width="500">
 
 # ☁️ Nextcloud — Home Assistant Add-on
 

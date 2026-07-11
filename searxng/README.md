@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/searxng/logo.png" alt="SearXNG Icon" width="256">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/searxng/logo.png" alt="SearXNG Logo" width="500">
 
 # 🔍 SearXNG — Home Assistant Add-on
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.png" alt="ntfy HAOS Admin Panel Icon" width="256">
+<img src="./logo.png" alt="ntfy HAOS Admin Panel Logo" width="500">
 
 # 🛠️ ntfy HAOS Admin Panel — Home Assistant Add-on
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/matrix_synapse/logo.png" alt="Matrix Server Icon" width="256">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/matrix_synapse/logo.png" alt="Matrix Server Logo" width="500">
 
 # 🔷 Matrix Server — Home Assistant Add-on
 
