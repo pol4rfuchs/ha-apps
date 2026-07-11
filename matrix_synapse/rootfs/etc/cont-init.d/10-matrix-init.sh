@@ -181,13 +181,6 @@ url_preview_ip_range_blacklist:
   - '10.0.0.0/8'
   - '172.16.0.0/12'
   - '192.168.0.0/16'
-
-# MSC4108: QR-Code-Login für neue Sessions (Element → "Login with QR code").
-# Unabhängig von enable_voice_calls — reine Synapse-eigene Rendezvous-
-# Unterstützung, kein zusätzlicher Dienst nötig (nur relevant, falls MAS/OAuth
-# delegation genutzt würde, was hier nicht der Fall ist).
-experimental_features:
-  msc4108_enabled: true
 EOF
 
 # ── Element Call / MSC3401 Support (Voice/Video) ──────────────────────────
@@ -197,7 +190,6 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
 
 # ── Element Call / MSC3401 (Voice/Video) ────────────────────────────────
 experimental_features:
-  msc4108_enabled: true
   msc3266_enabled: true
   msc3401_enabled: true
   msc2285_enabled: true
