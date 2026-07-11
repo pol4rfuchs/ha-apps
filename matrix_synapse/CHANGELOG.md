@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.4.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.12...matrix_synapse-v1.4.0) (2026-07-11)
+
+
+### Features
+
+* **matrix_synapse:** enable QR code login (MSC4108) ([361e515](https://github.com/pol4rfuchs/ha-apps/commit/361e51576f902206ba9aa85086d510016d102713))
+
 ## [1.3.12](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.11...matrix_synapse-v1.3.12) (2026-07-10)
 
 
