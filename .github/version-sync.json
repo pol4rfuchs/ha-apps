@@ -54,7 +54,7 @@
     ]
   },
   "ntfy": {
-    "readme": "readme.md",
+    "readme": "README.md",
     "items": [
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG NTFY_VERSION=(\\S+)" },
@@ -99,7 +99,7 @@
     ]
   },
   "ts6_manager": {
-    "readme": "readme.md",
+    "readme": "README.md",
     "items": [
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
