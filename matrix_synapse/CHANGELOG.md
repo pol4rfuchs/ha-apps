@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.4.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.0...matrix_synapse-v1.4.1) (2026-07-11)
+
+
+### Reverts
+
+* **matrix_synapse:** remove msc4108_enabled, breaks Synapse startup ([594f3f0](https://github.com/pol4rfuchs/ha-apps/commit/594f3f012f7d2673ff31597c41a9d4428a313a0a))
+
 ## [1.4.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.3.12...matrix_synapse-v1.4.0) (2026-07-11)
 
 
