@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/teamspeak6/icon.png" alt="TeamSpeak 6 Server Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/teamspeak6/logo.png" alt="TeamSpeak 6 Server Icon" width="128">
 
 # TeamSpeak 6 Server Home Assistant App
 

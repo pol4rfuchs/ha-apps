@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/navidrome/icon.png" alt="Navidrome Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/navidrome/logo.png" alt="Navidrome Icon" width="256">
 
 # 🎵 Navidrome — Home Assistant Add-on
 

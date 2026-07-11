@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/nginx_proxy_manager/icon.png" alt="Nginx Proxy Manager Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/nginx_proxy_manager/logo.png" alt="Nginx Proxy Manager Icon" width="256">
 
 # 🔀 Nginx Proxy Manager — Home Assistant Add-on
 

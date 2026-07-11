@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/unbound/icon.png" alt="Unbound DNS Resolver Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/unbound/logo.png" alt="Unbound DNS Resolver Icon" width="128">
 
 # 🛡️ Unbound DNS Resolver — Home Assistant Add-on
 

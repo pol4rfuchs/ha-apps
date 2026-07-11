@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/intiface_central/icon.png" alt="Intiface Central Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/intiface_central/icon.png" alt="Intiface Central Icon" width="256">
 
 # 🎛️ Intiface Central / Lovense Control — Home Assistant Add-on
 

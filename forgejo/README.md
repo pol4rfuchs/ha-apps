@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/forgejo/icon.png" alt="Forgejo Icon" width="128">
+<img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/forgejo/logo.png" alt="Forgejo Icon" width="256">
 
 # 🦊 Forgejo — Home Assistant Add-on
 
