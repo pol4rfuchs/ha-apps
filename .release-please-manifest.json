@@ -2,7 +2,7 @@
   "forgejo": "16.0.5",
   "intiface_central": "1.0.2",
   "matrix_synapse": "1.4.1",
-  "navidrome": "2.1.3",
+  "navidrome": "2.1.4",
   "nginx_proxy_manager": "2.1.4",
   "restic_backup": "0.2.0",
   "ntfy": "1.2.3",
