@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- '*/README.md' '*/readme.md'
+          git add -- '*/README.md'
           git commit -m "chore(docs): sync version badges [skip ci]
           Aktualisierte Add-ons: ${CHANGED_LIST}"
           git push
