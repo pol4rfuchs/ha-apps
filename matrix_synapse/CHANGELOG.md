@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.4.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.1...matrix_synapse-v1.4.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** rtc_foci discovery + ntfy pusher IP whitelist ([21f5a0e](https://github.com/pol4rfuchs/ha-apps/commit/21f5a0e13aa06c0c4b8fcd1067c8311a81c5237e))
+
 ## [1.4.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.0...matrix_synapse-v1.4.1) (2026-07-11)
 
 
