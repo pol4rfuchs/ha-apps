@@ -129,6 +129,12 @@ fi
 
 cat > "${SYNAPSE_CONFIG}" << EOF
 server_name: "${SERVER_NAME}"
+# public_baseurl ist zwingend nötig, damit Synapse extra_well_known_client_content
+# (siehe rtc_foci weiter unten) ueberhaupt in die /.well-known/matrix/client
+# Antwort mit reinmischt — ohne diese Zeile wird der Extra-Content von Synapse
+# schlicht ignoriert, auch wenn er syntaktisch korrekt in der Config steht.
+# Ref: https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html#extra_well_known_client_content
+public_baseurl: "https://${SERVER_NAME}/"
 pid_file: /tmp/synapse.pid
 
 listeners:
