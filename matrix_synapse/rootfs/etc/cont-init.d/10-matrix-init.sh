@@ -181,6 +181,15 @@ url_preview_ip_range_blacklist:
   - '10.0.0.0/8'
   - '172.16.0.0/12'
   - '192.168.0.0/16'
+
+# ── ip_range_whitelist — Ausnahme für lokal gehosteten ntfy-Push-Server ──
+# Synapses Standard-ip_range_blacklist (privater IP-Bereich) greift auch
+# für HTTP-Pusher-Requests, nicht nur für URL-Previews. Der ntfy-Server
+# liegt im selben privaten Netz (Split-Horizon-DNS löst die Domain intern
+# direkt auf die LAN-IP auf) — ohne explizite Whitelist blockiert Synapse
+# den Push aus SSRF-Schutzgründen und schlägt mit DNSLookupError fehl.
+ip_range_whitelist:
+  - '10.10.20.10'
 EOF
 
 # ── Element Call / MSC3401 Support (Voice/Video) ──────────────────────────
@@ -213,6 +222,20 @@ turn_uris:
 turn_shared_secret: "${LIVEKIT_SECRET}"
 turn_user_lifetime: 86400000
 turn_allow_guests: true
+
+# ── MSC4143 rtc_foci — MatrixRTC-Discovery für moderne Clients ───────────
+# Ohne diesen Eintrag im .well-known/matrix/client wissen aktuelle Clients
+# (Element X, aktuelles Element Web, SchildiChat) nicht, welchen LiveKit-
+# Server sie für Calls verwenden sollen — sie brechen den Call-Versuch
+# lokal ab, BEVOR irgendeine Netzwerkverbindung nach draußen aufgebaut
+# wird. Betrifft nur den nativen MatrixRTC-Pfad; der alte Widget-Ansatz
+# (element_call.url in element-web config.json) läuft weiter unabhängig
+# davon, was erklärt, warum ältere/andere Clients teilweise noch funktionieren.
+# Referenz: https://github.com/element-hq/synapse/issues/18859
+extra_well_known_client_content:
+  org.matrix.msc4143.rtc_foci:
+    - type: "livekit"
+      livekit_service_url: "${LIVEKIT_JWT_URL}"
 EOF
 fi
 
