@@ -53,10 +53,22 @@ for i in $(seq 1 60); do
 done
 
 SERVER_NAME=$(bashio::config 'server_name')
+LIVEKIT_PUBLIC_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
 
 bashio::log.info "🚀 Starte lk-jwt-service auf Port 8089..."
+bashio::log.info "   LiveKit-URL fuer Clients: ${LIVEKIT_PUBLIC_URL}"
+# WICHTIG: lk-jwt-service verwendet LIVEKIT_URL fuer ZWEI Dinge gleichzeitig:
+#   1) interne Server-zu-Server Raum-Erstellung (Twirp/REST API)
+#   2) die Adresse, die 1:1 an den Client fuer dessen eigene WebSocket-
+#      Verbindung weitergegeben wird (im "url"-Feld der SFU-Config)
+# Ein interner Wert wie ws://127.0.0.1:7880 waere fuer den Server korrekt,
+# wird aber unveraendert an den Client geschickt -> der Client versucht dann,
+# sich mit SEINEM EIGENEN localhost zu verbinden und scheitert IMMER
+# (net::ERR_CONNECTION_REFUSED), unabhaengig von NPM/DNS/Firewall.
+# Muss daher zwingend die oeffentliche WSS-Adresse sein.
+# Ref: https://github.com/element-hq/lk-jwt-service/issues/161
 exec env \
-    LIVEKIT_URL="ws://127.0.0.1:7880" \
+    LIVEKIT_URL="${LIVEKIT_PUBLIC_URL}" \
     LIVEKIT_KEY="devkey" \
     LIVEKIT_SECRET="${LIVEKIT_SECRET}" \
     HOMESERVER_URL="http://127.0.0.1:8008" \
