@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.5.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.4...matrix_synapse-v1.5.0) (2026-07-18)
+
+
+### Features
+
+* **matrix_synapse:** admin UI auth, media retention, backups, rate limiting ([9cede50](https://github.com/pol4rfuchs/ha-apps/commit/9cede508966baedf87637a838aa04f50bfbfd93c))
+
 ## [1.4.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.3...matrix_synapse-v1.4.4) (2026-07-16)
 
 
