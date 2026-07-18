@@ -5,13 +5,6 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
-## [1.5.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.4...matrix_synapse-v1.5.0) (2026-07-18)
-
-
-### Features
-
-* **matrix_synapse:** admin UI auth, media retention, backups, rate limiting ([9cede50](https://github.com/pol4rfuchs/ha-apps/commit/9cede508966baedf87637a838aa04f50bfbfd93c))
-
 ## [1.4.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.3...matrix_synapse-v1.4.4) (2026-07-16)
 
 
@@ -139,45 +132,63 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 * **matrix_synapse:** version-aware auto-update for embedded webapps ([dc2d191](https://github.com/pol4rfuchs/ha-apps/commit/dc2d19189dd00984d401e85fc4eeec10c982b79b))
 
-## [1.2.11] — 2026-05-xx
+## [1.2.11] — 2026-05-30
 
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
-
----
-
-## [1.2.10] — 2026-05-xx
-
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
+### Fixed / Behoben
+- DE: `config.yaml` `map:`-Schema auf die von HA Supervisor geforderte Extended-Object-Form umgestellt (`config:rw`/`media:rw`/`data:rw` → `type: homeassistant_config`/`type: media` mit `read_only: false`); `data:rw` komplett entfernt, da `/data` jedem Add-on ohnehin automatisch zur Verfügung steht
+- EN: `config.yaml` `map:` schema migrated to the extended-object form required by HA Supervisor (`config:rw`/`media:rw`/`data:rw` → `type: homeassistant_config`/`type: media` with `read_only: false`); `data:rw` removed entirely since `/data` is always available to every add-on
+- DE: Default-Werte-Felder aus `config.yaml` entfernt (`homeassistant_api`, `hassio_role`, `boot`) — Linter-Regel: Felder, die bereits dem Supervisor-Default entsprechen, sollen nicht explizit gesetzt werden
+- EN: Removed default-value fields from `config.yaml` (`homeassistant_api`, `hassio_role`, `boot`) — linter rule: fields matching the Supervisor default should not be set explicitly
+- DE: `ingress: true` → `ingress: false` + `webui: http://[HOST]:[PORT:7080]` — Element Web ist eine SPA mit absoluten Asset-Pfaden; HA Ingress hängt einen Pfad-Präfix an, der sämtliches JS/CSS-Laden bricht (weißer Bildschirm in der Sidebar)
+- EN: `ingress: true` → `ingress: false` + `webui: http://[HOST]:[PORT:7080]` — Element Web is an SPA with absolute asset paths; HA Ingress adds a path prefix that breaks all JS/CSS asset loading (white screen in sidebar)
 
 ---
 
-## [1.2.9] — 2026-05-xx
+## [1.2.10] — 2026-03-xx
 
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
-
----
-
-## [1.2.8] — 2026-05-xx
-
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
+### Fixed / Behoben
+- DE: `LK_DOMAIN: unbound variable` behoben — Variable wurde erst im LiveKit-Config-Block gesetzt, aber vom TURN-Block in der Synapse-Config schon früher gebraucht. Wird jetzt direkt nach den Config-Variablen abgeleitet, bevor irgendein Block darauf zugreift
+- EN: Fixed `LK_DOMAIN: unbound variable` — the variable was only set in the LiveKit config block, but needed earlier by the Synapse TURN block. Now derived immediately after the config variables, before any block accesses it
 
 ---
 
-## [1.2.7] — 2026-05-xx
+## [1.2.9] — 2026-03-xx
 
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
+### Fixed / Behoben
+- DE: lk-jwt-service Port-Bindung repariert — `PORT=8089` (falsche Env-Var) → `LIVEKIT_JWT_BIND=":8089"` (die tatsächlich erwartete Variable). Service lauschte vorher auf dem falschen Port
+- EN: Fixed lk-jwt-service port binding — `PORT=8089` (wrong env var) → `LIVEKIT_JWT_BIND=":8089"` (the actually expected variable). Service was previously listening on the wrong port
+- DE: Legacy Call Dialog ("falsch konfigurierter Server") in Element Web behoben — Synapse bekommt jetzt einen `turn_uris`-Block mit dem LiveKit-TURN-Secret
+- EN: Fixed legacy call dialog ("improperly configured server") in Element Web — Synapse now gets a `turn_uris` block with the LiveKit TURN secret
+- DE: LiveKit Crash-Loop behoben — `livekit/run` wartet jetzt explizit, bis `livekit.yaml` frisch durch cont-init geschrieben wurde (+ 3s Puffer), statt eine evtl. veraltete Config zu lesen
+- EN: Fixed LiveKit crash loop — `livekit/run` now explicitly waits until `livekit.yaml` has been freshly written by cont-init (+ 3s buffer), instead of potentially reading a stale config
 
 ---
 
-## [1.2.6] — 2026-05-xx
+## [1.2.8] — 2026-03-xx
 
-### Changed / Geändert
-- <!-- Eintrag fehlt – bitte nachtragen -->
+### Fixed / Behoben
+- DE: LiveKit startete nicht ohne TLS-Zertifikat — `tls_port`/`cert_file`/`key_file` aus der generierten `livekit.yaml` entfernt, läuft jetzt nur mit TURN UDP 3478
+- EN: LiveKit failed to start without a TLS certificate — removed `tls_port`/`cert_file`/`key_file` from the generated `livekit.yaml`, now runs with TURN UDP 3478 only
+- DE: lk-jwt-service startete nicht — falsche Env-Var-Namen (`LIVEKIT_API_KEY`/`LIVEKIT_API_SECRET` → `LIVEKIT_KEY`/`LIVEKIT_SECRET`, die tatsächlich von lk-jwt-service erwarteten Namen)
+- EN: lk-jwt-service failed to start — wrong env var names (`LIVEKIT_API_KEY`/`LIVEKIT_API_SECRET` → `LIVEKIT_KEY`/`LIVEKIT_SECRET`, the names actually expected by lk-jwt-service)
+
+---
+
+## [1.2.7] — 2026-03-xx
+
+### Fixed / Behoben
+- DE: LiveKit Binary-Download schlug fehl — falscher GitHub-Repo-Name in der Download-URL (`livekit/livekit-server` → `livekit/livekit`)
+- EN: LiveKit binary download failed — wrong GitHub repo name in the download URL (`livekit/livekit-server` → `livekit/livekit`)
+
+---
+
+## [1.2.6] — 2026-03-xx
+
+### Fixed / Behoben
+- DE: LiveKit-Download-Script auf direkte URL-Konstruktion umgestellt (`livekit_VERSION_linux_ARCH.tar.gz`) statt fragilem Asset-Parsing per `jq` — behebt Null-Ergebnisse bei API-Strukturänderungen. GitHub API wird nur noch für die Versionsnummer befragt, mit Fallback auf eine feste Version bei Nichterreichbarkeit
+- EN: LiveKit download script switched to direct URL construction (`livekit_VERSION_linux_ARCH.tar.gz`) instead of fragile `jq`-based asset parsing — fixes null results on API structure changes. GitHub API is now only queried for the version number, with a fallback to a fixed version if unreachable
+- DE: `livekit/run` und `livekit-jwt/run` warten jetzt aktiv, bis die jeweilige Binary existiert und ausführbar ist, bevor gestartet wird — behebt Crash-Loop bei langsamem/fehlgeschlagenem Download
+- EN: `livekit/run` and `livekit-jwt/run` now actively wait until their respective binary exists and is executable before starting — fixes crash loop on slow/failed downloads
 
 ---
 
