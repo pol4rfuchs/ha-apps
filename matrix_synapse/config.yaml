@@ -93,6 +93,17 @@ options:
   element_call_url: https://call.deine-domain.duckdns.org
   livekit_url: wss://livekit.deine-domain.duckdns.org
   livekit_jwt_url: https://livekit-jwt.deine-domain.duckdns.org
+  admin_ui_username: admin
+  admin_ui_password: ''
+  media_retention_local_days: 0
+  media_retention_remote_days: 30
+  backup_enabled: true
+  backup_interval_hours: 24
+  backup_retention_days: 7
+  login_rate_limit_per_second: 0.17
+  login_rate_limit_burst: 3
+  registration_rate_limit_per_second: 0.17
+  registration_rate_limit_burst: 3
 schema:
   server_name: str
   element_web_url: url
@@ -109,6 +120,17 @@ schema:
   element_call_url: str
   livekit_url: str
   livekit_jwt_url: str
+  admin_ui_username: str
+  admin_ui_password: password
+  media_retention_local_days: int(0,3650)
+  media_retention_remote_days: int(0,3650)
+  backup_enabled: bool
+  backup_interval_hours: int(1,168)
+  backup_retention_days: int(1,90)
+  login_rate_limit_per_second: float(0.01,10)
+  login_rate_limit_burst: int(1,50)
+  registration_rate_limit_per_second: float(0.01,10)
+  registration_rate_limit_burst: int(1,50)
 arch:
   - aarch64
   - amd64

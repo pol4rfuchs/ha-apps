@@ -1,0 +1,45 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: Periodische PostgreSQL Backups via pg_dump
+#
+# Warum pg_dump statt nur auf HA-Snapshots verlassen: ein HA-Snapshot
+# kopiert /data/matrix/postgresql im laufenden Betrieb (Hot-Copy) — das
+# ist kein konsistenter Datenbank-Zustand. pg_dump erzeugt ein logisches,
+# in sich konsistentes Backup, das man notfalls auch in eine andere
+# Postgres-Version/-Instanz einspielen kann.
+
+BACKUP_ENABLED=$(bashio::config 'backup_enabled')
+BACKUP_INTERVAL_HOURS=$(bashio::config 'backup_interval_hours')
+BACKUP_RETENTION_DAYS=$(bashio::config 'backup_retention_days')
+
+BACKUP_DIR="/data/matrix/backups"
+mkdir -p "${BACKUP_DIR}"
+
+if [ "${BACKUP_ENABLED}" != "true" ]; then
+    bashio::log.info "postgres-backup: backup_enabled=false — Service bleibt idle"
+    # longrun-Service darf nicht sofort exiten (sonst restart-loop) — schlafen und leben lassen
+    exec sleep infinity
+fi
+
+bashio::log.info "postgres-backup: aktiv, Intervall=${BACKUP_INTERVAL_HOURS}h, Retention=${BACKUP_RETENTION_DAYS}d"
+
+# Erster Lauf 2 Minuten nach Start, damit Postgres/Synapse sicher hochgefahren sind
+sleep 120
+
+while true; do
+    TS=$(date +%Y%m%d-%H%M%S)
+    DUMP_FILE="${BACKUP_DIR}/synapse_${TS}.sql.gz"
+
+    if gosu postgres pg_dump -U postgres synapse 2>/tmp/pg_dump.err | gzip > "${DUMP_FILE}.tmp"; then
+        mv "${DUMP_FILE}.tmp" "${DUMP_FILE}"
+        SIZE=$(du -h "${DUMP_FILE}" | cut -f1)
+        bashio::log.info "postgres-backup: ✅ ${DUMP_FILE} (${SIZE})"
+    else
+        rm -f "${DUMP_FILE}.tmp"
+        bashio::log.error "postgres-backup: ❌ pg_dump fehlgeschlagen: $(cat /tmp/pg_dump.err)"
+    fi
+
+    # Rotation: alte Dumps jenseits der Retention löschen
+    find "${BACKUP_DIR}" -name 'synapse_*.sql.gz' -mtime "+${BACKUP_RETENTION_DAYS}" -delete
+
+    sleep "$((BACKUP_INTERVAL_HOURS * 3600))"
+done

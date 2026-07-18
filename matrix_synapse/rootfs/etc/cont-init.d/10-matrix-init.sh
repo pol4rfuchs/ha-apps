@@ -19,6 +19,14 @@ LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
 ELEMENT_CALL_URL=$(bashio::config 'element_call_url' | sed 's|/$||')
 LIVEKIT_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
 LIVEKIT_JWT_URL=$(bashio::config 'livekit_jwt_url' | sed 's|/$||')
+ADMIN_UI_USER=$(bashio::config 'admin_ui_username')
+ADMIN_UI_PASSWORD=$(bashio::config 'admin_ui_password')
+MEDIA_RETENTION_LOCAL=$(bashio::config 'media_retention_local_days')
+MEDIA_RETENTION_REMOTE=$(bashio::config 'media_retention_remote_days')
+LOGIN_RATE_PS=$(bashio::config 'login_rate_limit_per_second')
+LOGIN_RATE_BURST=$(bashio::config 'login_rate_limit_burst')
+REG_RATE_PS=$(bashio::config 'registration_rate_limit_per_second')
+REG_RATE_BURST=$(bashio::config 'registration_rate_limit_burst')
 # LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
 LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
@@ -30,10 +38,13 @@ SIGNING_KEY="${SYNAPSE_DATA}/signing.key"
 PG_MARKER="${DATA_DIR}/.pg_initialized"
 LK_CONFIG="${DATA_DIR}/livekit.yaml"
 LK_SECRET_FILE="${DATA_DIR}/.livekit_secret"
+ADMIN_UI_AUTH_FILE="${DATA_DIR}/.admin_ui_auth"
+BACKUP_DIR="${DATA_DIR}/backups"
 
 mkdir -p "${SYNAPSE_DATA}" "${PG_DATA}" "/media/matrix" \
          "${DATA_DIR}/logs" "${SYNAPSE_DATA}/media_store" \
-         "${DATA_DIR}/element-web" "${DATA_DIR}/element-call"
+         "${DATA_DIR}/element-web" "${DATA_DIR}/element-call" \
+         "${BACKUP_DIR}"
 
 # ── PostgreSQL init (einmalig) ────────────────────────────────────────────
 if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
@@ -118,6 +129,21 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     fi
 fi
 
+# ── Ketesa (Admin UI) Basic-Auth Credentials ──────────────────────────────
+if [ -z "${ADMIN_UI_PASSWORD}" ]; then
+    if [ -f "${ADMIN_UI_AUTH_FILE}" ]; then
+        ADMIN_UI_PASSWORD=$(tail -n1 "${ADMIN_UI_AUTH_FILE}")
+        bashio::log.info "✅ Admin UI Passwort aus Speicher geladen"
+    else
+        ADMIN_UI_PASSWORD=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
+        bashio::log.info "✅ Admin UI Passwort generiert und gespeichert"
+        bashio::log.info "   → Wert: ${ADMIN_UI_AUTH_FILE} (nicht im Log, siehe Sicherheitshinweis)"
+        bashio::log.info "   → Optional in die Addon-Config eintragen (admin_ui_password)"
+    fi
+fi
+printf '%s\n%s\n' "${ADMIN_UI_USER}" "${ADMIN_UI_PASSWORD}" > "${ADMIN_UI_AUTH_FILE}"
+chmod 600 "${ADMIN_UI_AUTH_FILE}"
+
 # ── Synapse homeserver.yaml ───────────────────────────────────────────────
 bashio::log.info "Schreibe Synapse homeserver.yaml..."
 
@@ -179,6 +205,18 @@ rc_message:
   per_second: 0.2
   burst_count: 10
 
+rc_login:
+  address:
+    per_second: ${LOGIN_RATE_PS}
+    burst_count: ${LOGIN_RATE_BURST}
+  account:
+    per_second: ${LOGIN_RATE_PS}
+    burst_count: ${LOGIN_RATE_BURST}
+
+rc_registration:
+  per_second: ${REG_RATE_PS}
+  burst_count: ${REG_RATE_BURST}
+
 report_stats: false
 
 url_preview_enabled: true
@@ -197,6 +235,26 @@ url_preview_ip_range_blacklist:
 ip_range_whitelist:
   - '10.10.20.10'
 EOF
+
+# ── Media Retention (optional Auto-Purge) ─────────────────────────────────
+# 0 = deaktiviert (Standardverhalten von Synapse: Medien werden nie gelöscht)
+if [ "${MEDIA_RETENTION_LOCAL}" != "0" ] || [ "${MEDIA_RETENTION_REMOTE}" != "0" ]; then
+    bashio::log.info "🗑️  Media Retention: local=${MEDIA_RETENTION_LOCAL}d remote=${MEDIA_RETENTION_REMOTE}d"
+    cat >> "${SYNAPSE_CONFIG}" << EOF
+
+media_retention:
+EOF
+    if [ "${MEDIA_RETENTION_LOCAL}" != "0" ]; then
+        cat >> "${SYNAPSE_CONFIG}" << EOF
+  local_media_lifetime: ${MEDIA_RETENTION_LOCAL}d
+EOF
+    fi
+    if [ "${MEDIA_RETENTION_REMOTE}" != "0" ]; then
+        cat >> "${SYNAPSE_CONFIG}" << EOF
+  remote_media_lifetime: ${MEDIA_RETENTION_REMOTE}d
+EOF
+    fi
+fi
 
 # ── Element Call / MSC3401 Support (Voice/Video) ──────────────────────────
 if [ "${ENABLE_VOICE}" = "true" ]; then
@@ -506,7 +564,7 @@ bashio::log.info "✅ Initialisierung abgeschlossen!"
 bashio::log.info "  Server:      ${SERVER_NAME}"
 bashio::log.info "  Element Web: http://[HA-IP]:7080"
 bashio::log.info "  Synapse API: http://[HA-IP]:8008"
-bashio::log.info "  Admin UI:    http://[HA-IP]:8090"
+bashio::log.info "  Admin UI:    http://[HA-IP]:8090 (Basic-Auth: ${ADMIN_UI_USER}, siehe ${ADMIN_UI_AUTH_FILE})"
 if [ "${ENABLE_VOICE}" = "true" ]; then
 bashio::log.info "  Element Call: http://[HA-IP]:7081"
 bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"

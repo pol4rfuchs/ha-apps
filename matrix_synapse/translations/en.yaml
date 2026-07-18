@@ -45,3 +45,36 @@ configuration:
   livekit_jwt_url:
     name: LiveKit JWT URL
     description: "External HTTPS URL for the lk-jwt-service token bridge."
+  admin_ui_username:
+    name: Admin UI Username
+    description: "Basic-Auth username for the Ketesa (Admin UI) on port 8090. Protects the admin interface at the network level."
+  admin_ui_password:
+    name: Admin UI Password
+    description: "Basic-Auth password for the Ketesa (Admin UI). Leave empty to auto-generate on first start (stored in /data/matrix/.admin_ui_auth, never logged)."
+  media_retention_local_days:
+    name: Media Retention — Local (days)
+    description: "Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever)."
+  media_retention_remote_days:
+    name: Media Retention — Remote (days)
+    description: "Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default."
+  backup_enabled:
+    name: Enable Automatic PostgreSQL Backups
+    description: "Periodically dump the Synapse database via pg_dump to /data/matrix/backups/ (consistent, unlike raw filesystem snapshots)."
+  backup_interval_hours:
+    name: Backup Interval (hours)
+    description: "How often to run the pg_dump backup job."
+  backup_retention_days:
+    name: Backup Retention (days)
+    description: "How many days of backups to keep before rotating out old dumps."
+  login_rate_limit_per_second:
+    name: Login Rate Limit (per second)
+    description: "Sustained allowed login attempts per second, per address/account (Synapse rc_login). Synapse default is 0.17."
+  login_rate_limit_burst:
+    name: Login Rate Limit (burst)
+    description: "Burst allowance for login attempts before rate limiting kicks in."
+  registration_rate_limit_per_second:
+    name: Registration Rate Limit (per second)
+    description: "Sustained allowed registration attempts per second (Synapse rc_registration). Only relevant if enable_registration is true."
+  registration_rate_limit_burst:
+    name: Registration Rate Limit (burst)
+    description: "Burst allowance for registration attempts before rate limiting kicks in."

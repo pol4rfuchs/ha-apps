@@ -41,7 +41,10 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
     chmod +x /etc/s6-overlay/s6-rc.d/synapse/finish && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit-jwt/run && \
-    chmod +x /etc/s6-overlay/s6-rc.d/element-call/run
+    chmod +x /etc/s6-overlay/s6-rc.d/element-call/run && \
+    chmod +x /etc/s6-overlay/s6-rc.d/synapse-admin/run && \
+    chmod +x /etc/s6-overlay/s6-rc.d/postgres-backup/run && \
+    chmod +x /usr/local/bin/admin-ui-auth-server.py
 # Hinweis: livekit-server + lk-jwt-service Binaries werden beim ersten Start
 # durch 03-download-binaries.sh nach /data/matrix/bin/ geladen
 
@@ -49,3 +52,11 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
 # 7080 = Element Web  |  7081 = Element Call  |  7880 = LiveKit API
 # 8008 = Synapse API  |  8448 = Federation    |  8090 = Synapse Admin
 EXPOSE 7080 7081 7880 8448 8090
+
+# ── Healthcheck ─────────────────────────────────────────────────────────────
+# Prüft Synapses eigenen /health-Endpoint statt nur "Prozess läuft" zu
+# vertrauen. start-period=90s, weil beim ersten Start Postgres-Init +
+# Signing-Key-Generierung + ggf. Webapp-Downloads laufen, bevor Synapse
+# überhaupt hochkommt.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
+    CMD curl -sf http://127.0.0.1:8008/health || exit 1
