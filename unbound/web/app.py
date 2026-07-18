@@ -317,8 +317,9 @@ def run_unbound_control(cmd, retries=0):
             if result.returncode == 0:
                 return result.stdout, True
             last_err = (result.stderr.strip() + "\n" + result.stdout.strip()).strip()
-        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-            last_err = str(e)
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            logging.exception("unbound-control command failed: %s", cmd)
+            last_err = "Failed to communicate with unbound-control"
         if attempt < retries:
             time.sleep(0.5)
     return last_err or "Unknown error", False
@@ -335,8 +336,9 @@ def validate_unbound_config(path=UNBOUND_CONF):
             text=True,
             timeout=10,
         )
-    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return False, str(e)
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        logging.exception("unbound-checkconf failed for path: %s", path)
+        return False, "Failed to validate unbound configuration"
 
     output = (result.stdout.strip() + "\n" + result.stderr.strip()).strip()
     if result.returncode != 0:
