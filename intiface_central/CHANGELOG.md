@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.2...intiface_central-v1.0.3) (2026-07-19)
+
+
+### Bug Fixes
+
+* **intiface_central:** use dynamic BUILD_ARCH/BUILD_VERSION instead of hardcoded label values ([71a706e](https://github.com/pol4rfuchs/ha-apps/commit/71a706ec0401c1f1a95fc44ee180720c3da7fe41))
+
 ## [1.0.2](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.1...intiface_central-v1.0.2) (2026-06-26)
 
 
