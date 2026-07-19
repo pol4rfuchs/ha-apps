@@ -1,3 +1,6 @@
+ARG BUILD_ARCH
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+
 # ── Stage 1: Build ───────────────────────────────────────────────────────────
 FROM node:22-alpine AS builder
 
@@ -19,8 +22,6 @@ WORKDIR /opt/ntfy-admin
 RUN npm prune --production
 
 # ── Stage 2: Runtime (HA Add-on Base, s6-overlay v3, bashio) ─────────────────
-ARG BUILD_ARCH
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
 FROM ${BUILD_FROM}
 
 ARG BUILD_ARCH
