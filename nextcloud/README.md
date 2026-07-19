@@ -24,7 +24,7 @@
 |---|---|
 | **Base image** | `nextcloud:apache` (official) |
 | **Nextcloud version** | `34.0.1` |
-| **Add-on version** | `33.0.12` |
+| **Add-on version** | `33.0.13` |
 | **Default port** | `8280` |
 | **App store** | ✅ unrestricted |
 | **Arch** | `amd64`, `aarch64` |
