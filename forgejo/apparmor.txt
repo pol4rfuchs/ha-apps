@@ -28,6 +28,14 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   /run/{,**}                rwk,
   /dev/tty                  rw,
 
+  # s6-overlay Baseline (Minimum laut Buildrules §8): ohne diese drei Pfade
+  # crasht der Container beim ersten sauberen Neustart mit
+  # "/bin/sh: can't open '/init': Permission denied", weil s6-overlay beim
+  # Runterfahren diese internen Legacy-Compat-Pfade selbst erneut ausführt.
+  /etc/services.d/**        rwix,
+  /etc/cont-init.d/**       rwix,
+  /etc/cont-finish.d/**     rwix,
+
   # Binaries
   /bin/**                   ix,
   /usr/bin/**               ix,
