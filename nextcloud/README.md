@@ -25,7 +25,7 @@
 | **Base image** | `nextcloud:apache` (official) |
 | **Nextcloud version** | `34.0.1` |
 | **Add-on version** | `33.0.12` |
-| **Default port** | `8080` |
+| **Default port** | `8280` |
 | **App store** | ✅ unrestricted |
 | **Arch** | `amd64`, `aarch64` |
 
@@ -43,7 +43,7 @@
 ## Prerequisites
 
 - **MariaDB add-on** (recommended): configure with a `nextcloud` database and user before first start
-- Port **8080** must be free on the host (or change it in the add-on config)
+- Port **8280** must be free on the host (or change it in the add-on config)
 
 ## Installation
 

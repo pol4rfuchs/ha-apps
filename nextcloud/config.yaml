@@ -13,7 +13,7 @@ arch:
 map:
   - data:rw
 ports:
-  80/tcp: 8080
+  80/tcp: 8280
 ports_description:
   80/tcp: Nextcloud Web UI
 webui: http://[HOST]:[PORT:80]
