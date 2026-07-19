@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.7](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.6...forgejo-v16.0.7) (2026-07-19)
+
+
+### Bug Fixes
+
+* **forgejo:** add missing s6-overlay baseline paths to apparmor profile and re-enable apparmor ([45a39f9](https://github.com/pol4rfuchs/ha-apps/commit/45a39f9bdbd5cbef89725c67eb92e276445754fc))
+
 ## [16.0.6](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.5...forgejo-v16.0.6) (2026-07-13)
 
 
