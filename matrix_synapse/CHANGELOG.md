@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.5.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.0...matrix_synapse-v1.5.1) (2026-07-19)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** add BUILD_FROM/BUILD_ARCH indirection and mandatory io.hass labels ([b7a9e3e](https://github.com/pol4rfuchs/ha-apps/commit/b7a9e3e9f8ce4cbb380749608f0cd5808fa81c93))
+
 ## [1.5.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.4.4...matrix_synapse-v1.5.0) (2026-07-18)
 
 

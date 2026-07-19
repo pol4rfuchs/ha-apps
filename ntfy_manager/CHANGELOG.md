@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.12](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.11...ntfy_manager-v0.2.12) (2026-07-19)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add BUILD_FROM/BUILD_ARCH indirection and mandatory io.hass labels ([0654c81](https://github.com/pol4rfuchs/ha-apps/commit/0654c8112db8cf138178d90d4f80cbf3e4acc937))
+* **ntfy_manager:** move BUILD_FROM/BUILD_ARCH args before first FROM to fix multi-stage scope ([7e30544](https://github.com/pol4rfuchs/ha-apps/commit/7e305447c4bd0235ef5f60c6118b188b3f98a035))
+* **ntfy_manager:** restore swapped Dockerfiles to correct add-on directorie ([418f1a8](https://github.com/pol4rfuchs/ha-apps/commit/418f1a8a6a7062ad59b29a76ab6c145282ac44a0))
+
 ## [0.2.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.10...ntfy_manager-v0.2.11) (2026-06-29)
 
 

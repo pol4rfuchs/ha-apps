@@ -1,45 +1,68 @@
-# syntax=docker/dockerfile:1
-# ── Stage 1: intiface-engine nativ kompilieren ──────────────────────────────
-# cargo install = immer korrekte Version, nativ für die Build-Architektur,
-# kein box64 nötig. Build-Zeit: ~15 Min auf Pi4 (danach gecacht).
-FROM rust:slim-bookworm AS engine-builder
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      pkg-config \
-      libdbus-1-dev \
-      libudev-dev \
-      libusb-1.0-0-dev \
-    && rm -rf /var/lib/apt/lists/*
-ARG ENGINE_VERSION=4.0.2
-RUN cargo install intiface-engine --version "${ENGINE_VERSION}" \
-    && strip /usr/local/cargo/bin/intiface-engine
-# ── Stage 2: Runtime-Image ───────────────────────────────────────────────────
-FROM node:22-bookworm-slim
+ARG BUILD_ARCH
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+
+# ── Stage 1: Build ───────────────────────────────────────────────────────────
+FROM node:22-alpine AS builder
+
+WORKDIR /opt/ntfy-admin
+COPY package*.json ./
+COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
+RUN npm install --no-audit --no-fund --include=dev
+COPY apps ./apps
+
+# DL3003: use WORKDIR instead of cd
+WORKDIR /opt/ntfy-admin/apps/api
+RUN npm run build
+
+WORKDIR /opt/ntfy-admin/apps/web
+RUN npm run build
+
+WORKDIR /opt/ntfy-admin
+RUN npm prune --production
+
+# ── Stage 2: Runtime (HA Add-on Base, s6-overlay v3, bashio) ─────────────────
+FROM ${BUILD_FROM}
+
 ARG BUILD_ARCH
 ARG BUILD_VERSION
+
 LABEL \
-  io.hass.name="Intiface Central" \
-  io.hass.description="Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities" \
-  io.hass.type="addon" \
-  io.hass.arch="${BUILD_ARCH}" \
-  io.hass.version="${BUILD_VERSION}"
-ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8 \
-    NODE_ENV=production
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      python3 \
-      dbus dbus-user-session \
-      bluez \
-      libdbus-1-3 \
-      libudev1 \
-      libusb-1.0-0 \
-      tini \
-    && rm -rf /var/lib/apt/lists/*
-COPY --from=engine-builder /usr/local/cargo/bin/intiface-engine /usr/local/bin/intiface-engine
-WORKDIR /opt/intiface-addon
-COPY package.json ./
-RUN npm install --omit=dev --no-audit --no-fund
-COPY server.js ./
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
-ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/run.sh"]
+    io.hass.name="ntfy HAOS Admin Panel" \
+    io.hass.description="Full-featured admin console for ntfy on Home Assistant OS" \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="addon" \
+    io.hass.version="${BUILD_VERSION}" \
+    org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
+    org.opencontainers.image.title="ntfy HAOS Admin Panel" \
+    org.opencontainers.image.version="${BUILD_VERSION}"
+
+RUN apk add --no-cache \
+    nodejs \
+    nginx \
+    curl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+ENV NODE_ENV=production \
+    API_PORT=3000 \
+    SESSION_COOKIE_NAME=ntfy_admin_token
+
+WORKDIR /opt/ntfy-admin
+
+COPY --from=builder /opt/ntfy-admin/node_modules ./node_modules
+COPY --from=builder /opt/ntfy-admin/apps/api/dist ./apps/api/dist
+COPY --from=builder /opt/ntfy-admin/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /opt/ntfy-admin/apps/web/dist /usr/share/nginx/html/
+
+# s6-overlay v3 Services + nginx.conf
+COPY rootfs /
+
+RUN mkdir -p /data/logs /run/nginx /var/log/nginx /var/lib/nginx/tmp \
+    && find /etc/s6-overlay/s6-rc.d -name "run" -exec chmod a+x {} + \
+    && rm -f /etc/nginx/http.d/default.conf
+
+EXPOSE 8099
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -f http://127.0.0.1:8099/ >/dev/null 2>&1 || exit 1
