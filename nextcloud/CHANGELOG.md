@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.13](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.12...nextcloud-v33.0.13) (2026-07-19)
+
+
+### Bug Fixes
+
+* **nextcloud:** resolve host port conflict with searxng ([ad62ef9](https://github.com/pol4rfuchs/ha-apps/commit/ad62ef92e5071ab8d4bd1ca4d97a3540b6f700a6))
+
 ## [33.0.12](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.11...nextcloud-v33.0.12) (2026-07-06)
 
 
