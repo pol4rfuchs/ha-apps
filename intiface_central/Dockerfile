@@ -14,10 +14,14 @@ RUN cargo install intiface-engine --version "${ENGINE_VERSION}" \
     && strip /usr/local/cargo/bin/intiface-engine
 # ── Stage 2: Runtime-Image ───────────────────────────────────────────────────
 FROM node:22-bookworm-slim
+ARG BUILD_ARCH
+ARG BUILD_VERSION
 LABEL \
+  io.hass.name="Intiface Central" \
+  io.hass.description="Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities" \
   io.hass.type="addon" \
-  io.hass.arch="amd64 aarch64" \
-  io.hass.version="1.0.0"
+  io.hass.arch="${BUILD_ARCH}" \
+  io.hass.version="${BUILD_VERSION}"
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
     NODE_ENV=production
