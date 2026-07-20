@@ -16,7 +16,7 @@
 # BUILD_FROM muss vor dem ersten FROM deklariert werden (Docker Multi-Stage Regel)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
 ARG BUILD_VERSION
-ARG FORGEJO_IMAGE_VERSION=15.0.4
+ARG FORGEJO_IMAGE_VERSION=16.0.0
 
 FROM codeberg.org/forgejo/forgejo:${FORGEJO_IMAGE_VERSION}-rootless AS forgejo
 
