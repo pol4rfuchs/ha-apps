@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.10...searxng-v1.0.11) (2026-07-21)
+
+
+### Bug Fixes
+
+* **searxng:** add de.yaml, io.hass.arch label, sync SEARXNG_VERSION arg with actual tag, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix and deprecated hassio_api ([a8ad070](https://github.com/pol4rfuchs/ha-apps/commit/a8ad0703bc8fad9a03f7c1c3397293e6aab34844))
+
 ## [1.0.10](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.9...searxng-v1.0.10) (2026-07-21)
 
 
