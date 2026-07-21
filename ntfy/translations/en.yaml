@@ -39,6 +39,24 @@ configuration:
   manager_interval:
     name: Manager Interval
     description: "Interval for internal cleanup tasks. Default: 3m."
+  visitor_request_limit_burst:
+    name: Visitor Request Limit (burst)
+    description: "Burst allowance of requests per visitor (IP) before rate limiting kicks in."
+  visitor_request_limit_replenish:
+    name: Visitor Request Limit (replenish)
+    description: "How often one additional request is replenished per visitor. Format: 1s, 500ms, etc."
+  visitor_message_daily_limit:
+    name: Visitor Daily Message Limit
+    description: "Maximum number of messages a single visitor (IP) may publish per day."
+  message_size_limit:
+    name: Message Size Limit
+    description: "Maximum size of a single message body in bytes. Default: 4096."
+  visitor_attachment_total_size_limit:
+    name: Visitor Attachment Total Limit
+    description: "Maximum total attachment storage per visitor (IP). Example: 1G. Requires base_url."
+  visitor_attachment_daily_bandwidth_limit:
+    name: Visitor Attachment Daily Bandwidth
+    description: "Maximum attachment upload+download bandwidth per visitor (IP) per day. Example: 5G. Requires base_url."
   upstream_base_url:
     name: Upstream Base URL
     description: "For iOS push notifications only. Set to 'https://ntfy.sh' to enable iOS support. Requires base_url."

@@ -1,0 +1,68 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der Log-Ausgabe. INFO für den Normalbetrieb, DEBUG nur zur Fehlersuche."
+  base_url:
+    name: Basis-URL
+    description: "Externe URL deines ntfy-Servers (z.B. https://ntfy.deine-domain.com). Erforderlich für Anhänge, iOS-Push und UnifiedPush/Matrix Push Gateway. Ohne diese Angabe ist /_matrix/push/v1/notify nicht verfügbar und Android-Push via UnifiedPush funktioniert nicht."
+  behind_proxy:
+    name: Hinter Proxy
+    description: "Aktivieren, wenn ntfy hinter Nginx/Traefik/Caddy läuft. Liest die echte Client-IP aus X-Forwarded-For."
+  auth_default_access:
+    name: Standard-Zugriff
+    description: "Zugriffslevel für nicht authentifizierte Anfragen. 'deny-all' empfohlen, sobald Nutzer konfiguriert sind."
+  enable_signup:
+    name: Registrierung erlauben
+    description: "Erlaubt Nutzern, sich selbst über die Web-UI zu registrieren."
+  enable_login:
+    name: Login aktivieren
+    description: "Zeigt das Login-Formular in der Web-UI. Empfohlen, sobald Nutzer konfiguriert sind."
+  enable_reservations:
+    name: Topic-Reservierungen
+    description: "Erlaubt Nutzern, Topic-Namen zu reservieren."
+  cache_duration:
+    name: Cache-Dauer
+    description: "Wie lange Nachrichten zwischengespeichert werden. Format: 12h, 7d usw."
+  attachment_total_size_limit:
+    name: Anhänge Gesamtlimit
+    description: "Maximaler Gesamtspeicher für alle Anhänge. Beispiel: 5G, 500M. Erfordert base_url."
+  attachment_file_size_limit:
+    name: Anhänge Dateilimit
+    description: "Maximale Größe eines einzelnen Anhangs. Beispiel: 15M. Erfordert base_url."
+  attachment_expiry_duration:
+    name: Anhänge Ablaufzeit
+    description: "Wie lange Anhänge aufbewahrt werden. Beispiel: 3h, 24h. Erfordert base_url."
+  keepalive_interval:
+    name: Keepalive-Intervall
+    description: "Keepalive-Intervall an verbundene Clients. Höhere Werte reduzieren Log-Rauschen. Standard: 45s."
+  manager_interval:
+    name: Manager-Intervall
+    description: "Intervall für interne Aufräumaufgaben. Standard: 3m."
+  visitor_request_limit_burst:
+    name: Besucher-Anfragelimit (Burst)
+    description: "Burst-Kontingent an Anfragen pro Besucher (IP), bevor das Ratenlimit greift."
+  visitor_request_limit_replenish:
+    name: Besucher-Anfragelimit (Auffüllrate)
+    description: "Wie oft eine zusätzliche Anfrage pro Besucher nachgefüllt wird. Format: 1s, 500ms usw."
+  visitor_message_daily_limit:
+    name: Tägliches Nachrichtenlimit pro Besucher
+    description: "Maximale Anzahl an Nachrichten, die ein einzelner Besucher (IP) pro Tag veröffentlichen darf."
+  message_size_limit:
+    name: Nachrichtengrößenlimit
+    description: "Maximale Größe des Nachrichtentexts in Bytes. Standard: 4096."
+  visitor_attachment_total_size_limit:
+    name: Anhänge Gesamtlimit pro Besucher
+    description: "Maximaler Gesamtspeicher für Anhänge pro Besucher (IP). Beispiel: 1G. Erfordert base_url."
+  visitor_attachment_daily_bandwidth_limit:
+    name: Tägliche Anhang-Bandbreite pro Besucher
+    description: "Maximale Upload-/Download-Bandbreite für Anhänge pro Besucher (IP) und Tag. Beispiel: 5G. Erfordert base_url."
+  upstream_base_url:
+    name: Upstream-Basis-URL
+    description: "Nur für iOS-Push-Benachrichtigungen. Auf 'https://ntfy.sh' setzen, um iOS-Unterstützung zu aktivieren. Erfordert base_url."
+  admin_username:
+    name: Admin-Benutzername
+    description: "Benutzername für das erste Admin-Konto. Wird beim Start automatisch angelegt. Leer lassen zum Überspringen."
+  admin_password:
+    name: Admin-Passwort
+    description: "Passwort für das erste Admin-Konto."

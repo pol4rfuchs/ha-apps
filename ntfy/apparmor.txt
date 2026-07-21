@@ -1,0 +1,76 @@
+#include <tunables/global>
+
+# NOTE: test a full start + create an account via admin_username/password +
+# publish and receive on a topic, then a clean restart, before relying on
+# this in production. If something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path
+# and add it here.
+profile ntfy_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: inbound API/WebUI, outbound upstream_base_url (iOS push relay)
+  network tcp,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8) — this add-on has no COPY rootfs/ of
+  # its own (CMD ["/run.sh"] runs directly), but the HA base image's /init
+  # still manages these paths on every start/stop.
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /run/{s6,s6-rc*,service}/**  ix,
+  /run/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /run/{,**}                   rwk,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + the add-on's own entrypoint script
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+  /run.sh                      ix,
+
+  # bashio + CLI helper functions installed into profile.d
+  /usr/lib/bashio/**           ix,
+  /etc/profile.d/**            r,
+
+  # ntfy server config, generated fresh on every start
+  /etc/ntfy/                   rw,
+  /etc/ntfy/**                 rw,
+
+  # Persistent add-on data: user db, cache, attachments, HA token
+  /data/                       rw,
+  /data/**                     rw,
+
+  # Mapped folder (backup:rw)
+  /backup/                     rw,
+  /backup/**                   rw,
+
+  # /tmp
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf             r,
+  /etc/nsswitch.conf           r,
+  /etc/ssl/**                  r,
+  /etc/localtime               r,
+  /usr/share/zoneinfo/**       r,
+
+  # Proc
+  @{PROC}/**                   r,
+  owner @{PROC}/*/status       r,
+  owner @{PROC}/*/fd/          r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}
