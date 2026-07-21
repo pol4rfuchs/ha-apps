@@ -1,0 +1,76 @@
+#include <tunables/global>
+
+# NOTE: this add-on runs on the jc21/nginx-proxy-manager vendor image, which
+# bundles its own internal s6-overlay (confirmed by the Dockerfile's own
+# patching of /etc/s6-overlay and /etc/cont-init.d, and by run.sh redirecting
+# S6_BASEDIR to /tmp/s6 since /run/ is noexec in the HA container — see
+# Buildrules §11). Test a full start, add a proxy host, issue a Let's
+# Encrypt cert, then a clean restart before relying on this in production.
+# If something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path.
+profile nginx_proxy_manager_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: Supervisor API (config), MariaDB (optional), Let's Encrypt/ACME,
+  # inbound HTTP/HTTPS/Admin UI
+  network tcp,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8/§11) — S6_BASEDIR is redirected to
+  # /tmp/s6 (not /run/s6) because /run/ is noexec in this container.
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /tmp/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + the add-on's own entrypoint script
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+
+  # nginx / NPM application code
+  /app/**                      ix,
+  /etc/nginx/**                rw,
+
+  # Certificates (persisted to /data/npm/letsencrypt, synced to /etc/letsencrypt)
+  /etc/letsencrypt/            rw,
+  /etc/letsencrypt/**          rw,
+
+  # Persistent add-on data
+  /data/                       rw,
+  /data/**                     rw,
+
+  # Secrets from secrets.yaml (mounted read-only by Supervisor)
+  /etc/secrets/                r,
+  /etc/secrets/**               r,
+
+  # /tmp (self-healing dummy certs, S6_BASEDIR)
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf             r,
+  /etc/nsswitch.conf           r,
+  /etc/ssl/**                  r,
+  /etc/localtime                r,
+  /usr/share/zoneinfo/**       r,
+
+  # Proc
+  @{PROC}/**                   r,
+  owner @{PROC}/*/status       r,
+  owner @{PROC}/*/fd/          r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

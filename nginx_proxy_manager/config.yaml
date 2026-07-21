@@ -1,9 +1,10 @@
+---
 name: "Nginx Proxy Manager"
 description: "Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration."
 version: "2.1.4"
 slug: "nginx_proxy_manager"
 url: "https://github.com/pol4rfuchs/ha-apps"
-image: "ghcr.io/pol4rfuchs/npm-ha-app"
+image: "ghcr.io/pol4rfuchs/nginx_proxy_manager"
 init: false
 webui: "http://[HOST]:[PORT:81]"
 
@@ -51,4 +52,8 @@ map:
   - type: ssl
     read_only: false
 
+# apparmor.txt exists but is intentionally NOT yet enforced — vendor image
+# (jc21/nginx-proxy-manager) with its own bundled s6-overlay. Test a full
+# start, add a proxy host, issue a Let's Encrypt cert, then a clean restart
+# before flipping this to true.
 apparmor: false
