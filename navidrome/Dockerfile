@@ -18,9 +18,6 @@ LABEL \
 # hadolint ignore=DL3002
 USER root
 
-# curl TLS-Quirk in Alpine vermeiden
-RUN echo insecure >> ~/.curlrc
-
 RUN apk add --no-cache \
   bash \
   curl \

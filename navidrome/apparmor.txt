@@ -1,0 +1,80 @@
+#include <tunables/global>
+
+# NOTE: this add-on has no s6-overlay at all — ENTRYPOINT is a plain bash
+# script (/ha_entrypoint.sh) that sources /etc/cont-init.d/* itself before
+# exec'ing navidrome-run.sh, so none of the s6 baseline paths required for
+# HA-base-image add-ons apply here. Test a full start, a library scan, and
+# a clean restart before relying on this in production. If something
+# breaks with "Permission denied", check `dmesg | grep -i apparmor` (or
+# journalctl -k) for the exact DENIED path and add it here.
+profile navidrome_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: Subsonic API / web UI, optional Last.fm / ListenBrainz scrobbling
+  network tcp,
+  network inet,
+  network inet6,
+
+  # Shell + coreutils
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+
+  # The add-on's own entrypoint + init scripts — need ix, not just r
+  /ha_entrypoint.sh             ix,
+  /etc/cont-init.d/**           rwix,
+
+  # bashio
+  /usr/lib/bashio/**            ix,
+
+  # Navidrome binary itself
+  /app/**                       ix,
+
+  # Runtime env file written by 10-config.sh, read by navidrome-run.sh
+  /run/navidrome.env            rw,
+  /run/                         rw,
+
+  # Persistent add-on data (ND_DATAFOLDER)
+  /data/                        rw,
+  /data/**                      rw,
+
+  # Mapped folders
+  /media/                       rw,
+  /media/**                     rw,
+  /homeassistant/               rw,
+  /homeassistant/**             rw,
+  /share/                       rw,
+  /share/**                     rw,
+  /addon_configs/               rw,
+  /addon_configs/**             rw,
+
+  # Optional hardware transcoding / audio devices
+  /dev/dri/                     rw,
+  /dev/dri/**                   rw,
+  /dev/snd/                     rw,
+  /dev/snd/**                   rw,
+
+  # /tmp
+  /tmp/                         rw,
+  /tmp/**                       rw,
+
+  # System files
+  /etc/passwd                   r,
+  /etc/group                    r,
+  /etc/hosts                    r,
+  /etc/resolv.conf              r,
+  /etc/nsswitch.conf            r,
+  /etc/ssl/**                   r,
+  /etc/localtime                r,
+  /usr/share/zoneinfo/**        r,
+
+  # Proc
+  @{PROC}/**                    r,
+  owner @{PROC}/*/status        r,
+  owner @{PROC}/*/fd/           r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

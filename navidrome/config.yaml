@@ -1,16 +1,21 @@
+---
 name: Navidrome
 version: "2.1.4"
 slug: navidrome
 description: Modern Music Server and Streamer compatible with Subsonic/Airsonic
 url: https://github.com/pol4rfuchs/ha-apps
-image: ghcr.io/pol4rfuchs/navidrome-ha-app
+image: ghcr.io/pol4rfuchs/navidrome
+# apparmor.txt exists but is intentionally NOT yet enforced — vendor image
+# (deluan/navidrome) with a custom bash entrypoint, no s6-overlay. Test a
+# full start, a library scan, and a clean restart before flipping this to
+# true.
+apparmor: false
 arch:
   - aarch64
   - amd64
 panel_icon: mdi:music-box-multiple
 webui: http://[HOST]:[PORT:4533]
 init: false
-hassio_api: true
 ports:
   4533/tcp: 4533
 ports_description:
