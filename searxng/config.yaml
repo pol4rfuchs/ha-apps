@@ -1,6 +1,5 @@
----
 name: SearXNG
-version: "1.0.10"
+version: 1.0.11
 slug: searxng
 image: ghcr.io/pol4rfuchs/searxng
 description: Privacy-respecting metasearch engine — kein Tracking, keine Profile.
@@ -12,9 +11,6 @@ init: false
 ingress: true
 ingress_port: 8080
 panel_icon: mdi:magnify
-# apparmor.txt exists but is intentionally NOT yet enforced — official
-# searxng/searxng vendor image, untested. Test a full start, run a search,
-# then a clean restart before flipping this to true.
 apparmor: false
 ports:
   8080/tcp: 8080
