@@ -1,0 +1,8 @@
+---
+configuration:
+  set_base_url_for_ingress:
+    name: Basis-URL automatisch für Ingress setzen
+    description: "Konfiguriert SEARXNG_BASE_URL automatisch passend zum HA-Ingress-Pfad. Nur deaktivieren, wenn SearXNG über einen externen Reverse-Proxy mit eigener Domain erreicht wird."
+  log_level:
+    name: Log-Level
+    description: "SearXNG selbst kennt nur einen Debug-An/Aus-Schalter. 'debug' aktiviert ausführliches Logging (general.debug: true); info/warning/error führen alle zu Standard-Logging (nicht-Debug), da SearXNG unterhalb von Debug nicht weiter unterscheidet."

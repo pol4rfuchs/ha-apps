@@ -1,0 +1,54 @@
+#include <tunables/global>
+
+# NOTE: this add-on runs on the official searxng/searxng vendor image with
+# its own entrypoint (no s6-overlay observed). Test a full start, run a
+# search, then a clean restart before relying on this in production. If
+# something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path.
+profile searxng_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: outbound to search engines, inbound on 8080/Ingress, Supervisor
+  # API (ingress URL lookup)
+  network tcp,
+  network udp,
+  network inet,
+  network inet6,
+
+  # Shell + coreutils + the add-on's own entrypoint script
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+  /run.sh                      ix,
+
+  # SearXNG application code + its own entrypoint (invoked via custom.sh)
+  /usr/local/searxng/**        rix,
+
+  # Mapped config folder (settings.yml, secret key, custom.sh hook)
+  /etc/searxng/                rw,
+  /etc/searxng/**              rw,
+
+  # /tmp
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf             r,
+  /etc/nsswitch.conf           r,
+  /etc/ssl/**                  r,
+  /etc/localtime               r,
+  /usr/share/zoneinfo/**       r,
+
+  # Proc
+  @{PROC}/**                   r,
+  owner @{PROC}/*/status       r,
+  owner @{PROC}/*/fd/          r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

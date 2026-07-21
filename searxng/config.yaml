@@ -1,7 +1,8 @@
+---
 name: SearXNG
 version: "1.0.10"
 slug: searxng
-image: ghcr.io/pol4rfuchs/searxng-ha-app
+image: ghcr.io/pol4rfuchs/searxng
 description: Privacy-respecting metasearch engine — kein Tracking, keine Profile.
 url: https://github.com/pol4rfuchs/ha-apps
 arch:
@@ -11,7 +12,10 @@ init: false
 ingress: true
 ingress_port: 8080
 panel_icon: mdi:magnify
-hassio_api: true
+# apparmor.txt exists but is intentionally NOT yet enforced — official
+# searxng/searxng vendor image, untested. Test a full start, run a search,
+# then a clean restart before flipping this to true.
+apparmor: false
 ports:
   8080/tcp: 8080
 ports_description:
@@ -22,5 +26,7 @@ map:
     path: /etc/searxng
 options:
   set_base_url_for_ingress: true
+  log_level: info
 schema:
   set_base_url_for_ingress: bool
+  log_level: list(debug|info|warning|error)

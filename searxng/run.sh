@@ -65,6 +65,23 @@ EOF
     log "settings.yml angelegt: ${SETTINGS_FILE}"
 fi
 
+# ── Log Level ─────────────────────────────────────────────────────────────────
+# SearXNG itself only exposes an on/off debug switch (general.debug in
+# settings.yml), not a graded level. "debug" maps to true; info/warning/error
+# all map to false, since there's nothing finer-grained below debug to map
+# them to. Patched on EVERY start (not just first boot), so changing the
+# option later actually takes effect on the next restart.
+LOG_LEVEL=$(python3 -c "import json,sys; d=json.load(open('/data/options.json')); print(d.get('log_level','info'))" 2>/dev/null)
+if [ "${LOG_LEVEL}" = "debug" ]; then
+    DEBUG_BOOL="true"
+else
+    DEBUG_BOOL="false"
+fi
+if [ -f "${SETTINGS_FILE}" ]; then
+    sed -i "s/^  debug: .*/  debug: ${DEBUG_BOOL}/" "${SETTINGS_FILE}"
+    log "Log level: ${LOG_LEVEL} (general.debug=${DEBUG_BOOL})"
+fi
+
 # ── custom.sh Hook (nur beim Erststart) ───────────────────────────────────────
 CUSTOM_SH="/etc/searxng/custom.sh"
 if [ ! -f "${CUSTOM_SH}" ]; then
