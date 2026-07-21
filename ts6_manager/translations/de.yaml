@@ -1,0 +1,5 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der TS6-Manager-Log-Ausgabe. 'info' für den Normalbetrieb, 'debug' zur Fehlersuche."

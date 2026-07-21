@@ -1,0 +1,77 @@
+#include <tunables/global>
+
+# NOTE: three s6-rc.d services share this container (ts6-init, ts6-backend:
+# Node/Prisma API, ts6-nginx: reverse-proxy + static frontend). Same HA base
+# image family as ntfy_manager/restic_backup, so the s6 baseline below is
+# high-confidence — but the app-specific paths (Prisma DB, yt-dlp/ffmpeg
+# media downloads) are new. Test a full start + login + a real music
+# download via yt-dlp, then a clean restart, before relying on this in
+# production. If something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path.
+profile ts6_manager_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: TeamSpeak WebQuery API, outbound yt-dlp downloads
+  network tcp,
+  network udp,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8)
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /run/{s6,s6-rc*,service}/**  ix,
+  /run/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /run/{,**}                   rwk,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + the add-on's own init script
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+
+  # Node backend (Prisma-based API) + frontend static build
+  /app/**                      rix,
+  /var/www/html/**             r,
+
+  # nginx (reverse proxy + static frontend)
+  /etc/nginx/**                r,
+  /var/log/nginx/**            rw,
+  /run/nginx/**                rw,
+
+  # yt-dlp / ffmpeg (media download + transcoding)
+  /usr/lib/python3*/**         ix,
+
+  # Persistent add-on data: secrets, SQLite DB, downloaded music
+  /data/                       rw,
+  /data/**                     rwk,
+
+  # /tmp
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf             r,
+  /etc/nsswitch.conf           r,
+  /etc/ssl/**                  r,
+  /etc/localtime               r,
+  /usr/share/zoneinfo/**       r,
+
+  # Proc
+  @{PROC}/**                   r,
+  owner @{PROC}/*/status       r,
+  owner @{PROC}/*/fd/          r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}
