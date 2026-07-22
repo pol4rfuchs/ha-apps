@@ -1,10 +1,9 @@
----
 name: Restic Backup
 description: >-
   Scheduled restic backups of HA config/media/addon data with ntfy alerting on
   failure
 url: https://github.com/pol4rfuchs/ha-apps
-version: "0.2.0"
+version: 0.2.1
 slug: restic_backup
 image: ghcr.io/pol4rfuchs/restic_backup
 init: false
