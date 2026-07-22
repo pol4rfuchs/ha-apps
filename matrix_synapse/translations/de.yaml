@@ -1,0 +1,80 @@
+---
+configuration:
+  server_name:
+    name: Servername
+    description: "Matrix-Servername / Domain (z.B. deine-domain.duckdns.org). Wird Teil deiner Matrix-ID: @user:server_name."
+  element_web_url:
+    name: Element Web URL
+    description: "Externe HTTPS-URL für Element Web (z.B. https://element.deine-domain.duckdns.org)."
+  enable_registration:
+    name: Registrierung erlauben
+    description: "Erlaubt neuen Nutzern, sich auf diesem Server zu registrieren."
+  registration_shared_secret:
+    name: Registration Shared Secret
+    description: "Secret für admin-gesteuerte Nutzerregistrierung. Leer lassen zur automatischen Generierung."
+  enable_federation:
+    name: Federation aktivieren
+    description: "Verbindet mit dem weiteren Matrix-Netzwerk. Für vollständig private Server deaktivieren."
+  max_upload_size_mb:
+    name: Maximale Upload-Größe (MB)
+    description: "Maximale Dateigröße für Uploads in Megabyte (10–500)."
+  enable_synapse_admin:
+    name: Synapse Admin UI aktivieren
+    description: "Startet die Synapse-Admin-Weboberfläche auf Port 8090."
+  postgres_password:
+    name: PostgreSQL-Passwort
+    description: "Passwort für den internen Synapse-Datenbankbenutzer."
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der Synapse-Protokollierung. WARNING wird für den Normalbetrieb empfohlen."
+  ntfy_url:
+    name: ntfy-URL (UnifiedPush)
+    description: "Optional: Externe URL deines ntfy-Servers (z.B. https://ntfy.deine-domain.tld). Wird beim Start genutzt, um die Erreichbarkeit des ntfy Matrix Push Gateway zu prüfen und Setup-Hinweise auszugeben. Synapse selbst benötigt diese URL nicht — der UnifiedPush-Client (Element Android) registriert das Gateway automatisch bei Synapse."
+  enable_voice_calls:
+    name: Sprach-/Videoanrufe aktivieren
+    description: "Aktiviert Element Call (MSC3401) mit LiveKit SFU. Lädt beim ersten Start LiveKit und lk-jwt-service herunter."
+  livekit_secret:
+    name: LiveKit Secret
+    description: "Shared Secret für LiveKit. Leer lassen zur automatischen Generierung beim ersten Start."
+  element_call_url:
+    name: Element Call URL
+    description: "Externe HTTPS-URL für die Element-Call-Web-App."
+  livekit_url:
+    name: LiveKit URL
+    description: "Externe WSS-URL für den LiveKit SFU (z.B. wss://livekit.deine-domain.tld)."
+  livekit_jwt_url:
+    name: LiveKit JWT URL
+    description: "Externe HTTPS-URL für die lk-jwt-service Token-Bridge."
+  admin_ui_username:
+    name: Admin-UI-Benutzername
+    description: "Basic-Auth-Benutzername für die Ketesa (Admin UI) auf Port 8090. Schützt die Admin-Oberfläche auf Netzwerkebene."
+  admin_ui_password:
+    name: Admin-UI-Passwort
+    description: "Basic-Auth-Passwort für die Ketesa (Admin UI). Leer lassen zur automatischen Generierung beim ersten Start (gespeichert in /data/matrix/.admin_ui_auth, nie geloggt)."
+  media_retention_local_days:
+    name: Medien-Aufbewahrung — Lokal (Tage)
+    description: "Löscht lokal hochgeladene Medien automatisch, die älter als diese Anzahl Tage sind. 0 = deaktiviert (dauerhaft behalten)."
+  media_retention_remote_days:
+    name: Medien-Aufbewahrung — Remote (Tage)
+    description: "Löscht zwischengespeicherte Remote-(Federation-)Medien automatisch, die älter als diese Anzahl Tage sind. 0 = deaktiviert (dauerhaft behalten). 30 ist ein sinnvoller Standardwert."
+  backup_enabled:
+    name: Automatische PostgreSQL-Backups aktivieren
+    description: "Sichert die Synapse-Datenbank regelmäßig via pg_dump nach /data/matrix/backups/ (konsistent, im Gegensatz zu rohen Dateisystem-Snapshots)."
+  backup_interval_hours:
+    name: Backup-Intervall (Stunden)
+    description: "Wie oft der pg_dump-Backup-Job läuft."
+  backup_retention_days:
+    name: Backup-Aufbewahrung (Tage)
+    description: "Wie viele Tage an Backups behalten werden, bevor alte Dumps rotiert werden."
+  login_rate_limit_per_second:
+    name: Login-Ratenlimit (pro Sekunde)
+    description: "Dauerhaft erlaubte Login-Versuche pro Sekunde, je Adresse/Konto (Synapse rc_login). Synapse-Standard ist 0.17."
+  login_rate_limit_burst:
+    name: Login-Ratenlimit (Burst)
+    description: "Burst-Kontingent für Login-Versuche, bevor das Ratenlimit greift."
+  registration_rate_limit_per_second:
+    name: Registrierungs-Ratenlimit (pro Sekunde)
+    description: "Dauerhaft erlaubte Registrierungsversuche pro Sekunde (Synapse rc_registration). Nur relevant, wenn enable_registration aktiv ist."
+  registration_rate_limit_burst:
+    name: Registrierungs-Ratenlimit (Burst)
+    description: "Burst-Kontingent für Registrierungsversuche, bevor das Ratenlimit greift."

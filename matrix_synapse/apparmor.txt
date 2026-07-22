@@ -1,0 +1,92 @@
+#include <tunables/global>
+
+# NOTE: this is by far the most complex add-on in the repo — 8 separate
+# s6-rc.d services (synapse, postgresql, livekit, livekit-jwt, element-web,
+# synapse-admin, element-call, postgres-backup) all sharing one container
+# and one /data/matrix tree. The profile below was built from reading every
+# service's run script, but — like the other freshly-added profiles in this
+# batch — test a full start + a real login/message/voice-call cycle + a
+# clean restart before relying on this in production. If something breaks
+# with "Permission denied", check `dmesg | grep -i apparmor` (or
+# journalctl -k) for the exact DENIED path and add it here.
+profile matrix_synapse_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: Matrix federation/client HTTPS, LiveKit TURN/media (UDP relay
+  # range), internal service-to-service calls (all on 127.0.0.1)
+  network tcp,
+  network udp,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8) — required so a clean restart
+  # doesn't crash with "/bin/sh: can't open '/init': Permission denied".
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /run/{s6,s6-rc*,service}/**  ix,
+  /run/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /run/{,**}                   rwk,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + the add-on's own init/service scripts
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+
+  # bashio
+  /usr/lib/bashio/**           ix,
+
+  # Synapse's own Python venv
+  /opt/synapse/**              ix,
+
+  # PostgreSQL server binaries (privilege-dropped to the postgres user via gosu)
+  /usr/lib/postgresql/**       ix,
+  capability setuid,
+  capability setgid,
+  capability dac_read_search,
+  capability chown,
+
+  # Downloaded binaries (LiveKit, lk-jwt-service) and symlinks to them
+  /data/matrix/bin/**          ix,
+
+  # Everything under /data/matrix: Synapse config + media store, PostgreSQL
+  # data dir, Element Web / Synapse Admin / Element Call static builds,
+  # secrets (.livekit_secret, .admin_ui_auth), and pg_dump backups.
+  /data/                       rw,
+  /data/**                     rwk,
+
+  # Mapped folders (homeassistant_config, media)
+  /homeassistant/               rw,
+  /homeassistant/**              rw,
+  /media/                          rw,
+  /media/**                         rw,
+
+  # /tmp (pg_dump error capture)
+  /tmp/                              rw,
+  /tmp/**                             rw,
+
+  # System files
+  /etc/passwd                        r,
+  /etc/group                         r,
+  /etc/hosts                         r,
+  /etc/resolv.conf                   r,
+  /etc/nsswitch.conf                 r,
+  /etc/ssl/**                        r,
+  /etc/localtime                     r,
+  /usr/share/zoneinfo/**             r,
+
+  # Proc
+  @{PROC}/**                         r,
+  owner @{PROC}/*/status             r,
+  owner @{PROC}/*/fd/                r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

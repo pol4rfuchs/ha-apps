@@ -1,3 +1,4 @@
+---
 name: Matrix Server (ESS CE)
 description: >-
   Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS
@@ -5,9 +6,8 @@ description: >-
 version: "1.5.1"
 slug: matrix_server
 url: https://github.com/pol4rfuchs/ha-apps
-image: ghcr.io/pol4rfuchs/matrix-synapse-ha-app
+image: ghcr.io/pol4rfuchs/matrix_synapse
 init: false
-hassio_api: true
 map:
   - type: homeassistant_config
     read_only: false
@@ -141,3 +141,10 @@ panel_icon: mdi:matrix
 panel_title: Matrix
 backup_exclude:
   - data/postgresql/pg_wal
+# apparmor.txt exists but is intentionally NOT yet enforced — 8 separate
+# services share this container (synapse, postgresql, livekit, livekit-jwt,
+# element-web, synapse-admin, element-call, postgres-backup), which is a lot
+# of surface to get exactly right on the first try. Test a full start + a
+# real login/message/voice-call cycle + a clean restart before flipping
+# this to true.
+apparmor: false
