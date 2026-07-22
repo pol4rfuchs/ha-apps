@@ -33,6 +33,22 @@ DB_PASS=$(opt_str db_password "")
 PHP_MEM=$(opt_str php_memory_limit "512M")
 MAX_UPLOAD=$(opt_str max_upload_size "16G")
 MAX_EXEC=$(opt_int max_execution_time 3600)
+LOG_LEVEL=$(opt_str log_level "info")
+
+# Nextcloud's config.php only knows a numeric loglevel (0=Debug .. 4=Fatal).
+# Map the HA-side list(debug|info|warning|error|fatal) option onto it; the
+# actual value is applied via occ in the docker-entrypoint-hooks.d scripts
+# below, since config.php doesn't exist yet on first boot at this point.
+case "${LOG_LEVEL}" in
+  debug)   NC_LOG_LEVEL_NUM=0 ;;
+  info)    NC_LOG_LEVEL_NUM=1 ;;
+  warning) NC_LOG_LEVEL_NUM=2 ;;
+  error)   NC_LOG_LEVEL_NUM=3 ;;
+  fatal)   NC_LOG_LEVEL_NUM=4 ;;
+  *)       NC_LOG_LEVEL_NUM=1 ;;
+esac
+export NC_LOG_LEVEL_NUM
+log "Log level: ${LOG_LEVEL} (Nextcloud loglevel=${NC_LOG_LEVEL_NUM})"
 
 # ── Persistent data layout ────────────────────────────────────────────────────
 # HA mounts /data (add-on persistent storage).

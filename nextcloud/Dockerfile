@@ -30,7 +30,9 @@ RUN apt-get update \
 # ── Copy HA wrapper ───────────────────────────────────────────────────────────
 COPY rootfs /
 
-RUN chmod +x /ha-init.sh
+RUN chmod +x /ha-init.sh \
+    && chmod +x /docker-entrypoint-hooks.d/post-installation/*.sh \
+    && chmod +x /docker-entrypoint-hooks.d/before-starting/*.sh
 
 # ── Entrypoint: run HA init, then hand off to official NC entrypoint ──────────
 ENTRYPOINT ["/ha-init.sh"]

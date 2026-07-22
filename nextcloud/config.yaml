@@ -1,3 +1,4 @@
+---
 name: Nextcloud
 description: >-
   A safe home for all your data — full Nextcloud instance with unrestricted app
@@ -5,7 +6,7 @@ description: >-
 version: "33.0.13"
 slug: nextcloud
 url: https://github.com/pol4rfuchs/ha-apps
-image: ghcr.io/pol4rfuchs/nextcloud-ha-app
+image: ghcr.io/pol4rfuchs/nextcloud
 init: false
 arch:
   - aarch64
@@ -30,6 +31,7 @@ options:
   php_memory_limit: 512M
   max_upload_size: 16G
   max_execution_time: 3600
+  log_level: info
 schema:
   admin_user: str
   admin_password: password
@@ -43,3 +45,10 @@ schema:
   php_memory_limit: str
   max_upload_size: str
   max_execution_time: int
+  log_level: list(debug|info|warning|error|fatal)
+# apparmor.txt exists but is intentionally NOT yet enforced — best-effort
+# profile against the official Nextcloud/Apache vendor image, whose internal
+# paths weren't verified against the real filesystem. Test manually (full
+# install, upload a file, install an app, then a clean restart) before
+# flipping this to true.
+apparmor: false

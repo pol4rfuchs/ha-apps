@@ -1,0 +1,41 @@
+---
+configuration:
+  admin_user:
+    name: Admin Username
+    description: "Nextcloud administrator username, created on first install."
+  admin_password:
+    name: Admin Password
+    description: "Nextcloud administrator password, set on first install. Change it here before the very first start."
+  trusted_domains:
+    name: Trusted Domains
+    description: "Space-separated list of additional hostnames/IPs Nextcloud should accept requests for (e.g. behind a reverse proxy)."
+  db_type:
+    name: Database Type
+    description: "Database backend to use. 'sqlite' is fine for testing only; 'mysql' (MariaDB) or 'pgsql' are recommended for production."
+  db_host:
+    name: Database Host
+    description: "Hostname of the database server (e.g. the MariaDB/Postgres add-on's hostname)."
+  db_port:
+    name: Database Port
+    description: "Port of the database server."
+  db_name:
+    name: Database Name
+    description: "Name of the Nextcloud database."
+  db_user:
+    name: Database User
+    description: "Database user Nextcloud connects as."
+  db_password:
+    name: Database Password
+    description: "Password for the database user."
+  php_memory_limit:
+    name: PHP Memory Limit
+    description: "PHP memory_limit for the Nextcloud process (e.g. 512M)."
+  max_upload_size:
+    name: Max Upload Size
+    description: "Maximum file upload size (also used for post_max_size)."
+  max_execution_time:
+    name: Max Execution Time
+    description: "Maximum PHP script execution time in seconds (also used for max_input_time)."
+  log_level:
+    name: Log Level
+    description: "Nextcloud log verbosity, mapped onto Nextcloud's own loglevel setting (debug/info/warning/error/fatal). Applied via 'occ config:system:set loglevel' on install and on every start."
