@@ -5,7 +5,7 @@
  * cheap and let the UI render a Debug feed without a database.
  */
 
-import { env } from "../env";
+import { env } from "../env.js";
 
 export type LogLevel = "DEBUG" | "INFO" | "WARN" | "ERROR";
 
