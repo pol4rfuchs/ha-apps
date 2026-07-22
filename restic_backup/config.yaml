@@ -1,3 +1,4 @@
+---
 name: Restic Backup
 description: >-
   Scheduled restic backups of HA config/media/addon data with ntfy alerting on
@@ -5,7 +6,7 @@ description: >-
 url: https://github.com/pol4rfuchs/ha-apps
 version: "0.2.0"
 slug: restic_backup
-image: ghcr.io/pol4rfuchs/restic-backup-ha-app
+image: ghcr.io/pol4rfuchs/restic_backup
 init: false
 panel_icon: mdi:archive-lock-outline
 arch:
@@ -62,4 +63,3 @@ schema:
   ntfy_password: password?
 startup: application
 apparmor: true
-homeassistant_api: false

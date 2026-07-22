@@ -22,4 +22,4 @@ Scheduled [restic](https://restic.net/) backups for Home Assistant, with [ntfy](
 
 - `backup_paths` must be covered by the add-on's `map:` config — adding a path here without also mapping it (e.g. `media:ro`) does nothing.
 - This add-on only handles the backup side. Restoring is a manual `restic restore` from a shell with the same `RESTIC_REPOSITORY` / `RESTIC_PASSWORD` — intentionally not automated inside the add-on to avoid an accidental one-click data-loss button.
-- `apparmor: true` is enabled but this add-on currently ships without a dedicated `apparmor.txt` profile (default HA base profile applies). Follows the same backlog pattern as the other add-ons pending a hardening pass.
+- `apparmor: true` is enabled with a dedicated `apparmor.txt` profile covering the mapped backup folders, cron, and the s6-overlay baseline.
