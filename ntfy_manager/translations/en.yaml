@@ -21,3 +21,6 @@ configuration:
   allow_login_override:
     name: Allow Login Override
     description: "Show the login form so users can connect to a different ntfy server or use different credentials."
+  log_level:
+    name: Log Level
+    description: "Minimum severity forwarded to the Home Assistant Supervisor log (debug/info/warn/error). The web UI's own Debug feed always shows every entry regardless of this setting."

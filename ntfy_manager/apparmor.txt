@@ -1,0 +1,73 @@
+#include <tunables/global>
+
+# NOTE: two s6-rc.d services share this container (ntfy-admin: the Node/
+# Express API; nginx: reverse-proxies to it + serves the static web build).
+# Test a full start + login + a real ntfy topic subscription, then a clean
+# restart, before relying on this in production. If something breaks with
+# "Permission denied", check `dmesg | grep -i apparmor` (or journalctl -k)
+# for the exact DENIED path and add it here.
+profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: outbound to the configured ntfy server, inbound on 8099/Ingress
+  network tcp,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8)
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /run/{s6,s6-rc*,service}/**  ix,
+  /run/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /run/{,**}                   rwk,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + bashio
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+  /usr/lib/bashio/**           ix,
+
+  # Node.js runtime + the API app
+  /usr/lib/node_modules/**     ix,
+  /opt/ntfy-admin/**           rix,
+
+  # nginx (reverse proxy + static web build)
+  /etc/nginx/**                r,
+  /usr/share/nginx/html/**     r,
+  /var/log/nginx/**            rw,
+  /run/nginx/**                rw,
+
+  # Persistent add-on data: JWT secret, log files
+  /data/                       rw,
+  /data/**                     rw,
+
+  # /tmp
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf             r,
+  /etc/nsswitch.conf           r,
+  /etc/ssl/**                  r,
+  /etc/localtime               r,
+  /usr/share/zoneinfo/**       r,
+
+  # Proc
+  @{PROC}/**                   r,
+  owner @{PROC}/*/status       r,
+  owner @{PROC}/*/fd/          r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

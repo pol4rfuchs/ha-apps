@@ -1,13 +1,14 @@
 #!/usr/bin/with-contenv bashio
 set -euo pipefail
 
+bashio::log.level "$(bashio::config 'log_level')"
 bashio::log.info "Preparing ntfy HAOS Admin Panel API ..."
 
 mkdir -p /data/logs
 
 export NODE_ENV="production"
 export API_PORT="3000"
-export LOG_LEVEL="info"
+export LOG_LEVEL="$(bashio::config 'log_level')"
 export SESSION_COOKIE_NAME="ntfy_admin_token"
 
 if [[ ! -f /data/jwt_secret ]]; then

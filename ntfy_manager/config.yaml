@@ -1,9 +1,13 @@
+---
 name: ntfy HAOS Admin Panel
 version: "0.2.12"
 slug: ntfy_haos_admin_panel
 description: Full-featured admin console for ntfy on Home Assistant OS
 url: https://github.com/pol4rfuchs/ha-apps
-image: ghcr.io/pol4rfuchs/ntfy-manager-ha-app
+image: ghcr.io/pol4rfuchs/ntfy_manager
+# apparmor.txt exists but is intentionally NOT yet enforced — test a full
+# start + login + a real ntfy topic subscription + a clean restart before
+# flipping this to true.
 apparmor: false
 arch:
   - aarch64
@@ -28,6 +32,7 @@ options:
     - ha-notify
     - ha-system
   allow_login_override: true
+  log_level: info
 schema:
   ntfy_base_url: url
   ntfy_auth_type: list(none|basic|bearer)
@@ -37,3 +42,4 @@ schema:
   default_topics:
     - str
   allow_login_override: bool
+  log_level: list(debug|info|warn|error)

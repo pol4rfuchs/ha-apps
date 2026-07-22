@@ -1,0 +1,26 @@
+---
+configuration:
+  ntfy_base_url:
+    name: ntfy-Server-URL
+    description: "URL deines ntfy-Servers. Standard: http://homeassistant.local:4280"
+  ntfy_auth_type:
+    name: Authentifizierungstyp
+    description: "'none' für offene Server, 'basic' für Benutzername/Passwort, 'bearer' für Token-Authentifizierung."
+  ntfy_username:
+    name: ntfy-Benutzername
+    description: "Benutzername für Basic-Authentifizierung. Leer lassen, falls kein Basic-Auth genutzt wird."
+  ntfy_password:
+    name: ntfy-Passwort
+    description: "Passwort für Basic-Authentifizierung."
+  ntfy_bearer_token:
+    name: ntfy Bearer-Token
+    description: "API-Token für Bearer-Authentifizierung."
+  default_topics:
+    name: Standard-Topics
+    description: "Topics, die standardmäßig auf den Nachrichten- und Debug-Seiten angezeigt werden."
+  allow_login_override:
+    name: Login-Override erlauben
+    description: "Zeigt das Login-Formular, damit Nutzer sich mit einem anderen ntfy-Server oder anderen Zugangsdaten verbinden können."
+  log_level:
+    name: Log-Level
+    description: "Minimaler Schweregrad, der an das Home-Assistant-Supervisor-Log weitergegeben wird (debug/info/warn/error). Das eigene Debug-Feed der Web-UI zeigt unabhängig davon immer alle Einträge."
