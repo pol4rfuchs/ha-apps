@@ -1,9 +1,8 @@
----
 name: Nextcloud
 description: >-
   A safe home for all your data — full Nextcloud instance with unrestricted app
   store access
-version: "33.0.13"
+version: 33.0.14
 slug: nextcloud
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/nextcloud
@@ -46,9 +45,4 @@ schema:
   max_upload_size: str
   max_execution_time: int
   log_level: list(debug|info|warning|error|fatal)
-# apparmor.txt exists but is intentionally NOT yet enforced — best-effort
-# profile against the official Nextcloud/Apache vendor image, whose internal
-# paths weren't verified against the real filesystem. Test manually (full
-# install, upload a file, install an app, then a clean restart) before
-# flipping this to true.
 apparmor: false
