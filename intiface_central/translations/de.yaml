@@ -1,0 +1,38 @@
+---
+configuration:
+  engine_ws_port:
+    name: Engine-WebSocket-Port
+    description: "Port, auf dem der Intiface-Engine-WebSocket-Server lauscht. Standard: 12345."
+  use_bluetooth_le:
+    name: Bluetooth LE
+    description: "Unterstützung für Bluetooth Low Energy-Geräte aktivieren."
+  use_hid:
+    name: HID-Geräte
+    description: "Unterstützung für USB-/HID-Geräte aktivieren (Gamepads, Controller usw.)."
+  use_serial:
+    name: Serielle Geräte
+    description: "Unterstützung für serielle Schnittstellen aktivieren."
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der Add-on-Log-Ausgabe."
+  mqtt_host:
+    name: MQTT-Host
+    description: "Hostname oder IP deines MQTT-Brokers. Leer lassen, um die MQTT-Bridge zu deaktivieren."
+  mqtt_port:
+    name: MQTT-Port
+    description: "Port des MQTT-Brokers. Standard: 1883."
+  mqtt_user:
+    name: MQTT-Benutzername
+    description: "Benutzername für den MQTT-Broker. Leer lassen, falls keine Authentifizierung nötig ist."
+  mqtt_pass:
+    name: MQTT-Passwort
+    description: "Passwort für den MQTT-Broker."
+  mqtt_topic_prefix:
+    name: MQTT-Topic-Präfix
+    description: "Präfix für alle MQTT-Topics. Standard: buttplug."
+  ha_discovery:
+    name: HA-MQTT-Discovery
+    description: "Home Assistant MQTT-Discovery-Nachrichten veröffentlichen, damit Geräte automatisch als Entitäten erscheinen."
+  ha_discovery_prefix:
+    name: HA-Discovery-Präfix
+    description: "MQTT-Discovery-Präfix. Muss mit dem in der HA-MQTT-Integration konfigurierten Präfix übereinstimmen. Standard: homeassistant."
