@@ -4,7 +4,7 @@ ARG TEAMSPEAK_VERSION=6.0.0-beta11
 FROM teamspeaksystems/teamspeak6-server:${TEAMSPEAK_VERSION}
 
 ARG BUILD_VERSION=dev
-ARG BUILD_ARCH=aarch64
+ARG BUILD_ARCH
 ARG TEAMSPEAK_VERSION=6.0.0-beta11
 
 # DL3002: root required — TS6 server process needs root for initial setup

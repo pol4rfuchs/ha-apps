@@ -4,7 +4,7 @@ version: "1.1.15"
 slug: "teamspeak6"
 description: "TeamSpeak 6 Voice Server for Raspberry Pi (ARM64/aarch64)"
 url: "https://github.com/pol4rfuchs/ha-apps"
-image: "ghcr.io/pol4rfuchs/teamspeak6-ha-app"
+image: "ghcr.io/pol4rfuchs/teamspeak6"
 arch:
   - aarch64
   - amd64
@@ -31,3 +31,9 @@ schema:
   log_level: "int(0,4)"
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
+# apparmor.txt exists but is intentionally NOT yet enforced — it's a
+# best-effort profile against a third-party vendor image whose internal
+# paths weren't verified against the real filesystem. Test manually
+# (start, connect a real client, then a clean restart) before flipping
+# this to true.
+apparmor: false
