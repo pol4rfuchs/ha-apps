@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.3...ntfy-v1.2.4) (2026-07-23)
+
+
+### Bug Fixes
+
+* **ntfy:** add de.yaml, apparmor profile, io.hass.arch label, --- header, drop -ha-app suffix, document missing visitor_* options ([231fc09](https://github.com/pol4rfuchs/ha-apps/commit/231fc091ca56fac365d97c3d56380132ea6846ba))
+
 ## [1.2.3](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.2...ntfy-v1.2.3) (2026-07-13)
 
 
