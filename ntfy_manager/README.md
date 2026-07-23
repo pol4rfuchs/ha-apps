@@ -7,7 +7,7 @@
 Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on läuft.
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![App Version](https://img.shields.io/badge/ntfy--manager-0.2.12-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/ntfy--manager-0.2.13-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![ntfy](https://img.shields.io/badge/ntfy-Admin%20Panel-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
 [![Ingress](https://img.shields.io/badge/HAOS-Ingress-2ea44f?style=for-the-badge)](https://www.home-assistant.io/addons/)
@@ -21,7 +21,7 @@ Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on lä
 | Property | Value |
 |---|---|
 | **HA Add-on Slug** | `ntfy_haos_admin_panel` |
-| **App Version** | `0.2.12` |
+| **App Version** | `0.2.13` |
 | **Web UI Port** | `8099` (Ingress) |
 | **Talks to** | `ntfy` add-on (same repo) |
 | **Persistence** | `/data/jwt_secret` |
