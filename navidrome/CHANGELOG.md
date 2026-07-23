@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.4...navidrome-v2.1.5) (2026-07-23)
+
+
+### Bug Fixes
+
+* **navidrome:** correct swapped en/de translations, add apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix and deprecated hassio_api, remove insecure curl TLS bypass ([6bd16bc](https://github.com/pol4rfuchs/ha-apps/commit/6bd16bcaee76f930f9869a5afd1994e2cb239c91))
+
 ## [2.1.4](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.3...navidrome-v2.1.4) (2026-07-13)
 
 
