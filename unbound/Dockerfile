@@ -3,7 +3,7 @@
 # stages ("base name (${BUILD_FROM}) should not be blank" — see
 # moby/moby#38379). Both belong here, not next to their respective stages.
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
-ARG UNBOUND_VERSION=1.25.1
+ARG UNBOUND_VERSION=1.25.2
 
 # ---------------------------------------------------------------------------
 # Stage 1: build Unbound from source.
