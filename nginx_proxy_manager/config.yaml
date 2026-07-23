@@ -1,59 +1,43 @@
----
-name: "Nginx Proxy Manager"
-description: "Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration."
-version: "2.1.4"
-slug: "nginx_proxy_manager"
-url: "https://github.com/pol4rfuchs/ha-apps"
-image: "ghcr.io/pol4rfuchs/nginx_proxy_manager"
+name: Nginx Proxy Manager
+description: Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration.
+version: "2.1.5"
+slug: nginx_proxy_manager
+url: https://github.com/pol4rfuchs/ha-apps
+image: ghcr.io/pol4rfuchs/nginx_proxy_manager
 init: false
-webui: "http://[HOST]:[PORT:81]"
-
+webui: http://[HOST]:[PORT:81]
 arch:
   - amd64
   - aarch64
-
 ports:
   80/tcp: 80
   81/tcp: 81
   443/tcp: 443
-
 ports_description:
-  80/tcp: "HTTP Entrance port"
-  81/tcp: "NGinx Proxy Manager Admin web interface"
-  443/tcp: "HTTPS/SSL Entrance port"
-
+  80/tcp: HTTP Entrance port
+  81/tcp: NGinx Proxy Manager Admin web interface
+  443/tcp: HTTPS/SSL Entrance port
 options:
-  db_type: "sqlite"
-  mariadb_host: ""
+  db_type: sqlite
+  mariadb_host: ''
   mariadb_port: 3306
-  mariadb_name: "npm"
-  mariadb_user: "npm"
+  mariadb_name: npm
+  mariadb_user: npm
   http_port: 80
   https_port: 443
   disable_ipv6: false
-  log_level: "info"
-
+  log_level: info
 schema:
-  db_type: "list(sqlite|mariadb)"
-  mariadb_host: "str?"
-  mariadb_port: "int?"
-  mariadb_name: "str?"
-  mariadb_user: "str?"
-  http_port: "int?"
-  https_port: "int?"
-  disable_ipv6: "bool?"
-  log_level: "list(info|warning|error|debug)"
-
-# Passwörter kommen aus secrets.yaml:
-#   npm_mariadb_password: "dein_passwort"
-#   npm_jwt_secret: "dein_jwt_secret"
-
+  db_type: list(sqlite|mariadb)
+  mariadb_host: str?
+  mariadb_port: int?
+  mariadb_name: str?
+  mariadb_user: str?
+  http_port: int?
+  https_port: int?
+  disable_ipv6: bool?
+  log_level: list(info|warning|error|debug)
 map:
   - type: ssl
     read_only: false
-
-# apparmor.txt exists but is intentionally NOT yet enforced — vendor image
-# (jc21/nginx-proxy-manager) with its own bundled s6-overlay. Test a full
-# start, add a proxy host, issue a Let's Encrypt cert, then a clean restart
-# before flipping this to true.
 apparmor: false

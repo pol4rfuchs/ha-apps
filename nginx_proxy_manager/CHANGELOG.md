@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.4...nginx_proxy_manager-v2.1.5) (2026-07-23)
+
+
+### Bug Fixes
+
+* **nginx_proxy_manager:** add de.yaml, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([d14559f](https://github.com/pol4rfuchs/ha-apps/commit/d14559f2c8cc5da7b343ca2a7c8a4a371df42ba7))
+
 ## [2.1.4](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.3...nginx_proxy_manager-v2.1.4) (2026-06-27)
 
 
