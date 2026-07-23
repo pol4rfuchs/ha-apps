@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.5.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.1...matrix_synapse-v1.5.2) (2026-07-23)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** add de.yaml, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix and deprecated hassio_api field ([c2f9bc1](https://github.com/pol4rfuchs/ha-apps/commit/c2f9bc1389d715c3c7202a4c93650655d6e02708))
+
 ## [1.5.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.0...matrix_synapse-v1.5.1) (2026-07-19)
 
 
