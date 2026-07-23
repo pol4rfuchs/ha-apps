@@ -30,6 +30,15 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [Unbound](unbound/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | DNS | Validating, recursive DNS resolver with DNSSEC support |
 | [Restic Backup](restic_backup/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `custom build` | Backup | Scheduled restic backups of HA config/media/add-on data with ntfy alerting on failure |
 
+## Pipeline
+
+> Planned add-ons currently in the pipeline — not yet released.
+
+| App | Status | Runtime / Upstream | Category | Description |
+|---|---|---|---|---|
+| LPI | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Privacy | Live Privacy Inspector — scans and reports privacy-sensitive exposure across the stack |
+| UCCM | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Network | UniFi Control Center/Manager — HAOS-integrated management UI for UniFi controllers |
+
 ### Status
 
 | Badge | Meaning |
@@ -38,6 +47,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | ![ready](https://img.shields.io/badge/-ready-41BDF5?style=flat-square) | Functional, but not yet production-validated |
 | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | Experimental implementation — expect breaking changes and incomplete functionality |
 | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | Work in progress — not yet validated on HAOS |
+| ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | Planned — in pipeline, not yet started or in early scaffolding |
 | ![deprecated](https://img.shields.io/badge/-deprecated-D73A49?style=flat-square) | Deprecated — no longer recommended and may be removed in a future release |
 
 ## Installation
