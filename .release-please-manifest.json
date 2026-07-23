@@ -2,13 +2,13 @@
   "forgejo": "16.0.8",
   "intiface_central": "1.0.4",
   "matrix_synapse": "1.5.1",
-  "navidrome": "2.1.4",
   "nginx_proxy_manager": "2.1.5",
+  "navidrome": "2.1.5",
   "restic_backup": "0.2.1",
-  "ntfy": "1.2.3",
-  "ntfy_manager": "0.2.12",
+  "ntfy": "1.2.4",
+  "ntfy_manager": "0.2.13",
   "nextcloud": "33.0.14",
   "searxng": "1.0.11",
   "teamspeak6": "1.1.16",
-  "ts6_manager": "1.0.4"
+  "ts6_manager": "1.0.5"
 }
