@@ -46,7 +46,7 @@ schema:
 
 # Passwörter kommen aus secrets.yaml:
 #   npm_mariadb_password: "dein_passwort"
-#   npm_jwt_secret: "dein_jwt_secret" 
+#   npm_jwt_secret: "dein_jwt_secret"
 
 map:
   - type: ssl
