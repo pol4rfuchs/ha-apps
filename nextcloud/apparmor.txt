@@ -1,0 +1,74 @@
+#include <tunables/global>
+
+# NOTE: this add-on runs directly on the official Nextcloud/Apache image
+# (no HA base image, no s6-overlay — see Dockerfile ENTRYPOINT). The exact
+# internal paths Apache/PHP/Nextcloud touch at runtime (log paths, PHP-FPM
+# sockets if ever switched on, app install directories, etc.) were not
+# verified against the real filesystem (no image access at profile-authoring
+# time). Test carefully — full install, log in, upload a file, install an
+# app from the app store, then a clean restart — before relying on this in
+# production. If something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path
+# and add it here.
+profile nextcloud_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: MariaDB/Postgres connection, outbound app store / federation
+  network tcp,
+  network udp,
+  network inet,
+  network inet6,
+
+  # The add-on's own entrypoint script — needs ix, not just r
+  /ha-init.sh                          ix,
+
+  # Official Nextcloud entrypoint + our hook scripts (docker-entrypoint-hooks.d)
+  /entrypoint.sh                       ix,
+  /docker-entrypoint-hooks.d/**        rix,
+
+  # PHP / Apache / coreutils
+  /usr/local/bin/**                    ix,
+  /usr/sbin/**                         ix,
+  /usr/bin/**                          ix,
+  /bin/**                              ix,
+
+  # Nextcloud application code, config, and app store installs — all live
+  # under the web root, so this needs broad read-write.
+  /var/www/html/                       rw,
+  /var/www/html/**                     rwk,
+
+  # PHP runtime config written by ha-init.sh at every start
+  /usr/local/etc/php/conf.d/**         rw,
+
+  # Apache/PHP runtime state
+  /var/log/apache2/**                  rw,
+  /var/run/**                          rw,
+  /run/**                              rw,
+
+  # Persistent add-on data (mapped rw)
+  /data/                               rw,
+  /data/**                             rw,
+
+  # /tmp for PHP session/upload temp files
+  /tmp/                                rw,
+  /tmp/**                              rw,
+
+  # System files
+  /etc/passwd                          r,
+  /etc/group                           r,
+  /etc/hosts                           r,
+  /etc/resolv.conf                     r,
+  /etc/nsswitch.conf                   r,
+  /etc/ssl/**                          r,
+  /etc/localtime                       r,
+  /usr/share/zoneinfo/**               r,
+
+  # Proc
+  @{PROC}/**                           r,
+  owner @{PROC}/*/status               r,
+  owner @{PROC}/*/fd/                  r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

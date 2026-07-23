@@ -1,0 +1,81 @@
+#include <tunables/global>
+
+profile restic_backup_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: restic remote repositories (S3/B2/MinIO/sftp), ntfy notifications
+  network tcp,
+  network dgram,
+  network stream,
+  network inet,
+  network inet6,
+
+  # s6-overlay baseline (Buildrules §8). This add-on has no COPY rootfs/ of
+  # its own (CMD ["/run.sh"] runs directly), but the HA base image's /init
+  # still manages these paths on every start/stop — without them the
+  # container crashes on the first clean restart with
+  # "/bin/sh: can't open '/init': Permission denied".
+  /init                        ix,
+  /package/**                  ix,
+  /command/**                  ix,
+  /run/{s6,s6-rc*,service}/**  ix,
+  /run/s6/**                   rix,
+  /etc/s6-overlay/**           rix,
+  /etc/services.d/**           rwix,
+  /etc/cont-init.d/**          rwix,
+  /etc/cont-finish.d/**        rwix,
+  /run/{,**}                   rwk,
+  /dev/tty                     rw,
+
+  # Shell + coreutils + the add-on's own scripts (need ix, not just r)
+  /bin/**                      ix,
+  /usr/bin/**                  ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+  /run.sh                      ix,
+
+  # bashio
+  /usr/lib/bashio/**           ix,
+
+  # cron (dcron)
+  /etc/crontabs/               rw,
+  /etc/crontabs/**             rw,
+  /var/spool/cron/**           rw,
+
+  # restic's own lock file
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # Mapped folders — read-only backup sources
+  /homeassistant/              r,
+  /homeassistant/**            r,
+  /addon_configs/               r,
+  /addon_configs/**              r,
+  /media/                        r,
+  /media/**                       r,
+  /ssl/                            r,
+  /ssl/**                           r,
+
+  # Mapped folder — backup repository target (read-write)
+  /share/                            rw,
+  /share/**                           rw,
+
+  # System files
+  /etc/passwd                         r,
+  /etc/group                          r,
+  /etc/hosts                          r,
+  /etc/resolv.conf                    r,
+  /etc/nsswitch.conf                  r,
+  /etc/ssl/**                         r,
+  /etc/localtime                      r,
+  /usr/share/zoneinfo/**              r,
+
+  # Proc
+  @{PROC}/**                          r,
+  owner @{PROC}/*/status              r,
+  owner @{PROC}/*/fd/                 r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

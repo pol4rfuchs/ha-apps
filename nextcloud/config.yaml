@@ -2,10 +2,10 @@ name: Nextcloud
 description: >-
   A safe home for all your data — full Nextcloud instance with unrestricted app
   store access
-version: "33.0.13"
+version: "33.0.14"
 slug: nextcloud
 url: https://github.com/pol4rfuchs/ha-apps
-image: ghcr.io/pol4rfuchs/nextcloud-ha-app
+image: ghcr.io/pol4rfuchs/nextcloud
 init: false
 arch:
   - aarch64
@@ -30,6 +30,7 @@ options:
   php_memory_limit: 512M
   max_upload_size: 16G
   max_execution_time: 3600
+  log_level: info
 schema:
   admin_user: str
   admin_password: password
@@ -43,3 +44,5 @@ schema:
   php_memory_limit: str
   max_upload_size: str
   max_execution_time: int
+  log_level: list(debug|info|warning|error|fatal)
+apparmor: false

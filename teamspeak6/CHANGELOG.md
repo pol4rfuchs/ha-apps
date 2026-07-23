@@ -6,6 +6,13 @@
 * **teamspeak6:** update upstream to 6.0.0-beta11 ([#51](https://github.com/pol4rfuchs/ha-apps/issues/51)) ([c8cde49](https://github.com/pol4rfuchs/ha-apps/commit/c8cde4937d5cb19cca3ff0aaa6e3444424c51d61))
 
 
+## [1.1.16](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.15...teamspeak6-v1.1.16) (2026-07-22)
+
+
+### Bug Fixes
+
+* **teamspeak6:** add de.yaml, drop -ha-app suffix and hardcoded BUILD_ARCH default, add draft apparmor profile (disabled pending manual test) ([5fc474a](https://github.com/pol4rfuchs/ha-apps/commit/5fc474a4551253c48fc3a70a4aa732d91443b5b2))
+
 ## [1.1.15](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.14...teamspeak6-v1.1.15) (2026-07-02)
 
 

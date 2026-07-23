@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.3...intiface_central-v1.0.4) (2026-07-22)
+
+
+### Bug Fixes
+
+* **intiface_central:** add de.yaml, --- header, list() schema, drop -ha-app suffix, remove duplicate en.yaml ([31d4c19](https://github.com/pol4rfuchs/ha-apps/commit/31d4c192b35c4769bb2de700200a1fa25861f3fc))
+
 ## [1.0.3](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.2...intiface_central-v1.0.3) (2026-07-19)
 
 

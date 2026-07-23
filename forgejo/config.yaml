@@ -1,3 +1,4 @@
+---
 name: Forgejo
 version: "16.0.8"
 slug: forgejo
@@ -6,11 +7,11 @@ description: >-
   Issues, Pull Requests, CI/CD Actions, Package-Registry, Wiki, Projekte und
   mehr.
 url: https://github.com/pol4rfuchs/ha-apps
-apparmor: false
+apparmor: true
 arch:
   - amd64
   - aarch64
-image: ghcr.io/pol4rfuchs/forgejo-ha-app
+image: ghcr.io/pol4rfuchs/forgejo
 init: false
 ingress: true
 ingress_port: 3000

@@ -1,0 +1,50 @@
+---
+configuration:
+  app_name:
+    name: "App-Name"
+    description: "Anzeigename der Forgejo-Instanz (erscheint in Browser-Tab und Header)."
+
+  domain:
+    name: "Domain / Hostname"
+    description: >-
+      Öffentlich erreichbarer Hostname (z.B. 'git.home.example.com' oder '192.168.1.100').
+      Leer lassen → Ingress-Modus (HA ermittelt URL automatisch über Supervisor).
+
+  ssl:
+    name: "HTTPS aktivieren"
+    description: >-
+      Aktiviert HTTPS für direkten Zugriff. Erfordert 'domain' und gültige
+      Zertifikatsdateien im HA SSL-Verzeichnis (/ssl/).
+      Für Ingress nicht nötig – HA übernimmt SSL selbst.
+
+  certfile:
+    name: "SSL-Zertifikat"
+    description: "Dateiname des SSL-Zertifikats aus /ssl/ (z.B. 'fullchain.pem')."
+
+  keyfile:
+    name: "SSL-Schlüssel"
+    description: "Dateiname des SSL-Privatschlüssels aus /ssl/ (z.B. 'privkey.pem')."
+
+  ssh_enabled:
+    name: "SSH Git-Zugriff aktivieren"
+    description: >-
+      Erlaubt Git-Zugriff via SSH (git clone/push/pull über ssh://).
+      Port 22/tcp muss in den Add-on Netzwerkeinstellungen gemappt sein.
+
+  ssh_port:
+    name: "SSH-Port"
+    description: "Externer SSH-Port für Git-Operationen (Standard: 22)."
+
+  log_level:
+    name: "Log-Level"
+    description: >-
+      Detailgrad der Protokollierung. 'Info' für normalen Betrieb,
+      'Debug' oder 'Trace' für Fehlersuche (sehr ausführlich).
+
+network:
+  3000/tcp:
+    name: "Web-UI Port"
+    description: "Direkter HTTP-Zugriff. Ingress bevorzugen – dieser Port ist optional."
+  22/tcp:
+    name: "SSH Git-Port"
+    description: "Nur nötig wenn 'SSH Git-Zugriff aktivieren' aktiv ist."

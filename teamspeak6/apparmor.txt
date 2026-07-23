@@ -1,0 +1,74 @@
+#include <tunables/global>
+
+# NOTE: unlike forgejo/unbound, this add-on runs directly on top of the
+# third-party vendor image teamspeaksystems/teamspeak6-server rather than
+# the HA base image — there is no s6-overlay involved (entrypoint is a
+# plain bash run.sh), so none of the s6-specific baseline paths required
+# for HA-base-image add-ons apply here. Exact internal binary paths of the
+# vendor image were not verified against the real filesystem (no image
+# access at profile-authoring time) — test carefully (full start, a real
+# client connection, and a clean restart/stop) before relying on this in
+# production. If something breaks with "Permission denied", check
+# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path
+# and add it here.
+profile teamspeak6_addon flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Network: voice (UDP), file transfer / query / ssh-query / http-query (TCP)
+  network udp,
+  network tcp,
+  network dgram,
+  network stream,
+  network inet,
+  network inet6,
+
+  # Capabilities: Dockerfile runs as root for initial setup (DL3002 waiver);
+  # keep broad enough that a privilege-drop inside tsserver itself doesn't
+  # get blocked.
+  capability setuid,
+  capability setgid,
+  capability dac_read_search,
+
+  # Shell + coreutils used by run.sh itself
+  /bin/**                    ix,
+  /usr/bin/**                 ix,
+  /usr/sbin/**                 ix,
+  /usr/local/bin/**            ix,
+
+  # run.sh (the add-on's own entrypoint script) — needs ix, not just r
+  /run.sh                      ix,
+
+  # TeamSpeak 6 server binary + bundled libs/resources (vendor image layout,
+  # best-effort broad glob since the exact install path wasn't verified)
+  /opt/**                      ix,
+  /tsserver*                   ix,
+
+  # Persistent add-on data (backed up to /data, synced to runtime dir)
+  /data/                       rw,
+  /data/**                     rw,
+
+  # Runtime working directory used by tsserver while running
+  /var/tsserver/               rw,
+  /var/tsserver/**             rw,
+
+  # Temp: FIFO used to capture the first-boot admin token
+  /tmp/                        rw,
+  /tmp/**                      rw,
+
+  # System files
+  /etc/passwd                  r,
+  /etc/group                   r,
+  /etc/hosts                   r,
+  /etc/resolv.conf              r,
+  /etc/nsswitch.conf             r,
+  /etc/ssl/**                    r,
+
+  # Proc (for the server's own introspection / sqlite3 checkpointing)
+  @{PROC}/**                     r,
+  owner @{PROC}/*/status          r,
+  owner @{PROC}/*/fd/              r,
+
+  # ptrace / signal for Docker's own process introspection
+  ptrace (trace,read) peer=docker-default,
+  signal (receive) set=(kill,term) peer=/usr/bin/docker,
+}

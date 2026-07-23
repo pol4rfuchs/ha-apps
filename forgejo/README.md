@@ -72,19 +72,20 @@ Erweiterte Forgejo-Einstellungen die nicht im HA-UI sind → direkt in app.ini.
 
 ## Lokales Testen (vor erstem GHCR-Push)
 
-Das Add-on nutzt ein prebuilt Image von GHCR (`ghcr.io/pol4rfuchs/forgejo-ha-app`).
-Für lokales Testen bevor das Image gebaut ist:
-
-1. `image:`-Zeile in `config.yaml` auskommentieren
-2. `build.yaml` ist dann aktiv → HA Supervisor baut lokal
-3. Addon-Ordner nach `/addons/forgejo/` auf dem HA-Host kopieren
+Das Add-on nutzt ein prebuilt Image von GHCR (`ghcr.io/pol4rfuchs/forgejo`).
+`build.yaml` gibt es im Repo nicht mehr (die zentrale CI/CD-Pipeline bricht
+sogar hart ab, falls eine im Add-on-Ordner liegt) — lokales Testen läuft
+stattdessen direkt über das Dockerfile:
 
 ```bash
-# Via SSH (SSH-Addon in HA aktivieren):
-scp -P 22222 -r ./forgejo root@homeassistant.local:/addons/forgejo/
+docker buildx build \
+  --build-arg BUILD_ARCH=aarch64 \
+  --build-arg BUILD_VERSION=dev \
+  -t forgejo-local ./forgejo
 ```
 
-Dann: **Einstellungen → Add-ons → Add-on Store → ⋮ → Check for updates**
+Oder: PR mit der Änderung öffnen — `02-build-test.yml` baut automatisch nur
+das geänderte Add-on (Path-Filtering) für amd64+arm64 im CI.
 
 ## Erweiterte Konfiguration (direkt in app.ini)
 

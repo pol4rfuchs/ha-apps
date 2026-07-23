@@ -4,12 +4,14 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 
 FROM ${BUILD_FROM}
 
+ARG BUILD_ARCH
 ARG BUILD_VERSION=dev
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
     io.hass.type="addon" \
     io.hass.name="restic_backup" \
+    io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.title="Restic Backup Home Assistant Add-on" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
     org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.0" \

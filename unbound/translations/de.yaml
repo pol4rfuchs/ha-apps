@@ -1,0 +1,9 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: "Steuert den Detailgrad der Log-Ausgabe des Addon-Supervisor-Prozesses."
+
+network:
+  53/tcp: DNS-Anfragen über TCP
+  53/udp: DNS-Anfragen über UDP

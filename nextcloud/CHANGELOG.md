@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.14](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.13...nextcloud-v33.0.14) (2026-07-22)
+
+
+### Bug Fixes
+
+* **nextcloud:** add DOCS.md and draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([b22acf4](https://github.com/pol4rfuchs/ha-apps/commit/b22acf4562dfa2d5b5cbe52e8680576169ccfa70))
+
 ## [33.0.13](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.12...nextcloud-v33.0.13) (2026-07-19)
 
 

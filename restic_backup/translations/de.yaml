@@ -1,0 +1,53 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der Log-Ausgabe. 'info' für den Normalbetrieb, 'debug' nur zur Fehlersuche."
+  cron_schedule:
+    name: Cron-Zeitplan
+    description: "Standard-5-Felder-Cron-Ausdruck, wann Backups laufen. Standard: '0 3 * * *' (täglich um 3 Uhr)."
+  repository:
+    name: Restic-Repository
+    description: "Ort des Restic-Repositorys. Lokaler Pfad (z.B. /share/restic-backup/repo) oder eine Remote-URI (z.B. s3:https://minio.local/bucket, sftp:user@host:/path). Unterstützte Backends siehe restic-Doku."
+  restic_password:
+    name: Restic-Passwort
+    description: "Verschlüsselungspasswort für das Restic-Repository. Erforderlich — bei Verlust sind alle Backups unwiederbringlich verloren. An sicherer Stelle außerhalb dieses Add-ons aufbewahren."
+  backup_paths:
+    name: Backup-Pfade
+    description: "Welche gemappten Ordner gesichert werden. Standard: /homeassistant, /addon_configs, /ssl. Bei Bedarf /media oder /share ergänzen (muss im 'map'-Block des Add-ons gemappt sein)."
+  exclude_patterns:
+    name: Ausschlussmuster
+    description: "Glob-Muster für restic --exclude, z.B. '*.log' oder '**/__pycache__'."
+  retention_daily:
+    name: Tägliche Aufbewahrung
+    description: "Anzahl der täglichen Snapshots, die nach dem Pruning behalten werden."
+  retention_weekly:
+    name: Wöchentliche Aufbewahrung
+    description: "Anzahl der wöchentlichen Snapshots, die nach dem Pruning behalten werden."
+  retention_monthly:
+    name: Monatliche Aufbewahrung
+    description: "Anzahl der monatlichen Snapshots, die nach dem Pruning behalten werden."
+  run_on_start:
+    name: Beim Start ausführen
+    description: "Führt beim Start des Add-ons sofort ein Backup aus, zusätzlich zum Cron-Zeitplan. Nützlich zum Testen einer neuen Konfiguration."
+  aws_access_key_id:
+    name: S3 Access Key ID
+    description: "Nur nötig für S3-/MinIO-/B2-kompatible Repositories. Bei lokalem Repository leer lassen."
+  aws_secret_access_key:
+    name: S3 Secret Access Key
+    description: "Nur nötig für S3-/MinIO-/B2-kompatible Repositories. Bei lokalem Repository leer lassen."
+  aws_default_region:
+    name: S3-Region
+    description: "Nur für manche S3-kompatible Backends nötig. Leer lassen, falls dein Backend das nicht braucht."
+  ntfy_url:
+    name: ntfy-Server-URL
+    description: "Basis-URL deines ntfy-Servers, z.B. https://ntfy.deine-domain.com. Leer lassen, um Benachrichtigungen zu deaktivieren."
+  ntfy_topic:
+    name: ntfy-Topic
+    description: "Topic, an das Backup-Ergebnisse gesendet werden, z.B. ha-system."
+  ntfy_username:
+    name: ntfy-Benutzername
+    description: "Optional — nur nötig, falls das ntfy-Topic Authentifizierung erfordert."
+  ntfy_password:
+    name: ntfy-Passwort
+    description: "Optional — nur nötig, falls das ntfy-Topic Authentifizierung erfordert."

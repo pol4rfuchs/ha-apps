@@ -1,8 +1,8 @@
 name: Intiface Central
 description: Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities
-version: "1.0.3"
+version: "1.0.4"
 slug: intiface_central
-image: ghcr.io/pol4rfuchs/intiface-ha-app
+image: ghcr.io/pol4rfuchs/intiface_central
 url: https://github.com/pol4rfuchs/ha-apps
 init: false
 arch:
@@ -25,7 +25,7 @@ schema:
   use_bluetooth_le: bool
   use_hid: bool
   use_serial: bool
-  log_level: match(error|warn|info|debug)
+  log_level: list(error|warn|info|debug)
   mqtt_host: str?
   mqtt_port: int(1,65535)?
   mqtt_user: str?
