@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.13](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.12...ntfy_manager-v0.2.13) (2026-07-23)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add de.yaml, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([f116752](https://github.com/pol4rfuchs/ha-apps/commit/f1167520005ecbe75a98381f82d52c95425abc92))
+* **ntfy_manager:** add missing .js extension to relative import (NodeNext moduleResolution) ([ca70913](https://github.com/pol4rfuchs/ha-apps/commit/ca7091376c2460f468ce579e1cfd6fe5a8e39b04))
+
 ## [0.2.13](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.12...ntfy_manager-v0.2.13) (2026-07-22)
 
 
