@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.9](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.8...forgejo-v16.0.9) (2026-07-23)
+
+
+### Bug Fixes
+
+* **forgejo:** correct swapped en/de translations, add DOCS.md, --- header, drop -ha-app suffix, fix stale build.yaml reference in README ([c8dece9](https://github.com/pol4rfuchs/ha-apps/commit/c8dece97f0881af934af01d938814cb67cf2c3de))
+
 ## [16.0.8](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.7...forgejo-v16.0.8) (2026-07-21)
 
 

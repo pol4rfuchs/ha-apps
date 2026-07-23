@@ -1,6 +1,5 @@
----
 name: Forgejo
-version: "16.0.8"
+version: 16.0.9
 slug: forgejo
 description: >-
   Self-hosted Git-Plattform – die freie GitHub-Alternative. Repositories,
