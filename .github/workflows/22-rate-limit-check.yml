@@ -1,0 +1,85 @@
+name: 22 Rate Limit Check
+
+on:
+  schedule:
+    # Every hour, on the hour. Cheap check (1 API call), doesn't count much
+    # against the very budget it's monitoring.
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rate-limit-check
+  cancel-in-progress: true
+
+jobs:
+  check-rate-limit:
+    name: Check GitHub API rate limit
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    env:
+      # Same token release-please and other workflows use (secrets.APP_TOKEN,
+      # not the default GITHUB_TOKEN) — checking any other token's quota
+      # wouldn't reflect the actual constrained resource.
+      GH_TOKEN: ${{ secrets.APP_TOKEN }}
+      WARN_THRESHOLD: 500
+    steps:
+      - name: Query rate limit
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          json="$(gh api rate_limit)"
+          core_remaining="$(echo "${json}" | jq -r '.resources.core.remaining')"
+          core_limit="$(echo "${json}" | jq -r '.resources.core.limit')"
+          core_reset_epoch="$(echo "${json}" | jq -r '.resources.core.reset')"
+          reset_human="$(date -u -d "@${core_reset_epoch}" '+%Y-%m-%d %H:%M UTC')"
+
+          {
+            echo "### GitHub API Rate Limit (core)"
+            echo ""
+            echo "| Remaining | Limit | Resets |"
+            echo "|---|---|---|"
+            echo "| ${core_remaining} | ${core_limit} | ${reset_human} |"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          echo "remaining=${core_remaining}" >> "${GITHUB_OUTPUT}"
+          echo "limit=${core_limit}" >> "${GITHUB_OUTPUT}"
+          echo "reset_human=${reset_human}" >> "${GITHUB_OUTPUT}"
+
+          if [ "${core_remaining}" -lt "${WARN_THRESHOLD}" ]; then
+            echo "is_low=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "is_low=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # Opens (or comments on, if one is already open) a tracking issue —
+      # only when the quota is actually low, so this stays silent 95% of
+      # the time instead of spamming hourly.
+      - name: Open or update warning issue
+        if: steps.check.outputs.is_low == 'true'
+        shell: bash
+        env:
+          REMAINING: ${{ steps.check.outputs.remaining }}
+          LIMIT: ${{ steps.check.outputs.limit }}
+          RESET_HUMAN: ${{ steps.check.outputs.reset_human }}
+        run: |
+          set -euo pipefail
+          title="GitHub API rate limit low (${REMAINING}/${LIMIT})"
+          body="Remaining core API requests: **${REMAINING}/${LIMIT}**. Resets at ${RESET_HUMAN} UTC.
+
+          Workflows that call the GitHub API directly (Release Please, this
+          check itself, some Renovate operations) may start failing with
+          rate-limit errors until the quota resets. Regular build/lint/test
+          workflows using only the standard checkout+build actions are
+          unaffected. Consider pausing PR merges until the reset time above."
+
+          existing="$(gh issue list --search "GitHub API rate limit low in:title" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "${existing}" ]; then
+            gh issue comment "${existing}" --body "${body}"
+          else
+            gh issue create --title "${title}" --body "${body}" --label "ci"
+          fi
