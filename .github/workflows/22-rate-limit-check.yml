@@ -46,9 +46,11 @@ jobs:
             echo "| ${core_remaining} | ${core_limit} | ${reset_human} |"
           } >> "${GITHUB_STEP_SUMMARY}"
 
-          echo "remaining=${core_remaining}" >> "${GITHUB_OUTPUT}"
-          echo "limit=${core_limit}" >> "${GITHUB_OUTPUT}"
-          echo "reset_human=${reset_human}" >> "${GITHUB_OUTPUT}"
+          {
+            echo "remaining=${core_remaining}"
+            echo "limit=${core_limit}"
+            echo "reset_human=${reset_human}"
+          } >> "${GITHUB_OUTPUT}"
 
           if [ "${core_remaining}" -lt "${WARN_THRESHOLD}" ]; then
             echo "is_low=true" >> "${GITHUB_OUTPUT}"
