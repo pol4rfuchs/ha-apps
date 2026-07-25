@@ -1,6 +1,7 @@
+---
 name: TS6 Manager
 description: Web-based management interface for TeamSpeak 6 servers (WebQuery API)
-version: "1.0.5"
+version: "2.0.0"
 slug: ts6_manager
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/ts6_manager
@@ -15,5 +16,7 @@ panel_icon: mdi:microphone
 webui: http://[HOST]:[PORT:8066]
 options:
   log_level: info
+  video_streaming: false
 schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)
+  video_streaming: bool

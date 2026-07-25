@@ -1,13 +1,19 @@
 #include <tunables/global>
 
-# NOTE: three s6-rc.d services share this container (ts6-init, ts6-backend:
-# Node/Prisma API, ts6-nginx: reverse-proxy + static frontend). Same HA base
-# image family as ntfy_manager/restic_backup, so the s6 baseline below is
-# high-confidence — but the app-specific paths (Prisma DB, yt-dlp/ffmpeg
-# media downloads) are new. Test a full start + login + a real music
-# download via yt-dlp, then a clean restart, before relying on this in
-# production. If something breaks with "Permission denied", check
-# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path.
+# NOTE: four s6-rc.d services share this container (ts6-init, ts6-backend:
+# Node/Prisma API, ts6-nginx: reverse-proxy + static frontend, ts6-sidecar:
+# Go/Pion WebRTC media relay for video streaming, /usr/local/bin/ts6-sidecar,
+# already covered by the /usr/local/bin/** ix rule below — loopback-only,
+# no extra network rule needed since network tcp/udp/inet/inet6 below are
+# already unconditional). Same HA base image family as ntfy_manager/
+# restic_backup, so the s6 baseline below is high-confidence — but the
+# app-specific paths (Prisma DB, yt-dlp/ffmpeg media downloads) are new.
+# Test a full start + login + a real music download via yt-dlp, a video
+# stream if video_streaming is enabled, then a clean restart, before relying
+# on this in production. If something breaks with "Permission denied",
+# check `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED
+# path. apparmor is off (apparmor: false) for now — flip to true only after
+# that full test pass (Buildrules §8: no permanent panic-fix).
 profile ts6_manager_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 

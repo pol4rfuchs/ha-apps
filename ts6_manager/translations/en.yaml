@@ -3,3 +3,6 @@ configuration:
   log_level:
     name: Log Level
     description: "Verbosity of the TS6 Manager log output. Use 'info' for normal operation, 'debug' for troubleshooting."
+  video_streaming:
+    name: Video Streaming
+    description: "Enable the WebRTC media sidecar for streaming YouTube/Twitch/direct-URL video into TeamSpeak channels. Off by default to save RAM/CPU when unused; the sidecar idles at near-zero cost while disabled."

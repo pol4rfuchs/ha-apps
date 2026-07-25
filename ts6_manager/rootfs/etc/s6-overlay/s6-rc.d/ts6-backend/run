@@ -11,6 +11,13 @@ export PORT="3001"
 export NODE_ENV="production"
 export FRONTEND_URL="http://localhost:8066"
 
+# WebRTC media sidecar (video streaming) — shares this container, loopback
+# only. SIDECAR_TOKEN comes from /data/secrets.env above. If video_streaming
+# is off in the add-on options, ts6-sidecar idles harmlessly on this port
+# instead of actually listening; the backend's own video-streaming routes
+# stay unused in that case, so no explicit gating needed here.
+export SIDECAR_URL="http://127.0.0.1:9800"
+
 ENTRY="dist/index.js"
 MAIN="$(node -e "try{console.log(require('/app/package.json').main||'')}catch(e){}" 2>/dev/null)"
 [ -n "${MAIN}" ] && ENTRY="${MAIN}"

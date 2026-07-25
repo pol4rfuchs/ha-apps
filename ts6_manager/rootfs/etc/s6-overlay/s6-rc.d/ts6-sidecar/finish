@@ -1,0 +1,4 @@
+#!/bin/sh
+# Secondary process (video streaming only) — log and let s6 restart it on
+# its own backoff; never bring the whole container down over this (§11).
+echo "[ts6-sidecar] exited with code $1" >&2

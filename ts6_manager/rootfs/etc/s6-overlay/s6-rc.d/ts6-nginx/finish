@@ -1,0 +1,4 @@
+#!/bin/sh
+# nginx is a secondary process (reverse proxy + static frontend) — log a
+# crash but don't tear down the whole container over it (§11).
+echo "[ts6-nginx] exited with code $1" >&2

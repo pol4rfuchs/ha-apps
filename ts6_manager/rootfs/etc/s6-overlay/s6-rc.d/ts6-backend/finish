@@ -1,0 +1,6 @@
+#!/bin/sh
+# ts6-backend is the primary process (§11): a crash should bring the whole
+# container down for a clean HA supervisor restart, not limp along with
+# nginx serving a dead API.
+echo "[ts6-backend] exited with code $1, stopping container for restart" >&2
+exec /command/s6-svscanctl -t /tmp/s6/legacy-services

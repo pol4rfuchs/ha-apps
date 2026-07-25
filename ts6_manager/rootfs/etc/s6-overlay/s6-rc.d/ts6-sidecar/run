@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Resource-conscious default (Buildrules §12): the WebRTC sidecar only earns
+# its RAM/CPU when video streaming is actually used. If the option is off,
+# idle instead of launching the real process — near-zero footprint, still a
+# valid long-running s6 service (no crash-loop, no restart churn).
+VIDEO_STREAMING="$(node -e "try{process.stdout.write(String(!!require('/data/options.json').video_streaming))}catch(e){process.stdout.write('false')}" 2>/dev/null)"
+
+if [ "${VIDEO_STREAMING}" != "true" ]; then
+    echo "[ts6-sidecar] video_streaming disabled in add-on options, idling."
+    exec sleep infinity
+fi
+
+set -a
+. /data/secrets.env
+set +a
+
+# Loopback-only: the API has no per-user auth, SIDECAR_TOKEN is the only
+# gate. Never bind 0.0.0.0 here since nothing else in this container needs
+# to reach it except the backend, on 127.0.0.1 (single-container add-on).
+export SIDECAR_LISTEN_ADDR="127.0.0.1"
+export SIDECAR_PORT="9800"
+
+echo "[ts6-sidecar] Starting WebRTC media sidecar on 127.0.0.1:9800 ..."
+exec /usr/local/bin/ts6-sidecar
