@@ -48,6 +48,9 @@ RUN pnpm run build \
     && PRISMA_VERSION="$(node -e "console.log(require('./packages/backend/node_modules/prisma/package.json').version)")" \
     && mkdir -p /tmp/prisma-cli \
     && npm install --prefix /tmp/prisma-cli --no-audit --no-fund "prisma@${PRISMA_VERSION}" \
+    && for d in /tmp/prisma-cli/node_modules/*; do \
+           rm -rf "/deploy/backend/node_modules/$(basename "$d")"; \
+       done \
     && cp -r /tmp/prisma-cli/node_modules/. /deploy/backend/node_modules/ \
     && rm -rf /tmp/prisma-cli
 
