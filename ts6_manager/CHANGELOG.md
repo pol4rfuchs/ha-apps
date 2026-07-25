@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.0...ts6_manager-v1.1.1) (2026-07-25)
+
+
+### Bug Fixes
+
+* **ts6_manager:** dereference prisma CLI symlinks when copying into deploy stage ([81c6817](https://github.com/pol4rfuchs/ha-apps/commit/81c6817622f11fe8fe015ffe7d894c36be274430))
+
 ## [1.1.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.0.5...ts6_manager-v1.1.0) (2026-07-25)
 
 
