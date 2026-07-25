@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.15](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.14...nextcloud-v33.0.15) (2026-07-25)
+
+
+### Bug Fixes
+
+* **nextcloud:** update upstream to 34.0.2-apach ([#225](https://github.com/pol4rfuchs/ha-apps/issues/225)) ([7fb48d5](https://github.com/pol4rfuchs/ha-apps/commit/7fb48d573275af53c41bed219e034d4067544c7f))
+
 ## [33.0.14](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.13...nextcloud-v33.0.14) (2026-07-22)
 
 
