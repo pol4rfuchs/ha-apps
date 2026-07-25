@@ -2,7 +2,7 @@
 
 <img src="./logo.png" alt="ntfy HAOS Admin Panel Logo" width="500">
 
-# 🛠️ ntfy HAOS Admin Panel — Home Assistant Add-on
+# 🛠️ ntfy Manager — Home Assistant Add-on
 
 Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on läuft.
 
