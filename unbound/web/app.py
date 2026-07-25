@@ -21,6 +21,8 @@ _spec.loader.exec_module(config_gen)
 
 app = Flask(__name__)
 
+_logger = logging.getLogger("unbound-web")
+
 BLOCKLISTS_FILE = "/data/blocklists.json"
 BLOCKLIST_STATUS_FILE = "/data/blocklist_status.json"
 BLOCKLIST_CONF = "/etc/unbound/blocklist.conf"
@@ -664,7 +666,8 @@ def api_local_records_add():
     try:
         record = normalize_local_record(data)
     except (ValueError, KeyError) as exc:
-        return jsonify({"error": str(exc)}), 400
+        _logger.warning("Rejected local record %r: %s", data, exc)
+        return jsonify({"error": "Invalid local record data"}), 400
 
     records = load_local_records()
 
@@ -802,8 +805,9 @@ def api_query_log():
                 f.readline()  # skip partial line
             text = f.read()
         return jsonify(parse_query_log(text))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        _logger.exception("Failed to read query log")
+        return jsonify({"error": "Failed to read query log"}), 500
 
 
 @app.route("/api/query-log/clear", methods=["POST"])
@@ -817,8 +821,9 @@ def api_query_log_clear():
         if os.path.exists(old):
             os.unlink(old)
         return jsonify({"ok": True, "message": "Query log cleared."})
-    except OSError as e:
-        return jsonify({"ok": False, "message": str(e)}), 500
+    except OSError:
+        _logger.exception("Failed to clear query log")
+        return jsonify({"ok": False, "message": "Failed to clear query log"}), 500
 
 
 @app.route("/api/top-domains")
@@ -843,8 +848,9 @@ def api_top_domains():
 
         top = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:25]
         return jsonify([{"domain": d, "count": c} for d, c in top])
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        _logger.exception("Failed to compute top domains")
+        return jsonify({"error": "Failed to compute top domains"}), 500
 
 
 # --- Config (Settings) ---
@@ -913,15 +919,14 @@ def api_config_validate_custom():
         else:
             output = (result.stdout + result.stderr).strip()
             return jsonify({"ok": False, "message": output})
-    except Exception as e:
-        return jsonify({"ok": False, "message": str(e)})
+    except Exception:
+        _logger.exception("Failed to validate custom config")
+        return jsonify({"ok": False, "message": "Failed to validate custom config"})
 
 
 # --- Blocklist auto-refresh ---
 
 BLOCKLIST_REFRESH_INTERVAL = 24 * 60 * 60  # 24 hours
-
-_logger = logging.getLogger("unbound-web")
 
 
 def _blocklist_auto_refresh():
