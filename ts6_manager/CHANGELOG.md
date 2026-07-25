@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.0.5...ts6_manager-v1.1.0) (2026-07-25)
+
+
+### Features
+
+* **ts6_manager:** switch build source to own fork, add video-streaming sidecar ([f5f82b9](https://github.com/pol4rfuchs/ha-apps/commit/f5f82b90c6a18c8c64773e3681cc78137c0124a1))
+
+
+### Bug Fixes
+
+* **ts6_manager:** derive sidecar GOARCH from buildx TARGETARCH, not BUILD_ARCH ([61b8fbf](https://github.com/pol4rfuchs/ha-apps/commit/61b8fbfb6064da81457431ee3470e1811b87fe18))
+
 ## [1.0.5](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.0.4...ts6_manager-v1.0.5) (2026-07-23)
 
 
