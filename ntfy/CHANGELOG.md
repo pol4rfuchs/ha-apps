@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.4...ntfy-v1.2.5) (2026-07-25)
+
+
+### Bug Fixes
+
+* **ntfy:** disable apparmor after breaking production, profile needs rework ([c7d703f](https://github.com/pol4rfuchs/ha-apps/commit/c7d703f12468b8a518fecd66c075aa8e2e01c72a))
+
 ## [1.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.3...ntfy-v1.2.4) (2026-07-23)
 
 
