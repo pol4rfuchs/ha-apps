@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.1...ts6_manager-v1.1.2) (2026-07-25)
+
+
+### Bug Fixes
+
+* **ts6_manager:** install prisma CLI into isolated prefix, not /deploy/backend ([fd6b2cd](https://github.com/pol4rfuchs/ha-apps/commit/fd6b2cd749de695a864981827828aad8ec39f975))
+* **ts6_manager:** install prisma CLI via npm instead of hand-copying pnpm symlinks ([c73187a](https://github.com/pol4rfuchs/ha-apps/commit/c73187ae5073c4ea2f3a1d7ae540ca9ef402867d))
+* **ts6_manager:** remove colliding node_modules entries before prisma-cli merge ([a0eaaee](https://github.com/pol4rfuchs/ha-apps/commit/a0eaaee28294ec2ca84accd4114ee285a3ca18db))
+
 ## [1.1.1](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.0...ts6_manager-v1.1.1) (2026-07-25)
 
 
