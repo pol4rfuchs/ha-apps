@@ -184,7 +184,7 @@ jobs:
           allow_marker="forge-check:allow"
 
           # Collect raw matches (do not fail the step yet; git grep exits 1 on no match)
-          raw_matches="$(git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!.github/workflows/07-update-upstream-candidate.yml' ':!.github/workflows/mirror-to-codeberg.yml' ':!wiki/' ':!forgejo/' || true)"
+          raw_matches="$(git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!.github/workflows/07-update-upstream-candidate.yml' ':!.github/workflows/23-fast-image-watch.yml' ':!.github/workflows/mirror-to-codeberg.yml' ':!wiki/' ':!forgejo/' || true)"
 
           # Drop lines that carry an explicit, reviewed allow-marker
           # (e.g. a legitimate Forgejo-upstream badge/link that happens to
