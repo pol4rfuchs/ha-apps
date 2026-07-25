@@ -1,7 +1,6 @@
----
 name: TS6 Manager
 description: Web-based management interface for TeamSpeak 6 servers (WebQuery API)
-version: "1.0.5"
+version: 1.1.0
 slug: ts6_manager
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/ts6_manager
