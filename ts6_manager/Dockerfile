@@ -45,9 +45,9 @@ RUN pnpm run build \
     && cp -r packages/backend/prisma /deploy/backend/prisma \
     && cp -r packages/backend/generated /deploy/backend/generated 2>/dev/null || true \
     && cp -r node_modules/.prisma /deploy/backend/node_modules/.prisma 2>/dev/null || true \
-    && mkdir -p /deploy/backend/node_modules/.bin \
-    && cp -rL packages/backend/node_modules/prisma /deploy/backend/node_modules/prisma \
-    && cp -L packages/backend/node_modules/.bin/prisma /deploy/backend/node_modules/.bin/prisma
+    && PRISMA_VERSION="$(node -e "console.log(require('./packages/backend/node_modules/prisma/package.json').version)")" \
+    && cd /deploy/backend \
+    && npm install --no-save --no-audit --no-fund "prisma@${PRISMA_VERSION}"
 
 # DL3003: use WORKDIR instead of cd
 WORKDIR /src/packages/backend
