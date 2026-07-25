@@ -46,8 +46,8 @@ RUN pnpm run build \
     && cp -r packages/backend/generated /deploy/backend/generated 2>/dev/null || true \
     && cp -r node_modules/.prisma /deploy/backend/node_modules/.prisma 2>/dev/null || true \
     && mkdir -p /deploy/backend/node_modules/.bin \
-    && cp -r node_modules/prisma /deploy/backend/node_modules/prisma \
-    && cp node_modules/.bin/prisma /deploy/backend/node_modules/.bin/prisma
+    && cp -r packages/backend/node_modules/prisma /deploy/backend/node_modules/prisma \
+    && cp packages/backend/node_modules/.bin/prisma /deploy/backend/node_modules/.bin/prisma
 
 # DL3003: use WORKDIR instead of cd
 WORKDIR /src/packages/backend
