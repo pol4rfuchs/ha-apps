@@ -1,14 +1,9 @@
----
 name: ntfy
-version: "1.2.4"
+version: 1.2.5
 slug: ntfy
 description: Self-hosted pub-sub notification service (ntfy.sh)
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/ntfy
-# apparmor.txt exists but is disabled again after breaking ntfy in
-# production — the profile missed at least one required path. Re-enable
-# only after the exact DENIED path(s) from `dmesg | grep -i apparmor` have
-# been added and it's been re-tested.
 apparmor: false
 arch:
   - aarch64
