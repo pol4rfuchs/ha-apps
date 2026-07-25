@@ -20,7 +20,7 @@ Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on lä
 
 | Property | Value |
 |---|---|
-| **HA Add-on Slug** | `ntfy_haos_admin_panel` |
+| **HA Add-on Slug** | `ntfy_manager` |
 | **App Version** | `0.2.13` |
 | **Web UI Port** | `8099` (Ingress) |
 | **Talks to** | `ntfy` add-on (same repo) |
