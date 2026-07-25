@@ -181,7 +181,20 @@ jobs:
           token_c="forge"
           token_d="jo"
           pattern="${token_a}${token_b}[.]org|${token_a}${token_b}[.]page|[.]${token_c}${token_d}"
-          if git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!.github/workflows/07-update-upstream-candidate.yml' ':!.github/workflows/mirror-to-codeberg.yml' ':!wiki/' ':!forgejo/'; then
+          allow_marker="forge-check:allow"
+
+          # Collect raw matches (do not fail the step yet; git grep exits 1 on no match)
+          raw_matches="$(git grep -n -i -E "${pattern}" -- . ':!.git' ':!.github/workflows/00-meta-validate.yml' ':!.github/workflows/07-update-upstream-candidate.yml' ':!.github/workflows/mirror-to-codeberg.yml' ':!wiki/' ':!forgejo/' || true)"
+
+          # Drop lines that carry an explicit, reviewed allow-marker
+          # (e.g. a legitimate Forgejo-upstream badge/link that happens to
+          # reference codeberg.org). Everything else still fails the check.
+          filtered_matches="$(printf '%s\n' "${raw_matches}" | grep -v -F "${allow_marker}" | sed '/^$/d' || true)"
+
+          if [ -n "${filtered_matches}" ]; then
             echo "ERROR: deprecated legacy forge reference found." >&2
+            printf '%s\n' "${filtered_matches}" >&2
             exit 1
           fi
+
+          echo "No (unallowed) deprecated legacy forge references found."
