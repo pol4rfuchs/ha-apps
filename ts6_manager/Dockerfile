@@ -64,14 +64,13 @@ WORKDIR /src
 COPY --from=builder /src/packages/sidecar/go.mod /src/packages/sidecar/go.sum ./
 RUN go mod download
 COPY --from=builder /src/packages/sidecar/main.go .
-# BUILD_ARCH -> GOARCH (HA only ever gives us aarch64/amd64, see §1)
-ARG BUILD_ARCH=unknown
-RUN case "${BUILD_ARCH}" in \
-        aarch64) export GOARCH=arm64 ;; \
-        amd64)   export GOARCH=amd64 ;; \
-        *) echo "unsupported BUILD_ARCH=${BUILD_ARCH} for sidecar" >&2; exit 1 ;; \
-    esac \
-    && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /sidecar main.go
+# TARGETARCH is set automatically by buildx from --platform (arm64/amd64 —
+# already Go's own naming, no mapping needed). This build-app.yaml pipeline
+# drives architecture purely via --platform, never via a BUILD_ARCH build-arg
+# (that one only shows up as a HA-Supervisor-provided arg on the real
+# Supervisor build path, and only feeds the io.hass.arch LABEL below).
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -ldflags="-s -w" -o /sidecar main.go
 
 # ─────────────────────────────────────────────
 # Stage 3: Final image (HA hassio-addons base)
