@@ -6,6 +6,13 @@
 * **teamspeak6:** update upstream to 6.0.0-beta11 ([#51](https://github.com/pol4rfuchs/ha-apps/issues/51)) ([c8cde49](https://github.com/pol4rfuchs/ha-apps/commit/c8cde4937d5cb19cca3ff0aaa6e3444424c51d61))
 
 
+## [1.1.17](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.16...teamspeak6-v1.1.17) (2026-07-25)
+
+
+### Bug Fixes
+
+* **teamspeak6:** update upstream to 6.0.0-beta12 ([#226](https://github.com/pol4rfuchs/ha-apps/issues/226)) ([68ff203](https://github.com/pol4rfuchs/ha-apps/commit/68ff20370603e22bb3454647ade0a04a056c75be))
+
 ## [1.1.16](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.15...teamspeak6-v1.1.16) (2026-07-22)
 
 
