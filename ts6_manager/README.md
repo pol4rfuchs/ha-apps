@@ -10,7 +10,7 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-teamspeak6--manager--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Upstream](https://img.shields.io/badge/Upstream-clusterzx%2Fts6--manager-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/clusterzx/ts6-manager)
-[![App Version](https://img.shields.io/badge/ts6--manager-1.0.5-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/ts6--manager-2.0.0-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![License](https://img.shields.io/badge/License-MIT-2ECC71?style=for-the-badge)](LICENSE)
 
@@ -90,7 +90,7 @@ This repository contains a complete **Home Assistant Add-on** that wraps [`clust
 |---|---|
 | **HA Add-on Name** | `TS6 Manager` |
 | **HA Add-on Slug** | `ts6_manager` |
-| **Add-on Version** | `1.0.5` |
+| **Add-on Version** | `2.0.0` |
 | **Default Web UI Port** | `8066` |
 | **Backend Target** | TeamSpeak 6 WebQuery HTTP API |
 | **TS6 WebQuery Port** | `10080` |
