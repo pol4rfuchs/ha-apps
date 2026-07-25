@@ -1,0 +1,390 @@
+---
+name: 23 Fast Image Watch
+
+# Fast lane for add-ons whose image is a pass-through of upstream software
+# (Docker Hub tag, GitHub release, Codeberg release, or tracked branch ref) —
+# i.e. everything in 07-update-upstream-candidate.yml that is NOT `noop`.
+#
+# 07 stays the weekly full-repo audit (covers noop add-ons for visibility +
+# supports ad-hoc `all`/manual dispatch). This workflow exists purely to
+# shorten the feedback loop for the addons below from "next Monday" to
+# "twice a day" — same resolve → patch Dockerfile → PR logic, just on a
+# tighter schedule and a smaller matrix.
+#
+# NOTE: this is polling, not a push trigger. GitHub Actions has no native
+# webhook for "Docker Hub tag published" / "GitHub release published" without
+# standing up your own receiver for repository_dispatch, so a fixed daily
+# poll cadence is the practical baseline here without extra infra.
+#
+# Runs at 05:00 and 17:00 UTC (~07:00 and ~19:00 Europe/Vienna in summer,
+# ~06:00/~18:00 in winter) — morning and evening, not 24x/day.
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 5 * * *"
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: "Add-on dir to update, or all."
+        required: false
+        default: "all"
+      target_version:
+        description: "Optional explicit version/tag for version-based add-ons. Empty = latest upstream."
+        required: false
+        default: ""
+      target_ref:
+        description: "Optional explicit commit SHA for ref-based add-ons. Empty = latest upstream branch commit."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fast-image-watch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # required to push update branches
+      pull-requests: write # required to open/edit PRs
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - addon: ts6_manager
+            mode: github_branch_ref
+            upstream_repo: clusterzx/ts6-manager
+            upstream_branch: main
+            arg_name: TS6_MANAGER_REF
+            tag_prefix: ts6-manager
+          - addon: ntfy
+            mode: github_latest_release_arg
+            upstream_repo: binwiederhier/ntfy
+            arg_name: NTFY_VERSION
+            tag_prefix: ntfy
+          - addon: navidrome
+            mode: dockerhub_from_tag
+            dockerhub_repo: deluan/navidrome
+            image_prefix: deluan/navidrome
+            tag_prefix: navidrome
+          - addon: nginx_proxy_manager
+            mode: dockerhub_from_tag
+            dockerhub_repo: jc21/nginx-proxy-manager
+            image_prefix: jc21/nginx-proxy-manager
+            tag_prefix: nginx-proxy-manager
+          - addon: teamspeak6
+            mode: dockerhub_arg_tag
+            dockerhub_repo: teamspeaksystems/teamspeak6-server
+            arg_name: TEAMSPEAK_VERSION
+            image_prefix: teamspeaksystems/teamspeak6-server
+            tag_prefix: teamspeak6
+          - addon: searxng
+            mode: dockerhub_from_tag
+            dockerhub_repo: searxng/searxng
+            image_prefix: searxng/searxng
+            tag_prefix: searxng
+          - addon: nextcloud
+            mode: dockerhub_arg_tag
+            dockerhub_repo: library/nextcloud
+            arg_name: NEXTCLOUD_TAG
+            tag_prefix: nextcloud
+            tag_filter: '^\d+\.\d+\.\d+-apache$'
+          - addon: forgejo
+            mode: codeberg_latest_release_arg
+            codeberg_repo: forgejo/forgejo
+            arg_name: FORGEJO_IMAGE_VERSION
+            tag_prefix: forgejo
+
+    env:
+      BASE_BRANCH: main
+      MANUAL_ADDON: ${{ github.event.inputs.addon || 'all' }}
+      TARGET_VERSION: ${{ github.event.inputs.target_version || '' }}
+      TARGET_REF: ${{ github.event.inputs.target_ref || '' }}
+      TAG_FILTER: ${{ matrix.tag_filter || '' }}
+
+    steps:
+      - name: Skip non-selected add-on
+        if: ${{ env.MANUAL_ADDON != 'all' && env.MANUAL_ADDON != matrix.addon }}
+        run: |
+          echo "Skipping ${{ matrix.addon }} because selected add-on is ${MANUAL_ADDON}."
+
+      - name: Checkout repository
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          token: ${{ secrets.APP_TOKEN }}
+
+      - name: Install tools
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl git jq python3 python3-yaml
+
+      - name: Resolve target
+        id: target
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
+          UPSTREAM_REPO: ${{ matrix.upstream_repo || '' }}
+          UPSTREAM_BRANCH: ${{ matrix.upstream_branch || '' }}
+          DOCKERHUB_REPO: ${{ matrix.dockerhub_repo || '' }}
+          CODEBERG_REPO: ${{ matrix.codeberg_repo || '' }}
+          TAG_PREFIX: ${{ matrix.tag_prefix }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${MODE}" == "github_branch_ref" ]]; then
+            if [[ -n "${TARGET_REF}" ]]; then
+              value="${TARGET_REF}"
+            else
+              value="$(git ls-remote "https://github.com/${UPSTREAM_REPO}.git" "refs/heads/${UPSTREAM_BRANCH}" | awk '{print $1}')"
+            fi
+            [[ -n "${value}" ]] || { echo "ERROR: could not resolve upstream ref" >&2; exit 1; }
+          elif [[ "${MODE}" == "github_latest_release_arg" ]]; then
+            if [[ -n "${TARGET_VERSION}" ]]; then
+              value="${TARGET_VERSION}"
+            else
+              value="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' | sed 's/^v//')"
+            fi
+            [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest GitHub release" >&2; exit 1; }
+          elif [[ "${MODE}" == "dockerhub_from_tag" || "${MODE}" == "dockerhub_arg_tag" ]]; then
+            if [[ -n "${TARGET_VERSION}" ]]; then
+              value="${TARGET_VERSION}"
+            else
+              value="$(python3 - <<'PY'
+          import json, re, urllib.request
+          import os
+          repo = os.environ["DOCKERHUB_REPO"]
+          tag_filter = os.environ.get("TAG_FILTER", "")
+          url = f"https://registry.hub.docker.com/v2/repositories/{repo}/tags?page_size=100"
+          data = json.load(urllib.request.urlopen(url, timeout=30))
+          tags = []
+          for item in data.get("results", []):
+              name = item.get("name", "")
+              if re.fullmatch(r"[0-9]+(\.[0-9]+){1,3}(-[0-9A-Za-z.]+)?|[0-9]+\.[0-9]+\.[0-9]+-beta[0-9]+", name):
+                  if not tag_filter or re.fullmatch(tag_filter, name):
+                      tags.append(name)
+          def key(tag):
+              nums = [int(x) for x in re.findall(r"\d+", tag)]
+              beta = -1 if "beta" in tag else 0
+              return (*nums, beta)
+          if not tags:
+              raise SystemExit("no semver-like Docker Hub tags found")
+          print(sorted(tags, key=key)[-1])
+          PY
+              )"
+            fi
+            [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest Docker Hub tag" >&2; exit 1; }
+          elif [[ "${MODE}" == "codeberg_latest_release_arg" ]]; then
+            if [[ -n "${TARGET_VERSION}" ]]; then
+              value="${TARGET_VERSION}"
+            else
+              value="$(curl -sSf \
+                "https://codeberg.org/api/v1/repos/${CODEBERG_REPO}/releases?limit=20&type=releases" \
+                | jq -r '[.[] | select(.prerelease == false and .draft == false)] | first | .tag_name | ltrimstr("v")')"
+            fi
+            [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest Codeberg release" >&2; exit 1; }
+          else
+            echo "ERROR: unsupported mode ${MODE}" >&2
+            exit 1
+          fi
+
+          safe="${value//\//-}"
+          safe="${safe//:/-}"
+          short="${safe:0:12}"
+          branch="auto/${TAG_PREFIX}-${short}"
+
+          {
+            echo "value=${value}"
+            echo "short=${short}"
+            echo "branch=${branch}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Apply update candidate
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        shell: bash
+        env:
+          VALUE: ${{ steps.target.outputs.value }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
+          ARG_NAME: ${{ matrix.arg_name || '' }}
+          IMAGE_PREFIX: ${{ matrix.image_prefix || '' }}
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          addon = os.environ["ADDON"]
+          mode  = os.environ["MODE"]
+          value = os.environ["VALUE"]
+          arg_name     = os.environ.get("ARG_NAME", "")
+          image_prefix = os.environ.get("IMAGE_PREFIX", "")
+          dockerfile = Path(addon, "Dockerfile")
+
+          if not dockerfile.is_file():
+              print(f"ERROR: missing {dockerfile}", file=sys.stderr)
+              raise SystemExit(1)
+
+          text     = dockerfile.read_text(encoding="utf-8")
+          original = text
+
+          def replace_arg(name: str, new_value: str) -> None:
+              global text
+              pattern = rf"(?m)^(ARG\s+{re.escape(name)}\s*=\s*).+$"
+              updated, count = re.subn(pattern, rf"\g<1>{new_value}", text)
+              if count == 0:
+                  print(f"ERROR: ARG {name}=... not found in {dockerfile}", file=sys.stderr)
+                  raise SystemExit(1)
+              text = updated
+
+          def replace_from(prefix: str, new_tag: str) -> None:
+              global text
+              pattern = rf"(?m)^(FROM\s+{re.escape(prefix)}:).+$"
+              updated, count = re.subn(pattern, rf"\g<1>{new_tag}", text)
+              if count == 0:
+                  print(f"ERROR: FROM {prefix}:... not found in {dockerfile}", file=sys.stderr)
+                  raise SystemExit(1)
+              text = updated
+
+          if mode in ("github_branch_ref", "github_latest_release_arg", "dockerhub_arg_tag", "codeberg_latest_release_arg"):
+              replace_arg(arg_name, value)
+          elif mode == "dockerhub_from_tag":
+              replace_from(image_prefix, value)
+              text = re.sub(
+                  rf"(?m)^(ARG\s+\w*VERSION\s*=\s*){re.escape(image_prefix.split('/')[-1])}[^\n]*$",
+                  rf"\g<1>{value}",
+                  text,
+              )
+          else:
+              print(f"ERROR: unsupported mode {mode}", file=sys.stderr)
+              raise SystemExit(1)
+
+          if text != original:
+              dockerfile.write_text(text, encoding="utf-8")
+          else:
+              print("No Dockerfile change required.")
+
+          # Release Please still owns config.yaml/CHANGELOG/tag, same as 07.
+          print("Release Please will bump config.yaml in the release PR.")
+          PY
+
+      - name: Static validate changed add-on
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        shell: bash
+        env:
+          ADDON: ${{ matrix.addon }}
+        run: |
+          set -euo pipefail
+
+          test -f "${ADDON}/config.yaml"
+          test -f "${ADDON}/Dockerfile"
+
+          if [[ -f "${ADDON}/build.yaml" ]]; then
+            echo "ERROR: ${ADDON}/build.yaml exists but is deprecated." >&2
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import os
+          import yaml
+          from pathlib import Path
+
+          addon = os.environ["ADDON"]
+          data = yaml.safe_load(Path(addon, "config.yaml").read_text(encoding="utf-8")) or {}
+          for key in ("name", "version", "slug", "image", "arch"):
+              if key not in data:
+                  raise SystemExit(f"missing config key: {key}")
+          print(f"OK: {addon} {data['version']}")
+          PY
+
+      - name: Stop when no update is required
+        id: diff
+        if: ${{ env.MANUAL_ADDON == 'all' || env.MANUAL_ADDON == matrix.addon }}
+        shell: bash
+        env:
+          ADDON: ${{ matrix.addon }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- "${ADDON}/Dockerfile"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No update required for ${ADDON}."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff -- "${ADDON}/Dockerfile" || true
+          fi
+
+      - name: Close superseded PRs for this add-on
+        if: ${{ steps.diff.outputs.changed == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
+          ADDON: ${{ matrix.addon }}
+          TARGET_BRANCH: ${{ steps.target.outputs.branch }}
+        run: |
+          set -euo pipefail
+          gh pr list --base main --state open --json number,headRefName \
+            --jq ".[] | select(.headRefName | startswith(\"auto/${ADDON}-\")) | select(.headRefName != \"${TARGET_BRANCH}\") | .number" \
+          | xargs -r -I{} gh pr close {} --comment "Superseded by a newer upstream candidate PR."
+
+      - name: Create or update pull request
+        if: ${{ steps.diff.outputs.changed == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
+          TARGET_BRANCH: ${{ steps.target.outputs.branch }}
+          TARGET_VALUE: ${{ steps.target.outputs.value }}
+          SHORT_VALUE: ${{ steps.target.outputs.short }}
+          ADDON: ${{ matrix.addon }}
+          MODE: ${{ matrix.mode }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "${TARGET_BRANCH}"
+          git add "${ADDON}/Dockerfile"
+          git commit -m "fix(${ADDON}): update upstream to ${SHORT_VALUE}"
+          git push --force-with-lease origin "${TARGET_BRANCH}"
+
+          title="fix(${ADDON}): update upstream to ${SHORT_VALUE}"
+          body="$(cat <<BODY
+          Automated fast-lane update candidate (hourly watch, not the weekly 07 sweep).
+
+          - Add-on directory: \`${ADDON}/\`
+          - Update mode: \`${MODE}\`
+          - Target: \`${TARGET_VALUE}\`
+          - Base branch: \`${BASE_BRANCH}\`
+
+          Release Please will bump \`config.yaml\`, update \`CHANGELOG.md\`, tag the release and trigger GHCR publishing after this PR is merged.
+          BODY
+          )"
+
+          if gh pr view "${TARGET_BRANCH}" --json number >/dev/null 2>&1; then
+            gh pr edit "${TARGET_BRANCH}" --title "${title}" --body "${body}"
+          else
+            gh pr create \
+              --base "${BASE_BRANCH}" \
+              --head "${TARGET_BRANCH}" \
+              --title "${title}" \
+              --body "${body}"
+          fi
+          
