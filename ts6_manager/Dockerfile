@@ -3,7 +3,7 @@
 # build.yaml is deprecated/no longer required by the HA add-on builder.
 
 ARG BUILD_ARCH=unknown
-ARG BUILD_VERSION=2.0.0
+ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REPO=https://github.com/pol4rfuchs/ts6-manager.git
 ARG TS6_MANAGER_BRANCH=main
 ARG TS6_MANAGER_REF=09573b64cadcf26786862fed2e24ad8641603ac1
@@ -79,7 +79,7 @@ RUN case "${BUILD_ARCH}" in \
 FROM ghcr.io/hassio-addons/base:16.3.2
 
 ARG BUILD_ARCH=unknown
-ARG BUILD_VERSION=2.0.0
+ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REF
 
 LABEL io.hass.name="TS6 Manager" \
