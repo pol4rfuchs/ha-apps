@@ -26,4 +26,4 @@ schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)
 
 startup: system
-apparmor: true
+apparmor: false
