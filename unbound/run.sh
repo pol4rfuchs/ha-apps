@@ -256,6 +256,42 @@ fi
 bashio::log.info "Starting web UI on port 2137..."
 INGRESS_PATH=$(bashio::app.ingress_entry) \
     python3 /web/app.py &
+WEBUI_PID=$!
 
-# Run unbound in foreground
-exec unbound -d -c /etc/unbound/unbound.conf
+# Run unbound as a tracked background job (not exec) so we can catch the
+# stop signal ourselves and translate it into a clean exit. Without this,
+# a normal "Stop" from the Supervisor forwards SIGTERM straight to unbound;
+# unbound shuts down correctly (see the clean "service stopped" log lines),
+# but its own signal-exit status isn't guaranteed to be 0, and the base
+# image's legacy-services wrapper judges "crashed vs. stopped cleanly" by
+# that exit code alone, regardless of what the log actually says. Result:
+# a perfectly healthy stop gets shown as add-on status "Error".
+unbound -d -c /etc/unbound/unbound.conf &
+UNBOUND_PID=$!
+
+shutdown() {
+    bashio::log.info "Stop signal received, shutting down Unbound..."
+    kill -TERM "${UNBOUND_PID}" 2>/dev/null || true
+    wait "${UNBOUND_PID}" 2>/dev/null || true
+    kill -TERM "${WEBUI_PID}" 2>/dev/null || true
+    wait "${WEBUI_PID}" 2>/dev/null || true
+    bashio::log.info "Unbound stopped cleanly."
+    exit 0
+}
+trap shutdown TERM INT
+
+# set -e would otherwise kill the script the instant `wait` reports
+# unbound's real (possibly signal-derived) exit status; disable it for
+# this single wait so a normal stop can reach the trap/exit-0 path above,
+# and a genuine unexpected crash (unbound exits on its own, no signal
+# involved) still surfaces below with its real exit code.
+set +e
+wait "${UNBOUND_PID}"
+UNBOUND_EXIT=$?
+set -e
+
+if [ "${UNBOUND_EXIT}" -ne 0 ]; then
+    bashio::log.error "Unbound exited unexpectedly (code ${UNBOUND_EXIT})."
+fi
+kill -TERM "${WEBUI_PID}" 2>/dev/null || true
+exit "${UNBOUND_EXIT}"
