@@ -6,7 +6,7 @@ ARG BUILD_ARCH=unknown
 ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REPO=https://github.com/pol4rfuchs/ts6-manager.git
 ARG TS6_MANAGER_BRANCH=main
-ARG TS6_MANAGER_REF=09573b64cadcf26786862fed2e24ad8641603ac1
+ARG TS6_MANAGER_REF=dd26e57954feca794fcceac0fb982243897d9114
 
 # ─────────────────────────────────────────────
 # Stage 1: Node build (backend + frontend), node:20-alpine
