@@ -1,5 +1,20 @@
 # Changelog
 
+## [16.0.12](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.11...forgejo-v16.0.12) (2026-08-01)
+
+
+### Bug Fixes
+
+* **forgejo:** add missing s6-overlay baseline paths to apparmor profile and re-enable apparmor ([45a39f9](https://github.com/pol4rfuchs/ha-apps/commit/45a39f9bdbd5cbef89725c67eb92e276445754fc))
+* **forgejo:** correct swapped en/de translations, add DOCS.md, --- header, drop -ha-app suffix, fix stale build.yaml reference in README ([c8dece9](https://github.com/pol4rfuchs/ha-apps/commit/c8dece97f0881af934af01d938814cb67cf2c3de))
+* **forgejo:** disable apparmor to fix /init permission denied ([6c55409](https://github.com/pol4rfuchs/ha-apps/commit/6c55409ebedaa4a5f69c1b94b8333f13bbfb7213))
+* **forgejo:** remove deprecated and invalid config fields ([0c15c83](https://github.com/pol4rfuchs/ha-apps/commit/0c15c839b3b5507fc57e876c07306fe6b854431f))
+* **forgejo:** sync version field to 16.0.4 ([7ebc916](https://github.com/pol4rfuchs/ha-apps/commit/7ebc91611cdb009641909a0e87b4dbd4090a911e))
+* **forgejo:** update upstream to 15.0.4 ([#169](https://github.com/pol4rfuchs/ha-apps/issues/169)) ([29c83e4](https://github.com/pol4rfuchs/ha-apps/commit/29c83e4a49da0ef2852ab9a362b0e45a42c62e88))
+* **forgejo:** update upstream to 16.0.0 ([#193](https://github.com/pol4rfuchs/ha-apps/issues/193)) ([202a50a](https://github.com/pol4rfuchs/ha-apps/commit/202a50af6e96f7c89cb9ad494b49b8f013f1faba))
+* **forgejo:** update upstream to 16.0.1 ([#227](https://github.com/pol4rfuchs/ha-apps/issues/227)) ([c92aa96](https://github.com/pol4rfuchs/ha-apps/commit/c92aa96297c08f0807c045a6a981ff00325913b4))
+* **forgejo:** update upstream to 16.0.2 ([#254](https://github.com/pol4rfuchs/ha-apps/issues/254)) ([68da4a4](https://github.com/pol4rfuchs/ha-apps/commit/68da4a4b81eca1764416cc6c1872951f05079190))
+
 ## [16.0.11](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.10...forgejo-v16.0.11) (2026-08-01)
 
 
