@@ -1,5 +1,4 @@
 name: 10 Hassfest
-
 on:
   pull_request:
     branches:
@@ -14,10 +13,8 @@ on:
       - custom_components/**
       - ".github/workflows/10-hassfest.yml"
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
   hassfest:
     name: Hassfest if custom_components exists
@@ -27,11 +24,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
       - name: Run hassfest
         if: ${{ hashFiles('custom_components/**/manifest.json') != '' }}
-        uses: home-assistant/actions/hassfest@ab22029681aa532bfe7de5774a9972d67bfbd2c0 # master
-
+        uses: home-assistant/actions/hassfest@ab22029681aa532bfe7de5774a9972d67bfbd2c0 # zizmor: ignore[ref-version-mismatch] master, no upstream tags exist
       - name: Skip
         if: ${{ hashFiles('custom_components/**/manifest.json') == '' }}
         run: echo "No custom integration manifests found; skipping hassfest."
