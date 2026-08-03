@@ -30,15 +30,21 @@ jobs:
           manifest-file: .release-please-manifest.json
           target-branch: main
 
-  # Release Please's extra-files YAML updater does a regex partial-replace:
-  # it looks for the *previous* version string inside the file and swaps it.
-  # Once a config.yaml's version drifts from what release-please's manifest
-  # thinks the previous version was (manual edit, conflict, anything), that
-  # match fails silently and the file is never touched again. This job is a
-  # deterministic safety net: it force-writes each component's `version:`
-  # line to match .release-please-manifest.json, every run, regardless of
-  # why it drifted. Text-line replace only — no full YAML re-serialization,
-  # so comments and formatting in config.yaml are preserved untouched.
+  # We deliberately do NOT use release-please's built-in `extra-files`
+  # (type: yaml + jsonpath) to bump config.yaml's `version:` field anymore.
+  # Verified against the actual release-please source (generic-yaml.js): that
+  # updater fully re-parses the YAML and re-serializes the *entire* document
+  # via js-yaml's dump() to apply the jsonpath write. Two consequences we hit
+  # in practice: (1) it strips quotes it considers unnecessary, e.g. turning
+  # `version: "1.1.17"` into `version: 1.1.18` — harmless for parsing (PyYAML
+  # reads both as the same string) but a needless extra commit's worth of
+  # diff noise every single release; (2) per the updater's own doc comment,
+  # a full re-serialization "removes all comments" — a real risk the moment
+  # any of these config.yaml files ever gains a comment, even though none
+  # currently have one. This job is the sole, deterministic mechanism that
+  # bumps `version:` in every component's config.yaml: a targeted text-line
+  # replace only, no full YAML re-serialization, so comments and formatting
+  # are always preserved and quoting stays consistent.
   sync-versions:
     name: Sync config.yaml versions to manifest
     needs: release-please

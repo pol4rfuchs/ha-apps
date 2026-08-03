@@ -153,7 +153,7 @@ jobs:
 
       - name: Login to GHCR
         if: inputs.publish
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -192,7 +192,7 @@ jobs:
       packages: write
     steps:
       - name: Login to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -230,12 +230,16 @@ jobs:
   # For our own custom-built apps (ntfy_manager, ts6_manager) a startup crash
   # is much more likely to be an actual code bug, so the smoke test is a real
   # gate there: continue-on-error evaluates to false for exactly those two.
+  # teamspeak6 is also a real gate: it runs directly on top of the third-party
+  # teamspeaksystems/teamspeak6-server image with a plain bash run.sh
+  # entrypoint (no s6-overlay), so a startup crash here is just as likely to
+  # be an actual regression in our run.sh as in a first-party app.
   smoke-test:
     name: Smoke test ${{ inputs.app }}
     needs: [prepare, manifest]
     if: inputs.publish
     runs-on: ubuntu-latest
-    continue-on-error: ${{ inputs.app != 'ntfy_manager' && inputs.app != 'ts6_manager' }}
+    continue-on-error: ${{ inputs.app != 'ntfy_manager' && inputs.app != 'ts6_manager' && inputs.app != 'teamspeak6' }}
     permissions:
       contents: read
       packages: read
@@ -246,7 +250,7 @@ jobs:
           persist-credentials: false
 
       - name: Login to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -332,7 +336,7 @@ jobs:
       packages: write
     steps:
       - name: Login to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

@@ -8,157 +8,73 @@
       "release-type": "simple",
       "component": "forgejo",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "intiface_central": {
       "release-type": "simple",
       "component": "intiface_central",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "matrix_synapse": {
       "release-type": "simple",
       "component": "matrix_synapse",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "navidrome": {
       "release-type": "simple",
       "component": "navidrome",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "nginx_proxy_manager": {
       "release-type": "simple",
       "component": "nginx_proxy_manager",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "restic_backup": {
       "release-type": "simple",
       "component": "restic_backup",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "ntfy": {
       "release-type": "simple",
       "component": "ntfy",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "ntfy_manager": {
       "release-type": "simple",
       "component": "ntfy_manager",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "nextcloud": {
       "release-type": "simple",
       "component": "nextcloud",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "searxng": {
       "release-type": "simple",
       "component": "searxng",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "teamspeak6": {
       "release-type": "simple",
       "component": "teamspeak6",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     },
     "ts6_manager": {
       "release-type": "simple",
       "component": "ts6_manager",
       "include-component-in-tag": true,
-      "tag-separator": "-",
-      "extra-files": [
-        {
-          "type": "yaml",
-          "path": "config.yaml",
-          "jsonpath": "$.version"
-        }
-      ]
+      "tag-separator": "-"
     }
   }
 }

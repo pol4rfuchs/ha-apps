@@ -1,40 +1,13 @@
 ---
 configuration:
-  server_name:
-    name: Servername
-    description: Der öffentlich sichtbare Name deines TeamSpeak 6 Servers.
-  server_password:
-    name: Serverpasswort
-    description: Passwort zum Beitreten. Leer lassen für kein Passwort.
-  max_clients:
-    name: Maximale Clients
-    description: Maximale Anzahl gleichzeitiger Clients (1–1024).
   query_admin_password:
     name: Query-Admin-Passwort
     description: >-
       Passwort für das ServerQuery-Admin-Konto. Leer lassen zur automatischen
       Generierung (nach dem ersten Start in den Logs prüfen).
-  welcome_message:
-    name: Willkommensnachricht
-    description: Nachricht, die Clients beim Verbinden angezeigt wird.
   log_level:
     name: Log-Level
     description: "Detailgrad des Server-Loggings: 0=Kritisch, 1=Fehler, 2=Warnung, 3=Info, 4=Debug."
-  voice_port:
-    name: Voice-Port (UDP)
-    description: UDP-Port, über den Clients für die Sprachübertragung verbinden. Standard ist 9987.
-  filetransfer_port:
-    name: Dateitransfer-Port (TCP)
-    description: TCP-Port für Dateiübertragungen. Standard ist 30033.
-  query_port:
-    name: Server-Query-Port (TCP)
-    description: TCP-Port für die unverschlüsselte ServerQuery-Schnittstelle. Standard ist 10011.
-  query_ssh_port:
-    name: SSH-Query-Port (TCP)
-    description: TCP-Port für die SSH-verschlüsselte ServerQuery-Schnittstelle. Standard ist 10022.
-  query_http_port:
-    name: HTTP-Web-Query-Port (TCP)
-    description: TCP-Port für die HTTP-ServerQuery-Schnittstelle. Standard ist 10080.
   license_accepted:
     name: TeamSpeak-Lizenz akzeptieren
     description: >-
