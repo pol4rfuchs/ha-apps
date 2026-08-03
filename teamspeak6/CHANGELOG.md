@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.20](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.19...teamspeak6-v1.1.20) (2026-08-03)
+
+
+### Bug Fixes
+
+* **teamspeak6:** add missing Changelog header, fixing wrong insert order ([1a87927](https://github.com/pol4rfuchs/ha-apps/commit/1a87927470b131b16db081911c46ade6b85c9e42))
+
 ## [1.1.19](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.18...teamspeak6-v1.1.19) (2026-08-03)
 
 
