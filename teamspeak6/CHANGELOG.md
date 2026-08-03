@@ -1,9 +1,4 @@
-## [1.1.18](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.17...teamspeak6-v1.1.18) (2026-07-29)
-
-
-### Bug Fixes
-
-* **teamspeak6:** update upstream to 6.0.0-beta12 ([#248](https://github.com/pol4rfuchs/ha-apps/issues/248)) ([dbe293b](https://github.com/pol4rfuchs/ha-apps/commit/dbe293be5c742a06535074d053663a4e9005c872))
+# Changelog
 
 ## [1.1.19](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.18...teamspeak6-v1.1.19) (2026-08-03)
 
@@ -11,6 +6,13 @@
 ### Bug Fixes
 
 * **teamspeak6:** clean up stale translations, gate smoke-test, document Dockerfile ARG ([b7fe0f5](https://github.com/pol4rfuchs/ha-apps/commit/b7fe0f5c2443c2e3b0b3ac5bcc624e282f9229a3))
+
+## [1.1.18](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.17...teamspeak6-v1.1.18) (2026-07-29)
+
+
+### Bug Fixes
+
+* **teamspeak6:** update upstream to 6.0.0-beta12.1 ([#248](https://github.com/pol4rfuchs/ha-apps/issues/248)) ([dbe293b](https://github.com/pol4rfuchs/ha-apps/commit/dbe293be5c742a06535074d053663a4e9005c872))
 
 ## [1.1.17](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.16...teamspeak6-v1.1.17) (2026-07-25)
 
