@@ -1,6 +1,6 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add ntfy/build.yaml.
-ARG NTFY_VERSION=2.26.3
+ARG NTFY_VERSION=2.27.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
 
@@ -12,7 +12,7 @@ FROM ${BUILD_FROM}
 
 ARG BUILD_ARCH
 ARG BUILD_VERSION=dev
-ARG NTFY_VERSION=2.26.3
+ARG NTFY_VERSION=2.27.0
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
