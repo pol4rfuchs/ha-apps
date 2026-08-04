@@ -73,28 +73,33 @@ jobs:
             dockerhub_repo: deluan/navidrome
             image_prefix: deluan/navidrome
             tag_prefix: navidrome
+            changelog_repo: navidrome/navidrome
           - addon: nginx_proxy_manager
             mode: dockerhub_from_tag
             dockerhub_repo: jc21/nginx-proxy-manager
             image_prefix: jc21/nginx-proxy-manager
             tag_prefix: nginx-proxy-manager
+            changelog_repo: NginxProxyManager/nginx-proxy-manager
           - addon: teamspeak6
             mode: dockerhub_arg_tag
             dockerhub_repo: teamspeaksystems/teamspeak6-server
             arg_name: TEAMSPEAK_VERSION
             image_prefix: teamspeaksystems/teamspeak6-server
             tag_prefix: teamspeak6
+            changelog_repo: teamspeak/teamspeak6-server
           - addon: searxng
             mode: dockerhub_from_tag
             dockerhub_repo: searxng/searxng
             image_prefix: searxng/searxng
             tag_prefix: searxng
+            changelog_repo: searxng/searxng
           - addon: nextcloud
             mode: dockerhub_arg_tag
             dockerhub_repo: library/nextcloud
             arg_name: NEXTCLOUD_TAG
             tag_prefix: nextcloud
             tag_filter: '^\d+\.\d+\.\d+-apache$'
+            changelog_repo: nextcloud/server
           - addon: forgejo
             mode: codeberg_latest_release_arg
             codeberg_repo: forgejo/forgejo
@@ -142,9 +147,12 @@ jobs:
           UPSTREAM_BRANCH: ${{ matrix.upstream_branch || '' }}
           DOCKERHUB_REPO: ${{ matrix.dockerhub_repo || '' }}
           CODEBERG_REPO: ${{ matrix.codeberg_repo || '' }}
+          CHANGELOG_REPO: ${{ matrix.changelog_repo || '' }}
           TAG_PREFIX: ${{ matrix.tag_prefix }}
         run: |
           set -euo pipefail
+
+          changelog_url=""
 
           if [[ "${MODE}" == "github_branch_ref" ]]; then
             if [[ -n "${TARGET_REF}" ]]; then
@@ -153,13 +161,17 @@ jobs:
               value="$(git ls-remote "https://github.com/${UPSTREAM_REPO}.git" "refs/heads/${UPSTREAM_BRANCH}" | awk '{print $1}')"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve upstream ref" >&2; exit 1; }
+            changelog_url="https://github.com/${UPSTREAM_REPO}/commit/${value}"
           elif [[ "${MODE}" == "github_latest_release_arg" ]]; then
             if [[ -n "${TARGET_VERSION}" ]]; then
               value="${TARGET_VERSION}"
+              raw_tag="${TARGET_VERSION}"
             else
-              value="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' | sed 's/^v//')"
+              raw_tag="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name')"
+              value="${raw_tag#v}"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest GitHub release" >&2; exit 1; }
+            changelog_url="https://github.com/${UPSTREAM_REPO}/releases/tag/${raw_tag}"
           elif [[ "${MODE}" == "dockerhub_from_tag" || "${MODE}" == "dockerhub_arg_tag" ]]; then
             if [[ -n "${TARGET_VERSION}" ]]; then
               value="${TARGET_VERSION}"
@@ -188,15 +200,26 @@ jobs:
               )"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest Docker Hub tag" >&2; exit 1; }
+            # Docker Hub tag naming doesn't reliably match the upstream
+            # project's GitHub/release tag naming (with/without "v" prefix,
+            # extra suffixes like "-apache"), so we deliberately link to the
+            # general releases page rather than guessing a specific tag URL
+            # that could 404.
+            if [[ -n "${CHANGELOG_REPO}" ]]; then
+              changelog_url="https://github.com/${CHANGELOG_REPO}/releases"
+            fi
           elif [[ "${MODE}" == "codeberg_latest_release_arg" ]]; then
             if [[ -n "${TARGET_VERSION}" ]]; then
               value="${TARGET_VERSION}"
+              raw_tag="${TARGET_VERSION}"
             else
-              value="$(curl -sSf \
+              raw_tag="$(curl -sSf \
                 "https://codeberg.org/api/v1/repos/${CODEBERG_REPO}/releases?limit=20&type=releases" \
-                | jq -r '[.[] | select(.prerelease == false and .draft == false)] | first | .tag_name | ltrimstr("v")')"
+                | jq -r '[.[] | select(.prerelease == false and .draft == false)] | first | .tag_name')"
+              value="${raw_tag#v}"
             fi
             [[ -n "${value}" ]] || { echo "ERROR: could not resolve latest Codeberg release" >&2; exit 1; }
+            changelog_url="https://codeberg.org/${CODEBERG_REPO}/releases/tag/${raw_tag}"
           else
             echo "ERROR: unsupported mode ${MODE}" >&2
             exit 1
@@ -211,6 +234,7 @@ jobs:
             echo "value=${value}"
             echo "short=${short}"
             echo "branch=${branch}"
+            echo "changelog_url=${changelog_url}"
           } >> "$GITHUB_OUTPUT"
 
       - name: Apply update candidate
@@ -352,6 +376,7 @@ jobs:
           TARGET_BRANCH: ${{ steps.target.outputs.branch }}
           TARGET_VALUE: ${{ steps.target.outputs.value }}
           SHORT_VALUE: ${{ steps.target.outputs.short }}
+          CHANGELOG_URL: ${{ steps.target.outputs.changelog_url }}
           ADDON: ${{ matrix.addon }}
           MODE: ${{ matrix.mode }}
         run: |
@@ -360,19 +385,30 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # Embedded in the commit *subject* (not just the PR body) on purpose:
+          # Release Please's changelog notes are generated from the commit
+          # subject line only, so this is what makes the link show up in
+          # CHANGELOG.md automatically once this PR is merged.
+          if [[ -n "${CHANGELOG_URL}" ]]; then
+            commit_subject="fix(${ADDON}): update upstream to ${SHORT_VALUE} (changelog: ${CHANGELOG_URL})"
+          else
+            commit_subject="fix(${ADDON}): update upstream to ${SHORT_VALUE}"
+          fi
+
           git checkout -B "${TARGET_BRANCH}"
           git add "${ADDON}/Dockerfile"
-          git commit -m "fix(${ADDON}): update upstream to ${SHORT_VALUE}"
+          git commit -m "${commit_subject}"
           git push --force-with-lease origin "${TARGET_BRANCH}"
 
-          title="fix(${ADDON}): update upstream to ${SHORT_VALUE}"
+          title="${commit_subject}"
           body="$(cat <<BODY
-          Automated fast-lane update candidate (hourly watch, not the weekly 07 sweep).
+          Automated fast-lane update candidate (twice-daily watch, not the weekly 07 sweep).
 
           - Add-on directory: \`${ADDON}/\`
           - Update mode: \`${MODE}\`
           - Target: \`${TARGET_VALUE}\`
           - Base branch: \`${BASE_BRANCH}\`
+          - Upstream changelog: ${CHANGELOG_URL:-"(none available for this mode)"}
 
           Release Please will bump \`config.yaml\`, update \`CHANGELOG.md\`, tag the release and trigger GHCR publishing after this PR is merged.
           BODY
