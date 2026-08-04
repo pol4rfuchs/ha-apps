@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.17](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.16...searxng-v1.0.17) (2026-08-04)
+
+
+### Bug Fixes
+
+* **searxng:** update upstream to 2026.8.5-168 ([#274](https://github.com/pol4rfuchs/ha-apps/issues/274)) ([481d376](https://github.com/pol4rfuchs/ha-apps/commit/481d376e095abbdd92da939578208d338a5f03e7))
+
 ## [1.0.16](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.15...searxng-v1.0.16) (2026-08-04)
 
 
