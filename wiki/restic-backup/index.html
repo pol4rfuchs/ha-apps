@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Restic Backup · Encrypted Backup Wiki</title>
+<style>
+  :root {
+    --accent: #e11d48;
+    --accent-2: #fb7185;
+    --accent-3: #fecdd3;
+    --bg-deep: #10040a;
+    --bg-navy: #170410;
+    --panel: rgba(23, 4, 16, .72);
+    --panel-2: rgba(23, 4, 16, .48);
+    --panel-3: rgba(16, 2, 10, .78);
+    --border: rgba(254, 205, 211, .18);
+    --border-strong: rgba(254, 205, 211, .40);
+    --text: #fff0f3;
+    --muted: #d8a7b7;
+    --dim: #a86f88;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(225, 29, 72,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(251, 113, 133,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(225, 29, 72,.14), transparent 34rem),
+      linear-gradient(135deg, #10040a 0%, #170410 44%, #1c0514 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(153,246,228,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(153,246,228,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22, 3, 15, .90), rgba(31, 5, 21, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(20,184,166,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(20,184,166,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(153,246,228,.98), rgba(45,212,191,.68) 46%, rgba(102,10,44,.86));
+    color: #1c0212;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(45,212,191,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(45,212,191,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(20,184,166,.14);
+    box-shadow: 0 10px 32px rgba(20,184,166,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45,212,191,.13);
+    border: 1px solid rgba(153,246,228,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(20,184,166,.25), rgba(45,212,191,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(153,246,228,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(20, 2, 13, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(20,184,166,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(153,246,228,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(153,246,228,0); } 100% { box-shadow: 0 0 0 0 rgba(153,246,228,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(153,246,228,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #ffe0e8; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(20,184,166,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(20,184,166,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(58, 11, 34, .62), rgba(21, 4, 14, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(153,246,228,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(45,212,191,.14);
+    border: 1px solid rgba(153,246,228,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #fff0f2; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #fff8f8; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #ffe0ea; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #fbd0dd; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(153,246,228,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(153,246,228,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(20,184,166,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #ffe0e0; background: rgba(45,212,191,.11); border: 1px solid rgba(153,246,228,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(153,246,228,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { background: none; border: none; padding: 0; color: #fdd8e0; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,.35); color: var(--muted); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; }
+  .copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin: 1rem 0; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #1c0212; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #1c0212; background: var(--accent-3); box-shadow: 0 16px 50px rgba(20,184,166,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🗄️</div>
+      <div>
+        <h1>Restic Backup</h1>
+        <p>ROSE GLASS WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search restic, retention, ntfy, restore..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, architecture</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>Options, schedule, retention</small></span></a>
+      <a class="nav-item" href="#backup-paths" data-target="backup-paths"><span class="nav-icon">📁</span><span><strong>backup_paths vs. map</strong><small>What actually gets backed up</small></span></a>
+      <a class="nav-item" href="#restore" data-target="restore"><span class="nav-icon">♻️</span><span><strong>Restore</strong><small>Manual, deliberately no 1-click</small></span></a>
+      <a class="nav-item" href="#ntfy" data-target="ntfy"><span class="nav-icon">🔔</span><span><strong>ntfy Alerting</strong><small>Success/failure notifications</small></span></a>
+      <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔒</span><span><strong>Security</strong><small>Secrets, AppArmor</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Lost password, remote repos</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Repo: <code>/share/restic-backup/repo</code><br>
+      Schedule: <code>0 3 * * *</code> (cron)<br>
+      Retention: <code>7d / 4w / 6m</code><br>
+      No web UI — logs only
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> RESTIC BACKUP · SCHEDULED ENCRYPTED BACKUPS · HOME ASSISTANT ADD-ON</div>
+        <h2>Restic in <span class="accent">Rose Glass</span>.</h2>
+        <p class="hero-copy">Operations wiki for the Restic Backup add-on: scheduled encrypted backups of HA config, add-on configs, media, and SSL certs, with ntfy alerting and retention policies — backup only, restore is a deliberate manual step.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#restore">♻️ Restore Guide</a>
+          <a class="btn secondary" href="#ntfy">🔔 ntfy Setup</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>Add-on Slug</small><strong>restic_backup</strong></div>
+          <div class="metric"><small>Default Repository</small><strong>/share/restic-backup/repo</strong></div>
+          <div class="metric"><small>Default Schedule</small><strong>0 3 * * * (03:00 daily)</strong></div>
+          <div class="metric"><small>Remote Support</small><strong>S3 / MinIO / B2-compatible</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>Set a password, start, verify once with <code>run_on_start</code>.</p>
+        <pre><code>options:
+  restic_password: "a strong password, stored outside this add-on too"
+  run_on_start: true   # verify once, then turn back off</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>⚠️ No Recovery Without the Password</h3>
+        <p>Restic repositories cannot be decrypted without <code>restic_password</code>. There is no reset mechanism.</p>
+        <pre><code>Keep a copy in: password manager, printed backup, or similar — outside this add-on.</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview restic backup scheduled encrypted backups home assistant config addon configs media ssl ntfy alerting retention cron schedule">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Restic Backup</strong> runs <a href="https://restic.net/">restic</a> on a cron schedule against a configurable set of mapped folders (defaults: <code>/homeassistant</code>, <code>/addon_configs</code>, <code>/ssl</code>). It initializes the repository automatically on first start, applies retention (<code>forget --prune</code>) after each successful backup, and sends an <a href="https://ntfy.sh/">ntfy</a> notification after every run — success or failure.</p>
+        <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
+        <table>
+          <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#installation">Installation</a></td><td>Add repository, install, start.</td></tr>
+            <tr><td><a href="#configuration">Configuration</a></td><td>All options: schedule, retention, remote repos.</td></tr>
+            <tr><td><a href="#backup-paths">backup_paths vs. map</a></td><td>Why a path needs both an option entry and a map entry.</td></tr>
+            <tr><td><a href="#restore">Restore</a></td><td>Manual restic restore commands — intentionally not automated.</td></tr>
+            <tr><td><a href="#ntfy">ntfy Alerting</a></td><td>Getting notified of success/failure.</td></tr>
+            <tr><td><a href="#security">Security</a></td><td>Secrets handling, AppArmor profile.</td></tr>
+            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Lost password, remote repo issues.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
+        <pre><code>cron (03:00 daily) → restic backup → local or S3/MinIO/B2 repo
+                                    → forget --prune (retention)
+                                    → ntfy notification (success/failure)</code></pre>
+        <blockquote>This add-on only performs the <strong>backup</strong> side. There is no one-click restore, by design — see <a href="#restore">Restore</a>.</blockquote>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github restic backup quick start password">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="rb-step-1"><a class="anchor" href="#rb-step-1">#</a>Step 1 — Add Repository</h2>
+        <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
+        <h2 id="rb-step-2"><a class="anchor" href="#rb-step-2">#</a>Step 2 — Install & Configure</h2>
+        <ol>
+          <li>Search for <strong>Restic Backup</strong> in the Add-on Store, click <strong>Install</strong>.</li>
+          <li>Set <code>restic_password</code> to something strong, and back it up somewhere outside this add-on.</li>
+          <li>Leave <code>repository</code> as the local default, or point it at a remote (e.g. <code>s3:https://minio.local/bucket-name</code>) and fill in <code>aws_access_key_id</code> / <code>aws_secret_access_key</code> if required.</li>
+          <li>Optionally set <code>ntfy_url</code> + <code>ntfy_topic</code> — fits naturally into an existing ntfy topic setup.</li>
+        </ol>
+        <h2 id="rb-step-3"><a class="anchor" href="#rb-step-3">#</a>Step 3 — Verify</h2>
+        <ol>
+          <li>Start the add-on. Check the log for <code>Repository initialized.</code> on first run.</li>
+          <li>Enable <code>run_on_start</code> once to verify the config works, then turn it back off and let <code>cron_schedule</code> handle it going forward.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options log level cron schedule repository restic password backup paths exclude patterns retention daily weekly monthly run on start aws access key secret ntfy url topic">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td>trace|debug|info|notice|warning|error|fatal</td></tr>
+            <tr><td><code>cron_schedule</code></td><td><code>0 3 * * *</code></td><td>Standard cron expression.</td></tr>
+            <tr><td><code>repository</code></td><td><code>/share/restic-backup/repo</code></td><td>Local path or remote URL (<code>s3:...</code>).</td></tr>
+            <tr><td><code>restic_password</code></td><td><em>(empty)</em></td><td>Repository encryption password. <strong>Unrecoverable if lost.</strong></td></tr>
+            <tr><td><code>backup_paths</code></td><td><code>/homeassistant</code>, <code>/addon_configs</code>, <code>/ssl</code></td><td>Which mounted folders restic walks.</td></tr>
+            <tr><td><code>exclude_patterns</code></td><td><code>*.log</code>, <code>**/__pycache__</code></td><td>restic exclude glob patterns.</td></tr>
+            <tr><td><code>retention_daily</code></td><td><code>7</code></td><td>Daily snapshots kept.</td></tr>
+            <tr><td><code>retention_weekly</code></td><td><code>4</code></td><td>Weekly snapshots kept.</td></tr>
+            <tr><td><code>retention_monthly</code></td><td><code>6</code></td><td>Monthly snapshots kept.</td></tr>
+            <tr><td><code>run_on_start</code></td><td><code>false</code></td><td>Run a backup immediately on add-on start (useful once, for verification).</td></tr>
+            <tr><td><code>aws_access_key_id</code> / <code>aws_secret_access_key</code></td><td><em>(empty)</em></td><td>Only for S3/MinIO/B2-compatible remote repositories.</td></tr>
+            <tr><td><code>ntfy_url</code> / <code>ntfy_topic</code> / <code>ntfy_username</code> / <code>ntfy_password</code></td><td><em>(empty)</em></td><td>Notification target; auth only if the topic requires it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="backup-paths" class="doc-section glass-card" data-search="backup paths vs map mounted folders mapped homeassistant config addon configs media share ssl read only read write does nothing not mapped">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📁</span><div><p class="eyebrow">Advanced</p><h2>backup_paths vs. map</h2></div></div>
+        <a class="section-link" href="#backup-paths">#backup-paths</a>
+      </div>
+      <div class="doc-content">
+        <p><code>backup_paths</code> only lists which <strong>mounted</strong> folders restic should walk — it does not mount anything itself. Each path listed must already be exposed via the add-on's own <code>map:</code> block in <code>config.yaml</code> (currently: <code>homeassistant_config:ro</code>, <code>addon_configs:ro</code>, <code>media:ro</code>, <code>share:rw</code>, <code>ssl:ro</code>).</p>
+        <blockquote>Adding a path to <code>backup_paths</code> that isn't mapped does nothing — the directory simply won't exist inside the container. To back up <code>/media</code> too, add it to both <code>backup_paths</code> <strong>and</strong> confirm <code>media:ro</code> stays in <code>map:</code>.</blockquote>
+      </div>
+    </article>
+
+    <article id="restore" class="doc-section glass-card" data-search="restore restic snapshots list target shell repository password aws credentials manual out of band no one click accidental data loss">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">♻️</span><div><p class="eyebrow">Recovery</p><h2>Restore (Manual, By Design)</h2></div></div>
+        <a class="section-link" href="#restore">#restore</a>
+      </div>
+      <div class="doc-content">
+        <p>This add-on only performs the <strong>backup</strong> side of the restic workflow. Restoring is intentionally a manual, out-of-band step — there is no one-click restore button, to avoid an accidental data-loss action.</p>
+        <p>To restore, open a shell with access to the same repository and run restic directly:</p>
+        <pre><code>export RESTIC_REPOSITORY=/share/restic-backup/repo   # or your configured repository
+export RESTIC_PASSWORD=your-restic-password
+restic snapshots                 # list available snapshots
+restic restore latest --target /path/to/restore/to</code></pre>
+        <p>For remote (S3/MinIO/B2) repositories, also export the same <code>AWS_ACCESS_KEY_ID</code> / <code>AWS_SECRET_ACCESS_KEY</code> / <code>AWS_DEFAULT_REGION</code> used by the add-on.</p>
+      </div>
+    </article>
+
+    <article id="ntfy" class="doc-section glass-card" data-search="ntfy alerting success failure urgent priority topic notification integration ha-system">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔔</span><div><p class="eyebrow">Notifications</p><h2>ntfy Alerting</h2></div></div>
+        <a class="section-link" href="#ntfy">#ntfy</a>
+      </div>
+      <div class="doc-content">
+        <p>A notification is sent after <strong>every</strong> run, success or failure, if <code>ntfy_url</code>/<code>ntfy_topic</code> are configured. Failures go out at <code>urgent</code> priority so they stand out from routine success pings.</p>
+        <blockquote>Fits naturally into an existing ntfy topic setup — e.g. reusing an <code>ha-system</code>-style topic alongside other infrastructure alerts.</blockquote>
+      </div>
+    </article>
+
+    <article id="security" class="doc-section glass-card" data-search="security secrets restic password aws secret access key ntfy password schema password type masked apparmor s6 overlay baseline mapped folders read write dcron crontab lock file tmp">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔒</span><div><p class="eyebrow">Security</p><h2>Secrets & AppArmor</h2></div></div>
+        <a class="section-link" href="#security">#security</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="rb-secrets"><a class="anchor" href="#rb-secrets">#</a>Secrets</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><code>restic_password</code></td><td>Encryption password for the entire repository. No recovery mechanism if lost — keep a copy outside this add-on.</td></tr>
+            <tr><td><code>aws_secret_access_key</code> / <code>aws_access_key_id</code></td><td>Only for S3/MinIO/B2-compatible remotes. Leave empty for the local repository.</td></tr>
+            <tr><td><code>ntfy_password</code></td><td>Only needed if the ntfy topic requires authentication.</td></tr>
+          </tbody>
+        </table>
+        <p>All three are declared as <code>password</code> schema types, so the Supervisor UI masks them.</p>
+        <h2 id="rb-apparmor"><a class="anchor" href="#rb-apparmor">#</a>AppArmor</h2>
+        <p>The bundled <code>apparmor.txt</code> profile covers: the s6-overlay baseline paths, the mapped read-only backup sources (<code>/homeassistant</code>, <code>/addon_configs</code>, <code>/media</code>, <code>/ssl</code>), the read-write repository target (<code>/share</code>), and <code>dcron</code>'s crontab files plus restic's own lock file under <code>/tmp</code>.</p>
+        <blockquote>Extra mapped folders beyond the current <code>map:</code> block need a matching read (or read-write) AppArmor rule, or restic will silently fail to read/write it under enforcement.</blockquote>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting lost restic password unrecoverable remote repository s3 minio connection failed backup path missing not mapped retention not applied ntfy not received">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms & Fixes</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Backup fails with "directory not found"</td><td>Path in <code>backup_paths</code> isn't covered by <code>map:</code>.</td><td>See <a href="#backup-paths">backup_paths vs. map</a> — add the matching map entry.</td></tr>
+            <tr><td>Remote repo connection fails (S3/MinIO)</td><td>Missing or wrong AWS credentials/region.</td><td>Verify <code>aws_access_key_id</code>, <code>aws_secret_access_key</code>, <code>aws_default_region</code>.</td></tr>
+            <tr><td>No ntfy notification received</td><td><code>ntfy_url</code>/<code>ntfy_topic</code> unset, or auth required but not set.</td><td>Set both, plus <code>ntfy_username</code>/<code>ntfy_password</code> if the topic needs auth.</td></tr>
+            <tr><td>Lost <code>restic_password</code></td><td>No recovery mechanism exists.</td><td>The repository is unrecoverable — start a new one and keep the new password backed up externally.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github restic upstream ntfy license disclaimer">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links & License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://restic.net/"><span>🗄️</span><strong>Restic Upstream</strong><small>restic.net</small></a>
+          <a class="source-chip" href="https://ntfy.sh/"><span>🔔</span><strong>ntfy</strong><small>ntfy.sh</small></a>
+          <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
+        </div>
+        <blockquote>Unofficial, community-maintained wrapper. Restic is licensed under BSD-2-Clause. Add-on wrapper is MIT.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+        <a href="https://restic.net/">🗄️ Upstream</a>
+      </div>
+      <div>Restic Backup · Encrypted Backup Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>

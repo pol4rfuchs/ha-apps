@@ -976,7 +976,7 @@ admin_password: your-secure-password
 
       </div>
     </article>
-<article id="installation" class="doc-section glass-card" data-search="installation add repository, install, start installation step 1 — add the repository 1. open home assistant 2. go to settings → add ons → add on store 3. click ⋮ top right → repositories 4. add: https://github.com/pol4rfuchs/ntfy-ha-app 5. click add → close step 2 — install the add on 1. search for ntfy in the add on store 2. click the add on → install 3. wait for the installation to complete step 3 — configure go to the configuration tab and set at minimum: yaml admin username: admin admin password: your secure password see configuration configuration for all available options. step 4 — start click start . check the log tab and confirm you see: starting ntfy add on … admin user &#x27;admin&#x27; ready starting ntfy → http://homeassistant.local:4280 step 5 — open the web ui ⚠️ do not use the ha sidebar link — it will show a white screen known ingress incompatibility . always use the direct url: http://homeassistant.local:4280 log in with the admin username and admin password you configured. updating when a new version of the add on is available, ha will show an update notification in the add on page. click update to install it. the forgejo actions workflow automatically tracks new ntfy releases and opens a pull request when a new version is available.">
+<article id="installation" class="doc-section glass-card" data-search="installation add repository, install, start installation step 1 — add the repository 1. open home assistant 2. go to settings → add ons → add on store 3. click ⋮ top right → repositories 4. add: https://github.com/pol4rfuchs/ha-apps 5. click add → close step 2 — install the add on 1. search for ntfy in the add on store 2. click the add on → install 3. wait for the installation to complete step 3 — configure go to the configuration tab and set at minimum: yaml admin username: admin admin password: your secure password see configuration configuration for all available options. step 4 — start click start . check the log tab and confirm you see: starting ntfy add on … admin user &#x27;admin&#x27; ready starting ntfy → http://homeassistant.local:4280 step 5 — open the web ui ⚠️ do not use the ha sidebar link — it will show a white screen known ingress incompatibility . always use the direct url: http://homeassistant.local:4280 log in with the admin username and admin password you configured. updating when a new version of the add on is available, ha will show an update notification in the add on page. click update to install it. the forgejo actions workflow automatically tracks new ntfy releases and opens a pull request when a new version is available.">
       <div class="section-topline">
         <div class="section-title-wrap">
           <span class="section-icon">🚀</span>
@@ -993,7 +993,7 @@ admin_password: your-secure-password
 <li>Open Home Assistant</li>
 <li>Go to <strong>Settings → Add-ons → Add-on Store</strong></li>
 <li>Click <strong>⋮</strong> (top right) → <strong>Repositories</strong></li>
-<li>Add:<pre><code>https://github.com/pol4rfuchs/ntfy-ha-app
+<li>Add:<pre><code>https://github.com/pol4rfuchs/ha-apps
 </code></pre>
 </li>
 <li>Click <strong>Add</strong> → <strong>Close</strong></li>
@@ -1235,7 +1235,7 @@ Starting ntfy → http://homeassistant.local:4280
 <p>See <a href="#ios-push-notifications">iOS-Push-Notifications</a> for details.</p>
 <hr />
 <h2 id="configuration--admin-panel"><a class="anchor" href="#configuration--admin-panel" aria-label="Permalink">#</a>Admin Panel</h2>
-<p>The built-in admin panel (port <code>4281</code>) has been <strong>removed</strong> from this add-on. Its functionality — user/token management, dashboard, send tests — now lives in the separate <a href="../ntfy-manager-ha-app/">ntfy_manager</a> add-on. Install that add-on if you want a web-based admin console.</p>
+<p>The built-in admin panel (port <code>4281</code>) has been <strong>removed</strong> from this add-on. Its functionality — user/token management, dashboard, send tests — now lives in the separate <a href="../ntfy-manager/">ntfy_manager</a> add-on. Install that add-on if you want a web-based admin console.</p>
 <hr />
 <h2 id="configuration--example-full-configuration"><a class="anchor" href="#configuration--example-full-configuration" aria-label="Permalink">#</a>Example: Full Configuration</h2>
 <pre><code class="language-yaml">log_level: INFO
@@ -2067,7 +2067,7 @@ ntfy access '*' HAOS deny
 <ol>
 <li>Set <code>log_level: DEBUG</code> in the configuration and restart</li>
 <li>Check the full log output</li>
-<li>Open an issue on <a href="https://codeberg.org/YOUR_USERNAME/hassio-ntfy-addon/issues">Codeberg</a> with the relevant log lines</li>
+<li>Open an issue on <a href="https://github.com/pol4rfuchs/ha-apps/issues">GitHub</a> with the relevant log lines</li>
 </ol>
 
       </div>
@@ -2147,7 +2147,7 @@ ntfy access '*' HAOS deny
 <p>The ntfy server itself is dual-licensed under Apache 2.0 and GPLv2 by its upstream author.</p>
 <h2>Useful Links</h2>
 <div class="source-grid">
-<a class="source-chip" href="https://codeberg.org/Pol4rFuchs/ntfy-ha-app"><span>🧊</span><strong>Codeberg Repo</strong><small>Pol4rFuchs/ntfy-ha-app</small></a>
+<a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
 <a class="source-chip" href="https://github.com/binwiederhier/ntfy"><span>⬆️</span><strong>Upstream Project</strong><small>binwiederhier/ntfy</small></a>
 <a class="source-chip" href="https://docs.ntfy.sh/"><span>📖</span><strong>ntfy Docs</strong><small>Official documentation</small></a>
 <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>HA Add-ons</strong><small>Home Assistant Supervisor platform</small></a>
@@ -2158,8 +2158,8 @@ ntfy access '*' HAOS deny
     <footer class="page-footer">
       <div class="links">
         <a href="#home">🏠 Home</a>
-        <a href="https://github.com/pol4rfuchs/ntfy-ha-app/issues">🐛 Issues</a>
-        <a href="https://github.com/pol4rfuchs/ntfy-ha-app/releases">📦 Releases</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps/issues">🐛 Issues</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps/releases">📦 Releases</a>
         <a href="https://docs.ntfy.sh">📖 ntfy Docs</a>
       </div>
       <div>ntfy Home Assistant Add-on · Green Glass Wiki · standalone HTML · no external CSS/JS required</div>

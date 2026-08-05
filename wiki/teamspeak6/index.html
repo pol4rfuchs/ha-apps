@@ -408,7 +408,7 @@
 <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔐</span><span><strong>Security Notes</strong><small>Ports, query, passwords, public exposure</small></span></a>
 <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Startup, token, ports, clients</small></span></a>
 <a class="nav-item" href="#maintenance" data-target="maintenance"><span class="nav-icon">🧰</span><span><strong>Update &amp; Rollback Runbook</strong><small>Beta-safe update path</small></span></a>
-<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.15 add-on and beta11 server</small></span></a>
+<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.20 add-on and beta12.1 server</small></span></a>
 <a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, beta, architecture</small></span></a>
 <a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer &amp; License</strong><small>Unofficial wrapper and licenses</small></span></a>
     </nav>
@@ -468,7 +468,7 @@ query_http_port: 10080</code></pre>
       </div>
     </section>
 
-    <article id="home" class="doc-section glass-card" data-search="home overview, quick start, role split teamspeak 6 server home assistant app ist dein eigentlicher voice-server als home-assistant-add-on. diese seite ist die blaue ts6-server-wiki im gleichen stil wie die ts6-manager-wiki. wichtig: server und manager sind zwei verschiedene bausteine. der server stellt voice, filetransfer und query bereit. der ts6 manager verbindet sich danach über die http-webquery-schnittstelle mit diesem server. bereich wert ha add-on name teamspeak 6 server ha add-on slug teamspeak6 offizieller upstream teamspeak/teamspeak6-server docker image teamspeaksystems/teamspeak6-server target version 6.0.0-beta9 voice port 9987/udp filetransfer 30033/tcp http webquery 10080/tcp persistenz /data/teamspeak6 quick start repository: https://codeberg.org/pol4rfuchs/teamspeak6-ha-app add-on: teamspeak 6 server voice: udp/9987 files: tcp/30033 webquery: tcp/10080 data: /data/teamspeak6 merksatz: extern freigeben nur 9987/udp und optional 30033/tcp . query-ports bleiben privat.">
+    <article id="home" class="doc-section glass-card" data-search="home overview, quick start, role split teamspeak 6 server home assistant app ist dein eigentlicher voice-server als home-assistant-add-on. diese seite ist die blaue ts6-server-wiki im gleichen stil wie die ts6-manager-wiki. wichtig: server und manager sind zwei verschiedene bausteine. der server stellt voice, filetransfer und query bereit. der ts6 manager verbindet sich danach über die http-webquery-schnittstelle mit diesem server. bereich wert ha add-on name teamspeak 6 server ha add-on slug teamspeak6 offizieller upstream teamspeak/teamspeak6-server docker image teamspeaksystems/teamspeak6-server target version 6.0.0-beta9 voice port 9987/udp filetransfer 30033/tcp http webquery 10080/tcp persistenz /data/teamspeak6 quick start repository: https://github.com/pol4rfuchs/ha-apps add-on: teamspeak 6 server voice: udp/9987 files: tcp/30033 webquery: tcp/10080 data: /data/teamspeak6 merksatz: extern freigeben nur 9987/udp und optional 30033/tcp . query-ports bleiben privat.">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">HOME.md</p><h2>Home</h2></div></div>
         <a class="section-link" href="#home">#home</a>
@@ -492,7 +492,7 @@ query_http_port: 10080</code></pre>
 </tbody>
 </table>
 <h2>Quick Start</h2>
-<pre><code>Repository: https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app
+<pre><code>Repository: https://github.com/pol4rfuchs/ha-apps
 Add-on:     TeamSpeak 6 Server
 Voice:      udp/9987
 Files:      tcp/30033
@@ -518,8 +518,8 @@ Data:       /data/teamspeak6</code></pre>
 <tr><td>Official TS6 Server</td><td>Upstream server, releases, README, CONFIG.md</td><td><a href="https://github.com/teamspeak/teamspeak6-server">GitHub</a></td></tr>
 <tr><td>Official Docker Image</td><td>Container image for Docker/HA add-on build</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server">Docker Hub</a></td></tr>
 <tr><td>Docker Tags</td><td>Architecture and version tags</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server/tags">Tags</a></td></tr>
-<tr><td>Codeberg Add-on Repo</td><td>Your Home Assistant add-on repository</td><td><a href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app">Codeberg</a></td></tr>
-<tr><td>GitHub Mirror</td><td>GitHub repo link from README</td><td><a href="https://github.com/pol4rfuchs/teamspeak6-ha-app">GitHub</a></td></tr>
+<tr><td>GitHub Add-on Repo</td><td>Your Home Assistant add-on monorepo</td><td><a href="https://github.com/pol4rfuchs/ha-apps">GitHub</a></td></tr>
+<tr><td>Codeberg Mirror</td><td>Pure mirror of the GitHub monorepo</td><td><a href="https://codeberg.org/Pol4rFuchs/ha-apps">Codeberg</a></td></tr>
 <tr><td>Home Assistant Add-ons</td><td>Supervisor/add-on platform</td><td><a href="https://www.home-assistant.io/addons/">Home Assistant</a></td></tr>
 </tbody>
 </table>
@@ -562,7 +562,7 @@ teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
       </div>
     </article>
 
-    <article id="installation" class="doc-section glass-card" data-search="installation repository adden, installieren, starten step 1 — repository in home assistant hinzufügen home assistant öffnen. einstellungen → add-ons → add-on store öffnen. oben rechts ⋮ → repositories wählen. diese url einfügen: https://codeberg.org/pol4rfuchs/teamspeak6-ha-app add klicken und dialog schließen. one-click badge step 2 — add-on installieren nach teamspeak 6 server suchen. add-on öffnen. install klicken. warten, bis download/build abgeschlossen ist. step 3 — license akzeptieren im add-on-tab configuration muss die teamspeak-lizenz akzeptiert werden. license_accepted: true step 4 — starten save klicken. zurück auf info . start klicken. log öffnen und auf token, ports und fehler prüfen.">
+    <article id="installation" class="doc-section glass-card" data-search="installation repository adden, installieren, starten step 1 — repository in home assistant hinzufügen home assistant öffnen. einstellungen → add-ons → add-on store öffnen. oben rechts ⋮ → repositories wählen. diese url einfügen: https://github.com/pol4rfuchs/ha-apps add klicken und dialog schließen. one-click badge step 2 — add-on installieren nach teamspeak 6 server suchen. add-on öffnen. install klicken. warten, bis download/build abgeschlossen ist. step 3 — license akzeptieren im add-on-tab configuration muss die teamspeak-lizenz akzeptiert werden. license_accepted: true step 4 — starten save klicken. zurück auf info . start klicken. log öffnen und auf token, ports und fehler prüfen.">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">INSTALLATION.md</p><h2>Installation</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
@@ -576,10 +576,10 @@ teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
 <li>Click <strong>⋮ → Repositories</strong> in the top right.</li>
 <li>Paste this URL:</li>
 </ol>
-<pre><code>https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app</code></pre>
+<pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
 <ol start="5"><li>Click <strong>Add</strong> and close the dialog.</li></ol>
 <h2>One-Click Badge</h2>
-<p><a href="https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fcodeberg.org%2FPol4rFuchs%2Fteamspeak6-ha-app"><img alt="Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled." src="https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg"></a></p>
+<p><a href="https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps"><img alt="Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled." src="https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg"></a></p>
 <h2>Step 2 — Install the Add-on</h2>
 <ol>
 <li>Search for <strong>TeamSpeak 6 Server</strong>.</li>
@@ -789,7 +789,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="project-structure" class="doc-section glass-card" data-search="project structure repository layout and file roles empfohlenes repo-layout teamspeak6-ha-app/ ├── repository.yaml ├── readme.md ├── readmeeng.md ├── readmeger.md └── teamspeak6/ ├── config.yaml ├── build.yaml ├── dockerfile ├── docs.md ├── changelog.md ├── icon.png ├── logo.png ├── translations/ │ └── en.yaml └── rootfs/ └── run.sh file roles datei rolle repository.yaml markiert das repo als home-assistant-add-on-repository. teamspeak6/config.yaml add-on-metadaten, schema, ports, image, ha ui. teamspeak6/build.yaml build-quelle pro architektur, idealerweise offizielles multi-arch-image. teamspeak6/dockerfile wrapper um das ts6-server-image mit ha-startlogik. teamspeak6/rootfs/run.sh liest add-on-optionen, erzeugt config, startet server. translations/en.yaml labels und beschreibungen in der ha-config-ui. image switch guard # prüfen vor umstellung von community-image auf official image: [ ] /data/teamspeak6 backup vorhanden [ ] datenpfad im neuen image korrekt gemountet [ ] server startet mit gleicher sqlite db [ ] ports sind gleich [ ] query/admin-zugang funktioniert [ ] client kann joinen [ ] ts6 manager kann webquery erreichen">
+    <article id="project-structure" class="doc-section glass-card" data-search="project structure repository layout and file roles empfohlenes repo-layout teamspeak6/ ├── repository.yaml ├── readme.md ├── readmeeng.md ├── readmeger.md └── teamspeak6/ ├── config.yaml ├── build.yaml ├── dockerfile ├── docs.md ├── changelog.md ├── icon.png ├── logo.png ├── translations/ │ └── en.yaml └── rootfs/ └── run.sh file roles datei rolle repository.yaml markiert das repo als home-assistant-add-on-repository. teamspeak6/config.yaml add-on-metadaten, schema, ports, image, ha ui. teamspeak6/build.yaml build-quelle pro architektur, idealerweise offizielles multi-arch-image. teamspeak6/dockerfile wrapper um das ts6-server-image mit ha-startlogik. teamspeak6/rootfs/run.sh liest add-on-optionen, erzeugt config, startet server. translations/en.yaml labels und beschreibungen in der ha-config-ui. image switch guard # prüfen vor umstellung von community-image auf official image: [ ] /data/teamspeak6 backup vorhanden [ ] datenpfad im neuen image korrekt gemountet [ ] server startet mit gleicher sqlite db [ ] ports sind gleich [ ] query/admin-zugang funktioniert [ ] client kann joinen [ ] ts6 manager kann webquery erreichen">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📁</span><div><p class="eyebrow">PROJECT.md</p><h2>Project Structure</h2></div></div>
         <a class="section-link" href="#project-structure">#project-structure</a>
@@ -797,7 +797,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       <div class="doc-content">
 
 <h2>Recommended Repo Layout</h2>
-<pre><code>teamspeak6-ha-app/
+<pre><code>teamspeak6/
 ├── repository.yaml
 ├── README.md
 ├── READMEeng.md
@@ -950,7 +950,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="changelog" class="doc-section glass-card" data-search="version notes v1.1.14 add-on and beta11 server home assistant app komponente version hinweis teamspeak6-ha-app v1.1.2 version aus deinem readme/badge. teamspeak 6 server 6.0.0-beta9 aktueller zielstand aus deinem readme und offiziellem upstream. docker image teamspeaksystems/teamspeak6-server:6.0.0-beta9 versionierter offizieller container-tag. v6.0.0-beta9 highlights native arm64-unterstützung. verbesserte server-migration-notifications für clients. crash-fix beim flush mit ungültigen datenbankverbindungen. s3-performance-optimierung. aktualisierte default-lizenz.">
+    <article id="changelog" class="doc-section glass-card" data-search="version notes v1.1.20 add-on and beta12.1 server home assistant app komponente version hinweis teamspeak6 v1.1.2 version aus deinem readme/badge. teamspeak 6 server 6.0.0-beta9 aktueller zielstand aus deinem readme und offiziellem upstream. docker image teamspeaksystems/teamspeak6-server:6.0.0-beta12.1 versionierter offizieller container-tag. v6.0.0-beta9 highlights native arm64-unterstützung. verbesserte server-migration-notifications für clients. crash-fix beim flush mit ungültigen datenbankverbindungen. s3-performance-optimierung. aktualisierte default-lizenz.">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
         <a class="section-link" href="#changelog">#changelog</a>
@@ -961,9 +961,9 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <table>
 <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
 <tbody>
-<tr><td>teamspeak6-ha-app</td><td><code>v1.1.15</code></td><td>Version from your README/badge.</td></tr>
-<tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta11</code></td><td>Current target from your README and official upstream.</td></tr>
-<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta11</code></td><td>Versioned official container tag.</td></tr>
+<tr><td>teamspeak6</td><td><code>v1.1.20</code></td><td>Version from README/badge.</td></tr>
+<tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta12.1</code></td><td>Current target from README and official upstream.</td></tr>
+<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta12.1</code></td><td>Versioned official container tag.</td></tr>
 </tbody>
 </table>
 <h2>v6.0.0-beta9 Highlights</h2>
@@ -976,6 +976,10 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 </ul>
 <h2>Recent Add-on Fixes</h2>
 <ul>
+<li><strong>v1.1.20:</strong> Fixed a wrong CHANGELOG insert order left over from the Release Please automation.</li>
+<li><strong>v1.1.19:</strong> Cleaned up stale translation files, gated the smoke-test job, documented the Dockerfile <code>ARG</code>.</li>
+<li><strong>v1.1.18:</strong> Upstream bumped to <code>6.0.0-beta12.1</code>.</li>
+<li><strong>v1.1.17:</strong> Upstream bumped to <code>6.0.0-beta12</code>.</li>
 <li><strong>v1.1.15:</strong> <code>query_admin_password</code> now uses the <code>password</code> schema type so Home Assistant shows a reveal icon instead of a plain text field.</li>
 <li><strong>v1.1.13:</strong> Fixed channel creates/renames/edits being reverted after every restart — a stale <code>.sqlitedb-wal</code> file was replayed on top of the checkpointed database. The WAL/SHM files are now deleted after checkpoint and after backup/restore.</li>
 <li><strong>v1.1.14:</strong> Upstream bumped to <code>6.0.0-beta11</code>.</li>
@@ -1010,7 +1014,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer &amp; license unofficial wrapper and licenses disclaimer this is an unofficial, community-maintained home assistant add-on. not affiliated with or endorsed by teamspeak systems, inc. wrapper license apache license 2.0 dein readme nennt apache 2.0 für den add-on-wrapper. der teamspeak 6 server selbst unterliegt den teamspeak-lizenzbedingungen. useful links 🧊 codeberg repo pol4rfuchs/teamspeak6-ha-app 🐙 github repo pol4rfuchs/teamspeak6-ha-app 🎙️ official ts6 server teamspeak/teamspeak6-server 🐳 docker image teamspeaksystems/teamspeak6-server 💬 teamspeak community announcements and feedback 🏠 ha add-ons home assistant supervisor platform">
+    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer &amp; license unofficial wrapper and licenses disclaimer this is an unofficial, community-maintained home assistant add-on. not affiliated with or endorsed by teamspeak systems, inc. wrapper license apache license 2.0 dein readme nennt apache 2.0 für den add-on-wrapper. der teamspeak 6 server selbst unterliegt den teamspeak-lizenzbedingungen. useful links 🧊 codeberg repo pol4rfuchs/teamspeak6 🐙 github repo pol4rfuchs/teamspeak6 🎙️ official ts6 server teamspeak/teamspeak6-server 🐳 docker image teamspeaksystems/teamspeak6-server 💬 teamspeak community announcements and feedback 🏠 ha add-ons home assistant supervisor platform">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📜</span><div><p class="eyebrow">LEGAL.md</p><h2>Disclaimer &amp; License</h2></div></div>
         <a class="section-link" href="#disclaimer-license">#disclaimer-license</a>
@@ -1024,8 +1028,8 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <p>Your README states Apache 2.0 for the add-on wrapper. The TeamSpeak 6 Server itself is subject to TeamSpeak licensing terms.</p>
 <h2>Useful Links</h2>
 <div class="source-grid">
-<a class="source-chip" href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app"><span>🧊</span><strong>Codeberg Repo</strong><small>Pol4rFuchs/teamspeak6-ha-app</small></a>
-<a class="source-chip" href="https://github.com/pol4rfuchs/teamspeak6-ha-app"><span>🐙</span><strong>GitHub Repo</strong><small>pol4rfuchs/teamspeak6-ha-app</small></a>
+<a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+<a class="source-chip" href="https://codeberg.org/Pol4rFuchs/ha-apps"><span>🧊</span><strong>Codeberg Mirror</strong><small>Pol4rFuchs/ha-apps</small></a>
 <a class="source-chip" href="https://github.com/teamspeak/teamspeak6-server"><span>🎙️</span><strong>Official TS6 Server</strong><small>teamspeak/teamspeak6-server</small></a>
 <a class="source-chip" href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server"><span>🐳</span><strong>Docker Image</strong><small>teamspeaksystems/teamspeak6-server</small></a>
 <a class="source-chip" href="https://community.teamspeak.com/"><span>💬</span><strong>TeamSpeak Community</strong><small>Announcements and feedback</small></a>
@@ -1038,7 +1042,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
     <footer class="page-footer">
       <div class="links">
         <a href="#home">🏠 Home</a>
-        <a href="https://codeberg.org/Pol4rFuchs/teamspeak6-ha-app">🧊 Codeberg</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
         <a href="https://github.com/teamspeak/teamspeak6-server">🎙️ Official TS6</a>
         <a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server">🐳 Docker</a>
       </div>

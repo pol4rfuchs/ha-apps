@@ -1,11 +1,15 @@
 {
-  "intiface_central": "1.0.2",
-  "matrix_synapse": "1.5.0",
-  "navidrome": "2.1.4",
-  "nginx_proxy_manager": "2.1.4",
-  "ntfy": "1.2.3",
-  "ntfy_manager": "0.2.11",
-  "searxng": "1.0.9",
-  "teamspeak6": "1.1.15",
-  "ts6_manager": "1.0.4"
+  "forgejo": "16.0.12",
+  "intiface_central": "1.0.4",
+  "matrix_synapse": "1.5.4",
+  "navidrome": "2.1.5",
+  "nextcloud": "33.0.15",
+  "nginx_proxy_manager": "2.1.5",
+  "ntfy": "1.2.6",
+  "ntfy_manager": "0.2.13",
+  "restic_backup": "0.2.1",
+  "searxng": "1.0.15",
+  "teamspeak6": "1.1.20",
+  "ts6_manager": "1.1.3",
+  "unbound": "1.25.2-ha3-pol4r1"
 }
