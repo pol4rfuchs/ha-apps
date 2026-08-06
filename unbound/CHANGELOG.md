@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.26.0-ha1-pol4r1] - 2026-08-06
+
+- Bump Unbound 1.25.2 → 1.26.0 (upstream feature + bugfix release, no
+  additional CVEs since 1.25.2). Notable upstream changes: new
+  `block_aaaa` / `block_a_wdata` / `block_aaaa_wdata` local-zone types,
+  `max-transfer-size`/`max-transfer-time` hardening for auth-zone/RPZ
+  transfers, and a heap out-of-bounds write fix in `outside_network_create()`.
+- No add-on config schema or Dockerfile build-flag changes required for
+  this bump; checksum verification against NLnetLabs' published
+  sha256 remains automatic at build time.
+
+<!--
+  TODO(fox): CHANGELOG is missing the 1.25.1 → 1.25.2 jump entirely —
+  config.yaml was already at 1.25.2-ha3-pol4r1 before this entry, but the
+  last real changelog entry below is 1.25.1-ha8-pol4r1. If you remember
+  what ha1-ha3 of 1.25.2 changed, backfill it here; otherwise leave as-is,
+  this note is just so it isn't forgotten silently.
+-->
+
 ## 1.25.1-ha8-pol4r1
 
 - Fix: AppArmor profile blocked bashio's default `mktemp` temp files

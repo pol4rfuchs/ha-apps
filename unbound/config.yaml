@@ -2,7 +2,7 @@
 name: "Unbound"
 description: "Hardened recursive DNS resolver with built-in web UI"
 url: "https://github.com/pol4rfuchs/ha-apps"
-version: "1.25.2-ha3-pol4r1"
+version: "1.26.0-ha1-pol4r1"
 slug: "unbound"
 image: "ghcr.io/pol4rfuchs/unbound"
 init: false

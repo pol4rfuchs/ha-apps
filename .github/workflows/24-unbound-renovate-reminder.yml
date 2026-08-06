@@ -1,0 +1,57 @@
+name: "24 - Unbound Renovate Merge Reminder"
+
+# Unbound is decoupled from Release Please (manual versioning: <upstream>-haNN-pol4rN).
+# Renovate still opens PRs when NLnetLabs/unbound has a new upstream release, but
+# merging that PR only bumps the version pointer - it does NOT trigger a build/release.
+# This workflow catches that merge and opens a reminder issue so it's not forgotten.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  issues: write
+
+jobs:
+  remind:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'renovate/nlnetlabs-unbound')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract new upstream version from PR title
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # Expected title format: "chore(unbound): update dependency nlnetlabs/unbound to v1.26.0"
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'v?\K[0-9]+\.[0-9]+\.[0-9]+$' || echo "unknown")
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create reminder issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const newVersion = "${{ steps.version.outputs.new_version }}";
+            const prNumber = context.payload.pull_request.number;
+            const prUrl = context.payload.pull_request.html_url;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `unbound: manual build/release needed for upstream ${newVersion}`,
+              labels: ["unbound", "manual-action-needed"],
+              body: [
+                `Renovate PR #${prNumber} (${prUrl}) was merged, bumping the NLnetLabs/unbound dependency pointer to **${newVersion}**.`,
+                ``,
+                `Since unbound is decoupled from Release Please, this merge does **not** trigger a build or release by itself. Manual steps:`,
+                ``,
+                `- [ ] Adjust the source-build tarball reference to ${newVersion}`,
+                `- [ ] Bump the ha-tag (e.g. \`${newVersion}-ha1-pol4r1\`)`,
+                `- [ ] Trigger build/release manually`,
+                `- [ ] Verify on Pi (DNS resolving, ECS toggle, no crash-loop)`,
+                ``,
+                `_Auto-created by 24-unbound-renovate-reminder.yml_`
+              ].join("\n")
+            });

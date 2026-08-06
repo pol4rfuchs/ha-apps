@@ -8,10 +8,10 @@ ARG UNBOUND_VERSION=1.26.0
 # ---------------------------------------------------------------------------
 # Stage 1: build Unbound from source.
 #
-# Alpine 3.24 stable's apk repo still ships Unbound 1.24.2 (1.25.1 only
-# landed in the `edge` branch on 2026-05-20, after the 3.24 stable freeze).
-# 1.25.1 fixes 11 CVEs including a DNSSEC-validation RCE (CVE-2026-33278),
-# so we build it ourselves instead of waiting for a stable apk backport.
+# Alpine 3.24 stable's apk repo still ships Unbound 1.24.2, well behind
+# upstream (currently 1.26.0). 1.25.2 alone fixed 23 CVEs, so we keep
+# building from the official NLnetLabs source tarball ourselves instead
+# of waiting for a stable apk backport.
 #
 # Built against the same Alpine 3.24 userland as the runtime stage, so no
 # musl/openssl/libevent ABI mismatch versus a mixed apk@edge install.
