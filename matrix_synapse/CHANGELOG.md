@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.5.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.5...matrix_synapse-v1.5.6) (2026-08-08)
+
+
+### Bug Fixes
+
+* **matrix-synapse:** honor enable_synapse_admin toggle ([5bc74b7](https://github.com/pol4rfuchs/ha-apps/commit/5bc74b701fc9aa1f858cb054732129743f324cad))
+
 ## [1.5.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.4...matrix_synapse-v1.5.5) (2026-08-05)
 
 
