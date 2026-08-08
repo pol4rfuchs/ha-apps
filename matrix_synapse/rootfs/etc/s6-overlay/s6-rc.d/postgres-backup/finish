@@ -1,0 +1,2 @@
+#!/usr/bin/with-contenv bashio
+bashio::log.warning "postgres-backup wurde beendet (exit code: $1)"

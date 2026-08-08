@@ -36,6 +36,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 | App | Status | Runtime / Upstream | Category | Description |
 |---|---|---|---|---|
+| Matrix Auth Service (MAS) | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `ghcr.io/element-hq/matrix-authentication-service` [![GitHub Release](https://img.shields.io/github/v/release/element-hq/matrix-authentication-service?style=flat-square&logo=github&label=)](https://github.com/element-hq/matrix-authentication-service/releases) | Messaging | Next-gen OIDC/OAuth2 auth delegation for Matrix Synapse — required for Element X QR-code login |
 | LPI | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Privacy | Live Privacy Inspector — scans and reports privacy-sensitive exposure across the stack |
 | UCCM | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Network | UniFi Control Center/Manager — HAOS-integrated management UI for UniFi controllers |
 
