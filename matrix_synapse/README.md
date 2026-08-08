@@ -22,7 +22,7 @@
 
 | Component | Version | Purpose |
 |---|---|---|
-| **Synapse** | ≥1.156.0 (pip floor, Renovate-tracked) | Matrix homeserver |
+| **Synapse** | pip floor, Renovate-tracked | Matrix homeserver |
 | **PostgreSQL 15** | Debian pkg | Database |
 | **Element Web** | latest (auto-fetched, version-tracked) | Web client |
 | **Element Call** | latest (auto-fetched, version-tracked) | Voice / Video calls |
