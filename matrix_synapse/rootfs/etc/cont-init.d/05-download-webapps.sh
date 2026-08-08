@@ -53,42 +53,47 @@ else
 fi
 
 # ── Ketesa (ehem. Synapse Admin) UI ──────────────────────────────────────
-bashio::log.info "🔍 Prüfe Ketesa Version..."
-ADMIN_LATEST=$(curl -sf \
-    "https://api.github.com/repos/etkecc/ketesa/releases/latest" \
-    | jq -r .tag_name 2>/dev/null)
-[ -z "${ADMIN_LATEST}" ] || [ "${ADMIN_LATEST}" = "null" ] && ADMIN_LATEST="v1.4.0"
-ADMIN_INSTALLED=$(cat "${ADMIN_VERSION_FILE}" 2>/dev/null || echo "")
+ENABLE_ADMIN=$(bashio::config 'enable_synapse_admin')
+if [ "${ENABLE_ADMIN}" = "true" ]; then
+    bashio::log.info "🔍 Prüfe Ketesa Version..."
+    ADMIN_LATEST=$(curl -sf \
+        "https://api.github.com/repos/etkecc/ketesa/releases/latest" \
+        | jq -r .tag_name 2>/dev/null)
+    [ -z "${ADMIN_LATEST}" ] || [ "${ADMIN_LATEST}" = "null" ] && ADMIN_LATEST="v1.4.0"
+    ADMIN_INSTALLED=$(cat "${ADMIN_VERSION_FILE}" 2>/dev/null || echo "")
 
-if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
-    bashio::log.info "📥 Lade Ketesa ${ADMIN_LATEST} (installiert: ${ADMIN_INSTALLED:-keine})..."
-    if wget -q "https://github.com/etkecc/ketesa/releases/download/${ADMIN_LATEST}/ketesa.tar.gz" \
-        -O /tmp/synapse-admin.tar.gz 2>/dev/null; then
-        mkdir -p /tmp/admin-extract /data/matrix/synapse-admin
-        tar -xzf /tmp/synapse-admin.tar.gz -C /tmp/admin-extract 2>/dev/null
+    if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
+        bashio::log.info "📥 Lade Ketesa ${ADMIN_LATEST} (installiert: ${ADMIN_INSTALLED:-keine})..."
+        if wget -q "https://github.com/etkecc/ketesa/releases/download/${ADMIN_LATEST}/ketesa.tar.gz" \
+            -O /tmp/synapse-admin.tar.gz 2>/dev/null; then
+            mkdir -p /tmp/admin-extract /data/matrix/synapse-admin
+            tar -xzf /tmp/synapse-admin.tar.gz -C /tmp/admin-extract 2>/dev/null
 
-        # Ketesa packt teils flach, teils in einem Unterordner — robust suchen
-        if [ -f /tmp/admin-extract/index.html ]; then
-            ADMINDIR="/tmp/admin-extract"
+            # Ketesa packt teils flach, teils in einem Unterordner — robust suchen
+            if [ -f /tmp/admin-extract/index.html ]; then
+                ADMINDIR="/tmp/admin-extract"
+            else
+                ADMINDIR=$(find /tmp/admin-extract -maxdepth 2 -name "index.html" | head -1 | xargs dirname 2>/dev/null)
+            fi
+
+            if [ -n "${ADMINDIR}" ] && [ -f "${ADMINDIR}/index.html" ]; then
+                rm -rf /data/matrix/synapse-admin/*
+                cp -r "${ADMINDIR}/." /data/matrix/synapse-admin/
+                echo "${ADMIN_LATEST}" > "${ADMIN_VERSION_FILE}"
+                COUNT=$(find /data/matrix/synapse-admin -type f | wc -l)
+                bashio::log.info "✅ Ketesa ${ADMIN_LATEST} installiert (${COUNT} Dateien)"
+            else
+                bashio::log.error "❌ Ketesa: index.html nicht gefunden!"
+            fi
+            rm -f /tmp/synapse-admin.tar.gz && rm -rf /tmp/admin-extract
         else
-            ADMINDIR=$(find /tmp/admin-extract -maxdepth 2 -name "index.html" | head -1 | xargs dirname 2>/dev/null)
+            bashio::log.error "❌ Ketesa Download fehlgeschlagen!"
         fi
-
-        if [ -n "${ADMINDIR}" ] && [ -f "${ADMINDIR}/index.html" ]; then
-            rm -rf /data/matrix/synapse-admin/*
-            cp -r "${ADMINDIR}/." /data/matrix/synapse-admin/
-            echo "${ADMIN_LATEST}" > "${ADMIN_VERSION_FILE}"
-            COUNT=$(find /data/matrix/synapse-admin -type f | wc -l)
-            bashio::log.info "✅ Ketesa ${ADMIN_LATEST} installiert (${COUNT} Dateien)"
-        else
-            bashio::log.error "❌ Ketesa: index.html nicht gefunden!"
-        fi
-        rm -f /tmp/synapse-admin.tar.gz && rm -rf /tmp/admin-extract
     else
-        bashio::log.error "❌ Ketesa Download fehlgeschlagen!"
+        bashio::log.info "✅ Ketesa bereits aktuell (${ADMIN_INSTALLED})"
     fi
 else
-    bashio::log.info "✅ Ketesa bereits aktuell (${ADMIN_INSTALLED})"
+    bashio::log.info "⏭️  Ketesa-Download übersprungen (enable_synapse_admin: false)"
 fi
 
 # ── Element Call (nur wenn Voice/Video aktiviert) ────────────────────────

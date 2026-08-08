@@ -1,6 +1,12 @@
 #!/usr/bin/with-contenv bashio
 # S6 Service: Synapse Admin UI (Python HTTP Server Port 8090)
 
+ENABLE_ADMIN=$(bashio::config 'enable_synapse_admin')
+if [ "${ENABLE_ADMIN}" != "true" ]; then
+    bashio::log.info "Synapse Admin UI (Ketesa) ist deaktiviert (enable_synapse_admin: false) — Service bleibt inaktiv."
+    exec sleep infinity
+fi
+
 READY_FILE="/data/matrix/synapse-admin/index.html"
 
 WAIT=0
