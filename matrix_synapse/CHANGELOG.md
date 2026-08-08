@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.5.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.6...matrix_synapse-v1.5.7) (2026-08-08)
+
+
+### Bug Fixes
+
+* **matrix-synapse:** correct backup_exclude path and add postgres-backup finish script ([696e698](https://github.com/pol4rfuchs/ha-apps/commit/696e698818e6f3121c2c6a71b4aae0cd27af5ab7))
+
 ## [1.5.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.5...matrix_synapse-v1.5.6) (2026-08-08)
 
 
