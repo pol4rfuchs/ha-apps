@@ -93,6 +93,9 @@ options:
   enable_registration: false
   registration_shared_secret: ''
   enable_federation: true
+  mas_enabled: false
+  mas_endpoint: 'http://homeassistant.local:8082'
+  mas_secret: ''
   max_upload_size_mb: 50
   enable_synapse_admin: true
   postgres_password: changeme_bitte_aendern
@@ -120,6 +123,9 @@ schema:
   enable_registration: bool
   registration_shared_secret: password
   enable_federation: bool
+  mas_enabled: bool
+  mas_endpoint: url
+  mas_secret: password
   max_upload_size_mb: int(10,500)
   enable_synapse_admin: bool
   postgres_password: password

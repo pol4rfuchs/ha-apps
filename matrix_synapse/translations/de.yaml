@@ -51,6 +51,15 @@ configuration:
   admin_ui_password:
     name: Admin-UI-Passwort
     description: "Basic-Auth-Passwort für die Ketesa (Admin UI). Leer lassen zur automatischen Generierung beim ersten Start (gespeichert in /data/matrix/.admin_ui_auth, nie geloggt)."
+  mas_enabled:
+    name: MAS-Delegation aktivieren
+    description: "Delegiert Login/Registrierung komplett an das matrix-auth-service-Add-on (Voraussetzung für Element X QR-Code-Login). Deaktiviert native Synapse-Auth."
+  mas_endpoint:
+    name: MAS Endpoint
+    description: "Intern erreichbare URL des matrix-auth-service-Add-ons (z.B. http://homeassistant.local:8082)."
+  mas_secret:
+    name: MAS Shared Secret
+    description: "Muss exakt dem Wert entsprechen, der im matrix-auth-service-Add-on generiert bzw. gesetzt wurde."
   media_retention_local_days:
     name: Medien-Aufbewahrung — Lokal (Tage)
     description: "Löscht lokal hochgeladene Medien automatisch, die älter als diese Anzahl Tage sind. 0 = deaktiviert (dauerhaft behalten)."

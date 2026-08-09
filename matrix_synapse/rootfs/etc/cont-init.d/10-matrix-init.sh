@@ -27,6 +27,9 @@ LOGIN_RATE_PS=$(bashio::config 'login_rate_limit_per_second')
 LOGIN_RATE_BURST=$(bashio::config 'login_rate_limit_burst')
 REG_RATE_PS=$(bashio::config 'registration_rate_limit_per_second')
 REG_RATE_BURST=$(bashio::config 'registration_rate_limit_burst')
+MAS_ENABLED=$(bashio::config 'mas_enabled')
+MAS_ENDPOINT=$(bashio::config 'mas_endpoint' | sed 's|/$||')
+MAS_SECRET=$(bashio::config 'mas_secret')
 # LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
 LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
@@ -153,6 +156,43 @@ else
     FEDERATE_FLAG="false"
 fi
 
+# ── MAS-Delegation (Variante B: expliziter Toggle) ────────────────────────
+# Bei aktivem MAS übernimmt MAS komplett Login/Registrierung — Synapses
+# eigene password_config und enable_registration müssen dafür aus sein,
+# sonst laufen zwei konkurrierende Auth-Wege gegeneinander.
+# MSC4108_FLAG wird NICHT in einem eigenen experimental_features:-Block
+# geschrieben, sondern weiter unten in den EINEN Block eingemischt, der
+# auch für Voice-Calls (msc3266/msc3401/msc2285) zuständig ist — zwei
+# separate Top-Level-experimental_features:-Keys im selben YAML würden
+# sich sonst gegenseitig überschreiben (der zweite gewinnt stillschweigend).
+if [ "${MAS_ENABLED}" = "true" ]; then
+    if [ -z "${MAS_SECRET}" ]; then
+        bashio::log.warning "⚠️  mas_enabled=true, aber mas_secret ist leer — MAS-Kopplung wird fehlschlagen!"
+        bashio::log.warning "   → Secret aus dem matrix-auth-service-Add-on übertragen (dort automatisch generiert, falls dort leer gelassen)."
+    fi
+    MAS_AUTH_BLOCK="
+# ── Matrix Authentication Service (MAS) — Variante B: aktiv ──────────────
+matrix_authentication_service:
+  enabled: true
+  endpoint: \"${MAS_ENDPOINT}\"
+  secret: \"${MAS_SECRET}\"
+
+password_config:
+  enabled: false
+"
+    NATIVE_REGISTRATION_BLOCK=""
+    MSC4108_FLAG="  msc4108_enabled: true"
+    bashio::log.info "🔐 MAS-Delegation aktiv — native Synapse-Auth deaktiviert (Endpoint: ${MAS_ENDPOINT})"
+else
+    MAS_AUTH_BLOCK=""
+    NATIVE_REGISTRATION_BLOCK="
+enable_registration: $([ \"${ENABLE_REGISTRATION}\" = \"true\" ] && echo \"true\" || echo \"false\")
+enable_registration_without_verification: true
+registration_shared_secret: \"${REG_SECRET}\"
+"
+    MSC4108_FLAG=""
+fi
+
 cat > "${SYNAPSE_CONFIG}" << EOF
 server_name: "${SERVER_NAME}"
 # public_baseurl ist zwingend nötig, damit Synapse extra_well_known_client_content
@@ -190,9 +230,8 @@ media_store_path: "${SYNAPSE_DATA}/media_store"
 max_upload_size: "${MAX_UPLOAD}M"
 no_tls: true
 
-enable_registration: $([ "${ENABLE_REGISTRATION}" = "true" ] && echo "true" || echo "false")
-enable_registration_without_verification: true
-registration_shared_secret: "${REG_SECRET}"
+${NATIVE_REGISTRATION_BLOCK}
+${MAS_AUTH_BLOCK}
 
 signing_key_path: "${SIGNING_KEY}"
 suppress_key_server_warning: true
@@ -266,6 +305,7 @@ experimental_features:
   msc3266_enabled: true
   msc3401_enabled: true
   msc2285_enabled: true
+${MSC4108_FLAG}
 
 # Höhere Rate Limits für Call-Signaling
 rc_message:
@@ -300,6 +340,17 @@ extra_well_known_client_content:
   org.matrix.msc4143.rtc_foci:
     - type: "livekit"
       livekit_service_url: "${LIVEKIT_JWT_URL}"
+EOF
+elif [ "${MAS_ENABLED}" = "true" ]; then
+    # Voice-Calls aus, aber MAS an: der obige Block läuft nicht, also
+    # braucht msc4108 (QR-Login-Voraussetzung) hier seinen eigenen,
+    # einzigen experimental_features:-Block.
+    bashio::log.info "🔑 MSC4108 (QR-Login) aktiviert, ohne Voice-Call-Block..."
+    cat >> "${SYNAPSE_CONFIG}" << EOF
+
+# ── MSC4108 (MAS QR-Login), ohne Voice-Call-Features ─────────────────────
+experimental_features:
+${MSC4108_FLAG}
 EOF
 fi
 
