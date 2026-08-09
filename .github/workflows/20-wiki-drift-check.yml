@@ -46,7 +46,7 @@ jobs:
             cfg="${slug}/config.yaml"
             [[ -f "$cfg" ]] || continue
 
-            wiki_dir="wiki/${slug//_/-}-ha-app"
+            wiki_dir="wiki/${slug//_/-}"
             [[ -d "$wiki_dir" ]] || continue   # kein Wiki-Eintrag für dieses Add-on -> ignorieren
 
             current_version=$(grep -E '^version:' "$cfg" | head -1 | sed -E 's/version:[[:space:]]*"?([^"]*)"?/\1/' | xargs)
