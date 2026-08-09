@@ -2,7 +2,7 @@ name: Matrix Server (ESS CE)
 description: >-
   Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS
   Community Edition Style
-version: "1.5.7"
+version: "1.6.0"
 slug: matrix_server
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/matrix_synapse
