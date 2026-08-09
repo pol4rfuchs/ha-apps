@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.6.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.6.0...matrix_synapse-v1.6.1) (2026-08-09)
+
+
+### Bug Fixes
+
+* **matrix-synapse:** distinguish signal-based shutdown from real crashes in finish scripts ([71485f9](https://github.com/pol4rfuchs/ha-apps/commit/71485f9fdacce2f6b84db9d91fd891bfcb366d44))
+
 ## [1.6.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.7...matrix_synapse-v1.6.0) (2026-08-09)
 
 
