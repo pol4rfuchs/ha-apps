@@ -1,2 +1,10 @@
 #!/bin/sh
-echo "[livekit-jwt] Service beendet (exit: $1)"
+EXIT_CODE="$1"
+SIGNAL="$2"
+if [ "${EXIT_CODE}" = "256" ]; then
+    echo "[livekit-jwt] Service beendet durch Signal ${SIGNAL} (normal bei Container-Stop/-Neustart)"
+elif [ "${EXIT_CODE}" = "0" ]; then
+    echo "[livekit-jwt] Service sauber beendet (exit code: 0)"
+else
+    echo "[livekit-jwt] Service unerwartet beendet (exit code: ${EXIT_CODE})"
+fi
