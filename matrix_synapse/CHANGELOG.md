@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.6.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.7...matrix_synapse-v1.6.0) (2026-08-09)
+
+
+### Features
+
+* **matrix-synapse:** add MAS delegation support (mas_enabled/mas_endpoint/mas_secret) ([d883524](https://github.com/pol4rfuchs/ha-apps/commit/d88352426686d5f200e086ced784a5a3ca8d318f))
+
 ## [1.5.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.5.6...matrix_synapse-v1.5.7) (2026-08-08)
 
 
