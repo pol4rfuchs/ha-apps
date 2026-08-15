@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.0...matrix_synapse-v1.7.1) (2026-08-15)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** add signal_bridge_enabled and telegram_bridge_enabled toggles ([28ef47f](https://github.com/pol4rfuchs/ha-apps/commit/28ef47fde75a46449f9557655d3d602c9757e592))
+
 ## [1.7.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.6.1...matrix_synapse-v1.7.0) (2026-08-15)
 
 
