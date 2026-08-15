@@ -99,6 +99,8 @@ options:
   mas_endpoint: 'http://homeassistant.local:8082'
   mas_secret: ''
   whatsapp_bridge_enabled: false
+  signal_bridge_enabled: false
+  telegram_bridge_enabled: false
   max_upload_size_mb: 50
   enable_synapse_admin: true
   postgres_password: changeme_bitte_aendern
@@ -130,6 +132,8 @@ schema:
   mas_endpoint: url
   mas_secret: password
   whatsapp_bridge_enabled: bool
+  signal_bridge_enabled: bool
+  telegram_bridge_enabled: bool
   max_upload_size_mb: int(10,500)
   enable_synapse_admin: bool
   postgres_password: password

@@ -31,6 +31,8 @@ MAS_ENABLED=$(bashio::config 'mas_enabled')
 MAS_ENDPOINT=$(bashio::config 'mas_endpoint' | sed 's|/$||')
 MAS_SECRET=$(bashio::config 'mas_secret')
 WHATSAPP_BRIDGE_ENABLED=$(bashio::config 'whatsapp_bridge_enabled')
+SIGNAL_BRIDGE_ENABLED=$(bashio::config 'signal_bridge_enabled')
+TELEGRAM_BRIDGE_ENABLED=$(bashio::config 'telegram_bridge_enabled')
 # LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
 LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
@@ -286,6 +288,14 @@ EOF
 BRIDGE_REG_LIST=""
 if [ "${WHATSAPP_BRIDGE_ENABLED}" = "true" ]; then
     BRIDGE_REG_LIST="${BRIDGE_REG_LIST}  - \"/share/whatsapp_bridge_registration.yaml\"
+"
+fi
+if [ "${SIGNAL_BRIDGE_ENABLED}" = "true" ]; then
+    BRIDGE_REG_LIST="${BRIDGE_REG_LIST}  - \"/share/signal_bridge_registration.yaml\"
+"
+fi
+if [ "${TELEGRAM_BRIDGE_ENABLED}" = "true" ]; then
+    BRIDGE_REG_LIST="${BRIDGE_REG_LIST}  - \"/share/telegram_bridge_registration.yaml\"
 "
 fi
 
