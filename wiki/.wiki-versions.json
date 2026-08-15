@@ -1,7 +1,9 @@
 {
   "forgejo": "16.0.12",
   "intiface_central": "1.0.4",
+  "matrix_signal_bridge": "26.7.0-ha1-pol4r1",
   "matrix_synapse": "1.6.1",
+  "matrix_telegram_bridge": "26.7.0-ha1-pol4r1",
   "matrix_whatsapp_bridge": "26.7.0-ha1-pol4r1",
   "navidrome": "2.1.5",
   "nextcloud": "33.0.15",

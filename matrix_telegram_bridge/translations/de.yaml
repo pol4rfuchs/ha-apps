@@ -1,0 +1,44 @@
+---
+configuration:
+  homeserver_address:
+    name: Homeserver-Adresse
+    description: "URL des Matrix-Synapse-Add-ons (intern, z.B. http://xxxxx-matrix-server:8008)."
+  homeserver_domain:
+    name: Homeserver-Domain
+    description: "Dein Matrix server_name / Domain für MXIDs."
+  appservice_address:
+    name: Appservice-Adresse
+    description: "URL, unter der der Homeserver diese Bridge erreicht (intern, z.B. http://xxxxx-matrix-telegram-bridge:29317)."
+  appservice_id:
+    name: Appservice-ID
+    description: "Eindeutige Appservice-ID für diese Bridge. Nach der Erstregistrierung nicht mehr ändern."
+  telegram_api_id:
+    name: Telegram API ID
+    description: "Pflichtfeld. App auf https://my.telegram.org registrieren, um diesen Wert zu erhalten."
+  telegram_api_hash:
+    name: Telegram API Hash
+    description: "Pflichtfeld. App auf https://my.telegram.org registrieren, um diesen Wert zu erhalten."
+  db_type:
+    name: Datenbank-Typ
+    description: "SQLite (einfach, ein Homeserver) oder Postgres (eigene Datenbank, nicht mit Synapse geteilt)."
+  postgres_host:
+    name: Postgres-Host
+    description: "Nur relevant bei Datenbank-Typ postgres."
+  postgres_port:
+    name: Postgres-Port
+    description: "Nur relevant bei Datenbank-Typ postgres."
+  postgres_database:
+    name: Postgres-Datenbank
+    description: "Nur relevant bei Datenbank-Typ postgres."
+  postgres_username:
+    name: Postgres-Benutzername
+    description: "Nur relevant bei Datenbank-Typ postgres."
+  postgres_password:
+    name: Postgres-Passwort
+    description: "Nur relevant bei Datenbank-Typ postgres."
+  encryption:
+    name: Verschlüsselung
+    description: "Matrix Megolm E2EE für Bridge-Portal-Räume aktivieren."
+  log_level:
+    name: Log-Level
+    description: "Verbosität des Loggings (zerolog-Level)."

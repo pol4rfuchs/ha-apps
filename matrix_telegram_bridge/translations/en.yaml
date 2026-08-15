@@ -1,0 +1,44 @@
+---
+configuration:
+  homeserver_address:
+    name: Homeserver Address
+    description: "URL of the Matrix Synapse add-on (internal, e.g. http://xxxxx-matrix-server:8008)."
+  homeserver_domain:
+    name: Homeserver Domain
+    description: "Your Matrix server_name / domain used for MXIDs."
+  appservice_address:
+    name: Appservice Address
+    description: "URL the homeserver uses to reach this bridge (internal, e.g. http://xxxxx-matrix-telegram-bridge:29317)."
+  appservice_id:
+    name: Appservice ID
+    description: "Unique appservice ID for this bridge. Do not change after initial registration."
+  telegram_api_id:
+    name: Telegram API ID
+    description: "Required. Register an app at https://my.telegram.org to get this value."
+  telegram_api_hash:
+    name: Telegram API Hash
+    description: "Required. Register an app at https://my.telegram.org to get this value."
+  db_type:
+    name: Database Type
+    description: "SQLite (simple, single homeserver) or Postgres (own database, not shared with Synapse)."
+  postgres_host:
+    name: Postgres Host
+    description: "Only used when Database Type is postgres."
+  postgres_port:
+    name: Postgres Port
+    description: "Only used when Database Type is postgres."
+  postgres_database:
+    name: Postgres Database
+    description: "Only used when Database Type is postgres."
+  postgres_username:
+    name: Postgres Username
+    description: "Only used when Database Type is postgres."
+  postgres_password:
+    name: Postgres Password
+    description: "Only used when Database Type is postgres."
+  encryption:
+    name: Encryption
+    description: "Enable Matrix Megolm E2EE for bridge portal rooms."
+  log_level:
+    name: Log Level
+    description: "Logging verbosity (zerolog levels)."

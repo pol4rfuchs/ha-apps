@@ -119,6 +119,18 @@
         "matrix_whatsapp_bridge/**"
       ],
       "semanticCommitScope": "matrix_whatsapp_bridge"
+    },
+    {
+      "matchFileNames": [
+        "matrix_signal_bridge/**"
+      ],
+      "semanticCommitScope": "matrix_signal_bridge"
+    },
+    {
+      "matchFileNames": [
+        "matrix_telegram_bridge/**"
+      ],
+      "semanticCommitScope": "matrix_telegram_bridge"
     }
   ],
   "ignorePaths": [
@@ -173,6 +185,30 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "mautrix/whatsapp"
+    },
+    {
+      "customType": "regex",
+      "description": "Track mautrix/signal upstream releases for ARG SIGNAL_VERSION in matrix_signal_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "managerFilePatterns": [
+        "/^matrix_signal_bridge/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG SIGNAL_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/signal"
+    },
+    {
+      "customType": "regex",
+      "description": "Track mautrix/telegram upstream releases for ARG TELEGRAM_VERSION in matrix_telegram_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "managerFilePatterns": [
+        "/^matrix_telegram_bridge/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG TELEGRAM_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/telegram"
     }
   ]
 }

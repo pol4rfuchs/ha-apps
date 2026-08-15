@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: mautrix-telegram Bridge
+
+CONFIG_PATH="/data/config.yaml"
+REG_PATH="/data/registration.yaml"
+
+# ── Warten bis cont-init config.yaml geschrieben hat ──────────────────────
+# (S6 und cont-init laufen parallel — ohne Wait startet die Bridge zu früh)
+WAIT=0
+while [ ! -f "${CONFIG_PATH}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf config.yaml..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 60 ]; then
+        bashio::log.error "Timeout: config.yaml wurde nicht erstellt!"
+        exit 1
+    fi
+done
+
+bashio::log.info "Starte mautrix-telegram..."
+exec mautrix-telegram -c "${CONFIG_PATH}" -r "${REG_PATH}" \
+    2>&1

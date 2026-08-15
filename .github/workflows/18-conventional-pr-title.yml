@@ -38,7 +38,8 @@ jobs:
 
           title = os.environ["PR_TITLE"]
           addon_scopes = (
-              "forgejo|intiface_central|matrix_synapse|matrix_whatsapp_bridge|navidrome|"
+              "forgejo|intiface_central|matrix_synapse|matrix_whatsapp_bridge|"
+              "matrix_signal_bridge|matrix_telegram_bridge|navidrome|"
               "nginx_proxy_manager|ntfy|ntfy_manager|nextcloud|restic_backup|searxng|"
               "teamspeak6|ts6_manager|unbound"
           )

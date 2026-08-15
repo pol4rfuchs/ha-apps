@@ -12,5 +12,7 @@
   "teamspeak6",
   "ts6_manager",
   "unbound",
-  "matrix_whatsapp_bridge"
+  "matrix_whatsapp_bridge",
+  "matrix_signal_bridge",
+  "matrix_telegram_bridge"
 ]
