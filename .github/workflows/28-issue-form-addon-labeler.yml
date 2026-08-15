@@ -1,0 +1,49 @@
+name: "28 - Issue-Form Add-on Labeler"
+
+# Liest die "Betroffene App"-Auswahl aus dem dependency-security-report.yml
+# Issue-Form aus und setzt automatisch das passende addon/<name>-Label
+# (analog zum Label-Slug-Schema in labels.yml, z. B. ntfy_manager -> addon/ntfy-manager).
+
+# yamllint disable-line rule:truthy
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  label:
+    name: Add-on-Label setzen
+    if: contains(github.event.issue.labels.*.name, 'dependencies')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Apply addon label from dropdown selection
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require("fs");
+            const addons = JSON.parse(fs.readFileSync("addons.json", "utf8"));
+            const body = context.payload.issue.body ?? "";
+
+            // Issue-Form rendert Felder als "### Betroffene App\n\n<auswahl>\n\n### ..."
+            const match = body.match(/###\s*Betroffene App\s*\n+([^\n]+)/i);
+            if (!match) return;
+
+            const selected = match[1].trim();
+            if (!addons.includes(selected)) return; // "Repo-weit / Tooling" o.ä. -> kein Add-on-Label
+
+            const label = `addon/${selected.replace(/_/g, "-")}`;
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [label],
+            });

@@ -1,0 +1,134 @@
+name: "27 - Dependabot Alerts zu Issues"
+
+# Dependabot selbst öffnet für offene Security-Alerts keine Issues - die landen nur
+# im Security-Tab. Dieser Workflow spiegelt offene Alerts als Issues, ordnet sie über
+# den Manifest-Pfad automatisch dem betroffenen Add-on zu (addons.json als Quelle,
+# 17 Apps im Monorepo) und dedupliziert über die Alert-Nummer, damit nichts doppelt
+# aufploppt. Ist ein Alert nicht mehr offen (gefixt/dismissed), wird das Issue
+# automatisch mit Kommentar geschlossen.
+#
+# Voraussetzung (einmalig, kein Datei-Config): Settings -> Code security ->
+# "Dependency graph" + "Dependabot alerts" müssen aktiv sein, sonst bleibt die
+# Alert-Liste leer und dieser Workflow hat nichts zu spiegeln.
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Montag 08:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  security-events: read
+
+concurrency:
+  group: dependabot-alerts-to-issues
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Alerts synchronisieren
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Sync Dependabot alerts as issues
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require("fs");
+            const addons = JSON.parse(fs.readFileSync("addons.json", "utf8"));
+
+            // Ordnername (Unterstrich) -> Label-Slug (Bindestrich), z.B. ntfy_manager -> addon/ntfy-manager
+            function addonLabelFor(manifestPath) {
+              if (!manifestPath) return null;
+              const top = manifestPath.split("/")[0];
+              return addons.includes(top) ? `addon/${top.replace(/_/g, "-")}` : null;
+            }
+
+            const MARKER_RE = /<!-- dependabot-alert:(\d+) -->/;
+
+            const alerts = await github.paginate(
+              "GET /repos/{owner}/{repo}/dependabot/alerts",
+              { owner: context.repo.owner, repo: context.repo.repo, state: "open", per_page: 100 }
+            );
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "dependencies",
+              per_page: 100,
+            });
+
+            const markerToIssue = new Map();
+            for (const issue of openIssues) {
+              const m = issue.body && issue.body.match(MARKER_RE);
+              if (m) markerToIssue.set(Number(m[1]), issue);
+            }
+
+            const stillOpenAlertNumbers = new Set();
+
+            for (const alert of alerts) {
+              stillOpenAlertNumbers.add(alert.number);
+              if (markerToIssue.has(alert.number)) continue; // Issue existiert schon
+
+              const manifestPath = alert.dependency?.manifest_path;
+              const addonLabel = addonLabelFor(manifestPath);
+              const pkg = alert.dependency?.package?.name ?? "unknown";
+              const eco = alert.dependency?.package?.ecosystem ?? "unknown";
+              const severity = alert.security_advisory?.severity ?? "unknown";
+              const ghsaId = alert.security_advisory?.ghsa_id ?? "unknown";
+              const summary = alert.security_advisory?.summary ?? "";
+              const vulnRange = alert.security_vulnerability?.vulnerable_version_range ?? "unbekannt";
+              const fixedIn = alert.security_vulnerability?.first_patched_version?.identifier ?? "noch kein Patch";
+              const alertUrl = alert.html_url;
+              const scope = addonLabel ? manifestPath.split("/")[0] : "repo-weit / Tooling";
+
+              const labels = ["dependencies", "security", `severity/${severity}`];
+              if (addonLabel) labels.push(addonLabel);
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[${severity.toUpperCase()}] ${pkg} (${eco}) - ${scope}`,
+                labels,
+                body: [
+                  `<!-- dependabot-alert:${alert.number} -->`,
+                  `**Paket:** \`${pkg}\` (${eco})`,
+                  `**Betroffener Bereich:** ${manifestPath ?? "unbekannt"}`,
+                  `**Schweregrad:** ${severity}`,
+                  `**Advisory:** ${ghsaId}`,
+                  "",
+                  summary,
+                  "",
+                  `**Verwundbarer Bereich:** ${vulnRange}`,
+                  `**Gefixt in:** ${fixedIn}`,
+                  "",
+                  `[Alert im Security-Tab ansehen](${alertUrl})`,
+                  "",
+                  "_Auto-erstellt von 27-dependabot-alerts-to-issues.yml_",
+                ].join("\n"),
+              });
+            }
+
+            for (const [alertNumber, issue] of markerToIssue) {
+              if (stillOpenAlertNumbers.has(alertNumber)) continue;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "Der zugehörige Dependabot-Alert ist nicht mehr offen (gefixt oder dismissed) - schließe automatisch.",
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: "closed",
+              });
+            }
