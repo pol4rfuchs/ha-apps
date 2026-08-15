@@ -1,0 +1,52 @@
+#!/usr/bin/with-contenv bashio
+# S6 Service: Matrix Authentication Service
+
+MARKER="/data/mas/.pg_initialized"
+CONFIG_MAIN="/data/mas/config.yaml"
+CONFIG_SECRETS="/data/mas/secrets.yaml"
+
+# ── Warten auf Postgres-Init durch cont-init ──────────────────────────────
+WAIT=0
+while [ ! -f "${MARKER}" ]; do
+    if [ $WAIT -eq 0 ]; then
+        bashio::log.info "Warte auf PostgreSQL Initialisierung..."
+    fi
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 120 ]; then
+        bashio::log.error "Timeout: PostgreSQL Initialisierung dauert zu lang!"
+        exit 1
+    fi
+done
+
+# ── Warten bis Postgres tatsächlich Verbindungen annimmt ─────────────────
+# Der postgresql-Service startet parallel — Marker-Datei existiert bereits
+# nach der einmaligen Init, sagt aber nichts darüber aus, ob der laufende
+# Postgres-Prozess in DIESEM Start-Zyklus schon lauscht.
+WAIT=0
+until pg_isready -h 127.0.0.1 -p 5433 -U mas >/dev/null 2>&1; do
+    sleep 1
+    WAIT=$((WAIT + 1))
+    if [ $WAIT -gt 60 ]; then
+        bashio::log.error "Timeout: PostgreSQL antwortet nicht auf Port 5433!"
+        exit 1
+    fi
+done
+
+bashio::log.info "Führe Datenbank-Migration aus..."
+mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+    database migrate || {
+        bashio::log.error "mas-cli database migrate fehlgeschlagen!"
+        exit 1
+    }
+
+bashio::log.info "Synchronisiere Clients/Policy-Config..."
+mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+    config sync --prune || {
+        bashio::log.error "mas-cli config sync fehlgeschlagen!"
+        exit 1
+    }
+
+bashio::log.info "Starte Matrix Authentication Service..."
+exec mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+    server 2>&1

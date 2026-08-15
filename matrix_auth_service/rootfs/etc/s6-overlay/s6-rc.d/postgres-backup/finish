@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bashio
+# Nebenprozess (reines Backup-Loop) — Crash hier soll NICHT den ganzen
+# Container mitreißen, nur loggen. Postgres/MAS selbst laufen unabhängig weiter.
+bashio::log.warning "postgres-backup wurde beendet (Exit-Code: ${1}) — MAS/Postgres laufen unabhängig weiter"

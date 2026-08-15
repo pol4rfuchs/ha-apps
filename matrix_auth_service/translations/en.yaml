@@ -1,0 +1,41 @@
+---
+configuration:
+  mas_domain:
+    name: MAS Domain
+    description: "Public URL of the account UI (e.g. account.your-domain.eu.org)."
+  synapse_server_name:
+    name: Synapse Server Name
+    description: "Must exactly match server_name in the Synapse add-on."
+  synapse_endpoint:
+    name: Synapse Endpoint
+    description: "Internally reachable URL of the Synapse add-on (e.g. http://homeassistant.local:8008)."
+  synapse_secret:
+    name: Synapse Shared Secret
+    description: "Secret used to couple MAS with Synapse. Leave empty for auto-generation — copy the value into the Synapse add-on afterwards."
+  postgres_password:
+    name: PostgreSQL Password
+    description: "Password for the internal MAS database user (own DB, separate from Synapse)."
+  admin_users:
+    name: Admin Users
+    description: "Comma-separated list of Matrix usernames granted admin rights in MAS."
+  password_registration_enabled:
+    name: Allow Password Registration
+    description: "Allows new accounts directly via MAS with a password (without an upstream OIDC provider)."
+  password_login_enabled:
+    name: Allow Password Login
+    description: "Allows login with a password instead of exclusively via upstream OIDC."
+  account_deactivation_allowed:
+    name: Allow Account Deactivation
+    description: "Allows users to deactivate their own account via the account UI."
+  log_level:
+    name: Log Level
+    description: "MAS logging verbosity."
+  backup_enabled:
+    name: Enable Backup
+    description: "Enables periodic PostgreSQL dumps."
+  backup_interval_hours:
+    name: Backup Interval (Hours)
+    description: "Time between automatic backups."
+  backup_retention_days:
+    name: Backup Retention (Days)
+    description: "How long backups are kept before deletion."

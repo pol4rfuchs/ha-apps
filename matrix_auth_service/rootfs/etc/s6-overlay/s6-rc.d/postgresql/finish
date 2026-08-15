@@ -1,0 +1,2 @@
+#!/usr/bin/with-contenv bashio
+bashio::log.warning "PostgreSQL (MAS) wurde beendet (Exit-Code: ${1})"

@@ -1,0 +1,57 @@
+name: Matrix Auth Service (MAS)
+description: >-
+  Matrix Authentication Service — next-gen OIDC-Auth für Matrix Synapse.
+  Voraussetzung für Element X QR-Code-Login, MFA und moderne Clients.
+version: "0.1.0"
+slug: matrix_auth_service
+url: https://github.com/pol4rfuchs/ha-apps
+image: ghcr.io/pol4rfuchs/matrix_auth_service
+init: false
+map:
+  - type: homeassistant_config
+    read_only: false
+ports:
+  8082/tcp: 8082
+  8083/tcp: 8083
+ports_description:
+  8082/tcp: MAS Public API + Account-UI (NPM → hier für HTTPS)
+  8083/tcp: MAS Internal (Health/Metrics, kein NPM)
+options:
+  mas_domain: account.deine-domain.eu.org
+  synapse_server_name: deine-domain.eu.org
+  synapse_endpoint: http://homeassistant.local:8008
+  synapse_secret: ''
+  postgres_password: changeme_bitte_aendern
+  admin_users: ''
+  password_registration_enabled: false
+  password_login_enabled: true
+  account_deactivation_allowed: true
+  log_level: warn
+  backup_enabled: true
+  backup_interval_hours: 24
+  backup_retention_days: 7
+schema:
+  mas_domain: str
+  synapse_server_name: str
+  synapse_endpoint: url
+  synapse_secret: password
+  postgres_password: password
+  admin_users: str
+  password_registration_enabled: bool
+  password_login_enabled: bool
+  account_deactivation_allowed: bool
+  log_level: list(trace|debug|info|warn|error)
+  backup_enabled: bool
+  backup_interval_hours: int(1,168)
+  backup_retention_days: int(1,90)
+arch:
+  - aarch64
+  - amd64
+startup: services
+ingress: false
+webui: http://[HOST]:[PORT:8082]
+panel_icon: mdi:shield-key
+panel_title: Matrix Auth
+backup_exclude:
+  - mas/postgresql/pg_wal
+apparmor: false

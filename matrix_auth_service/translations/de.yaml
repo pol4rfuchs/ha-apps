@@ -1,0 +1,41 @@
+---
+configuration:
+  mas_domain:
+    name: MAS Domain
+    description: "Öffentliche URL der Account-UI (z.B. account.deine-domain.eu.org)."
+  synapse_server_name:
+    name: Synapse Servername
+    description: "Muss exakt dem server_name im Synapse-Add-on entsprechen."
+  synapse_endpoint:
+    name: Synapse Endpoint
+    description: "Intern erreichbare URL des Synapse-Add-ons (z.B. http://homeassistant.local:8008)."
+  synapse_secret:
+    name: Synapse Shared Secret
+    description: "Secret für die Kopplung mit Synapse. Leer lassen zur automatischen Generierung — Wert danach ins Synapse-Add-on übertragen."
+  postgres_password:
+    name: PostgreSQL-Passwort
+    description: "Passwort für den internen MAS-Datenbankbenutzer (eigene DB, getrennt von Synapse)."
+  admin_users:
+    name: Admin-User
+    description: "Komma-getrennte Liste von Matrix-Usernamen mit Admin-Rechten in MAS."
+  password_registration_enabled:
+    name: Passwort-Registrierung erlauben
+    description: "Erlaubt neue Accounts direkt über MAS per Passwort (ohne Upstream-OIDC-Provider)."
+  password_login_enabled:
+    name: Passwort-Login erlauben
+    description: "Erlaubt Login mit Passwort statt ausschließlich über Upstream-OIDC."
+  account_deactivation_allowed:
+    name: Account-Deaktivierung erlauben
+    description: "Erlaubt Nutzern, ihren eigenen Account über die Account-UI zu deaktivieren."
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der MAS-Protokollierung."
+  backup_enabled:
+    name: Backup aktivieren
+    description: "Aktiviert periodische PostgreSQL-Dumps."
+  backup_interval_hours:
+    name: Backup-Intervall (Stunden)
+    description: "Zeitabstand zwischen automatischen Backups."
+  backup_retention_days:
+    name: Backup-Aufbewahrung (Tage)
+    description: "Wie lange Backups aufbewahrt werden, bevor sie gelöscht werden."
