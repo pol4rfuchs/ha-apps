@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Wiki / Dokumentation
+    url: https://github.com/pol4rfuchs/ha-apps/wiki
+    about: Vor dem Melden erst prüfen, ob es in der Wiki schon dokumentiert ist.
