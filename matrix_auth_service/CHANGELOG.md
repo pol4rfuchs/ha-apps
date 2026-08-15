@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2026-08-15)
+
+
+### Features
+
+* **matrix_auth_service:** initial add-on skeleton ([76b9e64](https://github.com/pol4rfuchs/ha-apps/commit/76b9e64e3ba5c0a829a01099f0a273cc5df26484))
+
 ## 0.1.0
 
 - Initiales Konzept-Skeleton: Dockerfile (Multi-Stage, Binary aus
