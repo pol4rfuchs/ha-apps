@@ -1,0 +1,45 @@
+---
+name: "WhatsApp Bridge (mautrix)"
+version: "26.7.0-ha1-pol4r1"
+slug: "matrix_whatsapp_bridge"
+description: "mautrix-whatsapp Application-Service Bridge für Matrix Synapse"
+url: https://github.com/pol4rfuchs/ha-apps
+image: "ghcr.io/pol4rfuchs/matrix_whatsapp_bridge"
+arch:
+  - aarch64
+  - amd64
+init: false
+apparmor: false
+ingress: false
+stage: "experimental"
+map:
+  - type: addon_config
+    read_only: false
+  - type: share
+    read_only: false
+options:
+  homeserver_address: "http://xxxxx-matrix-server:8008"
+  homeserver_domain: ""
+  appservice_address: "http://xxxxx-matrix-whatsapp-bridge:29318"
+  appservice_id: "whatsapp"
+  db_type: "sqlite"
+  postgres_host: ""
+  postgres_port: 5432
+  postgres_database: "whatsapp_bridge"
+  postgres_username: ""
+  postgres_password: ""
+  encryption: true
+  log_level: "info"
+schema:
+  homeserver_address: "url"
+  homeserver_domain: "str"
+  appservice_address: "url"
+  appservice_id: "str"
+  db_type: "list(sqlite|postgres)"
+  postgres_host: "str?"
+  postgres_port: "port?"
+  postgres_database: "str?"
+  postgres_username: "str?"
+  postgres_password: "password?"
+  encryption: "bool"
+  log_level: "list(debug|info|warn|error|fatal)"

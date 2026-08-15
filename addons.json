@@ -11,5 +11,6 @@
   "searxng",
   "teamspeak6",
   "ts6_manager",
-  "unbound"
+  "unbound",
+  "matrix_whatsapp_bridge"
 ]

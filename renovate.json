@@ -113,6 +113,12 @@
         "dockerfile"
       ],
       "enabled": false
+    },
+    {
+      "matchFileNames": [
+        "matrix_whatsapp_bridge/**"
+      ],
+      "semanticCommitScope": "matrix_whatsapp_bridge"
     }
   ],
   "ignorePaths": [
@@ -155,6 +161,18 @@
       ],
       "datasourceTemplate": "pypi",
       "packageNameTemplate": "matrix-synapse"
+    },
+    {
+      "customType": "regex",
+      "description": "Track mautrix/whatsapp upstream releases for ARG WHATSAPP_VERSION in matrix_whatsapp_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "managerFilePatterns": [
+        "/^matrix_whatsapp_bridge/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG WHATSAPP_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/whatsapp"
     }
   ]
 }

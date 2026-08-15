@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+EXIT_CODE="$1"
+SIGNAL="$2"
+if [ "${EXIT_CODE}" = "256" ]; then
+    bashio::log.info "whatsapp_bridge beendet durch Signal ${SIGNAL} (normal bei Container-Stop/-Neustart)"
+elif [ "${EXIT_CODE}" = "0" ]; then
+    bashio::log.info "whatsapp_bridge sauber beendet (exit code: 0)"
+else
+    bashio::log.warning "whatsapp_bridge unerwartet beendet (exit code: ${EXIT_CODE})"
+fi
