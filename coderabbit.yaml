@@ -1,0 +1,178 @@
+# CodeRabbit config for pol4rfuchs/ha-apps
+# https://docs.coderabbit.ai/reference/configuration
+
+language: "de-AT"
+
+tone_instructions: >
+  Be direct and concise. This is a solo-maintainer monorepo maintained by a
+  "vibe coder" (non-professional developer) who relies on AI review to catch
+  issues in generated/adjacent files. Flag real bugs, security issues, and
+  drift from established conventions clearly — don't pad comments with
+  unnecessary praise or hedging. Assume the maintainer wants to know what's
+  actually wrong, not a diplomatic summary.
+
+early_access: false
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+
+  # --- Paths CodeRabbit should not review ---
+  # These are generated, vendored, or documentation-site content, not
+  # add-on source code. Reviewing them produces noise, not value.
+  path_filters:
+    - "!wiki/**"
+    - "!docs/**"
+    - "!**/CHANGELOG.md"
+    - "!.release-please-manifest.json"
+    - "!.github/version-sync.json"
+    - "!**/*.png"
+    - "!**/icon.png"
+    - "!**/logo.png"
+    - "!**/translations/*.yaml"
+
+  # --- Repo-wide conventions every add-on must follow ---
+  path_instructions:
+    - path: "**/config.yaml"
+      instructions: >
+        This is a Home Assistant add-on manifest. Verify:
+        - `arch:` is restricted to `amd64` and `aarch64` only — flag any
+          `armhf`, `armv7`, `i386`, or `armv6` entry as a violation of this
+          repo's stated architecture policy.
+        - No `build.yaml` sibling file should exist for this add-on
+          (intentional convention: base images come from HA base images
+          directly, not custom build matrices).
+        - `image:` must point to `ghcr.io/pol4rfuchs/<slug>` — GHCR is the
+          only registry used in this repo, never Docker Hub.
+        - Version strings for add-ons with upstream software should roughly
+          follow `<upstream-version>-haN-pol4rN` (e.g. `1.26.0-ha1-pol4r1`)
+          where established in that add-on already — check consistency with
+          neighboring entries in `addons.json` / `release-please-config.json`
+          rather than assuming a single global rule.
+        - `ingress: true` add-ons should have a sensible, non-conflicting
+          `ingress_port`.
+        - Flag any add-on with elevated privileges (`full_access`,
+          `privileged`, `hassio_api: true` beyond what's plausible) — this
+          repo follows a per-service isolation / AppArmor-first philosophy,
+          and broad privilege grants should be justified, not default.
+
+    - path: "**/Dockerfile"
+      instructions: >
+        Multi-arch (amd64+aarch64) Home Assistant add-on images using
+        s6-overlay v3 and bashio. Known intentional exceptions (do NOT flag):
+        - Unpinned package versions in apt-get/apk/pip install lines
+          (hadolint DL3008/DL3013/DL3018 are explicitly suppressed repo-wide
+          because HA base images manage package availability; pinning breaks
+          on every base image update).
+        Do flag:
+        - Missing `HEALTHCHECK` where the add-on runs a long-lived service.
+        - Root-as-default-user where a privilege-drop pattern would be
+          expected (this repo prefers running as non-root where the upstream
+          software supports it).
+        - Secrets, tokens, or private domains baked into build args or
+          layers instead of runtime config/options.
+        - Missing SHA256/checksum verification on any manually downloaded
+          release binary or source tarball.
+
+    - path: "**/run.sh"
+      instructions: >
+        s6-overlay v3 service scripts. Should use `bashio::` helpers for
+        logging, config access, and add-on options rather than raw
+        `jq`/`curl` calls against the HA API where a bashio equivalent
+        exists. Flag any use of `set -e` combined with s6 patterns that
+        could mask a service crash instead of surfacing it to s6's
+        supervision tree.
+
+    - path: "**/apparmor.txt"
+      instructions: >
+        AppArmor profile for a HA add-on. This repo treats AppArmor as
+        first-class isolation, not an afterthought. Flag overly broad rules
+        (e.g. blanket `/** rw`) and note when a profile looks like a stub/
+        placeholder rather than a scoped policy matching what the add-on's
+        Dockerfile and run.sh actually need access to.
+
+    - path: ".github/workflows/**"
+      instructions: >
+        This repo has 24+ purpose-numbered workflows (00-meta-validate
+        through 24-unbound-renovate-reminder) plus legacy
+        build-app.yaml/cleanup/ghcr-cleanup. When reviewing changes here:
+        - Check whether a new/changed workflow duplicates responsibility
+          already covered by an existing numbered workflow instead of
+          extending it.
+        - This repo previously had a bug where path-filtering silently
+          skipped all add-ons due to stale `-ha-app` folder-name references
+          (fixed in 20-wiki-drift-check.yml) — flag any hardcoded folder-name
+          pattern that could go stale the same way as add-ons are renamed
+          or added.
+        - Verify path-filter changes are actually reachable given current
+          folder names in the repo root (forgejo, intiface_central,
+          matrix_synapse, matrix_auth_service, matrix_signal_bridge,
+          matrix_telegram_bridge, matrix_whatsapp_bridge, navidrome,
+          nextcloud, nginx_proxy_manager, ntfy, ntfy_manager, restic_backup,
+          searxng, teamspeak6, ts6_manager, unbound).
+
+    - path: "renovate.json"
+      instructions: >
+        Verify any new `matchFileNames` package rule has a matching
+        `semanticCommitScope` consistent with the add-on's folder name, and
+        that `semanticCommitType` overrides (e.g. forcing "fix" instead of
+        "chore" for upstream version bumps) are intentional — a "chore" bump
+        silently skips Release Please and never reaches the built image.
+
+    - path: "release-please-config.json"
+      instructions: >
+        Every add-on folder present in `addons.json` should have a
+        corresponding package entry here with matching `component` name and
+        `include-component-in-tag: true` / `tag-separator: "-"` for
+        consistency with existing entries. Flag drift between
+        `addons.json`, `release-please-config.json`, and
+        `.release-please-manifest.json`.
+
+    - path: "addons.json"
+      instructions: >
+        This is the source-of-truth list of published add-ons. Any add-on
+        added/removed here should have a corresponding folder in the repo
+        root and a corresponding entry in release-please-config.json — flag
+        if they're out of sync.
+
+    - path: "**/*.py"
+      instructions: >
+        Python used for add-on web UIs (e.g. unbound's config_gen/web app)
+        or repo tooling scripts (scripts/*.py). Flag missing input
+        validation on anything that renders into a config file consumed by
+        a system service (e.g. unbound.conf), and flag any secret/token/
+        private-domain string that shouldn't be hardcoded.
+
+  tools:
+    hadolint:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    ruff:
+      enabled: true
+    gitleaks:
+      enabled: true
+    markdownlint:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  learnings:
+    scope: "auto"
+  issues:
+    scope: "auto"
