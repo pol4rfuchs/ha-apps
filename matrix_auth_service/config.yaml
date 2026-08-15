@@ -2,7 +2,7 @@ name: Matrix Auth Service (MAS)
 description: >-
   Matrix Authentication Service — next-gen OIDC-Auth für Matrix Synapse.
   Voraussetzung für Element X QR-Code-Login, MFA und moderne Clients.
-version: "0.0.0"
+version: "1.0.0"
 slug: matrix_auth_service
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/matrix_auth_service
