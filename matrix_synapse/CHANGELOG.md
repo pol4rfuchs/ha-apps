@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.6.1...matrix_synapse-v1.7.0) (2026-08-15)
+
+
+### Features
+
+* **matrix_synapse:** add whatsapp_bridge_enabled toggle ([468a481](https://github.com/pol4rfuchs/ha-apps/commit/468a4811034cf584ad9b3344ab0210a2cbfcd627))
+
 ## [1.6.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.6.0...matrix_synapse-v1.6.1) (2026-08-09)
 
 
