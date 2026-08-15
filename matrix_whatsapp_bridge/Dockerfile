@@ -43,7 +43,7 @@ SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN apk add --no-cache olm ca-certificates yq
 
 COPY --from=builder /build/mautrix-whatsapp /usr/bin/mautrix-whatsapp
-COPY --from=builder /build/example-config.yaml /opt/mautrix-whatsapp/example-config.yaml
+COPY --from=builder /build/pkg/connector/example-config.yaml /opt/mautrix-whatsapp/example-config.yaml
 COPY --from=builder /build/COMMIT_SHA /opt/mautrix-whatsapp/COMMIT_SHA
 
 COPY rootfs /
