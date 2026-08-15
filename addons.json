@@ -14,5 +14,6 @@
   "unbound",
   "matrix_whatsapp_bridge",
   "matrix_signal_bridge",
-  "matrix_telegram_bridge"
+  "matrix_telegram_bridge",
+  "matrix_auth_service"
 ]
