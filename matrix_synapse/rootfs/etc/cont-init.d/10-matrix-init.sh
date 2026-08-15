@@ -30,6 +30,7 @@ REG_RATE_BURST=$(bashio::config 'registration_rate_limit_burst')
 MAS_ENABLED=$(bashio::config 'mas_enabled')
 MAS_ENDPOINT=$(bashio::config 'mas_endpoint' | sed 's|/$||')
 MAS_SECRET=$(bashio::config 'mas_secret')
+WHATSAPP_BRIDGE_ENABLED=$(bashio::config 'whatsapp_bridge_enabled')
 # LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
 LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
@@ -274,6 +275,27 @@ url_preview_ip_range_blacklist:
 ip_range_whitelist:
   - '10.10.20.10'
 EOF
+
+# ── Bridge Appservice Registration (mautrix-* Bridges via /share) ────────
+# WICHTIG: app_service_config_files darf nur EIN Mal als Top-Level-Key
+# auftauchen (gleiches Prinzip wie unten bei experimental_features/MSC4108 —
+# ein zweiter Block würde den ersten sonst stillschweigend überschreiben).
+# Deshalb alle aktiven Bridges hier in EINER Liste sammeln. Bei künftigen
+# Signal-/Telegram-Bridge-Add-ons hier jeweils einen weiteren if-Block
+# ergänzen, NICHT einen zweiten "app_service_config_files:"-Block anhängen.
+BRIDGE_REG_LIST=""
+if [ "${WHATSAPP_BRIDGE_ENABLED}" = "true" ]; then
+    BRIDGE_REG_LIST="${BRIDGE_REG_LIST}  - \"/share/whatsapp_bridge_registration.yaml\"
+"
+fi
+
+if [ -n "${BRIDGE_REG_LIST}" ]; then
+    bashio::log.info "🌉 Appservice-Bridge(s) registriert — bei Änderungen Synapse neu starten"
+    cat >> "${SYNAPSE_CONFIG}" << EOF
+
+app_service_config_files:
+${BRIDGE_REG_LIST}EOF
+fi
 
 # ── Media Retention (optional Auto-Purge) ─────────────────────────────────
 # 0 = deaktiviert (Standardverhalten von Synapse: Medien werden nie gelöscht)

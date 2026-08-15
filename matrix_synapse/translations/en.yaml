@@ -60,6 +60,9 @@ configuration:
   mas_secret:
     name: MAS Shared Secret
     description: "Must exactly match the value generated/set in the matrix-auth-service add-on."
+  whatsapp_bridge_enabled:
+    name: Enable WhatsApp Bridge
+    description: "Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge add-on running with its registration.yaml present in /share)."
   media_retention_local_days:
     name: Media Retention — Local (days)
     description: "Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever)."
