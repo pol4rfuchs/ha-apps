@@ -1,0 +1,85 @@
+name: "📦 Dependency / Security Report"
+description: Manuelles Melden eines Dependency- oder Security-Themas, das nicht schon automatisch von Renovate oder Dependabot erfasst wird.
+title: "[dependency] "
+labels:
+  - dependencies
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Für automatisch erkannte Security-Alerts erstellt `27-dependabot-alerts-to-issues.yml` bereits Issues.
+        Dieses Formular ist für alles, was du selbst entdeckt hast (z. B. beim manuellen Review, Pi-Test, oder Upstream-Changelog).
+
+  - type: dropdown
+    id: addon
+    attributes:
+      label: Betroffene App
+      description: Welches Add-on im Monorepo ist betroffen?
+      options:
+        - forgejo
+        - intiface_central
+        - matrix_auth_service
+        - matrix_signal_bridge
+        - matrix_synapse
+        - matrix_telegram_bridge
+        - matrix_whatsapp_bridge
+        - navidrome
+        - nextcloud
+        - nginx_proxy_manager
+        - ntfy
+        - ntfy_manager
+        - restic_backup
+        - searxng
+        - teamspeak6
+        - ts6_manager
+        - unbound
+        - Repo-weit / Tooling (nicht app-spezifisch)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Art des Themas
+      options:
+        - Sicherheitslücke / CVE
+        - Veraltete Version
+        - Breaking Change bei geplantem Update
+        - Renovate/Dependabot erfasst das nicht (Lücke in der Config)
+        - Sonstiges
+    validations:
+      required: true
+
+  - type: input
+    id: package
+    attributes:
+      label: Betroffenes Paket / Base Image
+      placeholder: "z. B. nlnetlabs/unbound, node, matrix-synapse"
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Aktuelle Version -> Zielversion
+      placeholder: "z. B. 1.25.1 -> 1.26.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Was ist das Problem, wo hast du es gesehen (Advisory-Link, Changelog, Pi-Test), was müsste passieren?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Vorab-Check
+      options:
+        - label: Ich habe geprüft, dass Renovate dafür aktuell keine PR öffnet (renovate.json / Dependency Dashboard)
+          required: false
+        - label: Ich habe geprüft, dass es noch kein offenes Issue dazu gibt
+          required: true
