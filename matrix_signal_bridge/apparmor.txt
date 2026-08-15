@@ -1,0 +1,49 @@
+#include <tunables/global>
+
+profile matrix_signal_bridge flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # ── s6-overlay Baseline (Pflicht — sonst Crash-Loop beim Restart) ────────
+  /init                          ix,
+  /package/**                    ix,
+  /command/**                    ix,
+  /run/s6/**                     ix,
+  /etc/s6-overlay/**             ix,
+  /etc/services.d/**             rwix,
+  /etc/cont-init.d/**            rwix,
+  /etc/cont-finish.d/**          rwix,
+
+  # Eigene Service-Scripts brauchen ix, nicht nur r
+  /etc/s6-overlay/s6-rc.d/signal_bridge/run    ix,
+  /etc/s6-overlay/s6-rc.d/signal_bridge/finish ix,
+
+  # Binary + Tools
+  /usr/bin/mautrix-signal mr,
+  /usr/bin/yq mr,
+
+  # Beispiel-Config (Read-only-Quelle für Erststart)
+  /opt/mautrix-signal/** r,
+
+  # Daten (SQLite-DB, State-Store, config.yaml, registration.yaml)
+  /data/** rwk,
+
+  # Shared Volume für registration.yaml → Synapse
+  /share/signal_bridge_registration.yaml rw,
+
+  # Optionen
+  /data/options.json r,
+
+  # Netzwerk
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+
+  # Tmp
+  /tmp/** rwk,
+
+  deny /proc/sys/kernel/** w,
+  deny @{PROC}/sysrq-trigger rwklx,
+  deny @{PROC}/mem rwklx,
+  deny @{PROC}/kmem rwklx,
+  deny @{PROC}/kcore rwklx,
+}
