@@ -5,7 +5,7 @@ ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 
 # ---- Builder Stage (Go source build, SHA/Tag-pinned) ----
-FROM golang:1.23-alpine3.24 AS builder
+FROM golang:1-alpine3.24 AS builder
 
 ARG WHATSAPP_VERSION
 ARG TARGETARCH
@@ -49,7 +49,7 @@ COPY --from=builder /build/COMMIT_SHA /opt/mautrix-whatsapp/COMMIT_SHA
 COPY rootfs /
 
 RUN chmod a+x /usr/bin/mautrix-whatsapp \
-    && chmod a+x /etc/cont-init.d/10-whatsapp-init.sh \
+    && chmod a+x /etc/cont-init.d/10-whatsapp-bridge-init.sh \
     && chmod a+x /etc/s6-overlay/s6-rc.d/whatsapp_bridge/run \
     && chmod a+x /etc/s6-overlay/s6-rc.d/whatsapp_bridge/finish
 
