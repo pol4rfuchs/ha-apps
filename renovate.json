@@ -131,6 +131,12 @@
         "matrix_telegram_bridge/**"
       ],
       "semanticCommitScope": "matrix_telegram_bridge"
+    },
+    {
+      "matchFileNames": [
+        "matrix_auth_service/**"
+      ],
+      "semanticCommitScope": "matrix_auth_service"
     }
   ],
   "ignorePaths": [
@@ -209,6 +215,19 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "mautrix/telegram"
+    },
+    {
+      "customType": "regex",
+      "description": "Track element-hq/matrix-authentication-service GHCR releases for ARG MAS_VERSION in matrix_auth_service/Dockerfile. GitHub-Tags haben ein 'v'-Praefix (z.B. v1.22.0), Docker-Tags nicht (1.22.0) - extractVersionTemplate gleicht das an, analog zum unbound-Manager.",
+      "managerFilePatterns": [
+        "/^matrix_auth_service/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG MAS_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "element-hq/matrix-authentication-service",
+      "extractVersionTemplate": "^v(?<version>.*)$"
     }
   ]
 }
