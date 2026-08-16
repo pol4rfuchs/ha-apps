@@ -26,6 +26,7 @@ jobs:
   yaml-json:
     name: YAML and JSON syntax
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,8 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y python3-yaml
+          pip install --break-system-packages --quiet pyyaml
 
       - name: Validate YAML and JSON
         shell: bash
