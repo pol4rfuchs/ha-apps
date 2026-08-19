@@ -2,7 +2,7 @@
 # in the whole file, or buildx silently fails to resolve them later
 # (moby/moby#38379).
 ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:7.7.1
-ARG MAS_VERSION=1.22.0
+ARG MAS_VERSION=1.23.0
 
 # ---------------------------------------------------------------------------
 # Stage 1: pull the official MAS binary + static assets.
