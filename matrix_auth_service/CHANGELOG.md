@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.0...matrix_auth_service-v1.0.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* **matrix_auth_service:** trigger release for v1.23.0 ([48fc450](https://github.com/pol4rfuchs/ha-apps/commit/48fc4508eb0fcd4f60104afac81363aec74e4ffd))
+
 ## 1.0.0 (2026-08-15)
 
 
