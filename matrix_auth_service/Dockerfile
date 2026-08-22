@@ -1,3 +1,4 @@
+# release trigger: v1.23.0
 # ARGs used in a FROM instruction must be declared before the *first* FROM
 # in the whole file, or buildx silently fails to resolve them later
 # (moby/moby#38379).
