@@ -137,6 +137,16 @@
         "matrix_auth_service/**"
       ],
       "semanticCommitScope": "matrix_auth_service"
+    },
+    {
+      "matchFileNames": [
+        "matrix_auth_service/Dockerfile"
+      ],
+      "matchDepNames": [
+        "element-hq/matrix-authentication-service"
+      ],
+      "semanticCommitType": "fix",
+      "description": "MAS-Versions-Bumps default zu 'chore', das triggert bei Release Please keinen Release/Image-Rebuild (siehe PR #311 — gemerged, aber ohne Release/Package geblieben). Force 'fix' analog zur matrix-synapse-Regel oben."
     }
   ],
   "ignorePaths": [
