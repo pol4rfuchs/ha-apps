@@ -1,6 +1,6 @@
 ---
 name: "Signal Bridge (mautrix)"
-version: "26.8.0-ha1-pol4r1"
+version: "0.2608.0-ha1-pol4r1"
 slug: "matrix_signal_bridge"
 description: "mautrix-signal Application-Service Bridge für Matrix Synapse"
 url: https://github.com/pol4rfuchs/ha-apps

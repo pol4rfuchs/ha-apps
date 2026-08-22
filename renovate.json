@@ -192,7 +192,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/whatsapp upstream releases for ARG WHATSAPP_VERSION in matrix_whatsapp_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "description": "Track mautrix/whatsapp upstream releases for ARG in matrix_whatsapp_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_whatsapp_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
       "managerFilePatterns": [
         "/^matrix_whatsapp_bridge/Dockerfile$/"
       ],
@@ -204,7 +204,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/signal upstream releases for ARG SIGNAL_VERSION in matrix_signal_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "description": "Track mautrix/signal upstream releases for ARG in matrix_signal_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_signal_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
       "managerFilePatterns": [
         "/^matrix_signal_bridge/Dockerfile$/"
       ],
@@ -216,7 +216,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/telegram upstream releases for ARG TELEGRAM_VERSION in matrix_telegram_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "description": "Track mautrix/telegram upstream releases for ARG in matrix_telegram_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_telegram_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
       "managerFilePatterns": [
         "/^matrix_telegram_bridge/Dockerfile$/"
       ],
@@ -237,6 +237,45 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "element-hq/matrix-authentication-service",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Companion zu ARG WHATSAPP_VERSION: haelt die Upstream-Version in matrix_whatsapp_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "managerFilePatterns": [
+        "/^matrix_whatsapp_bridge/config.yaml$/"
+      ],
+      "matchStrings": [
+        "version: \"(?<currentValue>[^\"]+)-ha\\d+-pol4r\\d+\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/whatsapp",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Companion zu ARG SIGNAL_VERSION: haelt die Upstream-Version in matrix_signal_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "managerFilePatterns": [
+        "/^matrix_signal_bridge/config.yaml$/"
+      ],
+      "matchStrings": [
+        "version: \"(?<currentValue>[^\"]+)-ha\\d+-pol4r\\d+\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/signal",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Companion zu ARG TELEGRAM_VERSION: haelt die Upstream-Version in matrix_telegram_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "managerFilePatterns": [
+        "/^matrix_telegram_bridge/config.yaml$/"
+      ],
+      "matchStrings": [
+        "version: \"(?<currentValue>[^\"]+)-ha\\d+-pol4r\\d+\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "mautrix/telegram",
       "extractVersionTemplate": "^v(?<version>.*)$"
     }
   ]
