@@ -1,6 +1,6 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add build.yaml here.
-ARG WHATSAPP_VERSION=v0.2607.0
+ARG WHATSAPP_VERSION=v0.2608.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 
