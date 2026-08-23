@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Forgejo Version](https://img.shields.io/badge/Forgejo-16.0.2-609926?style=for-the-badge&logo=forgejo&logoColor=white)](https://codeberg.org/forgejo/forgejo)
+[![Forgejo Version](https://img.shields.io/badge/Forgejo-16.0.3-609926?style=for-the-badge&logo=forgejo&logoColor=white)](https://codeberg.org/forgejo/forgejo)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Forgejo v16** – Die freie, selbst-gehostete Git-Plattform direkt in Home Assistant.
@@ -23,7 +23,7 @@
 | Property | Value |
 |---|---|
 | **Upstream image** | `codeberg.org/forgejo/forgejo` (rootless) |
-| **Forgejo version** | `16.0.2` |
+| **Forgejo version** | `16.0.3` |
 | **Add-on version** | `16.0.12` |
 | **SSH Git access** | optional (`ssh_enabled`) |
 | **Arch** | `amd64`, `aarch64` |
