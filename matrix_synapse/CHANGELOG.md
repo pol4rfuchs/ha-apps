@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.2...matrix_synapse-v1.7.3) (2026-09-04)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** add livekit_turn_enabled toggle, default direct SFU UDP path ([8a74461](https://github.com/pol4rfuchs/ha-apps/commit/8a744615cc7b65164fd5150c06d475c1e96f130e))
+
 ## [1.7.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.1...matrix_synapse-v1.7.2) (2026-08-23)
 
 
