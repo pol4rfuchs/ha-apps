@@ -33,6 +33,9 @@ configuration:
   enable_voice_calls:
     name: Enable Voice/Video Calls
     description: "Enable Element Call (MSC3401) with LiveKit SFU. Downloads LiveKit and lk-jwt-service on first start."
+  livekit_turn_enabled:
+    name: Enable internal LiveKit TURN server
+    description: "Off by default: calls use direct SFU UDP ports (30000-30020), which is more reliable on normal home/mobile networks. Only enable this if you're on a very restrictive network that only allows HTTPS/port 443 (the internal TURN server then uses that fallback path)."
   livekit_secret:
     name: LiveKit Secret
     description: "Shared secret for LiveKit. Leave empty to auto-generate on first start."
