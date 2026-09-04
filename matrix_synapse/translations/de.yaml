@@ -33,6 +33,9 @@ configuration:
   enable_voice_calls:
     name: Sprach-/Videoanrufe aktivieren
     description: "Aktiviert Element Call (MSC3401) mit LiveKit SFU. Lädt beim ersten Start LiveKit und lk-jwt-service herunter."
+  livekit_turn_enabled:
+    name: Internen LiveKit-TURN-Server aktivieren
+    description: "Standardmäßig aus: Calls laufen über direkte SFU-UDP-Ports (30000-30020), was in normalen Heim-/Mobilfunknetzen zuverlässiger ist. Nur aktivieren, wenn du dich in einem sehr restriktiven Netz befindest, das ausschließlich HTTPS/Port 443 erlaubt (der interne TURN-Server nutzt dann diesen Fallback-Pfad)."
   livekit_secret:
     name: LiveKit Secret
     description: "Shared Secret für LiveKit. Leer lassen zur automatischen Generierung beim ersten Start."
