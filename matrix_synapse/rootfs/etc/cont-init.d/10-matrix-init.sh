@@ -15,6 +15,7 @@ PG_PASSWORD=$(bashio::config 'postgres_password')
 LOG_LEVEL=$(bashio::config 'log_level')
 NTFY_URL=$(bashio::config 'ntfy_url' | sed 's|/$||')
 ENABLE_VOICE=$(bashio::config 'enable_voice_calls')
+LIVEKIT_TURN_ENABLED=$(bashio::config 'livekit_turn_enabled')
 LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
 ELEMENT_CALL_URL=$(bashio::config 'element_call_url' | sed 's|/$||')
 LIVEKIT_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
@@ -351,6 +352,13 @@ rc_joins:
   remote:
     per_second: 0.1
     burst_count: 10
+EOF
+
+    # TURN für Legacy 1:1 Calls (behebt "falsch konfigurierter Server" Dialog)
+    # Nur relevant, wenn der interne LiveKit-TURN-Server auch läuft — sonst
+    # würde hier ein toter Endpunkt (Port 3478) deklariert.
+    if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
+        cat >> "${SYNAPSE_CONFIG}" << EOF
 
 # TURN für Legacy 1:1 Calls (behebt "falsch konfigurierter Server" Dialog)
 turn_uris:
@@ -358,6 +366,10 @@ turn_uris:
 turn_shared_secret: "${LIVEKIT_SECRET}"
 turn_user_lifetime: 86400000
 turn_allow_guests: true
+EOF
+    fi
+
+    cat >> "${SYNAPSE_CONFIG}" << EOF
 
 # ── MSC4143 rtc_foci — MatrixRTC-Discovery für moderne Clients ───────────
 # Ohne diesen Eintrag im .well-known/matrix/client wissen aktuelle Clients
@@ -448,7 +460,7 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     # TURN Domain aus livekit_url ableiten (wss://livekit.x.y → livekit.x.y)
     LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
-    bashio::log.info "⚙️  Schreibe LiveKit Konfiguration (TURN: ${LK_DOMAIN})..."
+    bashio::log.info "⚙️  Schreibe LiveKit Konfiguration..."
     cat > "${LK_CONFIG}" << EOF
 # LiveKit Server Config — generiert von Matrix Addon v1.3.8
 port: 7880
@@ -456,8 +468,20 @@ bind_addresses:
   - "0.0.0.0"
 
 rtc:
-  # Kein direktes UDP-Range nötig — alle Clients gehen über TURN
-  # TCP-Fallback innerhalb des TURN-Flows
+  # Direkter UDP-Port-Range für die SFU-Kandidaten (Host + STUN-srflx).
+  # Bis v1.3.8 lief hier alles zwingend über den internen TURN-Server
+  # (turn.enabled: true), was dazu führte, dass ICE bei manchen Clients
+  # ausschließlich den TURN-Relay-Pfad nutzen musste. Dieser Relay-Pfad
+  # läuft aber über dieselbe öffentliche IP wie der Server selbst zurück
+  # (Server → eigene WAN-IP → TURN-Relay-Port), was ohne NAT-Hairpin am
+  # Router konsequent scheitert (bestätigt: LiveKit GitHub Issue #4487,
+  # pion/turn Issue #82 — TURN-Relay-zu-Relay-Hairpin ist eine bekannte,
+  # nicht unterstützte Einschränkung). Der direkte SFU-Pfad braucht diesen
+  # Hairpin nicht, weshalb er der zuverlässigere Default ist. Der interne
+  # TURN-Server bleibt optional zuschaltbar (livekit_turn_enabled) für
+  # sehr restriktive Netze, die ausschließlich Port 443/HTTPS erlauben.
+  port_range_start: 30000
+  port_range_end: 30020
   tcp_port: 7881
   use_external_ip: true
 
@@ -468,6 +492,10 @@ keys:
 logging:
   json: false
   level: info
+EOF
+
+    if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
+        cat >> "${LK_CONFIG}" << EOF
 
 # TURN built-in — nur UDP 3478 (kein TLS ohne Zertifikat)
 # Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben
@@ -477,6 +505,8 @@ logging:
 # unpraktikabel und laut LiveKit-eigener Doku auch für den Container-Start
 # ein Problem (separate iptables-Regel pro Port). 21 Ports reichen für
 # mehrere gleichzeitige Calls.
+# Achtung: teilt sich den 30000-30020-Range mit den direkten SFU-Kandidaten
+# oben — das ist von LiveKit so vorgesehen und kein Konflikt.
 turn:
   enabled: true
   domain: "${LK_DOMAIN}"
@@ -484,9 +514,16 @@ turn:
   relay_range_start: 30000
   relay_range_end: 30020
 EOF
+        bashio::log.info "   TURN UDP 3478 → ${LK_DOMAIN} (livekit_turn_enabled=true)"
+    else
+        bashio::log.info "   TURN deaktiviert — direkter SFU-Pfad über UDP 30000-30020 (livekit_turn_enabled=false)"
+    fi
     bashio::log.info "✅ LiveKit Config: ${LK_CONFIG}"
-    bashio::log.info "   TURN UDP 3478 → ${LK_DOMAIN}"
-    bashio::log.info "   ⚠️  Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
+    if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
+        bashio::log.info "   ⚠️  Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
+    else
+        bashio::log.info "   ⚠️  Router: UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
+    fi
 fi
 
 # ── Element Web config.json ───────────────────────────────────────────────
@@ -651,6 +688,10 @@ bashio::log.info "  Admin UI:    http://[HA-IP]:8090 (Basic-Auth: ${ADMIN_UI_USE
 if [ "${ENABLE_VOICE}" = "true" ]; then
 bashio::log.info "  Element Call: http://[HA-IP]:7081"
 bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"
-bashio::log.info "  ⚠️  Router: UDP 3478 + UDP 30000-30020 + TCP 5349 → Pi freigeben!"
+if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
+bashio::log.info "  ⚠️  Router: UDP 3478 + UDP 30000-30020 + TCP 5349 → Pi freigeben! (TURN aktiv)"
+else
+bashio::log.info "  ⚠️  Router: UDP 30000-30020 → Pi freigeben! (direkter SFU-Pfad, TURN deaktiviert)"
+fi
 fi
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

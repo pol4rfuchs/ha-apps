@@ -66,29 +66,29 @@ ports_description:
   8089/tcp: lk-jwt-service Token Bridge (NPM → hier)
   8448/tcp: Matrix Federation Port
   8090/tcp: Synapse Admin UI
-  3478/udp: TURN UDP (direkt, kein NPM)
-  5349/tcp: TURN TLS Fallback (direkt, kein NPM)
-  30000/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30001/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30002/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30003/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30004/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30005/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30006/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30007/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30008/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30009/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30010/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30011/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30012/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30013/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30014/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30015/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30016/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30017/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30018/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30019/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
-  30020/udp: LiveKit TURN Relay-Range (Media, direkt, kein NPM)
+  3478/udp: TURN UDP — nur aktiv wenn livekit_turn_enabled=true (direkt, kein NPM)
+  5349/tcp: TURN TLS Fallback — nur aktiv wenn livekit_turn_enabled=true (direkt, kein NPM)
+  30000/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30001/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30002/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30003/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30004/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30005/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30006/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30007/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30008/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30009/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30010/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30011/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30012/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30013/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30014/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30015/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30016/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30017/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30018/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30019/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
+  30020/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
 options:
   server_name: deine-domain.duckdns.org
   element_web_url: https://deine-domain.duckdns.org:7080
@@ -107,6 +107,7 @@ options:
   log_level: WARNING
   ntfy_url: ''
   enable_voice_calls: false
+  livekit_turn_enabled: false
   livekit_secret: ''
   element_call_url: https://call.deine-domain.duckdns.org
   livekit_url: wss://livekit.deine-domain.duckdns.org
@@ -140,6 +141,7 @@ schema:
   log_level: list(DEBUG|INFO|WARNING|ERROR)
   ntfy_url: str
   enable_voice_calls: bool
+  livekit_turn_enabled: bool
   livekit_secret: password
   element_call_url: str
   livekit_url: str
