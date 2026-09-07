@@ -3,7 +3,7 @@
   "intiface_central": "1.0.4",
   "matrix_synapse": "1.7.4",
   "nginx_proxy_manager": "2.1.5",
-  "navidrome": "2.1.5",
+  "navidrome": "2.1.6",
   "restic_backup": "0.2.1",
   "ntfy": "1.2.8",
   "ntfy_manager": "0.2.13",
