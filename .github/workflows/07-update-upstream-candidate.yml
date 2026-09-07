@@ -101,8 +101,11 @@ jobs:
             mode: noop
             tag_prefix: unbound
             reason: >-
-              Hardened fork of fenio/ha-addons unbound — upstream tracking is
-              manual; version bumps require review of upstream security patches.
+              Hardened fork of fenio/ha-addons unbound, decoupled from Release
+              Please (manual <upstream>-haNN-pol4rN versioning). Upstream
+              bumps are handled by 25-unbound-auto-bump.yml (checksum-verified
+              PR after Renovate merges) + 26-unbound-auto-bump-trigger-build.yml
+              (triggers the build on merge), not by this workflow.
 
     env:
       BASE_BRANCH: main

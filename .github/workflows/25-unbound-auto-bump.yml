@@ -1,0 +1,266 @@
+name: "25 - Unbound Auto-Bump PR"
+
+# Renovate opens a PR when NLnetLabs/unbound has a new upstream release, but
+# merging it only bumps the dependency pointer - it does not touch
+# config.yaml/README.md/CHANGELOG.md/Dockerfile (unbound is deliberately
+# decoupled from Release Please, see 07-update-upstream-candidate.yml's
+# `noop` entry for unbound).
+#
+# This workflow prepares that bump as a normal, reviewable PR instead of
+# just an issue (see 24-unbound-renovate-reminder.yml, which stays in place
+# as a fallback in case this one ever fails to open a PR):
+#   1. Download the new tarball + NLnetLabs' published sha256 and compare.
+#      A mismatch stops here (job fails, no PR opened) and raises a
+#      security-flagged issue - never trust a mismatched tarball.
+#   2. Patch config.yaml/README.md/Dockerfile/CHANGELOG.md.
+#   3. Open a PR for human review (configure-flag/build changes are NOT
+#      auto-detected - that stays a manual review step, same as before).
+#
+# Uses secrets.APP_TOKEN (GitHub App token), not GITHUB_TOKEN: PRs/pushes
+# made with the default GITHUB_TOKEN don't trigger other pull_request
+# workflows (loop protection), which would silently skip lint/CI on this
+# PR. Same pattern as 07-update-upstream-candidate.yml.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  issues: write
+
+jobs:
+  bump:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'renovate/nlnetlabs-unbound')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # required to push the bump branch
+      pull-requests: write # required to open/edit the PR
+      issues: write        # required for the checksum-mismatch issue
+    env:
+      ADDON: unbound
+      BASE_BRANCH: main
+    steps:
+      - name: Extract new upstream version from PR title
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          # Expected title format: "chore(unbound): update dependency nlnetlabs/unbound to v1.26.0"
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'v?\K[0-9]+\.[0-9]+\.[0-9]+$' || true)
+          if [[ -z "${NEW_VERSION}" ]]; then
+            echo "::error::could not parse a version out of PR title: ${PR_TITLE}"
+            exit 1
+          fi
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "new_full=${NEW_VERSION}-ha1-pol4r1" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          token: ${{ secrets.APP_TOKEN }}
+
+      # ── Verify the tarball against NLnetLabs' own published checksum ──────
+      # This is a belt-and-suspenders check in addition to the Dockerfile's
+      # own build-time verification (same source, same method) - it just
+      # moves the same check earlier, before we ever open a PR based on it.
+      - name: Download and verify upstream tarball checksum
+        id: checksum
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          set -euo pipefail
+          cd "$(mktemp -d)"
+
+          curl --fail --location --show-error --silent \
+            --output "unbound-${NEW_VERSION}.tar.gz" \
+            "https://nlnetlabs.nl/downloads/unbound/unbound-${NEW_VERSION}.tar.gz"
+          curl --fail --location --show-error --silent \
+            --output "unbound-${NEW_VERSION}.tar.gz.sha256" \
+            "https://nlnetlabs.nl/downloads/unbound/unbound-${NEW_VERSION}.tar.gz.sha256"
+
+          expected="$(awk '{print $1}' "unbound-${NEW_VERSION}.tar.gz.sha256")"
+          actual="$(sha256sum "unbound-${NEW_VERSION}.tar.gz" | awk '{print $1}')"
+
+          echo "expected=${expected}" >> "$GITHUB_OUTPUT"
+          echo "actual=${actual}" >> "$GITHUB_OUTPUT"
+
+          if [[ "${expected}" != "${actual}" ]]; then
+            echo "::error::checksum mismatch for unbound-${NEW_VERSION}.tar.gz (expected ${expected}, got ${actual})"
+            exit 1
+          fi
+          echo "Checksum verified OK."
+
+      - name: Open security issue on checksum mismatch
+        if: failure() && steps.checksum.outcome == 'failure'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          EXPECTED: ${{ steps.checksum.outputs.expected }}
+          ACTUAL: ${{ steps.checksum.outputs.actual }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        with:
+          script: |
+            const newVersion = process.env.NEW_VERSION;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `SECURITY: unbound tarball checksum mismatch for ${newVersion}`,
+              labels: ["unbound", "security"],
+              body: [
+                `The tarball downloaded for unbound ${newVersion} did **not** match the sha256 published by NLnetLabs.`,
+                ``,
+                `- Expected: \`${process.env.EXPECTED}\``,
+                `- Got: \`${process.env.ACTUAL}\``,
+                `- Triggered by: ${process.env.PR_URL}`,
+                ``,
+                `No auto-bump PR was opened. Do **not** build this version until this is manually resolved - verify the download directly against https://nlnetlabs.nl/projects/unbound/download/ before proceeding.`,
+                ``,
+                `_Auto-created by 25-unbound-auto-bump.yml_`
+              ].join("\n")
+            });
+
+      # ── Patch the four files, hard-failing on any structural surprise ─────
+      - name: Patch config.yaml / README.md / Dockerfile / CHANGELOG.md
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          NEW_FULL: ${{ steps.version.outputs.new_full }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import re
+          import sys
+          from datetime import date
+          from pathlib import Path
+
+          addon = Path("unbound")
+          new_version = os.environ["NEW_VERSION"]
+          new_full = os.environ["NEW_FULL"]
+          pr_number = os.environ["PR_NUMBER"]
+
+          def patch(path, pattern, repl, expected_count=1, flags=re.M):
+              text = path.read_text(encoding="utf-8")
+              updated, n = re.subn(pattern, repl, text, flags=flags)
+              if n != expected_count:
+                  print(f"ERROR: {path}: expected {expected_count} match(es) for "
+                        f"{pattern!r}, got {n}. Refusing to guess - file structure "
+                        f"may have changed, needs a human look.", file=sys.stderr)
+                  raise SystemExit(1)
+              path.write_text(updated, encoding="utf-8")
+
+          # config.yaml
+          patch(addon / "config.yaml",
+                r'^(version:\s*")[^"]+(")',
+                rf'\g<1>{new_full}\g<2>')
+
+          # README.md
+          patch(addon / "README.md",
+                r'(Unbound-)[0-9]+\.[0-9]+\.[0-9]+(-2C3E50)',
+                rf'\g<1>{new_version}\g<2>')
+          patch(addon / "README.md",
+                r'(\*\*Unbound version\*\*\s*\|\s*`)[0-9]+\.[0-9]+\.[0-9]+(`)',
+                rf'\g<1>{new_version}\g<2>')
+          patch(addon / "README.md",
+                r'(\*\*Add-on version\*\*\s*\|\s*`)[^`]+(`)',
+                rf'\g<1>{new_full}\g<2>')
+
+          # Dockerfile
+          patch(addon / "Dockerfile",
+                r'(^ARG\s+UNBOUND_VERSION=)[0-9]+\.[0-9]+\.[0-9]+$',
+                rf'\g<1>{new_version}')
+
+          # CHANGELOG.md - insert new entry right after the "# Changelog" header
+          today = date.today().isoformat()
+          entry = (
+              f"## [{new_full}] - {today}\n\n"
+              f"- Bump Unbound to {new_version} (automated by Renovate PR #{pr_number}, "
+              f"checksum-verified against NLnetLabs' published sha256).\n"
+              f"- TODO(fox): review upstream changelog for CVE/behavior notes and "
+              f"replace this line with the real summary before merging.\n\n"
+          )
+          patch(addon / "CHANGELOG.md",
+                r'^# Changelog\n',
+                lambda m: "# Changelog\n\n" + entry)
+          PY
+
+      - name: Static validate changed add-on
+        run: |
+          set -euo pipefail
+          test -f "${ADDON}/config.yaml"
+          test -f "${ADDON}/Dockerfile"
+          python3 - <<'PY'
+          import os
+          import yaml
+          from pathlib import Path
+
+          addon = os.environ["ADDON"]
+          data = yaml.safe_load(Path(addon, "config.yaml").read_text(encoding="utf-8")) or {}
+          for key in ("name", "version", "slug", "image", "arch"):
+              if key not in data:
+                  raise SystemExit(f"missing config key: {key}")
+          print(f"OK: {addon} {data['version']}")
+          PY
+
+      - name: Close superseded auto-bump PRs
+        env:
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
+          TARGET_BRANCH: auto/unbound-bump-${{ steps.version.outputs.new_version }}
+        run: |
+          set -euo pipefail
+          gh pr list --base main --state open --json number,headRefName \
+            --jq ".[] | select(.headRefName | startswith(\"auto/unbound-bump-\")) | select(.headRefName != \"${TARGET_BRANCH}\") | .number" \
+            | xargs -r -I{} gh pr close {} --comment "Superseded by a newer unbound auto-bump PR."
+
+      - name: Create or update pull request
+        env:
+          GH_TOKEN: ${{ secrets.APP_TOKEN }}
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          NEW_FULL: ${{ steps.version.outputs.new_full }}
+          TARGET_BRANCH: auto/unbound-bump-${{ steps.version.outputs.new_version }}
+          RENOVATE_PR_NUMBER: ${{ github.event.pull_request.number }}
+          RENOVATE_PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "${TARGET_BRANCH}"
+          git add unbound/config.yaml unbound/README.md unbound/Dockerfile unbound/CHANGELOG.md
+          git commit -m "chore(unbound): bump to ${NEW_FULL} (automated)"
+          git push --force-with-lease origin "${TARGET_BRANCH}"
+
+          title="chore(unbound): bump to ${NEW_FULL} (automated)"
+          body="$(cat <<BODY
+          Automated version bump, opened after Renovate PR #${RENOVATE_PR_NUMBER} (${RENOVATE_PR_URL}) was merged.
+
+          - Tarball checksum verified against NLnetLabs' published sha256 before this PR was opened.
+          - config.yaml, README.md, Dockerfile, CHANGELOG.md updated to ${NEW_FULL}.
+
+          **Still needs a human look before merging:**
+          - [ ] Skim the upstream changelog between the old and new version for any \`./configure\` flag or build-dependency changes.
+          - [ ] Replace the placeholder CHANGELOG.md line with a real summary.
+          - [ ] Confirm the ha-tag suffix (\`-ha1-\`) is right - bump to ha2/ha3/... instead if this isn't the first add-on release at this upstream version.
+
+          Merging this PR triggers 03-build-publish-ghcr.yml for unbound automatically (see 26-unbound-auto-bump-trigger-build.yml).
+          BODY
+          )"
+
+          if gh pr view "${TARGET_BRANCH}" --json number >/dev/null 2>&1; then
+            gh pr edit "${TARGET_BRANCH}" --title "${title}" --body "${body}"
+          else
+            gh pr create \
+              --base "${BASE_BRANCH}" \
+              --head "${TARGET_BRANCH}" \
+              --title "${title}" \
+              --body "${body}" \
+              --label "unbound" \
+              --label "automated-version-bump"
+          fi

@@ -1,0 +1,64 @@
+name: "26 - Unbound Auto-Bump Trigger Build"
+
+# When the PR opened by 25-unbound-auto-bump.yml gets merged, this calls
+# 03-build-publish-ghcr.yml's workflow_dispatch for unbound.
+#
+# Deliberately NOT a tag push: pushing a tag from a workflow using the
+# default GITHUB_TOKEN would not trigger 03-build-publish-ghcr.yml's
+# `on: push: tags` (GitHub's loop-protection rule - events caused by
+# GITHUB_TOKEN don't cascade into new workflow runs). workflow_dispatch is
+# explicitly exempt from that rule, so calling it via the API works fine
+# with the plain GITHUB_TOKEN - no APP_TOKEN needed here.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  actions: write   # required to trigger workflow_dispatch on another workflow
+  issues: write
+
+jobs:
+  trigger-build:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'auto/unbound-bump-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger 03 Build Publish GHCR for unbound
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh workflow run 03-build-publish-ghcr.yml \
+            --repo "${REPO}" \
+            --ref main \
+            -f app=unbound
+
+      - name: Open Pi-test reminder issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "unbound: verify on Pi after auto-bump build",
+              labels: ["unbound"],
+              body: [
+                `Auto-bump PR #${process.env.PR_NUMBER} (${process.env.PR_URL}) was merged and the build/release was triggered automatically.`,
+                ``,
+                `Once the "03 Build Publish GHCR" run finishes and \`:latest\` is promoted:`,
+                ``,
+                `- [ ] Update the add-on on the Pi`,
+                `- [ ] DNS resolving (\`dig @<pi-ip> -p 5053 example.com\`)`,
+                `- [ ] ECS toggle`,
+                `- [ ] No crash-loop`,
+                ``,
+                `_Auto-created by 26-unbound-auto-bump-trigger-build.yml_`
+              ].join("\n")
+            });
