@@ -54,9 +54,9 @@ jobs:
             arg_name: NTFY_VERSION
             tag_prefix: ntfy
           - addon: navidrome
-            mode: dockerhub_from_tag
-            dockerhub_repo: deluan/navidrome
-            image_prefix: deluan/navidrome
+            mode: github_latest_release_arg
+            upstream_repo: navidrome/navidrome
+            arg_name: NAVIDROME_VERSION
             tag_prefix: navidrome
           - addon: nginx_proxy_manager
             mode: dockerhub_from_tag
