@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.6](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.5...navidrome-v2.1.6) (2026-09-07)
+
+
+### Bug Fixes
+
+* **navidrome:** parameterize upstream image tag via ARG NAVIDROME_VERSION ([36ccefc](https://github.com/pol4rfuchs/ha-apps/commit/36ccefc71353898d7a1189079d1e1770158226eb))
+
 ## [2.1.5](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.4...navidrome-v2.1.5) (2026-07-23)
 
 
