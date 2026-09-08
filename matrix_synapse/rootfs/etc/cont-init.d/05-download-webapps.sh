@@ -59,7 +59,7 @@ if [ "${ENABLE_ADMIN}" = "true" ]; then
     ADMIN_LATEST=$(curl -sf \
         "https://api.github.com/repos/etkecc/ketesa/releases/latest" \
         | jq -r .tag_name 2>/dev/null)
-    [ -z "${ADMIN_LATEST}" ] || [ "${ADMIN_LATEST}" = "null" ] && ADMIN_LATEST="v1.4.0"
+    [ -z "${ADMIN_LATEST}" ] || [ "${ADMIN_LATEST}" = "null" ] && ADMIN_LATEST="v1.5.0"
     ADMIN_INSTALLED=$(cat "${ADMIN_VERSION_FILE}" 2>/dev/null || echo "")
 
     if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
