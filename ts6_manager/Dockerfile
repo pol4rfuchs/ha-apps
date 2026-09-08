@@ -80,7 +80,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -ldflags="-s -w" -o /
 # ─────────────────────────────────────────────
 # Stage 3: Final image (HA hassio-addons base)
 # ─────────────────────────────────────────────
-FROM ghcr.io/hassio-addons/base:16.3.2
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+FROM ${BUILD_FROM}
 
 ARG BUILD_ARCH=unknown
 ARG BUILD_VERSION=1.1.0
