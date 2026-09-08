@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.3...ts6_manager-v1.1.4) (2026-09-08)
+
+
+### Bug Fixes
+
+* **ts6_manager:** make base image configurable via BUILD_FROM  Dockerfile hardcoded FROM ghcr.io/hassio-addons/base:16.3.2 instead of using the ARG BUILD_FROM=&lt;default&gt; pattern all other hassio-addons/base add-ons use. Functionally identical (same default), but now the base version can be overridden via --build-arg without editing the Dockerfile, and Renovate can track/bump it consistently with the rest of the repo. ([5f018ef](https://github.com/pol4rfuchs/ha-apps/commit/5f018efba1e8499de7f6a919e667752cbeb8a8ad))
+
 ## [1.1.3](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.2...ts6_manager-v1.1.3) (2026-07-26)
 
 
