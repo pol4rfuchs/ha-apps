@@ -7,6 +7,14 @@ ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REPO=https://github.com/pol4rfuchs/ts6-manager.git
 ARG TS6_MANAGER_BRANCH=main
 ARG TS6_MANAGER_REF=dd26e57954feca794fcceac0fb982243897d9114
+# Must live in the GLOBAL arg scope (before the first FROM), not re-declared
+# right before Stage 3's FROM. An ARG declared between two FROM lines is only
+# a stage-local declaration for the stage that follows it; BuildKit has shown
+# unreliable default-value resolution for such ARGs the moment *any* other
+# --build-arg is passed in the same invocation (which we always do, for
+# BUILD_VERSION/VERSION) -> "base name (${BUILD_FROM}) should not be blank".
+# Declaring it up here once, globally, avoids relying on that resolution path.
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
 
 # ─────────────────────────────────────────────
 # Stage 1: Node build (backend + frontend), node:20-alpine
@@ -80,7 +88,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -ldflags="-s -w" -o /
 # ─────────────────────────────────────────────
 # Stage 3: Final image (HA hassio-addons base)
 # ─────────────────────────────────────────────
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+# BUILD_FROM is declared once, globally, at the top of the file — see comment
+# there. Do NOT re-declare "ARG BUILD_FROM=..." here; that reintroduces the
+# stage-local shadowing that broke the 1.1.4 release build.
 FROM ${BUILD_FROM}
 
 ARG BUILD_ARCH=unknown
