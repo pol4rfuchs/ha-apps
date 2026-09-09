@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.4...ts6_manager-v1.1.5) (2026-09-09)
+
+
+### Bug Fixes
+
+* **ts6_manager:** declare BUILD_FROM in global ARG scope, not stage-local ([64e1521](https://github.com/pol4rfuchs/ha-apps/commit/64e15215e4b1542d20e3715f7aaf99f857ab5f27))
+
 ## [1.1.4](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.3...ts6_manager-v1.1.4) (2026-09-08)
 
 
