@@ -1,5 +1,17 @@
 # Changelog
 
+## [33.0.18](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.17...nextcloud-v33.0.18) (2026-09-13)
+
+
+### Bug Fixes
+
+* **nextcloud:** add DOCS.md and draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([b22acf4](https://github.com/pol4rfuchs/ha-apps/commit/b22acf4562dfa2d5b5cbe52e8680576169ccfa70))
+* **nextcloud:** resolve host port conflict with searxng ([ad62ef9](https://github.com/pol4rfuchs/ha-apps/commit/ad62ef92e5071ab8d4bd1ca4d97a3540b6f700a6))
+* **nextcloud:** update upstream to 34.0.1-apach ([#151](https://github.com/pol4rfuchs/ha-apps/issues/151)) ([546f476](https://github.com/pol4rfuchs/ha-apps/commit/546f47631317ae7e76c612e357e0152d603c46b6))
+* **nextcloud:** update upstream to 34.0.2-apach ([#225](https://github.com/pol4rfuchs/ha-apps/issues/225)) ([7fb48d5](https://github.com/pol4rfuchs/ha-apps/commit/7fb48d573275af53c41bed219e034d4067544c7f))
+* **nextcloud:** update upstream to 34.0.3-apach (changelog: https://github.com/nextcloud/server/releases) ([#301](https://github.com/pol4rfuchs/ha-apps/issues/301)) ([292d218](https://github.com/pol4rfuchs/ha-apps/commit/292d218c6f14f93ccebeeaf7840d2e275264808f))
+* **nextcloud:** update upstream to 34.0.4-apach (changelog: https://github.com/nextcloud/server/releases) ([#376](https://github.com/pol4rfuchs/ha-apps/issues/376)) ([8bb8b56](https://github.com/pol4rfuchs/ha-apps/commit/8bb8b56f05a36d25832342ada4947e88eaf37777))
+
 ## [33.0.17](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.16...nextcloud-v33.0.17) (2026-09-12)
 
 
