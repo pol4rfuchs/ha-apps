@@ -1,6 +1,6 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add teamspeak6/build.yaml.
-ARG TEAMSPEAK_VERSION=6.0.0-beta13
+ARG TEAMSPEAK_VERSION=6.0.0-beta13.1
 FROM teamspeaksystems/teamspeak6-server:${TEAMSPEAK_VERSION}
 
 ARG BUILD_VERSION=dev
@@ -9,7 +9,7 @@ ARG BUILD_ARCH
 # fall out of scope afterwards. Re-declaring here (same default) is required
 # to make TEAMSPEAK_VERSION available below for the image.base.name label —
 # this is not a duplicate/copy-paste leftover.
-ARG TEAMSPEAK_VERSION=6.0.0-beta13
+ARG TEAMSPEAK_VERSION=6.0.0-beta13.1
 
 # DL3002: root required — TS6 server process needs root for initial setup
 # hadolint ignore=DL3002
