@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.22](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.21...teamspeak6-v1.1.22) (2026-09-23)
+
+
+### Bug Fixes
+
+* **teamspeak6:** update upstream to 6.0.0-beta13 (changelog: https://… ([#422](https://github.com/pol4rfuchs/ha-apps/issues/422)) ([d8862ef](https://github.com/pol4rfuchs/ha-apps/commit/d8862efe3817b2d63340c78051f8e25498a4aa88))
+
 ## [1.1.21](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.20...teamspeak6-v1.1.21) (2026-09-19)
 
 
