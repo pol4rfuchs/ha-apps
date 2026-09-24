@@ -18,7 +18,7 @@ concurrency:
 jobs:
   sync:
     name: Sync README badges against real versions
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout
