@@ -1,5 +1,5 @@
 ARG BUILD_VERSION
-FROM jc21/nginx-proxy-manager:2.15.1
+FROM jc21/nginx-proxy-manager:2.16.0
 
 # ── jq für Supervisor API ─────────────────────────────────────────────────────
 RUN apt-get update \
