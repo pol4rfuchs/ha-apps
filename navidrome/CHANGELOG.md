@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.9](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.8...navidrome-v2.1.9) (2026-09-26)
+
+
+### Bug Fixes
+
+* **navidrome:** update upstream to 0.64.2 (changelog: https://github.com/navidrome/navidrome/releases/tag/v0.64.2) ([#430](https://github.com/pol4rfuchs/ha-apps/issues/430)) ([1efd138](https://github.com/pol4rfuchs/ha-apps/commit/1efd138fc70a5feb23f6b0a76013d6f3e1441528))
+
 ## [2.1.8](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.7...navidrome-v2.1.8) (2026-09-23)
 
 
