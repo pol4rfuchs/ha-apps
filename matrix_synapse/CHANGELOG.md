@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.5...matrix_synapse-v1.7.6) (2026-09-30)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** update dependency matrix-synapse to v1.162.0 ([#437](https://github.com/pol4rfuchs/ha-apps/issues/437)) ([356bf68](https://github.com/pol4rfuchs/ha-apps/commit/356bf683a8c87255fa379e525421888e864e13a7))
+
 ## [1.7.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.4...matrix_synapse-v1.7.5) (2026-09-19)
 
 
