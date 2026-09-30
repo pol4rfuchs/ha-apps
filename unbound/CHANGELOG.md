@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.26.1-ha1-pol4r1] - 2026-09-24
+
+- Bump Unbound to 1.26.1 (automated by Renovate PR #412, checksum-verified against NLnetLabs' published sha256).
+- TODO(fox): review upstream changelog for CVE/behavior notes and replace this line with the real summary before merging.
+
+
 ## [1.26.0-ha1-pol4r1] - 2026-08-06
 
 - Bump Unbound 1.25.2 → 1.26.0 (upstream feature + bugfix release, no
