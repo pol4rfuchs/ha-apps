@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.2...matrix_auth_service-v1.0.3) (2026-09-30)
+
+
+### Bug Fixes
+
+* **matrix_auth_service:** update dependency element-hq/matrix-authentication-service to v1.26.0 ([#419](https://github.com/pol4rfuchs/ha-apps/issues/419)) ([60fb608](https://github.com/pol4rfuchs/ha-apps/commit/60fb60853f13c6af220c06f49a8fb639f84aae83))
+
 ## [1.0.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.1...matrix_auth_service-v1.0.2) (2026-09-06)
 
 
