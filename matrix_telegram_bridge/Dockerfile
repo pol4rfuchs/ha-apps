@@ -3,15 +3,15 @@
 #
 # HINWEIS: mautrix-telegram wurde im April 2026 von Python (Telethon) auf
 # Go (bridgev2-Framework, gotd-Library) umgeschrieben. Ab v0.2604.0 ist die
-# alte Python-Codebase vollständig ersetzt. Go 1.25+ ist laut offizieller
-# Doku (go.mod) Pflicht - daher hier ein neuerer Go-Builder als bei
+# alte Python-Codebase vollständig ersetzt. Laut go.mod ist Go 1.26+ Pflicht
+# (seit v0.2609.0) - daher hier ein neuerer Go-Builder als bei
 # WhatsApp/Signal (die kommen mit 1.23/1 aus).
 ARG TELEGRAM_VERSION=v0.2609.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
 
 # ---- Builder Stage (Go source build, SHA/Tag-pinned) ----
-FROM golang:1.25-alpine3.24 AS builder
+FROM golang:1.26-alpine3.24 AS builder
 
 ARG TELEGRAM_VERSION
 ARG TARGETARCH
