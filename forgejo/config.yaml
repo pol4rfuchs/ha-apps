@@ -12,9 +12,8 @@ arch:
   - aarch64
 image: ghcr.io/pol4rfuchs/forgejo
 init: false
-ingress: true
-ingress_port: 3000
-ingress_stream: true
+ingress: false
+webui: http://[HOST]:[PORT:3000]
 panel_icon: mdi:git
 panel_title: Forgejo
 map:
@@ -26,7 +25,7 @@ ports:
   3000/tcp: 3000
   22/tcp: null
 ports_description:
-  3000/tcp: Web-UI (Ingress bevorzugen – Port nur für direkten Zugriff)
+  3000/tcp: Web-UI (Direktzugriff – Host-Port muss 3000 bleiben)
   22/tcp: 'SSH Git-Zugriff (nur bei ssh_enabled: true nötig)'
 options:
   app_name: Forgejo
