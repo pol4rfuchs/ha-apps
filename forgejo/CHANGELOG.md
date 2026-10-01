@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.16](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.15...forgejo-v16.0.16) (2026-10-01)
+
+
+### Bug Fixes
+
+* **forgejo:** disable apparmor until s6 baseline is fixed ([fb1c8b4](https://github.com/pol4rfuchs/ha-apps/commit/fb1c8b438963b3584fab639c1cb0d4fd2ec3b12a))
+
 ## [16.0.15](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.14...forgejo-v16.0.15) (2026-09-19)
 
 
