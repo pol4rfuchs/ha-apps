@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.17](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.16...forgejo-v16.0.17) (2026-10-01)
+
+
+### Bug Fixes
+
+* **forgejo:** replace ingress with webui (assets broken behind ingress) ([a7ecce7](https://github.com/pol4rfuchs/ha-apps/commit/a7ecce723edbc41850eb5f2803ea8b4f5572c3b0))
+
 ## [16.0.16](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.15...forgejo-v16.0.16) (2026-10-01)
 
 
