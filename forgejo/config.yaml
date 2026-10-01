@@ -6,7 +6,7 @@ description: >-
   Issues, Pull Requests, CI/CD Actions, Package-Registry, Wiki, Projekte und
   mehr.
 url: https://github.com/pol4rfuchs/ha-apps
-apparmor: true
+apparmor: false
 arch:
   - amd64
   - aarch64
