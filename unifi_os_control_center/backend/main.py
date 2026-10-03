@@ -5,6 +5,7 @@ import csv
 import io
 import json
 import logging
+import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -563,9 +564,14 @@ frontend = Path("/app/frontend")
 if frontend.exists():
     app.mount("/assets", StaticFiles(directory=frontend / "assets"), name="assets")
 
+_FRONTEND_ROOT = os.path.realpath(frontend)
+
 @app.get("/{path:path}")
 async def spa(path: str) -> FileResponse:
-    candidate = frontend / path
-    if path and candidate.exists() and candidate.is_file():
-        return FileResponse(candidate)
-    return FileResponse(frontend / "index.html")
+    # Serve only files that resolve inside the frontend bundle; everything
+    # else (including traversal attempts) falls back to the SPA entry point.
+    if path and "\x00" not in path:
+        full = os.path.realpath(os.path.join(_FRONTEND_ROOT, path))
+        if full.startswith(_FRONTEND_ROOT + os.sep) and os.path.isfile(full):
+            return FileResponse(full)
+    return FileResponse(os.path.join(_FRONTEND_ROOT, "index.html"))
