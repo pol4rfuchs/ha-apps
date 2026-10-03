@@ -24,8 +24,8 @@ COPY frontend/dist /app/frontend
 COPY rootfs /
 
 RUN chmod +x \
-      /etc/services.d/unifi-control/run \
-      /etc/services.d/unifi-control/finish
+      /etc/s6-overlay/s6-rc.d/unifi-control/run \
+      /etc/s6-overlay/s6-rc.d/unifi-control/finish
 
 WORKDIR /app
 EXPOSE 8599
