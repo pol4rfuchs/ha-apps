@@ -33,6 +33,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [Forgejo](forgejo/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `forgejo/forgejo` [![Codeberg Release](https://img.shields.io/gitea/v/release/forgejo/forgejo?gitea_url=https%3A%2F%2Fcodeberg.org&style=flat-square&label=)](https://codeberg.org/forgejo/forgejo/releases) <!-- forge-check:allow: legitimate Forgejo upstream is hosted on Codeberg --> | Git | Self-hosted Git platform — free GitHub alternative with repos, issues, CI/CD and package registry |
 | [Unbound](unbound/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | DNS | Validating, recursive DNS resolver with DNSSEC support |
 | [Restic Backup](restic_backup/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `custom build` | Backup | Scheduled restic backups of HA config/media/add-on data with ntfy alerting on failure |
+| [UniFi OS Control Center](unifi_os_control_center/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | Network | Local-first UniFi OS monitoring and management for Home Assistant |
 
 ## Pipeline
 
@@ -42,7 +43,6 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 |---|---|---|---|---|
 | Technitium DNS Server | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | DNS | Self-hosted DNS server with DoH/DoT/DoQ, local zones, and ad-blocking (host network) |
 | LPI | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Privacy | Live Privacy Inspector — scans and reports privacy-sensitive exposure across the stack |
-| UCCM | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Network | UniFi Control Center/Manager — HAOS-integrated management UI for UniFi controllers |
 
 ### Status
 

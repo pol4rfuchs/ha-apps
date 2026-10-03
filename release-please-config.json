@@ -1,6 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "bootstrap-sha": "aee5755b0895b0706d0679d40eb97497d760a229",
   "separate-pull-requests": true,
   "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "packages": {
@@ -81,6 +80,15 @@
       "component": "matrix_auth_service",
       "include-component-in-tag": true,
       "tag-separator": "-"
+    },
+    "unifi_os_control_center": {
+      "release-type": "simple",
+      "component": "unifi_os_control_center",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "extra-files": [
+        "backend/main.py"
+      ]
     }
   }
 }

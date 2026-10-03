@@ -1,0 +1,77 @@
+---
+configuration:
+  controller_url:
+    name: Controller URL
+    description: Local HTTPS URL of the UniFi OS console.
+  api_key:
+    name: API key
+    description: API key created in UniFi Settings > API Keys.
+  verify_tls:
+    name: Verify TLS
+    description: Verify the certificate presented by the UniFi console.
+  read_only:
+    name: Read-only mode
+    description: Blocks every non-read API operation in the backend.
+  polling_interval:
+    name: Polling interval
+    description: Refresh interval in seconds for background telemetry.
+  history_retention_days:
+    name: History retention
+    description: Maximum age of stored telemetry snapshots in days.
+  max_history_rows:
+    name: Maximum history rows
+    description: Hard database row limit used to prevent unbounded growth.
+  log_level:
+    name: Log level
+    description: Runtime logging verbosity.
+
+  allow_firewall_write:
+    name: Allow firewall writes
+    description: Enables the firewall write gate only when global read-only mode is disabled.
+  allow_firewall_delete:
+    name: Allow firewall deletion
+    description: Enables the additional deletion gate for supported Zone-Based Firewall policies.
+  allow_policy_reorder:
+    name: Allow policy reordering
+    description: Enables the additional ordering gate for supported Zone-Based Firewall policies.
+  require_change_confirmation:
+    name: Require change confirmation
+    description: Requires explicit confirmation before any future firewall mutation.
+  create_prechange_snapshot:
+    name: Create pre-change snapshot
+    description: Creates a local policy snapshot before any future firewall mutation.
+
+  ntfy_enabled:
+    name: Enable ntfy notifications
+    description: Send selected UniFi Control Center events to an ntfy topic.
+  ntfy_url:
+    name: ntfy server URL
+    description: Base URL of the self-hosted or public ntfy server.
+  ntfy_topic:
+    name: ntfy topic
+    description: Topic path used for notifications, for example ha-alerts.
+  ntfy_token:
+    name: ntfy access token
+    description: Optional bearer token for protected ntfy topics.
+  notify_on_connection_failure:
+    name: Notify on connection failure
+    description: Send an alert when the UniFi console becomes unreachable.
+  notify_on_connection_recovery:
+    name: Notify on connection recovery
+    description: Send an alert after a failed UniFi connection recovers.
+  notify_on_new_client:
+    name: Notify on new client
+    description: Send an alert when a previously unseen client appears.
+  notification_cooldown:
+    name: Notification cooldown
+    description: Minimum seconds between repeated notifications of the same type.
+
+  notify_on_device_offline:
+    name: Notify when a device goes offline
+    description: Send an ntfy notification after the configured offline grace polls.
+  notify_on_device_recovery:
+    name: Notify when a device recovers
+    description: Send an ntfy notification when an explicitly tracked UniFi device returns online.
+  device_offline_grace_polls:
+    name: Device offline grace polls
+    description: Consecutive offline polling results required before creating an offline alert.

@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+frontend/node_modules/
+*.db
+*.db-wal
+*.db-shm
+*.tsbuildinfo
+
+# frontend/dist is intentionally committed for deterministic local HAOS builds.

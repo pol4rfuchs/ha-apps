@@ -11,5 +11,6 @@
   "searxng": "1.0.33",
   "teamspeak6": "1.1.22",
   "ts6_manager": "1.1.5",
-  "matrix_auth_service": "1.0.3"
+  "matrix_auth_service": "1.0.3",
+  "unifi_os_control_center": "0.7.2"
 }
