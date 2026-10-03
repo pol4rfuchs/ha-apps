@@ -1,3 +1,4 @@
+---
 name: Nginx Proxy Manager
 description: Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration.
 version: "2.1.6"

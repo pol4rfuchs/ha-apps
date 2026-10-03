@@ -20,7 +20,7 @@ concurrency:
 jobs:
   lock:
     name: 🔒 Lock closed issues and PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Lock stale closed issues
         env:

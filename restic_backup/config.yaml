@@ -1,3 +1,4 @@
+---
 name: Restic Backup
 description: >-
   Scheduled restic backups of HA config/media/addon data with ntfy alerting on

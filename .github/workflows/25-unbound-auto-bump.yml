@@ -34,7 +34,7 @@ jobs:
     if: >
       github.event.pull_request.merged == true &&
       startsWith(github.event.pull_request.head.ref, 'renovate/nlnetlabs-unbound')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write      # required to push the bump branch
       pull-requests: write # required to open/edit the PR

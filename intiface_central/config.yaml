@@ -1,3 +1,4 @@
+---
 name: Intiface Central
 description: Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities
 version: "1.0.4"

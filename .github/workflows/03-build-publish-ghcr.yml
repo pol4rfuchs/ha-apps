@@ -24,7 +24,7 @@ concurrency:
 jobs:
   detect:
     name: Detect add-ons
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       apps: ${{ steps.detect.outputs.apps }}
     steps:

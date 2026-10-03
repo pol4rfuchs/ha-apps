@@ -15,7 +15,7 @@ permissions:
 jobs:
   prepare:
     name: Read add-on list
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.load-matrix.outputs.matrix }}
     steps:
@@ -34,7 +34,7 @@ jobs:
   lint:
     name: Lint ${{ matrix.addon }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:

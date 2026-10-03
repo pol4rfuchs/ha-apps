@@ -1,3 +1,4 @@
+---
 name: Matrix Auth Service (MAS)
 description: >-
   Matrix Authentication Service — next-gen OIDC-Auth für Matrix Synapse.
