@@ -516,6 +516,7 @@ Version 0.7.2 is an experimental but functional monitoring milestone. Inventory,
 ## 13. Security notes
 
 - The app is designed for local operation.
+- The web UI is only reachable through Home Assistant Ingress. The app has no login of its own and rejects every connection that does not come from the Home Assistant Ingress gateway, so no host port is published.
 - Do not expose the app's ingress or UniFi management interface directly to the public internet.
 - Keep `read_only: true` unless management actions are intentionally being tested.
 - Keep `verify_tls: true` whenever possible.
