@@ -41,7 +41,8 @@ jobs:
               "forgejo|intiface_central|matrix_synapse|matrix_whatsapp_bridge|"
               "matrix_signal_bridge|matrix_telegram_bridge|matrix_auth_service|"
               "navidrome|nginx_proxy_manager|ntfy|ntfy_manager|nextcloud|"
-              "restic_backup|searxng|teamspeak6|ts6_manager|unbound"
+              "restic_backup|searxng|teamspeak6|ts6_manager|unbound|"
+              "unifi_os_control_center"
           )
           repo_scopes = "main|repo|ci|docs|deps|security|wiki"
           all_scopes = f"{addon_scopes}|{repo_scopes}"
