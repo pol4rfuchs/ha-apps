@@ -175,7 +175,7 @@ async def lifespan(_: FastAPI):
     stop.set()
     await task
 
-app = FastAPI(title="UniFi OS Control Center", version="0.7.2", lifespan=lifespan)  # x-release-please-version
+app = FastAPI(title="UniFi OS Control Center", version="0.7.3", lifespan=lifespan)  # x-release-please-version
 
 # Home Assistant Ingress is the only supported entry point: the Supervisor
 # proxies authenticated users from 172.30.32.2. The app has no login of its own,
@@ -252,7 +252,7 @@ def _rows(value: Any) -> list[dict[str, Any]]:
 
 @app.get("/api/health")
 async def health() -> dict[str, Any]:
-    return {"status": "ok", "version": "0.7.2", "read_only": settings.read_only}  # x-release-please-version
+    return {"status": "ok", "version": "0.7.3", "read_only": settings.read_only}  # x-release-please-version
 
 @app.get("/api/config/status")
 async def config_status() -> dict[str, Any]:

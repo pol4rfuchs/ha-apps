@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.3](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.2...unifi_os_control_center-v0.7.3) (2026-10-03)
+
+
+### Bug Fixes
+
+* **unifi_os_control_center:** prepare GHCR release ([#451](https://github.com/pol4rfuchs/ha-apps/issues/451)) ([d843dfb](https://github.com/pol4rfuchs/ha-apps/commit/d843dfb3fb03380cdbaff8eafe5f81506ddf1242))
+
 ## 0.7.2
 
 - Make the SPA entry point robust under Home Assistant Ingress on mobile and WebView clients.
