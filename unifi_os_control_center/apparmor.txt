@@ -1,0 +1,44 @@
+#include <tunables/global>
+
+profile unifi_os_control_center flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+
+  network inet stream,
+  network inet6 stream,
+  network netlink raw,
+
+  # s6-overlay/PID 1 bootstrap and clean shutdown.
+  # /init is a shell script in the HA base image and therefore needs read + execute.
+  /init rix,
+  /package/** rix,
+  /command/** rix,
+  /run/s6/** rwix,
+  /etc/s6-overlay/** rix,
+  /etc/services.d/** rwix,
+  /etc/cont-init.d/** rwix,
+  /etc/cont-finish.d/** rwix,
+
+  /bin/sh rix,
+  /bin/bash rix,
+  /usr/bin/python3 rix,
+  /usr/lib/python3.*/** mr,
+  /usr/lib/lib*.so* mr,
+  /lib/lib*.so* mr,
+
+  /app/** r,
+  /data/** rwk,
+  /config/** rwk,
+  /tmp/** rwk,
+  /proc/sys/kernel/random/uuid r,
+  /etc/ssl/certs/** r,
+  /etc/resolv.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/group r,
+
+  deny /proc/*/mem rwklx,
+  deny /sys/** wklx,
+}

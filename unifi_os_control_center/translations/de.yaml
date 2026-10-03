@@ -1,0 +1,77 @@
+---
+configuration:
+  controller_url:
+    name: Controller-URL
+    description: Lokale HTTPS-Adresse der UniFi-OS-Konsole.
+  api_key:
+    name: API-Schlüssel
+    description: API-Schlüssel aus UniFi Einstellungen > API-Schlüssel.
+  verify_tls:
+    name: TLS prüfen
+    description: Zertifikat der UniFi-Konsole vollständig überprüfen.
+  read_only:
+    name: Nur-Lesen-Modus
+    description: Sperrt alle schreibenden API-Aufrufe direkt im Backend.
+  polling_interval:
+    name: Abfrageintervall
+    description: Aktualisierungsintervall der Hintergrundtelemetrie in Sekunden.
+  history_retention_days:
+    name: Aufbewahrungsdauer
+    description: Maximales Alter gespeicherter Telemetriedaten in Tagen.
+  max_history_rows:
+    name: Maximale Verlaufszeilen
+    description: Harte Datenbankgrenze gegen unbegrenztes Wachstum.
+  log_level:
+    name: Protokollstufe
+    description: Detailgrad der Laufzeitprotokollierung.
+
+  allow_firewall_write:
+    name: Firewall-Schreibzugriffe erlauben
+    description: Aktiviert das Firewall-Schreib-Gate nur bei deaktiviertem globalem Nur-Lesen-Modus.
+  allow_firewall_delete:
+    name: Firewall-Regeln löschen erlauben
+    description: Aktiviert das zusätzliche Lösch-Gate für unterstützte Zone-Based-Firewall-Regeln.
+  allow_policy_reorder:
+    name: Regelreihenfolge ändern erlauben
+    description: Aktiviert das zusätzliche Sortier-Gate für unterstützte Zone-Based-Firewall-Regeln.
+  require_change_confirmation:
+    name: Änderungsbestätigung verlangen
+    description: Verlangt vor jeder zukünftigen Firewall-Änderung eine ausdrückliche Bestätigung.
+  create_prechange_snapshot:
+    name: Snapshot vor Änderung erstellen
+    description: Erstellt vor jeder zukünftigen Firewall-Änderung einen lokalen Policy-Snapshot.
+
+  ntfy_enabled:
+    name: ntfy-Benachrichtigungen aktivieren
+    description: Ausgewählte Ereignisse des UniFi Control Centers an ein ntfy-Topic senden.
+  ntfy_url:
+    name: ntfy-Server-URL
+    description: Basis-URL des selbst gehosteten oder öffentlichen ntfy-Servers.
+  ntfy_topic:
+    name: ntfy-Topic
+    description: Topic-Pfad für Benachrichtigungen, zum Beispiel ha-alerts.
+  ntfy_token:
+    name: ntfy-Zugriffstoken
+    description: Optionales Bearer-Token für geschützte ntfy-Topics.
+  notify_on_connection_failure:
+    name: Bei Verbindungsfehler benachrichtigen
+    description: Meldung senden, wenn die UniFi-Konsole nicht erreichbar ist.
+  notify_on_connection_recovery:
+    name: Bei Wiederherstellung benachrichtigen
+    description: Meldung senden, sobald eine zuvor gestörte UniFi-Verbindung wieder funktioniert.
+  notify_on_new_client:
+    name: Bei neuem Client benachrichtigen
+    description: Meldung senden, wenn ein bisher unbekannter Client erscheint.
+  notification_cooldown:
+    name: Benachrichtigungs-Cooldown
+    description: Mindestabstand in Sekunden zwischen wiederholten Meldungen desselben Typs.
+
+  notify_on_device_offline:
+    name: Bei Geräteausfall benachrichtigen
+    description: Sendet nach den konfigurierten Offline-Prüfungen eine ntfy-Benachrichtigung.
+  notify_on_device_recovery:
+    name: Bei Gerätewiederkehr benachrichtigen
+    description: Sendet eine ntfy-Benachrichtigung, wenn ein überwachtes UniFi-Gerät wieder online ist.
+  device_offline_grace_polls:
+    name: Offline-Toleranz in Prüfungen
+    description: Anzahl aufeinanderfolgender Offline-Ergebnisse vor dem Erstellen eines Alarms.

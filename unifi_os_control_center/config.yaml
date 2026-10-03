@@ -1,0 +1,77 @@
+---
+name: "UniFi OS Control Center"
+version: "0.7.2"
+slug: "unifi_os_control_center"
+description: "Local-first UniFi OS monitoring and management for Home Assistant"
+url: "https://github.com/pol4rfuchs/ha-apps"
+image: "ghcr.io/pol4rfuchs/unifi_os_control_center"
+arch:
+  - aarch64
+  - amd64
+stage: experimental
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 8599
+ports:
+  8599/tcp: null
+ports_description:
+  8599/tcp: Not used. The UI is only reachable through Home Assistant Ingress.
+panel_icon: mdi:router-network
+panel_title: UniFi Control
+watchdog: "http://[HOST]:[PORT:8599]/api/health"
+backup: hot
+apparmor: false
+map:
+  - addon_config:rw
+options:
+  controller_url: "https://unifi.example.internal"
+  api_key: ""
+  verify_tls: true
+  read_only: true
+  allow_firewall_write: false
+  allow_firewall_delete: false
+  allow_policy_reorder: false
+  require_change_confirmation: true
+  create_prechange_snapshot: true
+  polling_interval: 15
+  history_retention_days: 30
+  max_history_rows: 100000
+  log_level: "INFO"
+  ntfy_enabled: false
+  ntfy_url: "https://ntfy.example.invalid"
+  ntfy_topic: "ha-alerts"
+  ntfy_token: ""
+  notify_on_connection_failure: true
+  notify_on_connection_recovery: true
+  notify_on_new_client: true
+  notify_on_device_offline: true
+  notify_on_device_recovery: true
+  device_offline_grace_polls: 2
+  notification_cooldown: 900
+schema:
+  controller_url: url
+  api_key: password
+  verify_tls: bool
+  read_only: bool
+  allow_firewall_write: bool
+  allow_firewall_delete: bool
+  allow_policy_reorder: bool
+  require_change_confirmation: bool
+  create_prechange_snapshot: bool
+  polling_interval: int(5,300)
+  history_retention_days: int(1,365)
+  max_history_rows: int(1000,1000000)
+  log_level: list(DEBUG|INFO|WARNING|ERROR)
+  ntfy_enabled: bool
+  ntfy_url: url
+  ntfy_topic: str
+  ntfy_token: password
+  notify_on_connection_failure: bool
+  notify_on_connection_recovery: bool
+  notify_on_new_client: bool
+  notify_on_device_offline: bool
+  notify_on_device_recovery: bool
+  device_offline_grace_polls: int(1,10)
+  notification_cooldown: int(60,86400)
