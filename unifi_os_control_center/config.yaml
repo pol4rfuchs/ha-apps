@@ -1,6 +1,6 @@
 ---
 name: "UniFi OS Control Center"
-version: "0.7.2"
+version: "0.7.3"
 slug: "unifi_os_control_center"
 description: "Local-first UniFi OS monitoring and management for Home Assistant"
 url: "https://github.com/pol4rfuchs/ha-apps"
