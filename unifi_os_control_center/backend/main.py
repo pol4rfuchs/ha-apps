@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -176,6 +176,23 @@ async def lifespan(_: FastAPI):
     await task
 
 app = FastAPI(title="UniFi OS Control Center", version="0.7.2", lifespan=lifespan)  # x-release-please-version
+
+# Home Assistant Ingress is the only supported entry point: the Supervisor
+# proxies authenticated users from 172.30.32.2. The app has no login of its own,
+# so any other peer (e.g. a LAN client hitting a mapped host port) is rejected.
+_INGRESS_PEERS = frozenset({"172.30.32.2", "127.0.0.1", "::1"})
+_rejected_peers: set[str] = set()
+
+
+@app.middleware("http")
+async def ingress_peer_guard(request: Request, call_next: Any) -> Response:
+    peer = request.client.host if request.client else ""
+    if peer not in _INGRESS_PEERS:
+        if peer not in _rejected_peers and len(_rejected_peers) < 64:
+            _rejected_peers.add(peer)
+            logger.warning("Rejected connection from %s: only the Home Assistant Ingress gateway is allowed", peer or "unknown peer")
+        return Response(content="Forbidden", status_code=403, media_type="text/plain")
+    return await call_next(request)
 
 
 
