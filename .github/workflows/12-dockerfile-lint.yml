@@ -21,7 +21,7 @@ permissions:
 jobs:
   prepare:
     name: Read add-on list
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.addons.outputs.matrix }}
     steps:
@@ -41,7 +41,7 @@ jobs:
   hadolint:
     name: Hadolint ${{ matrix.app }}
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:

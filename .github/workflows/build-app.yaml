@@ -29,7 +29,7 @@ jobs:
   # ── 1. Read config.yaml, resolve arch → runner matrix ──────────────────────
   prepare:
     name: Prepare ${{ inputs.app }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       image:    ${{ steps.info.outputs.image }}
       version:  ${{ steps.info.outputs.version }}
@@ -104,7 +104,7 @@ jobs:
               raise SystemExit("missing arch")
 
           arch_map = {
-              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-latest",    "suffix": "amd64"},
+              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-24.04",    "suffix": "amd64"},
               "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64"},
           }
           bad = sorted(set(arch) - set(arch_map))
@@ -186,7 +186,7 @@ jobs:
     name: Manifest ${{ inputs.app }}
     needs: [prepare, build]
     if: inputs.publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -238,7 +238,7 @@ jobs:
     name: Smoke test ${{ inputs.app }}
     needs: [prepare, manifest]
     if: inputs.publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     continue-on-error: ${{ inputs.app != 'ntfy_manager' && inputs.app != 'ts6_manager' && inputs.app != 'teamspeak6' }}
     permissions:
       contents: read
@@ -330,7 +330,7 @@ jobs:
     name: Promote latest ${{ inputs.app }}
     needs: [prepare, smoke-test]
     if: inputs.publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write

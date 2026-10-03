@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write      # required to push update branches
       pull-requests: write # required to open/edit PRs

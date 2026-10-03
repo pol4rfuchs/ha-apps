@@ -16,7 +16,7 @@ concurrency:
 jobs:
   release-please:
     name: Release Please monorepo
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
@@ -49,7 +49,7 @@ jobs:
     name: Sync config.yaml versions to manifest
     needs: release-please
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:

@@ -1,3 +1,4 @@
+---
 name: TS6 Manager
 description: Web-based management interface for TeamSpeak 6 servers (WebQuery API)
 version: "1.1.5"
