@@ -15,7 +15,9 @@ init: false
 ingress: true
 ingress_port: 8599
 ports:
-  8599/tcp: 8599
+  8599/tcp: null
+ports_description:
+  8599/tcp: Not used. The UI is only reachable through Home Assistant Ingress.
 panel_icon: mdi:router-network
 panel_title: UniFi Control
 watchdog: "http://[HOST]:[PORT:8599]/api/health"
