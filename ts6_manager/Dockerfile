@@ -14,7 +14,7 @@ ARG TS6_MANAGER_REF=dd26e57954feca794fcceac0fb982243897d9114
 # --build-arg is passed in the same invocation (which we always do, for
 # BUILD_VERSION/VERSION) -> "base name (${BUILD_FROM}) should not be blank".
 # Declaring it up here once, globally, avoids relying on that resolution path.
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
 # ─────────────────────────────────────────────
 # Stage 1: Node build (backend + frontend), node:20-alpine
@@ -117,7 +117,7 @@ RUN apk add --no-cache \
         ffmpeg \
         python3 \
         py3-pip \
-    && pip3 install --no-cache-dir yt-dlp \
+    && pip3 install --no-cache-dir --break-system-packages yt-dlp \
     && rm -rf /var/cache/apk/* /root/.cache
 
 WORKDIR /app
