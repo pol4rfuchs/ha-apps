@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.4](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.3...unifi_os_control_center-v0.7.4) (2026-10-04)
+
+
+### Bug Fixes
+
+* **unifi_os_control_center:** do not expose exception text in firewal… ([#470](https://github.com/pol4rfuchs/ha-apps/issues/470)) ([b55ff5d](https://github.com/pol4rfuchs/ha-apps/commit/b55ff5d74e7f8098014ac72694f1e03bb8094490))
+
 ## [0.7.3](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.2...unifi_os_control_center-v0.7.3) (2026-10-03)
 
 
