@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Telegram Bridge (mautrix) · Wiki</title>
+<style>
+  :root {
+    --accent: #14b8a6;
+    --accent-2: #2dd4bf;
+    --accent-3: #ccfbf1;
+    --bg-deep: #021110;
+    --bg-navy: #031a18;
+    --panel: rgba(3, 26, 24, .72);
+    --panel-2: rgba(3, 26, 24, .48);
+    --panel-3: rgba(2, 17, 16, .78);
+    --border: rgba(204, 251, 241, .18);
+    --border-strong: rgba(204, 251, 241, .40);
+    --text: #f0fdfa;
+    --muted: #9fd6d0;
+    --dim: #5f9f98;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(20, 184, 166,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(45, 212, 191,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(20, 184, 166,.14), transparent 34rem),
+      linear-gradient(135deg, #021110 0%, #031a18 44%, #04221f 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(153,246,228,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(153,246,228,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22, 3, 15, .90), rgba(31, 5, 21, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(20,184,166,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(20,184,166,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(153,246,228,.98), rgba(45,212,191,.68) 46%, rgba(102,10,44,.86));
+    color: #1c0212;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(45,212,191,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(45,212,191,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(20,184,166,.14);
+    box-shadow: 0 10px 32px rgba(20,184,166,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45,212,191,.13);
+    border: 1px solid rgba(153,246,228,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(20,184,166,.25), rgba(45,212,191,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(153,246,228,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(20, 2, 13, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(20,184,166,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(153,246,228,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(153,246,228,0); } 100% { box-shadow: 0 0 0 0 rgba(153,246,228,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(153,246,228,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #ffe0e8; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(20,184,166,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(20,184,166,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(58, 11, 34, .62), rgba(21, 4, 14, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(153,246,228,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(45,212,191,.14);
+    border: 1px solid rgba(153,246,228,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #fff0f2; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #fff8f8; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #ffe0ea; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #fbd0dd; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(153,246,228,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(153,246,228,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(20,184,166,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #ffe0e0; background: rgba(45,212,191,.11); border: 1px solid rgba(153,246,228,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(153,246,228,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { background: none; border: none; padding: 0; color: #fdd8e0; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,.35); color: var(--muted); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; }
+  .copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin: 1rem 0; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #1c0212; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #1c0212; background: var(--accent-3); box-shadow: 0 16px 50px rgba(20,184,166,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">✈️</div>
+      <div>
+        <h1>Telegram Bridge (mautrix)</h1>
+        <p>MATRIX BRIDGE WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search telegram, registration, login, backup..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What this bridge does</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Install &amp; Link Synapse</strong><small>Step by step</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Add-on Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#login" data-target="login"><span class="nav-icon">🔗</span><span><strong>Phone number + code login</strong><small>How to connect your account</small></span></a>
+      <a class="nav-item" href="#secrets" data-target="secrets"><span class="nav-icon">🔐</span><span><strong>Tokens &amp; Registration</strong><small>Appservice registration</small></span></a>
+      <a class="nav-item" href="#backup" data-target="backup"><span class="nav-icon">💾</span><span><strong>What to Back Up</strong><small>State and registration</small></span></a>
+      <a class="nav-item" href="#notes" data-target="notes"><span class="nav-icon">🔑</span><span><strong>Telegram API Credentials</strong><small>Good to know</small></span></a>
+      <a class="nav-item" href="#limits" data-target="limits"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>What to expect</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Links &amp; License</strong><small>Upstream and repository</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Version: <code>0.2609.0-ha1-pol4r1</code><br>Registration: <code>/share/telegram_bridge_registration.yaml</code><br>Bot: <code>@telegrambot</code><br>AppArmor: on
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> MAUTRIX TELEGRAM · APPLICATION-SERVICE BRIDGE · HOME ASSISTANT ADD-ON</div>
+        <h2>Telegram in <span class="accent">Matrix</span>.</h2>
+        <p class="hero-copy">Operations wiki for the Telegram Bridge: mautrix-telegram as an isolated application-service bridge for your self-hosted Synapse homeserver.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#login">🔗 Login</a>
+          <a class="btn secondary" href="#backup">💾 Backup</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>Add-on Slug</small><strong>matrix_telegram_bridge</strong></div>
+          <div class="metric"><small>Version</small><strong>0.2609.0-ha1-pol4r1</strong></div>
+          <div class="metric"><small>Bot</small><strong>@telegrambot:&lt;domain&gt;</strong></div>
+          <div class="metric"><small>Status</small><strong>experimental</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Enable in Synapse</h3>
+        <p>Without this switch Synapse ignores the bridge registration.</p>
+        <pre><code>telegram_bridge_enabled: true   # in the Matrix Synapse add-on, then restart Synapse</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>⚠️ Never Change the Tokens</h3>
+        <p><code>as_token</code> / <code>hs_token</code> must stay as generated.</p>
+        <pre><code>/data/registration.yaml</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview mautrix telegram bridge appservice synapse isolated add-on">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Telegram Bridge</strong> connects Telegram to your self-hosted Matrix Synapse homeserver via <a href="https://github.com/mautrix/telegram">mautrix-telegram</a> as an application-service bridge. It runs as a standalone, isolated add-on — no shared container with other bridges.</p>
+        <blockquote><strong>Experimental.</strong> The add-on is marked <code>stage: experimental</code>. Documented upstream at <a href="https://docs.mau.fi/bridges/go/telegram/index.html">docs.mau.fi</a>.</blockquote>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation install homeserver address domain db type registration yaml synapse telegram_bridge_enabled bot login">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install &amp; Link Synapse</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <ol>
+          <li>Install and start the add-on.</li>
+          <li>Set <code>homeserver_address</code> / <code>homeserver_domain</code> (address of the Matrix Synapse add-on) and <code>db_type</code> (SQLite or Postgres). Also enter <code>telegram_api_id</code> and <code>telegram_api_hash</code> from my.telegram.org first.</li>
+          <li>On first start the bridge generates <code>config.yaml</code> (from your options) and <code>registration.yaml</code>, which is copied to <code>/share/telegram_bridge_registration.yaml</code>.</li>
+          <li>In the <strong>Matrix Synapse add-on</strong> enable <code>telegram_bridge_enabled</code> and restart Synapse — it only reads the appservice registration then.</li>
+          <li>From any Matrix client, DM <code>@telegrambot:&lt;your-domain&gt;</code> and send <code>login</code>.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options homeserver appservice db type postgres encryption log level telegram api id api hash my.telegram.org mtproto phone sms">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>homeserver_address</code></td><td><code>http://xxxxx-matrix-server:8008</code></td><td>URL of the Matrix Synapse add-on (internal address).</td></tr>
+            <tr><td><code>homeserver_domain</code></td><td><em>(empty)</em></td><td>Server name of your Matrix homeserver.</td></tr>
+            <tr><td><code>appservice_address</code></td><td><code>http://xxxxx-matrix-telegram-bridge:29317</code></td><td>Address under which Synapse reaches this bridge.</td></tr>
+            <tr><td><code>appservice_id</code></td><td><code>telegram</code></td><td>Appservice ID. Changing it requires regenerating <code>registration.yaml</code>.</td></tr>
+            <tr><td><code>telegram_api_id</code></td><td><em>(empty)</em></td><td>API ID from <a href="https://my.telegram.org">my.telegram.org</a>. Required.</td></tr>
+            <tr><td><code>telegram_api_hash</code></td><td><em>(empty)</em></td><td>API hash from <a href="https://my.telegram.org">my.telegram.org</a>. Required, masked password field.</td></tr>
+            <tr><td><code>db_type</code></td><td><code>sqlite</code></td><td><code>sqlite</code> or <code>postgres</code>. Switching later starts with an empty database.</td></tr>
+            <tr><td><code>postgres_host</code></td><td><em>(empty)</em></td><td>Only for <code>db_type: postgres</code>.</td></tr>
+            <tr><td><code>postgres_port</code></td><td><code>5432</code></td><td>Only for <code>db_type: postgres</code>.</td></tr>
+            <tr><td><code>postgres_database</code></td><td><code>telegram_bridge</code></td><td>Only for <code>db_type: postgres</code>.</td></tr>
+            <tr><td><code>postgres_username</code></td><td><em>(empty)</em></td><td>Only for <code>db_type: postgres</code>.</td></tr>
+            <tr><td><code>postgres_password</code></td><td><em>(empty)</em></td><td>Only for <code>db_type: postgres</code>. Masked password field.</td></tr>
+            <tr><td><code>encryption</code></td><td><code>true</code></td><td>Bridge-side end-to-end encryption (Megolm); the Matrix client must enable it too.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code> or <code>fatal</code>.</td></tr>
+            </tbody>
+        </table><blockquote>The <code>xxxxx-…</code> hostnames in the defaults are placeholders — replace them with the real hostnames of your Synapse add-on and this bridge.</blockquote>
+      </div>
+    </article>
+
+    <article id="login" class="doc-section glass-card" data-search="login link telegram api id api hash my.telegram.org mtproto phone sms">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔗</span><div><p class="eyebrow">Login</p><h2>Phone number + code login</h2></div></div>
+        <a class="section-link" href="#login">#login</a>
+      </div>
+      <div class="doc-content">
+        <ul><li>Unlike WhatsApp/Signal there is <strong>no QR code</strong>: send <code>login</code> to the bridge bot, enter your phone number and type the code from the Telegram app or SMS (Telegram's own MTProto login flow).</li></ul>
+      </div>
+    </article>
+
+    <article id="secrets" class="doc-section glass-card" data-search="secrets as token hs token registration yaml share volume synapse">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔐</span><div><p class="eyebrow">Secrets</p><h2>Tokens &amp; Registration</h2></div></div>
+        <a class="section-link" href="#secrets">#secrets</a>
+      </div>
+      <div class="doc-content">
+        <p><code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code> are generated automatically on first registration. <strong>Do not change them afterwards</strong> — otherwise Synapse loses its link to the appservice and all bridged rooms and users break.</p>
+        <p>The bridge writes <code>registration.yaml</code> to <code>/share/telegram_bridge_registration.yaml</code>. Synapse reads it only when <code>telegram_bridge_enabled</code> is enabled (restart required).</p>
+      </div>
+    </article>
+
+    <article id="backup" class="doc-section glass-card" data-search="backup data config registration sqlite database share">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Backup</p><h2>What to Back Up</h2></div></div>
+        <a class="section-link" href="#backup">#backup</a>
+      </div>
+      <div class="doc-content">
+        <ul>
+          <li><code>/data</code> contains <code>config.yaml</code>, <code>registration.yaml</code> and, with SQLite, the complete bridge database. <strong>Back it up</strong> — Telegram must be linked again (phone number + code) after a restore otherwise.</li>
+          <li><code>/share/telegram_bridge_registration.yaml</code> is reproducible from <code>/data/registration.yaml</code> (re-copied on the next start if missing) and need not be part of the backup.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="notes" class="doc-section glass-card" data-search="&lt;code&gt;telegram_api_id&lt;/code&gt; / &lt;code&gt;telegram_api_hash&lt;/code">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔑</span><div><p class="eyebrow">Details</p><h2>Telegram API Credentials</h2></div></div>
+        <a class="section-link" href="#notes">#notes</a>
+      </div>
+      <div class="doc-content">
+        <p><code>telegram_api_id</code> / <code>telegram_api_hash</code> are your own values issued by Telegram (register a free app at my.telegram.org) — not to be confused with <code>as_token</code> / <code>hs_token</code>. <strong>Without them the bridge starts (log warning) but cannot connect to Telegram.</strong> They are plain config values, there is no separate secret file.</p>
+      </div>
+    </article>
+
+    <article id="limits" class="doc-section glass-card" data-search="limitations known encryption megolm">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚠️</span><div><p class="eyebrow">Limits</p><h2>Known Limitations</h2></div></div>
+        <a class="section-link" href="#limits">#limits</a>
+      </div>
+      <div class="doc-content">
+        <ul><li><strong>LottieConverter is not included</strong> in the image (resource saving) — animated stickers/emoji packs may not bridge correctly. It can be added to the Dockerfile if needed.</li><li>Encryption (Megolm) must be enabled on both sides (bridge option <code>encryption</code> plus the Matrix client) to get encrypted portal rooms.</li><li>After the Go rewrite (April 2026) the old Python relaybot mode is not migrated automatically — re-add <code>default_relays</code> manually in <code>config.yaml</code> if you ever had a Python instance (not relevant for fresh installs).</li></ul>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github mautrix telegram upstream docs">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links &amp; License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/matrix_telegram_bridge"><span>🐙</span><strong>Add-on source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/mautrix/telegram"><span>🌉</span><strong>mautrix-telegram</strong><small>Upstream</small></a>
+          <a class="source-chip" href="https://docs.mau.fi/bridges/go/telegram/index.html"><span>📖</span><strong>Upstream docs</strong><small>docs.mau.fi</small></a>
+          <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver add-on</small></a>
+        </div>
+        <blockquote>Unofficial, community-maintained wrapper around the upstream mautrix bridge.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+        <a href="https://github.com/mautrix/telegram">🌉 Upstream</a>
+      </div>
+      <div>Telegram Bridge · Matrix Bridge Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
