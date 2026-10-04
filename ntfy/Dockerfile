@@ -2,7 +2,7 @@
 # Home Assistant build.yaml is deprecated; do not re-add ntfy/build.yaml.
 ARG NTFY_VERSION=2.28.0
 ARG BUILD_ARCH
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
 # Stage 1: ntfy binary from the official multi-arch image
 FROM binwiederhier/ntfy:v${NTFY_VERSION} AS ntfy-source
@@ -21,7 +21,7 @@ LABEL \
     io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.title="ntfy Home Assistant Add-on" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
-    org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:16.3.2" \
+    org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.7" \
     org.opencontainers.image.source="https://github.com/binwiederhier/ntfy" \
     org.opencontainers.image.description="ntfy ${NTFY_VERSION} packaged as a Home Assistant add-on"
 
