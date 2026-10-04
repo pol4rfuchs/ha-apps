@@ -24,7 +24,7 @@
 |---|---|
 | **Upstream image** | `codeberg.org/forgejo/forgejo` (rootless) |
 | **Forgejo version** | `16.0.5` |
-| **Add-on version** | `16.0.17` |
+| **Add-on version** | `16.0.18` |
 | **SSH Git access** | optional (`ssh_enabled`) |
 | **Arch** | `amd64`, `aarch64` |
 
