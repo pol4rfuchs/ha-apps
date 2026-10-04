@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.5...ts6_manager-v1.1.6) (2026-10-04)
+
+
+### Bug Fixes
+
+* **ts6_manager:** bump base image to hassio-addons/base 21.0.7 ([#461](https://github.com/pol4rfuchs/ha-apps/issues/461)) ([f995b1d](https://github.com/pol4rfuchs/ha-apps/commit/f995b1daaf466998c9b240192b26d6c9be735e94))
+
 ## [1.1.5](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.4...ts6_manager-v1.1.5) (2026-09-09)
 
 
