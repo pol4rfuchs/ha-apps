@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.9](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.8...ntfy-v1.2.9) (2026-10-04)
+
+
+### Bug Fixes
+
+* **ntfy:** bump base image to hassio-addons/base 21.0.7 ([#459](https://github.com/pol4rfuchs/ha-apps/issues/459)) ([bdfc9c7](https://github.com/pol4rfuchs/ha-apps/commit/bdfc9c7eb2780ea592da5a0c666b3494cc286a19))
+
 ## [1.2.8](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.7...ntfy-v1.2.8) (2026-08-28)
 
 

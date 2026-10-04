@@ -12,12 +12,11 @@ LABEL io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.description="Local-first UniFi OS control plane for Home Assistant" \
       org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps"
 
+COPY requirements.txt /tmp/requirements.txt
+
 RUN apk add --no-cache ca-certificates curl && \
-    python3 -m pip install --no-cache-dir \
-      fastapi==0.116.1 \
-      uvicorn==0.35.0 \
-      httpx==0.28.1 \
-      pydantic==2.11.7
+    python3 -m pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm -f /tmp/requirements.txt
 
 COPY backend /app/backend
 COPY frontend/dist /app/frontend
@@ -29,3 +28,8 @@ RUN chmod +x \
 
 WORKDIR /app
 EXPOSE 8599
+
+# Exec form (no shell); a failed request raises and exits 1 = unhealthy.
+# Loopback is allowed by the app's Ingress peer guard.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD ["python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8599/api/health', timeout=4)"]

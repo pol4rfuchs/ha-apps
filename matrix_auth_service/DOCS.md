@@ -13,7 +13,7 @@ zurückgestellt (gleiches Muster wie beim Technitium-Add-on).
 
 - Ein bereits laufendes Matrix Synapse Add-on mit **Simplified Sliding
   Sync**-Unterstützung (ab Synapse 1.114 nativ vorhanden)
-- Eigene Subdomain für die Account-UI (z.B. `account.deine-domain.eu.org`)
+- Eigene Subdomain für die Account-UI (z.B. `account.example.org`)
 - Fresh-Start empfohlen: bestehende Accounts werden **nicht** automatisch
   migriert (kein `syn2mas`-Schritt in diesem Add-on eingebaut)
 

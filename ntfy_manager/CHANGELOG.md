@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.14](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.13...ntfy_manager-v0.2.14) (2026-10-04)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** bump base image to hassio-addons/base 21.0.7 ([#458](https://github.com/pol4rfuchs/ha-apps/issues/458)) ([31420ab](https://github.com/pol4rfuchs/ha-apps/commit/31420abed01f70f927764586f3aa6781b31bf9b4))
+
 ## [0.2.13](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.12...ntfy_manager-v0.2.13) (2026-07-23)
 
 
