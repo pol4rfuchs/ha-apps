@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.5](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.4...unifi_os_control_center-v0.7.5) (2026-10-04)
+
+
+### Bug Fixes
+
+* **unifi_os_control_center:** return sanitized error details in API r… ([#474](https://github.com/pol4rfuchs/ha-apps/issues/474)) ([85e64c7](https://github.com/pol4rfuchs/ha-apps/commit/85e64c7af45f490a184459846edcad0ad7d8b57d))
+
 ## [0.7.4](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.3...unifi_os_control_center-v0.7.4) (2026-10-04)
 
 
