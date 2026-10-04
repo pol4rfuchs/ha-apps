@@ -1,7 +1,7 @@
 {
   "forgejo": "16.0.18",
   "intiface_central": "1.0.4",
-  "matrix_auth_service": "1.0.3",
+  "matrix_auth_service": "1.0.4",
   "matrix_signal_bridge": "0.2609.0-ha1-pol4r1",
   "matrix_synapse": "1.7.6",
   "matrix_telegram_bridge": "0.2609.0-ha1-pol4r1",
@@ -9,7 +9,7 @@
   "navidrome": "2.1.10",
   "nextcloud": "33.0.19",
   "nginx_proxy_manager": "2.1.6",
-  "ntfy": "1.2.8",
+  "ntfy": "1.2.9",
   "ntfy_manager": "0.2.13",
   "restic_backup": "0.2.1",
   "searxng": "1.0.33",
