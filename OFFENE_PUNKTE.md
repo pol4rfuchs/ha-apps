@@ -1,6 +1,6 @@
 # Offene Punkte – ha-apps
 
-Stand: 2026-10-04, nach Repo-Audit, PR #454 und den Folge-PRs (Base-Images, Wiki, unifi, Platzhalter).
+Stand: 2026-10-04, alle bisherigen PRs gemergt (Audit, Base-Images, Wiki, unifi, Platzhalter, CodeQL-Fix).
 Prioritäten: **hoch** / mittel / niedrig.
 
 ## 1. Erledigt
@@ -16,6 +16,8 @@ Prioritäten: **hoch** / mittel / niedrig.
 - [x] Wiki-Seiten für unifi_os_control_center, matrix_auth_service und die drei Bridges (inkl. Hub und `.wiki-versions.json`)
 - [x] unifi_os_control_center: pip-Pins in `requirements.txt`, `HEALTHCHECK`
 - [x] matrix_auth_service: Platzhalter-Defaults neutralisiert (§9)
+- [x] unifi_os_control_center: CodeQL-Alert #267 (`py/stack-trace-exposure`) in `firewall_capabilities` behoben (Exception-Text nur noch im Log)
+- [x] Root-`.gitignore` angelegt
 
 ## 2. Braucht Entscheidung oder Infos
 
@@ -53,7 +55,7 @@ Aktuell `apparmor: false` bei 14 Add-ons (nur restic_backup, matrix_signal_bridg
 
 ## 7. Kleinkram
 
-- [ ] niedrig – `.gitignore` im Repo-Root fehlt (nur unifi hat eine eigene)
+- [ ] niedrig – unifi_os_control_center: weitere `detail=str(exc)` in `backend/main.py` (HTTP-502-Antworten, `_api_error_detail`, `_diagnostic_attempt`). Erst anfassen, falls CodeQL sie meldet; Meldungen dienen der UI-Diagnose.
 
 ## 8. Hinweis Release Please
 
