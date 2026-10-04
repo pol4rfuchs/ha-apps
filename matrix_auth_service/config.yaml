@@ -18,11 +18,11 @@ ports_description:
   8082/tcp: MAS Public API + Account-UI (NPM → hier für HTTPS)
   8083/tcp: MAS Internal (Health/Metrics, kein NPM)
 options:
-  mas_domain: account.deine-domain.eu.org
-  synapse_server_name: deine-domain.eu.org
-  synapse_endpoint: http://homeassistant.local:8008
+  mas_domain: account.example.org
+  synapse_server_name: example.org
+  synapse_endpoint: http://xxxxx-matrix-server:8008
   synapse_secret: ''
-  postgres_password: changeme_bitte_aendern
+  postgres_password: change-me
   admin_users: ''
   password_registration_enabled: false
   password_login_enabled: true
