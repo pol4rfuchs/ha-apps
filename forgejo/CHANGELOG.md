@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.18](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.17...forgejo-v16.0.18) (2026-10-04)
+
+
+### Bug Fixes
+
+* **forgejo:** bump base image to hassio-addons/base 21.0.7 ([#457](https://github.com/pol4rfuchs/ha-apps/issues/457)) ([0f0c61a](https://github.com/pol4rfuchs/ha-apps/commit/0f0c61a0d895b0acccfc1925af706d229001718e))
+
 ## [16.0.17](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.16...forgejo-v16.0.17) (2026-10-01)
 
 
