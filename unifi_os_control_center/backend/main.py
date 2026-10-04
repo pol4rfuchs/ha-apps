@@ -196,6 +196,12 @@ async def ingress_peer_guard(request: Request, call_next: Any) -> Response:
 
 
 
+def _safe_error(exc: Exception, context: str) -> str:
+    """Log the exception server-side and return a generic message for API responses."""
+    logger.warning("%s failed", context, exc_info=exc)
+    return f"{type(exc).__name__}: request failed, see the app log for details"
+
+
 def _api_error_detail(exc: Exception) -> Any:
     if isinstance(exc, UniFiAPIError):
         return exc.as_dict()
@@ -447,7 +453,7 @@ async def firewall_capabilities(site_id: str) -> dict[str, Any]:
         result["errors"]["policies"] = exc.as_dict()
         model_attempts.append({"ok": False, "response_body": exc.response_body})
     except Exception as exc:
-        result["errors"]["policies"] = str(exc)
+        result["errors"]["policies"] = _safe_error(exc, "firewall policies read")
     try:
         zones = await client.firewall_zones(site_id)
         result["zones_read"] = True
@@ -456,7 +462,7 @@ async def firewall_capabilities(site_id: str) -> dict[str, Any]:
         result["errors"]["zones"] = exc.as_dict()
         model_attempts.append({"ok": False, "response_body": exc.response_body})
     except Exception as exc:
-        result["errors"]["zones"] = str(exc)
+        result["errors"]["zones"] = _safe_error(exc, "firewall zones read")
 
     zone_rows = _rows(zones)
     if len(zone_rows) >= 2:
@@ -467,7 +473,7 @@ async def firewall_capabilities(site_id: str) -> dict[str, Any]:
                 await client.firewall_ordering(site_id, source_id, destination_id)
                 result["ordering_read"] = True
             except Exception as exc:
-                result["errors"]["ordering"] = str(exc)
+                result["errors"]["ordering"] = _safe_error(exc, "firewall ordering read")
     if model_attempts:
         result.update(_detect_firewall_model(model_attempts))
     result["policy_count"] = len(_rows(policies))
