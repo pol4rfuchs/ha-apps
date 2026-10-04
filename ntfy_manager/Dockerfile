@@ -1,5 +1,5 @@
 ARG BUILD_ARCH
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:16.3.2
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
 # ── Stage 1: Build ───────────────────────────────────────────────────────────
 FROM node:22-alpine AS builder
