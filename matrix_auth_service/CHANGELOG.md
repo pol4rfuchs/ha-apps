@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.3...matrix_auth_service-v1.0.4) (2026-10-04)
+
+
+### Bug Fixes
+
+* **matrix_auth_service:** replace placeholder defaults with neutral v… ([#460](https://github.com/pol4rfuchs/ha-apps/issues/460)) ([05c3fd7](https://github.com/pol4rfuchs/ha-apps/commit/05c3fd73889ee9d0f885c4f90d076ee9936ce414))
+
 ## [1.0.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.2...matrix_auth_service-v1.0.3) (2026-09-30)
 
 
