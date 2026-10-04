@@ -2,13 +2,13 @@
 configuration:
   mas_domain:
     name: MAS Domain
-    description: "Öffentliche URL der Account-UI (z.B. account.deine-domain.eu.org)."
+    description: "Öffentliche URL der Account-UI (z.B. account.example.org)."
   synapse_server_name:
     name: Synapse Servername
     description: "Muss exakt dem server_name im Synapse-Add-on entsprechen."
   synapse_endpoint:
     name: Synapse Endpoint
-    description: "Intern erreichbare URL des Synapse-Add-ons (z.B. http://homeassistant.local:8008)."
+    description: "Intern erreichbare URL des Synapse-Add-ons (z.B. http://xxxxx-matrix-server:8008)."
   synapse_secret:
     name: Synapse Shared Secret
     description: "Secret für die Kopplung mit Synapse. Leer lassen zur automatischen Generierung — Wert danach ins Synapse-Add-on übertragen."
