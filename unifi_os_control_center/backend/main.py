@@ -205,7 +205,13 @@ def _safe_error(exc: Exception, context: str) -> str:
 def _api_error_detail(exc: Exception) -> Any:
     if isinstance(exc, UniFiAPIError):
         return exc.as_dict()
-    return str(exc)
+    return _safe_error(exc, "UniFi API request")
+
+
+def _http_detail(exc: Exception, context: str) -> str:
+    if isinstance(exc, UniFiAPIError):
+        return f"UniFi API returned HTTP {exc.status_code} {exc.reason}"
+    return _safe_error(exc, context)
 
 
 async def _diagnostic_attempt(name: str, operation: Any) -> dict[str, Any]:
@@ -216,7 +222,7 @@ async def _diagnostic_attempt(name: str, operation: Any) -> dict[str, Any]:
     except UniFiAPIError as exc:
         return {"name": name, "ok": False, **exc.as_dict()}
     except Exception as exc:
-        return {"name": name, "ok": False, "status_code": None, "reason": type(exc).__name__, "response_body": str(exc)}
+        return {"name": name, "ok": False, "status_code": None, "reason": type(exc).__name__, "response_body": _safe_error(exc, f"firewall diagnostic {name}")}
 
 
 
@@ -362,7 +368,7 @@ async def notification_test() -> dict[str, Any]:
         return {"ok": sent, "topic": settings.ntfy_topic}
     except Exception as exc:
         add_alert("error", "ntfy", f"ntfy test failed: {exc}")
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail=_safe_error(exc, "ntfy test")) from exc
 
 @app.get("/api/unifi/test")
 async def test_connection() -> dict[str, Any]:
@@ -373,28 +379,28 @@ async def test_connection() -> dict[str, Any]:
         return {"ok": True, "site_count": count}
     except Exception as exc:
         add_alert("error", "connection-test", f"Connection failed: {exc}")
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail=_http_detail(exc, "connection test")) from exc
 
 @app.get("/api/unifi/sites")
 async def sites() -> Any:
     try:
         return await UniFiClient(settings).sites()
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail=_http_detail(exc, "sites read")) from exc
 
 @app.get("/api/unifi/sites/{site_id}/devices")
 async def devices(site_id: str) -> Any:
     try:
         return await UniFiClient(settings).devices(site_id)
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail=_http_detail(exc, "devices read")) from exc
 
 @app.get("/api/unifi/sites/{site_id}/clients")
 async def clients(site_id: str) -> Any:
     try:
         return await UniFiClient(settings).clients(site_id)
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(status_code=502, detail=_http_detail(exc, "clients read")) from exc
 
 @app.get("/api/unifi/sites/{site_id}/firewall/policies")
 async def firewall_policies(site_id: str) -> Any:
