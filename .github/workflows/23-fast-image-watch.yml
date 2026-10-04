@@ -422,4 +422,3 @@ jobs:
               --title "${title}" \
               --body "${body}"
           fi
-          

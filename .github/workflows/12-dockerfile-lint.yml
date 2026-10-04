@@ -37,7 +37,7 @@ jobs:
             python3 -c "import json; print(json.dumps(json.load(open('addons.json'))))"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
-          
+
   hadolint:
     name: Hadolint ${{ matrix.app }}
     needs: prepare

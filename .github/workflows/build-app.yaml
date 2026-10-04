@@ -31,12 +31,12 @@ jobs:
     name: Prepare ${{ inputs.app }}
     runs-on: ubuntu-24.04
     outputs:
-      image:    ${{ steps.info.outputs.image }}
-      version:  ${{ steps.info.outputs.version }}
-      name:     ${{ steps.info.outputs.name }}
-      slug:     ${{ steps.info.outputs.slug }}
-      matrix:   ${{ steps.info.outputs.matrix }}
-      app:      ${{ steps.info.outputs.app }}
+      image: ${{ steps.info.outputs.image }}
+      version: ${{ steps.info.outputs.version }}
+      name: ${{ steps.info.outputs.name }}
+      slug: ${{ steps.info.outputs.slug }}
+      matrix: ${{ steps.info.outputs.matrix }}
+      app: ${{ steps.info.outputs.app }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -201,9 +201,9 @@ jobs:
       - name: Create and push multi-arch manifest
         shell: bash
         env:
-          IMAGE:   ${{ needs.prepare.outputs.image }}
+          IMAGE: ${{ needs.prepare.outputs.image }}
           VERSION: ${{ needs.prepare.outputs.version }}
-          MATRIX:  ${{ needs.prepare.outputs.matrix }}
+          MATRIX: ${{ needs.prepare.outputs.matrix }}
         run: |
           set -euo pipefail
 
@@ -258,7 +258,7 @@ jobs:
 
       - name: Pull pushed manifest
         env:
-          IMAGE:   ${{ needs.prepare.outputs.image }}
+          IMAGE: ${{ needs.prepare.outputs.image }}
           VERSION: ${{ needs.prepare.outputs.version }}
         run: docker pull "${IMAGE}:${VERSION}"
 
@@ -293,7 +293,7 @@ jobs:
       - name: Start container and classify result
         shell: bash
         env:
-          IMAGE:   ${{ needs.prepare.outputs.image }}
+          IMAGE: ${{ needs.prepare.outputs.image }}
           VERSION: ${{ needs.prepare.outputs.version }}
           WAIT_SECONDS: "15"
         run: |
@@ -344,7 +344,7 @@ jobs:
 
       - name: Tag VERSION as latest
         env:
-          IMAGE:   ${{ needs.prepare.outputs.image }}
+          IMAGE: ${{ needs.prepare.outputs.image }}
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           set -euo pipefail
