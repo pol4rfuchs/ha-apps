@@ -14,7 +14,7 @@
 # Kein manuelles Nachinstallieren dieser Tools nötig.
 # ==============================================================================
 # BUILD_FROM muss vor dem ersten FROM deklariert werden (Docker Multi-Stage Regel)
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:19.0.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 ARG BUILD_VERSION
 ARG FORGEJO_IMAGE_VERSION=16.0.5
 
