@@ -43,6 +43,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 |---|---|---|---|---|
 | Technitium DNS Server | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | DNS | Self-hosted DNS server with DoH/DoT/DoQ, local zones, and ad-blocking (host network) |
 | LPI | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `custom build` | Privacy | Live Privacy Inspector — scans and reports privacy-sensitive exposure across the stack |
+| CortenDesk | ![planned](https://img.shields.io/badge/-planned-6C757D?style=flat-square) | `ghcr.io/marcpope/cortendesk` (thin wrapper, no upstream changes) | Remote Access / Management | RustDesk console with embedded ID and relay server (hbbs/hbbr): device list, groups, users with permissions, shared address books, audit log and optional web client; stock RustDesk clients use it as "API Server". Unofficial community add-on, not endorsed or supported by the upstream author. AGPL-3.0 — upstream: [marcpope/cortendesk](https://github.com/marcpope/cortendesk), [marcpope/cortendesk-server](https://github.com/marcpope/cortendesk-server) |
 
 ### Status
 
