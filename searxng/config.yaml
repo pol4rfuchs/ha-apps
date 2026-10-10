@@ -1,6 +1,6 @@
 ---
 name: SearXNG
-version: "1.0.34"
+version: "1.0.35"
 slug: searxng
 image: ghcr.io/pol4rfuchs/searxng
 description: Privacy-respecting metasearch engine — kein Tracking, keine Profile.
