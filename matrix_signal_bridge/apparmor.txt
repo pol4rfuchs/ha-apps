@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-profile matrix_signal_bridge flags=(attach_disconnected,mediate_deleted,complain) {
+profile matrix_signal_bridge flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
   # ── s6-overlay Baseline (Pflicht — sonst Crash-Loop beim Restart) ────────
