@@ -98,6 +98,12 @@
       "semanticCommitScope": "unbound"
     },
     {
+      "matchFileNames": [
+        "unifi_os_control_center/**"
+      ],
+      "semanticCommitScope": "unifi_os_control_center"
+    },
+    {
       "matchManagers": [
         "github-actions"
       ],
