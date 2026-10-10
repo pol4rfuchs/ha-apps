@@ -1,0 +1,39 @@
+name: 29 AppArmor Check
+
+# No paths filter on purpose: the job is cheap, and a path-filtered job would
+# stay "pending" forever if it is ever made a required check.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apparmor:
+    name: AppArmor profiles
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install apparmor_parser and PyYAML
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends apparmor
+          pip install --break-system-packages --quiet pyyaml
+
+      # Syntax only (-Q skips the kernel load, -K skips the cache). The parser
+      # version can differ from HAOS, so this does not replace the manual
+      # complain-mode test on the Pi.
+      - name: Check profiles (syntax, s6 baseline, complain guard)
+        shell: bash
+        run: python3 scripts/check_apparmor.py
