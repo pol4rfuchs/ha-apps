@@ -63,11 +63,35 @@ jobs:
           test ! -d "$addon/rootfs/etc/services.d"
           echo "${addon}: layout OK"
 
-      - name: Home Assistant add-on linter advisory
-        uses: frenck/action-addon-linter@b9cfd1bc62ba60d2c4fc96317b5f7ada5923f4a7 # v2.21
+      # The upstream linter is a Docker container action. GitHub builds that
+      # image in a pre-step *before* any job step runs, so a Docker Hub
+      # timeout/429 fails the whole job and step-level continue-on-error cannot
+      # catch it. Run the same lint.py (pinned v2.21) directly instead: no Docker
+      # Hub pull, and every failure stays inside this advisory step.
+      - name: Checkout add-on linter (v2.21)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         continue-on-error: true
         with:
-          path: "./${{ matrix.addon }}"
+          repository: frenck/action-addon-linter
+          ref: b9cfd1bc62ba60d2c4fc96317b5f7ada5923f4a7 # v2.21
+          path: .addon-linter
+          persist-credentials: false
+
+      - name: Home Assistant add-on linter advisory
+        shell: bash
+        continue-on-error: true
+        env:
+          INPUT_PATH: "./${{ matrix.addon }}"
+          INPUT_COMMUNITY: "false"
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/addon-linter-venv"
+          "$RUNNER_TEMP/addon-linter-venv/bin/pip" install --quiet --no-cache-dir \
+            -r .addon-linter/src/requirements.txt
+          # lint.py reads its schemas from the container root.
+          sudo cp .addon-linter/src/config.schema.json /config.schema.json
+          sudo cp .addon-linter/src/build.schema.json /build.schema.json
+          "$RUNNER_TEMP/addon-linter-venv/bin/python" .addon-linter/src/lint.py
 
       - name: Explain advisory mode
         shell: bash
