@@ -155,7 +155,7 @@
       "description": "MAS-Versions-Bumps default zu 'chore', das triggert bei Release Please keinen Release/Image-Rebuild (siehe PR #311 — gemerged, aber ohne Release/Package geblieben). Force 'fix' analog zur matrix-synapse-Regel oben."
     },
     {
-      "description": "Automerge nur fuer risikoarme Updates: Minor/Patch von npm-/pip-Abhaengigkeiten und GitHub Actions, erst nach 3 Tagen Wartezeit und nur bei gruenen Checks (Smoke-Test, AppArmor, Lint). Majors bleiben manuell (siehe appbuildrules 7, gesammelt testen).",
+      "description": "Automerge nur fuer risikoarme Updates: Minor/Patch von npm-/pip-Abhaengigkeiten und GitHub Actions, erst nach 3 Tagen Wartezeit und nur bei gruenen Checks (Smoke-Test, AppArmor, Lint). Majors bleiben manuell (siehe appbuildrules 7, gesammelt testen). platformAutomerge ist bewusst aus: GitHubs Auto-Merge wartet nur auf die Pflicht-Checks des Rulesets, der pfadgefilterte Build-Test gehoert nicht dazu. Renovate mergt deshalb selbst und erst, wenn alle Checks des PRs gruen sind.",
       "matchManagers": [
         "npm",
         "pip_requirements",
@@ -167,7 +167,7 @@
       ],
       "minimumReleaseAge": "3 days",
       "automerge": true,
-      "platformAutomerge": true
+      "platformAutomerge": false
     },
     {
       "description": "Apps mit Datenbank/Migrationen werden NIE automatisch gemergt (kein Downgrade moeglich). Muss nach der Automerge-Regel stehen, damit sie gewinnt.",

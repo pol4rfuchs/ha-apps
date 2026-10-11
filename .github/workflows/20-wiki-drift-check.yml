@@ -27,6 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # APP_TOKEN, not GITHUB_TOKEN: the ruleset on main only lets the
+          # repository admin push past the required status checks.
+          # The baseline commit carries [skip ci], so this push starts no
+          # workflows (same as before with GITHUB_TOKEN).
+          token: ${{ secrets.APP_TOKEN }}
           fetch-depth: 0
           persist-credentials: true
 
@@ -80,7 +85,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add wiki/.wiki-versions.json
-          git commit -m "chore(wiki): track baseline versions for documented add-ons" || exit 0
+          git commit -m "chore(wiki): track baseline versions for documented add-ons [skip ci]" || exit 0
           git push
 
       - name: Open or update drift issue
