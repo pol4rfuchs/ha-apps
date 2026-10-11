@@ -7,12 +7,12 @@
 
 | Domain | Port | Notes / Hinweise |
 |--------|------|------------------|
-| `matrix.deine-domain.duckdns.org` | 8008 | Synapse API + well-known |
-| `element.deine-domain.duckdns.org` | 7080 | Element Web Client |
-| `element-call.deine-domain.duckdns.org` | 7081 | Element Call (Voice/Video) |
-| `livekit.deine-domain.duckdns.org` | 7880 | LiveKit SFU — **WebSocket required / WebSocket Pflicht!** |
-| `livekit-jwt.deine-domain.duckdns.org` | 8089 | LiveKit JWT Token Bridge |
-| `admin.deine-domain.duckdns.org` | 8090 | Ketesa (Admin UI) |
+| `matrix.example.org` | 8008 | Synapse API + well-known |
+| `element.example.org` | 7080 | Element Web Client |
+| `element-call.example.org` | 7081 | Element Call (Voice/Video) |
+| `livekit.example.org` | 7880 | LiveKit SFU — **WebSocket required / WebSocket Pflicht!** |
+| `livekit-jwt.example.org` | 8089 | LiveKit JWT Token Bridge |
+| `admin.example.org` | 8090 | Ketesa (Admin UI) |
 
 ## Router Port Forwards (not via NPM / nicht über NPM)
 
@@ -39,12 +39,12 @@
 **Advanced → Custom Nginx Config:**
 ```nginx
 location /.well-known/matrix/client {
-    return 200 '{"m.homeserver":{"base_url":"https://matrix.deine-domain.duckdns.org"}}';
+    return 200 '{"m.homeserver":{"base_url":"https://matrix.example.org"}}';
     default_type application/json;
     add_header Access-Control-Allow-Origin *;
 }
 location /.well-known/matrix/server {
-    return 200 '{"m.server":"matrix.deine-domain.duckdns.org:443"}';
+    return 200 '{"m.server":"matrix.example.org:443"}';
     default_type application/json;
     add_header Access-Control-Allow-Origin *;
 }
@@ -111,13 +111,13 @@ if ($request_method = OPTIONS) {
 ## Addon Config / Addon-Konfiguration
 
 ```yaml
-server_name: "deine-domain.duckdns.org"
-element_web_url: "https://element.deine-domain.duckdns.org"
+server_name: "example.org"
+element_web_url: "https://element.example.org"
 enable_voice_calls: true
 livekit_secret: ""
-element_call_url: "https://element-call.deine-domain.duckdns.org"
-livekit_url: "wss://livekit.deine-domain.duckdns.org"
-livekit_jwt_url: "https://livekit-jwt.deine-domain.duckdns.org"
+element_call_url: "https://element-call.example.org"
+livekit_url: "wss://livekit.example.org"
+livekit_jwt_url: "https://livekit-jwt.example.org"
 ```
 
 > EN: Leave `livekit_secret` empty — auto-generated on first start and stored in `/data/matrix/.livekit_secret`.
@@ -132,8 +132,8 @@ DE: LiveKit TURN TLS braucht ein Zertifikat direkt — nicht über NPM Proxy. Na
 
 ```bash
 mkdir -p /data/matrix/tls
-cp /ssl/livekit.deine-domain.duckdns.org/fullchain.pem /data/matrix/tls/livekit.crt
-cp /ssl/livekit.deine-domain.duckdns.org/privkey.pem   /data/matrix/tls/livekit.key
+cp /ssl/livekit.example.org/fullchain.pem /data/matrix/tls/livekit.crt
+cp /ssl/livekit.example.org/privkey.pem   /data/matrix/tls/livekit.key
 # Addon neu starten / restart addon
 ```
 

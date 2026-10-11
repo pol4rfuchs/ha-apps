@@ -2,10 +2,10 @@
 configuration:
   server_name:
     name: Servername
-    description: "Matrix-Servername / Domain (z.B. deine-domain.duckdns.org). Wird Teil deiner Matrix-ID: @user:server_name."
+    description: "Matrix-Servername / Domain (z.B. example.org). Wird Teil deiner Matrix-ID: @user:server_name."
   element_web_url:
     name: Element Web URL
-    description: "Externe HTTPS-URL für Element Web (z.B. https://element.deine-domain.duckdns.org)."
+    description: "Externe HTTPS-URL für Element Web (z.B. https://element.example.org)."
   enable_registration:
     name: Registrierung erlauben
     description: "Erlaubt neuen Nutzern, sich auf diesem Server zu registrieren."

@@ -91,8 +91,8 @@ ports_description:
   30019/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
   30020/udp: LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)
 options:
-  server_name: deine-domain.duckdns.org
-  element_web_url: https://deine-domain.duckdns.org:7080
+  server_name: example.org
+  element_web_url: https://example.org:7080
   enable_registration: false
   registration_shared_secret: ''
   enable_federation: true
@@ -110,9 +110,9 @@ options:
   enable_voice_calls: false
   livekit_turn_enabled: false
   livekit_secret: ''
-  element_call_url: https://call.deine-domain.duckdns.org
-  livekit_url: wss://livekit.deine-domain.duckdns.org
-  livekit_jwt_url: https://livekit-jwt.deine-domain.duckdns.org
+  element_call_url: https://call.example.org
+  livekit_url: wss://livekit.example.org
+  livekit_jwt_url: https://livekit-jwt.example.org
   admin_ui_username: admin
   admin_ui_password: ''
   media_retention_local_days: 0

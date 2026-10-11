@@ -55,8 +55,8 @@ https://github.com/pol4rfuchs/ha-apps
 Install **Matrix Server (ESS CE)** and set at minimum:
 
 ```yaml
-server_name: "your-domain.duckdns.org"
-element_web_url: "https://your-domain.duckdns.org"
+server_name: "example.org"
+element_web_url: "https://example.org"
 postgres_password: "changeme_please"
 enable_registration: false
 ```
@@ -129,7 +129,7 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 > ℹ️ This creates a **new** admin user. To promote an existing user to admin instead, update the database directly:
 > ```bash
 > docker exec -it addon_local_matrix_server \
->   gosu postgres psql -d synapse -c "UPDATE users SET admin = 1 WHERE name = '@username:your-domain.duckdns.org';"
+>   gosu postgres psql -d synapse -c "UPDATE users SET admin = 1 WHERE name = '@username:example.org';"
 > ```
 > Log out and back in afterwards — an already-active session won't pick up the change automatically.
 
@@ -199,10 +199,10 @@ Synapse does not need the ntfy URL in its config — the client registers the ga
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://matrix.your-domain.duckdns.org
-    username: "@homeassistant:your-domain.duckdns.org"
+    homeserver: https://matrix.example.org
+    username: "@homeassistant:example.org"
     password: "ha_user_password"
-    default_room: "#homeassistant:your-domain.duckdns.org"
+    default_room: "#homeassistant:example.org"
 ```
 
 See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full example with automations.
@@ -225,7 +225,7 @@ See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full exampl
 ## 🔍 Test federation
 
 ```
-https://federationtester.matrix.org/#your-domain.duckdns.org
+https://federationtester.matrix.org/#example.org
 ```
 
 ---

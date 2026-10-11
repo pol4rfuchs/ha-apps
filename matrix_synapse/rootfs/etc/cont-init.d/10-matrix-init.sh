@@ -48,6 +48,19 @@ LK_SECRET_FILE="${DATA_DIR}/.livekit_secret"
 ADMIN_UI_AUTH_FILE="${DATA_DIR}/.admin_ui_auth"
 BACKUP_DIR="${DATA_DIR}/backups"
 
+# ── Platzhalter-Schutz ────────────────────────────────────────────────────
+# server_name steckt dauerhaft in Datenbank und Signing-Key und lässt sich nach der
+# Ersteinrichtung nicht mehr ändern. Beim ersten Start daher nicht mit Platzhalter starten.
+case "${SERVER_NAME}" in
+    ""|*example.org|*example.com|*example.net|*deine-domain*|*your-domain*)
+        if [ ! -f "${SIGNING_KEY}" ]; then
+            bashio::exit.nok "server_name ist noch ein Platzhalter ('${SERVER_NAME}'). Trage deinen echten Servernamen ein (z. B. matrix.meinedomain.de) – er lässt sich nach der Ersteinrichtung nicht mehr ändern."
+        else
+            bashio::log.warning "server_name ist ein Platzhalter ('${SERVER_NAME}') – prüfe die Option, falls das nicht gewollt ist."
+        fi
+        ;;
+esac
+
 mkdir -p "${SYNAPSE_DATA}" "${PG_DATA}" "/media/matrix" \
          "${DATA_DIR}/logs" "${SYNAPSE_DATA}/media_store" \
          "${DATA_DIR}/element-web" "${DATA_DIR}/element-call" \
