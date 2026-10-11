@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.19](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.18...forgejo-v16.0.19) (2026-10-11)
+
+
+### Bug Fixes
+
+* **forgejo:** warn when domain is unset and install envsubst for first start ([#501](https://github.com/pol4rfuchs/ha-apps/issues/501)) ([07bdc44](https://github.com/pol4rfuchs/ha-apps/commit/07bdc448b7223b2b5cc54b5b27770851c1c8adba))
+
 ## [16.0.18](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.17...forgejo-v16.0.18) (2026-10-04)
 
 
