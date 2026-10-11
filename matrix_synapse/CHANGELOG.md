@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.6...matrix_synapse-v1.7.7) (2026-10-11)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** replace DynDNS placeholder defaults and refuse placeholder server_name on first start ([#503](https://github.com/pol4rfuchs/ha-apps/issues/503)) ([6e8dea6](https://github.com/pol4rfuchs/ha-apps/commit/6e8dea6dfa5913b5a6d9a9e5c951d1c5c38d36e4))
+
 ## [1.7.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.5...matrix_synapse-v1.7.6) (2026-09-30)
 
 
