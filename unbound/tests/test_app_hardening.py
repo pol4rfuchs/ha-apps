@@ -67,3 +67,16 @@ def test_normalize_cname_record():
         "ttl": 300,
     })
     assert rec["type"] == "CNAME"
+
+
+def test_ingress_guard_allows_gateway_and_loopback():
+    for peer in ("172.30.32.2", "127.0.0.1", "::1"):
+        app_module.request.remote_addr = peer
+        assert app_module.ingress_peer_guard() is None
+
+
+def test_ingress_guard_rejects_other_peers():
+    for peer in ("192.168.1.50", "172.30.33.5", "", None):
+        app_module.request.remote_addr = peer
+        assert app_module.ingress_peer_guard() == ("Forbidden", 403)
+

@@ -23,6 +23,28 @@ app = Flask(__name__)
 
 _logger = logging.getLogger("unbound-web")
 
+# Home Assistant Ingress is the only supported entry point: the Supervisor
+# proxies authenticated users from 172.30.32.2. The web UI has no login of its
+# own, so any other peer (e.g. another container on the add-on network) is
+# rejected. Loopback stays allowed for in-container checks.
+_INGRESS_PEERS = frozenset({"172.30.32.2", "127.0.0.1", "::1"})
+_rejected_peers = set()
+
+
+@app.before_request
+def ingress_peer_guard():
+    """Reject every request that does not come from the Ingress gateway."""
+    peer = request.remote_addr or ""
+    if peer in _INGRESS_PEERS:
+        return None
+    if peer not in _rejected_peers and len(_rejected_peers) < 64:
+        _rejected_peers.add(peer)
+        _logger.warning(
+            "Rejected connection from %s: only the Home Assistant Ingress gateway is allowed",
+            peer or "unknown peer",
+        )
+    return "Forbidden", 403
+
 BLOCKLISTS_FILE = "/data/blocklists.json"
 BLOCKLIST_STATUS_FILE = "/data/blocklist_status.json"
 BLOCKLIST_CONF = "/etc/unbound/blocklist.conf"

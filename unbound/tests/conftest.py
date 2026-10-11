@@ -27,11 +27,13 @@ def install_flask_stub():
             def decorator(func):
                 return func
             return decorator
+        def before_request(self, func):
+            return func
         def run(self, *args, **kwargs):
             return None
 
     flask.Flask = Flask
     flask.jsonify = lambda *args, **kwargs: args[0] if args else kwargs
     flask.render_template = lambda *args, **kwargs: ""
-    flask.request = types.SimpleNamespace(get_json=lambda: None, args={})
+    flask.request = types.SimpleNamespace(get_json=lambda: None, args={}, remote_addr="")
     sys.modules["flask"] = flask
