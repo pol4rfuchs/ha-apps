@@ -641,3 +641,9 @@ device_offline_grace_polls: 2
 ```
 
 `device_offline_grace_polls` requires the device to be reported offline for the configured number of consecutive polling cycles before an alert is created. With the default 15-second polling interval and two grace polls, the effective delay is approximately 30 seconds. Recovery is reported when the API explicitly reports the device online again. Alerts are stored in SQLite and optionally delivered through ntfy when enabled.
+
+## Local and external access
+
+**Local (LAN):** reachable only through Home Assistant Ingress (sidebar). The app has no host port, and a guard rejects every request that does not come from the Supervisor's ingress gateway.
+
+**External (internet):** **never publish it.** Reach it through Home Assistant itself (VPN or HA remote access).

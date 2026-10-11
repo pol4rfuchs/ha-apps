@@ -409,6 +409,7 @@
       <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Admin account, library scan</small></span></a>
       <a class="nav-item" href="#paths" data-target="paths"><span class="nav-icon">📂</span><span><strong>Music Paths</strong><small>media, share, nfs, smb</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data, database, backup</small></span></a>
+      <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Known symptoms and fixes</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
     </nav>
@@ -691,6 +692,17 @@ Data       → /data (database, cache)</code></pre>
           <li>For rollback, restore the Navidrome add-on data partition.</li>
           <li>After restore, restart the add-on and verify library access.</li>
         </ol>
+      </div>
+    </article>
+
+    <article id="external-access" class="doc-section glass-card" data-search="external-access external access internet reverse proxy vpn lan local https firewall port forward">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">External access</p><h2>Local and external access</h2></div></div>
+        <a class="section-link" href="#external-access">#external-access</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:4533</code>; Subsonic clients use the same URL. Access is protected by Navidrome's own login. There is no <code>ssl</code> option, so use a reverse proxy if you need HTTPS.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>ok, but only through a reverse proxy with TLS.</strong> Never forward port <code>4533</code> directly. Public share links stay off (<code>ND_ENABLESHARING: false</code> by default), and the outgoing services (Last.fm, ListenBrainz, insights collector, Gravatar) are all off by default; keep them opt-in.</p>
       </div>
     </article>
 

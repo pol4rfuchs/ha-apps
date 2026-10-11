@@ -623,6 +623,9 @@ Domain:       your-subdomain.duckdns.org</code></pre>
           </tbody>
         </table>
         <blockquote>Never expose the Admin UI (port <code>81</code>) to the internet. Keep it behind your LAN or VPN.</blockquote>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the admin UI runs directly on port <code>81</code> (<code>http://&lt;ha-host&gt;:81</code>), not through Ingress. The port is mapped on the host and reachable across your LAN. Change the default login (<code>admin@example.com</code> / <code>changeme</code>) right after the first start.</p>
+        <p><strong>External (internet):</strong> ports <code>80</code> and <code>443</code> are the entrance for proxy traffic and may be forwarded on your router; that is the purpose of this add-on. Never expose port <code>81</code> to the internet, LAN or VPN only.</p>
       </div>
     </article>
 

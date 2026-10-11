@@ -408,6 +408,7 @@
       <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>Options and settings.yml</small></span></a>
       <a class="nav-item" href="#api" data-target="api"><span class="nav-icon">🔌</span><span><strong>JSON API</strong><small>HA automations, REST command</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>Config files, backup</small></span></a>
+      <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Blank page, no results, ingress</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
     </nav>
@@ -565,6 +566,17 @@ rest_command:
 ├── settings.yml    # SearXNG configuration
 └── custom.sh       # Optional pre-start hook</code></pre>
         <blockquote>The <code>addon_configs</code> directory is preserved across add-on updates. HA backups include it.</blockquote>
+      </div>
+    </article>
+
+    <article id="external-access" class="doc-section glass-card" data-search="external-access external access internet reverse proxy vpn lan local https firewall port forward">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">External access</p><h2>Local and external access</h2></div></div>
+        <a class="section-link" href="#external-access">#external-access</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Local (LAN):</strong> open it from the sidebar (Ingress) or on <code>http://&lt;ha-host&gt;:8080</code>. Neither has a login: a search engine used as the browser's default search cannot sit behind a login (exception class "no login by design"). Ingress and the host port share port 8080, so the app cannot restrict the port to the Ingress gateway. If you only want the sidebar, clear the host port under the add-on's <strong>Network</strong> tab.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>not recommended, VPN only.</strong> A public SearXNG without authentication turns into an open search proxy that others can abuse in your name. If you publish it anyway, add authentication at the reverse proxy and set <code>set_base_url_for_ingress</code> to <code>false</code>. Your search queries leave the network to the search engines by design (exception).</p>
       </div>
     </article>
 

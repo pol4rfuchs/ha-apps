@@ -65,3 +65,9 @@ s6-overlay Services:
 | Option | Standard | Beschreibung |
 |--------|----------|--------------|
 | `log_level` | `info` | Log-Level (trace/debug/info/warning/error/fatal) |
+
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:8066`. There is no Ingress; the panel is protected by its own login only, not by Home Assistant authentication.
+
+**External (internet):** recommendation **VPN or trusted access only** (a reverse proxy with TLS plus an access layer such as VPN or Cloudflare Access). Never expose the WebQuery port `10080`. The public server widgets under `/widget/` are intentionally unauthenticated status views; they are the only part meant to be public.

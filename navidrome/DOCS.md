@@ -53,3 +53,9 @@ Key options:
 | Scan not running | Trigger manually: UI → Settings → Scan Library |
 | Client can't connect | Use Subsonic API URL: `http://[HA-IP]:4533` |
 | Admin user / library gone after restart (pre-v2.1.3) | `ND_DATAFOLDER` pointed to a non-persistent path. Update the add-on, then check the log for an automatic migration message. If your data was already lost, recreate the admin user once. |
+
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:4533`; Subsonic clients use the same URL. Access is protected by Navidrome's own login. There is no `ssl` option, so use a reverse proxy if you need HTTPS.
+
+**External (internet):** recommendation **ok, but only through a reverse proxy with TLS.** Never forward port `4533` directly. Public share links stay off (`ND_ENABLESHARING: false` by default), and the outgoing services (Last.fm, ListenBrainz, insights collector, Gravatar) are all off by default; keep them opt-in.

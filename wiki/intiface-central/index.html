@@ -611,6 +611,9 @@ action:
             <tr><td><code>12346/tcp</code></td><td>HTTP</td><td>WebGUI — browser control interface.</td></tr>
           </tbody>
         </table>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the add-on runs with <code>host_network</code>. The web UI (<code>8199</code>) and the Buttplug WebSocket (<code>12345</code>) listen on <strong>all interfaces</strong>, both without a login. That is intended for local clients.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>LAN or VPN only, never the internet.</strong> Do not port-forward <code>8199</code> or <code>12345</code>, not even through a reverse proxy, because there is no authentication. AppArmor is currently disabled (hardware/bus access).</p>
       </div>
     </article>
 

@@ -60,3 +60,11 @@ Der eingebaute Pattern Editor erlaubt es, Vibrationsmuster zu erstellen:
 ## Persistenz
 
 Einstellungen und intiface-engine-Daten werden unter `/data/home` gespeichert.
+
+## Lokaler und externer Zugriff
+
+**Lokal (LAN):** Die App läuft mit `host_network`. Die Weboberfläche (`8199`) und der Buttplug-WebSocket (`12345`) lauschen auf **allen Schnittstellen**, beide ohne Anmeldung. Für lokale Clients ist das gewollt.
+
+**Extern (Internet):** Empfehlung **nur LAN oder VPN, nie ins Internet.** Kein Port-Forward auf `8199` oder `12345`, auch nicht über einen Reverse Proxy, denn es gibt keine Authentifizierung. AppArmor ist derzeit deaktiviert (Hardware-/Bus-Zugriff).
+
+**Status:** experimentell und eingefroren. Die App wird nicht mehr weiterentwickelt; sie bekommt keine Anmeldung. Nutze sie nur im LAN oder per VPN.
