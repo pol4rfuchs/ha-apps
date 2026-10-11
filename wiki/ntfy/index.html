@@ -1171,7 +1171,7 @@ Starting ntfy → http://homeassistant.local:4280
 <tr>
   <td><code>visitor_message_daily_limit</code></td>
   <td><code>1000000</code></td>
-  <td>Max messages a single visitor (IP) can publish per day. Set to a large concrete value — <code>0</code> is <strong>not</strong> unlimited on ntfy v2.25.0.</td>
+  <td>Max messages a single visitor (IP) can publish per day. Set to a large concrete value — <code>0</code> is <strong>not</strong> unlimited: ntfy then derives the daily limit from <code>visitor_request_limit_replenish</code> (one day divided by the interval, so <code>1s</code> gives 86,400).</td>
 </tr>
 </tbody>
 </table>
