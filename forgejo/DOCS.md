@@ -63,3 +63,14 @@ plus Forgejo's own runtime paths (`/config`, SSH host keys, git binaries).
 If you add custom `app.ini` settings that make Forgejo read/write paths
 outside `/config` (e.g. a custom hook script location), the AppArmor
 profile needs a matching rule added for that path.
+
+## Local and external access
+
+**Local (LAN, default):** open Forgejo at `http://<ha-host>:3000`. There is no Ingress (assets break behind it). Set the option `domain` to the hostname or IP you use (for example the IP of your HA host). Without it Forgejo falls back to `localhost`, links and clone URLs then point to `localhost`, and the log shows a warning. For HTTPS inside the app set `ssl: true` with `certfile`/`keyfile` from `/ssl`; the root URL is then `https://<domain>/` without a port, so forward port 443 to 3000 or put a reverse proxy in front.
+
+**External (internet):** recommendation **ok, but only through a reverse proxy with TLS** (for example Nginx Proxy Manager). Never forward port 3000 or the SSH port directly. Before exposing the instance:
+
+- Disable open registration (`DISABLE_REGISTRATION = true`, see *Advanced Configuration*). It is **off by default**, so anyone who can reach the server can create an account.
+- Create the admin account in the first-run wizard and protect it with a strong password.
+- Keep SSH disabled (`ssh_enabled: false`) unless you need git over SSH; if you enable it, forward the port only deliberately.
+

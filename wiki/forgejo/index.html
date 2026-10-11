@@ -400,13 +400,13 @@
       <a class="nav-item" href="#advanced" data-target="advanced"><span class="nav-icon">🧩</span><span><strong>Advanced (app.ini)</strong><small>Settings not in the UI</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>addon_configs, backup</small></span></a>
       <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔒</span><span><strong>Security</strong><small>AppArmor, SSH keys, secrets</small></span></a>
-      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>SSH, ingress, actions</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>SSH, root URL, actions</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
     </nav>
 
     <div class="sidebar-footer">
       <strong style="color:var(--accent-3)">Quick reference</strong><br>
-      Web UI: <code>:3000</code> (Ingress)<br>
+      Web UI: <code>:3000</code> (direct, no Ingress)<br>
       SSH Git: <code>:22</code> (optional)<br>
       Config: <code>/config/conf/app.ini</code><br>
       Data: <code>addon_configs/local_forgejo/</code>
@@ -454,7 +454,7 @@ Config: /addon_configs/local_forgejo/conf/app.ini</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This add-on runs the official <code>codeberg.org/forgejo/forgejo</code> rootless image, wrapped with HA Ingress (streaming enabled for live actions logs) and optional SSH access for git clone/push.</p>
+        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This add-on runs the official <code>codeberg.org/forgejo/forgejo</code> rootless image, exposed on port 3000 (no HA Ingress, assets break behind it) with optional SSH access for git clone/push.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
@@ -464,11 +464,11 @@ Config: /addon_configs/local_forgejo/conf/app.ini</code></pre>
             <tr><td><a href="#advanced">Advanced (app.ini)</a></td><td>Settings not exposed in the HA options UI.</td></tr>
             <tr><td><a href="#persistence">Persistence</a></td><td>What's under <code>addon_configs</code>, backup strategy.</td></tr>
             <tr><td><a href="#security">Security</a></td><td>AppArmor profile, SSH host keys, secrets.</td></tr>
-            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>SSH access, ingress streaming, Actions runner.</td></tr>
+            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>SSH access, root URL, Actions runner.</td></tr>
           </tbody>
         </table>
         <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
-        <pre><code>HA Ingress (stream) → Forgejo Web UI :3000
+        <pre><code>Browser (LAN)       → Forgejo Web UI :3000
 Optional SSH :22     → git clone/push
 /config/             → app.ini, SQLite DB, repositories, SSH host keys, logs</code></pre>
       </div>
@@ -521,7 +521,7 @@ Optional SSH :22     → git clone/push
             <tr><td><code>log_level</code></td><td><code>Info</code></td><td>Log verbosity (Trace…Fatal).</td></tr>
           </tbody>
         </table>
-        <blockquote>Prefer HA Ingress for the web UI in normal use. The <code>3000/tcp</code> port mapping is for direct access when Ingress isn't suitable (e.g. git LFS clients, external reverse proxy).</blockquote>
+        <blockquote>The web UI is reached directly on <code>3000/tcp</code> (Ingress was removed in 16.0.17 because assets break behind it). Set <code>domain</code> to the hostname or IP you use, otherwise links and clone URLs point to <code>localhost</code>.</blockquote>
       </div>
     </article>
 
@@ -571,9 +571,12 @@ FORGEJO__packages__ENABLED=true</code></pre>
       </div>
       <div class="doc-content">
         <h2 id="fj-apparmor"><a class="anchor" href="#fj-apparmor">#</a>AppArmor</h2>
-        <p><code>apparmor: true</code> is enabled with a profile covering the s6-overlay baseline plus Forgejo's own runtime paths (<code>/config</code>, SSH host keys, git binaries). Custom <code>app.ini</code> settings that make Forgejo read/write outside <code>/config</code> need a matching AppArmor rule added.</p>
+        <p>A profile covering the s6-overlay baseline plus Forgejo's own runtime paths (<code>/config</code>, SSH host keys, git binaries) ships with the add-on, but AppArmor is currently <strong>disabled</strong> (<code>apparmor: false</code>) until the profile is re-tested on the Pi. Custom <code>app.ini</code> settings that make Forgejo read/write outside <code>/config</code> will need a matching rule once it is enabled again.</p>
         <h2 id="fj-secrets"><a class="anchor" href="#fj-secrets">#</a>Secrets</h2>
         <p>There's no dedicated <code>password</code>-type secret in this add-on's own options/schema — Forgejo manages its admin account and user credentials internally (created via its setup wizard, stored in <code>data/</code>). SSH host keys under <code>ssh/</code> are generated on first start; treat them as sensitive if the <code>/config/</code> folder is ever copied elsewhere.</p>
+        <h2 id="fj-external"><a class="anchor" href="#fj-external">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:3000</code> and set <code>domain</code> to the hostname or IP you use. For HTTPS inside the app set <code>ssl: true</code> (certificate and key from <code>/ssl</code>); the root URL is then <code>https://&lt;domain&gt;/</code> without a port, so forward 443 to 3000 or use a reverse proxy.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>ok, but only through a reverse proxy with TLS</strong>. Never forward port <code>3000</code> or the SSH port directly. Registration is <strong>open by default</strong>, so set <code>DISABLE_REGISTRATION = true</code> before exposing the instance, and keep <code>ssh_enabled</code> off unless you need git over SSH.</p>
       </div>
     </article>
 
@@ -587,8 +590,7 @@ FORGEJO__packages__ENABLED=true</code></pre>
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
             <tr><td>SSH clone/push fails</td><td><code>ssh_enabled</code> is off, or port 22 clashes with the host's own SSH.</td><td>Enable <code>ssh_enabled</code>; change <code>ssh_port</code> if 22 is already used by HA OS itself.</td></tr>
-            <tr><td>Actions logs don't stream live</td><td>Ingress streaming misconfigured.</td><td>Confirm <code>ingress_stream: true</code> is set (already default in this add-on).</td></tr>
-            <tr><td>Repo clone URL shows wrong domain</td><td><code>domain</code> option left empty while <code>ssl</code>/external reverse proxy in use.</td><td>Set <code>domain</code> to the externally reachable hostname.</td></tr>
+                        <tr><td>Repo clone URL or links show <code>localhost</code></td><td><code>domain</code> option left empty (the log shows a warning).</td><td>Set <code>domain</code> to the hostname or LAN IP you open Forgejo with, or to the external hostname behind a reverse proxy.</td></tr>
             <tr><td>Registration should be closed but isn't</td><td>No UI toggle for this — needs <code>app.ini</code>.</td><td>Set <code>DISABLE_REGISTRATION = true</code> under <code>[service]</code> in <code>app.ini</code>.</td></tr>
           </tbody>
         </table>

@@ -51,11 +51,13 @@ LABEL \
 # - gosu: sicheres Privilege-Dropping (git-User für Forgejo-Prozess)
 # - git: für Git-Operationen
 # - openssh-keygen: persistente SSH-Host-Keys generieren
-# - curl/jq: HA Supervisor API (Ingress-URL lesen) — oft schon in HA-Base
+# - gettext-envsubst: app.ini wird beim ersten Start per envsubst aus dem Template erzeugt
+# - curl/jq: allgemeine Hilfswerkzeuge, oft schon in der HA-Base
 RUN apk add --no-cache \
         gosu \
         git \
         openssh \
+        gettext-envsubst \
         curl \
         jq
 # Forgejo Binary + Tools aus Stage 1 kopieren
