@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.20](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.19...nextcloud-v33.0.20) (2026-10-11)
+
+
+### Bug Fixes
+
+* **nextcloud:** default trusted domains to HA hostnames and warn when empty ([#502](https://github.com/pol4rfuchs/ha-apps/issues/502)) ([6640daf](https://github.com/pol4rfuchs/ha-apps/commit/6640dafe1fb7c6697675e26ad06574a727e4aae2))
+
 ## [33.0.19](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.18...nextcloud-v33.0.19) (2026-09-30)
 
 
