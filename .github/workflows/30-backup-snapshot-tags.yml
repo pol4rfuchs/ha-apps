@@ -1,0 +1,78 @@
+name: 30 Backup Snapshot Tags
+
+# Rollback safety net: on every push to main, tag the commit that main pointed
+# to BEFORE the push. After a bad (auto)merge you can check out that tag or
+# revert back to it. Tags older than RETENTION_DAYS are deleted again.
+#
+# Tag format: backup/<UTC date>-<UTC time>-<short sha>, e.g. backup/20261011-1530-0f1a378.
+# It deliberately contains no "-v", so it never matches the '*-v*' release-tag
+# trigger of 03-build-publish-ghcr. Tags created with GITHUB_TOKEN do not
+# start other workflows.
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backup-snapshot-tags
+  cancel-in-progress: false
+
+env:
+  RETENTION_DAYS: "30"
+
+jobs:
+  snapshot:
+    name: Tag previous main state
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Create snapshot tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "${EVENT_NAME}" = "workflow_dispatch" ]; then
+            sha="${CURRENT_SHA}"
+          else
+            sha="${BEFORE_SHA}"
+          fi
+          if [ -z "${sha}" ] || [ "${sha}" = "0000000000000000000000000000000000000000" ]; then
+            echo "No previous commit to snapshot, skipping."
+            exit 0
+          fi
+          tag="backup/$(date -u +%Y%m%d-%H%M)-${sha:0:7}"
+          if gh api "repos/${REPO}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+            echo "Tag ${tag} already exists, nothing to do."
+            exit 0
+          fi
+          gh api "repos/${REPO}/git/refs" -f "ref=refs/tags/${tag}" -f "sha=${sha}" >/dev/null
+          echo "Created ${tag} -> ${sha}"
+
+      - name: Delete expired snapshot tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          cutoff="$(date -u -d "${RETENTION_DAYS} days ago" +%Y%m%d)"
+          gh api "repos/${REPO}/git/matching-refs/tags/backup/" --paginate --jq '.[].ref' | while read -r ref; do
+            name="${ref#refs/tags/backup/}"
+            day="${name%%-*}"
+            case "${day}" in
+              [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]) ;;
+              *) continue ;;
+            esac
+            if [ "${day}" -lt "${cutoff}" ]; then
+              gh api -X DELETE "repos/${REPO}/git/${ref}" >/dev/null
+              echo "Deleted ${ref}"
+            fi
+          done
