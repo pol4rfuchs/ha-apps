@@ -180,6 +180,13 @@
         "restic_backup/**"
       ],
       "automerge": false
+    },
+    {
+      "description": "Das Frontend von unifi_os_control_center wird nicht in CI gebaut: das Image kopiert das eingecheckte frontend/dist. npm-Updates dort prueft kein Check, deshalb kein Automerge, solange dist von Hand gebaut wird. Muss nach der Automerge-Regel stehen, damit sie gewinnt.",
+      "matchFileNames": [
+        "unifi_os_control_center/frontend/**"
+      ],
+      "automerge": false
     }
   ],
   "ignorePaths": [
