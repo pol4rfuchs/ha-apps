@@ -86,12 +86,7 @@ npm_jwt_secret: !secret npm_jwt_secret
 
 Open the Web UI at `http://[HA-IP]:81`.
 
-Default login credentials (change immediately):
-
-```
-Email:    admin@example.com
-Password: changeme
-```
+On first start NPM shows a setup wizard ("Welcome! Get started by creating your admin account."). Create the admin account right away: until you do, anyone on your LAN who can reach port 81 can create it. There is no default login (`admin@example.com` / `changeme`) since NPM 2.13.
 
 ---
 

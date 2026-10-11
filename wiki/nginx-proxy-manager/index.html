@@ -406,7 +406,7 @@
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, architecture</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
       <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>SQLite, MariaDB, secrets</small></span></a>
-      <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Default login, first proxy host</small></span></a>
+      <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Setup wizard, first proxy host</small></span></a>
       <a class="nav-item" href="#ssl" data-target="ssl"><span class="nav-icon">🔐</span><span><strong>SSL & Let's Encrypt</strong><small>DNS-01, DuckDNS, wildcard</small></span></a>
       <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports & Networking</strong><small>80, 443, 81</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data, certs, backup</small></span></a>
@@ -419,7 +419,7 @@
       Admin UI: <code>:81</code><br>
       HTTP: <code>:80</code><br>
       HTTPS: <code>:443</code><br>
-      Default: <code>admin@example.com</code>
+      First start: setup wizard
     </div>
   </aside>
 
@@ -446,11 +446,9 @@
 
     <section class="control-strip">
       <div class="quick-card glass-card">
-        <h3>⚡ Default Credentials</h3>
-        <p>Change immediately after first login.</p>
-        <pre><code>Email:    admin@example.com
-Password: changeme
-URL:      http://homeassistant.local:81</code></pre>
+        <h3>⚡ First Start</h3>
+        <p>No default login. Create the admin account in the setup wizard right away.</p>
+        <pre><code>URL:      http://homeassistant.local:81</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>🧭 Port Requirements</h3>
@@ -474,7 +472,7 @@ HTTPS:     :443 (public proxy)</code></pre>
           <tbody>
             <tr><td><a href="#installation">Installation</a></td><td>Add repository, install, start.</td></tr>
             <tr><td><a href="#configuration">Configuration</a></td><td>SQLite vs MariaDB, secrets, JWT.</td></tr>
-            <tr><td><a href="#first-start">First Start</a></td><td>Default login, change credentials.</td></tr>
+            <tr><td><a href="#first-start">First Start</a></td><td>Setup wizard, create the admin account.</td></tr>
             <tr><td><a href="#ssl">SSL & Let's Encrypt</a></td><td>DNS-01, DuckDNS, wildcard certs.</td></tr>
             <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Port conflicts, cert failures, DB issues.</td></tr>
           </tbody>
@@ -560,17 +558,16 @@ npm_jwt_secret: "einlangesrandommjwtsecret"</code></pre>
       </div>
     </article>
 
-    <article id="first-start" class="doc-section glass-card" data-search="first start default login admin password changeme credentials npm">
+    <article id="first-start" class="doc-section glass-card" data-search="first start setup wizard admin account default login password changeme credentials npm">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">✅</span><div><p class="eyebrow">First Start</p><h2>Default Credentials</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">✅</span><div><p class="eyebrow">First Start</p><h2>Setup Wizard</h2></div></div>
         <a class="section-link" href="#first-start">#first-start</a>
       </div>
       <div class="doc-content">
-        <h2 id="first-login"><a class="anchor" href="#first-login">#</a>Default Login</h2>
-        <pre><code>URL:      http://homeassistant.local:81
-Email:    admin@example.com
-Password: changeme</code></pre>
-        <blockquote>Change the email and password immediately after first login.</blockquote>
+        <h2 id="first-login"><a class="anchor" href="#first-login">#</a>Create the Admin Account</h2>
+        <pre><code>URL:      http://homeassistant.local:81</code></pre>
+        <p>On first start NPM shows a setup wizard (<em>Welcome! Get started by creating your admin account.</em>). Enter full name, email address and a password, then save. There is no default login (<code>admin@example.com</code> / <code>changeme</code>) since NPM 2.13.</p>
+        <blockquote>Finish the wizard right after the first start. Until then, anyone on your LAN who can reach port <code>81</code> can create the admin account. Existing installations keep their credentials after an update.</blockquote>
         <h2 id="first-proxy"><a class="anchor" href="#first-proxy">#</a>Create Your First Proxy Host</h2>
         <ol>
           <li>Click <strong>Proxy Hosts → Add Proxy Host</strong>.</li>
@@ -624,7 +621,7 @@ Domain:       your-subdomain.duckdns.org</code></pre>
         </table>
         <blockquote>Never expose the Admin UI (port <code>81</code>) to the internet. Keep it behind your LAN or VPN.</blockquote>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
-        <p><strong>Local (LAN):</strong> the admin UI runs directly on port <code>81</code> (<code>http://&lt;ha-host&gt;:81</code>), not through Ingress. The port is mapped on the host and reachable across your LAN. Change the default login (<code>admin@example.com</code> / <code>changeme</code>) right after the first start.</p>
+        <p><strong>Local (LAN):</strong> the admin UI runs directly on port <code>81</code> (<code>http://&lt;ha-host&gt;:81</code>), not through Ingress. The port is mapped on the host and reachable across your LAN. Finish the setup wizard and create the admin account right after the first start, the UI is unprotected until then.</p>
         <p><strong>External (internet):</strong> ports <code>80</code> and <code>443</code> are the entrance for proxy traffic and may be forwarded on your router; that is the purpose of this add-on. Never expose port <code>81</code> to the internet, LAN or VPN only.</p>
       </div>
     </article>

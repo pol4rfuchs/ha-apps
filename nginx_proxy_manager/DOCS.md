@@ -8,8 +8,8 @@ Vollwertige HA-Integration des offiziellen [Nginx Proxy Managers](https://nginxp
 
 1. Add-on installieren und starten
 2. UI über `http://<HA-Host>:81` öffnen (Button „Web-UI öffnen“ der App; es gibt kein Ingress)
-3. Standard-Login des Upstream-Images: `admin@example.com` / `changeme`
-4. **Sofort E-Mail und Passwort ändern.** Bis dahin kann jeder im LAN, der Port 81 erreicht, die Proxy-Konfiguration übernehmen.
+3. Beim ersten Öffnen zeigt NPM den Einrichtungsassistenten („Welcome! Get started by creating your admin account.“). Dort Name, E-Mail und Passwort für das Admin-Konto festlegen. Ein Standard-Login (`admin@example.com` / `changeme`) gibt es seit NPM 2.13 nicht mehr.
+4. **Den Assistenten sofort abschließen.** Bis dahin kann jeder im LAN, der Port 81 erreicht, das Admin-Konto selbst anlegen und die Proxy-Konfiguration übernehmen. Bestehende Installationen behalten nach einem Update ihre Zugangsdaten.
 5. Port `81` **nie** am Router weiterleiten (nur `80` und `443`).
 
 ---
@@ -132,6 +132,6 @@ log_level: info       # info | warning | error | debug
 
 ## Lokaler und externer Zugriff
 
-**Lokal (LAN):** Die Admin-Oberfläche läuft direkt auf Port `81` (`http://<HA-Host>:81`), nicht über Ingress. Der Port ist auf dem Host gemappt und im ganzen LAN erreichbar. Das Standardlogin (`admin@example.com` / `changeme`) sofort nach dem ersten Start ändern.
+**Lokal (LAN):** Die Admin-Oberfläche läuft direkt auf Port `81` (`http://<HA-Host>:81`), nicht über Ingress. Der Port ist auf dem Host gemappt und im ganzen LAN erreichbar. Direkt nach dem ersten Start den Einrichtungsassistenten abschließen und das Admin-Konto anlegen, vorher ist die Oberfläche ungeschützt.
 
 **Extern (Internet):** Die Ports `80` und `443` sind der Eingang für den Proxy-Traffic und dürfen am Router weitergeleitet werden, das ist der Zweck der App. Port `81` **nie** ins Internet, nur LAN oder VPN.
