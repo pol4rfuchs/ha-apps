@@ -63,3 +63,10 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"
 vendor image rather than the HA base image, and the profile's exact paths
 weren't verified against the real filesystem. See the profile's own header
 comment for the manual test steps to run before flipping it to `true`.
+
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:8280`. Nextcloud only answers for hostnames listed in `trusted_domains`; anything else gives "Access through untrusted domain". The default covers `homeassistant.local` and `homeassistant`. If you open Nextcloud by IP, add that IP to `trusted_domains` **before the first start**. The option is only applied on the first install, afterwards use `occ` (see above). There is no `ssl` option; for HTTPS use a reverse proxy.
+
+**External (internet):** recommendation **ok, but only through a reverse proxy with TLS** (for example Nginx Proxy Manager). Never forward port `8280` directly. Add the public domain with `occ config:system:set trusted_domains` and set `overwriteprotocol` to `https` (see above). Enable two-factor authentication for all accounts and keep the admin account off public sharing.
+

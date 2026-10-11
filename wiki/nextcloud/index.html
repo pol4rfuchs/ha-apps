@@ -596,6 +596,9 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
         <p>Both are declared as <code>password</code> schema types, so the Supervisor UI masks them.</p>
         <h2 id="nc-apparmor"><a class="anchor" href="#nc-apparmor">#</a>AppArmor — Not Yet Enforced</h2>
         <blockquote><code>apparmor.txt</code> is included but <strong>intentionally not yet enforced</strong> (<code>apparmor: false</code>) — this add-on runs on the official Nextcloud/Apache vendor image rather than the HA base image, and the profile's exact paths weren't verified against the real filesystem. See the profile's own header comment for the manual test steps before flipping it to <code>true</code>.</blockquote>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:8280</code>. Nextcloud only answers for hostnames in <code>trusted_domains</code>; anything else shows "Access through untrusted domain". The default covers <code>homeassistant.local</code> and <code>homeassistant</code>. If you open Nextcloud by IP, add the IP <strong>before the first start</strong> (the option is only applied on the first install; afterwards use <code>occ</code>). There is no <code>ssl</code> option, so use a reverse proxy for HTTPS.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>ok, but only through a reverse proxy with TLS.</strong> Never forward port <code>8280</code> directly. Add the public domain via <code>occ config:system:set trusted_domains</code>, set <code>overwriteprotocol</code> to <code>https</code>, and enable two-factor authentication for all accounts.</p>
       </div>
     </article>
 

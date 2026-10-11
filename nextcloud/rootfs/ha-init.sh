@@ -86,6 +86,9 @@ export NEXTCLOUD_DATA_DIR="${NC_BASE}/data"
 # The official NC entrypoint splits on spaces for NEXTCLOUD_TRUSTED_DOMAINS.
 if [[ -n "${TRUSTED_DOMAINS}" ]]; then
     export NEXTCLOUD_TRUSTED_DOMAINS="${TRUSTED_DOMAINS}"
+    log "Trusted domains (applied on first install): ${TRUSTED_DOMAINS}"
+else
+    log "WARNING: trusted_domains is empty - Nextcloud will only accept 'localhost'. Add the hostname/IP you open it with (applies on first install; later use occ, see DOCS)."
 fi
 
 # ── Database ──────────────────────────────────────────────────────────────────

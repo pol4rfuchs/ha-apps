@@ -21,7 +21,7 @@ webui: http://[HOST]:[PORT:80]
 options:
   admin_user: admin
   admin_password: changeme
-  trusted_domains: ''
+  trusted_domains: 'homeassistant.local homeassistant'
   db_type: mysql
   db_host: core-mariadb
   db_port: 3306

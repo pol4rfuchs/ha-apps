@@ -8,7 +8,7 @@ configuration:
     description: "Nextcloud-Administratorpasswort, wird bei der Erstinstallation gesetzt. Vor dem allerersten Start hier ändern."
   trusted_domains:
     name: Vertrauenswürdige Domains
-    description: "Leerzeichengetrennte Liste zusätzlicher Hostnamen/IPs, für die Nextcloud Anfragen akzeptieren soll (z. B. hinter einem Reverse Proxy)."
+    description: "Leerzeichengetrennte Hostnamen/IPs, für die Nextcloud Anfragen akzeptiert. LAN-IP oder Domain, mit der du Nextcloud aufrufst, VOR dem ersten Start eintragen (gilt nur bei der Erstinstallation, später per occ). Der Standard deckt die üblichen HA-Hostnamen ab."
   db_type:
     name: Datenbanktyp
     description: "Zu verwendendes Datenbank-Backend. 'sqlite' ist nur zum Testen geeignet; für den Produktivbetrieb werden 'mysql' (MariaDB) oder 'pgsql' empfohlen."

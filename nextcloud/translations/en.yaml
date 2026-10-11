@@ -8,7 +8,7 @@ configuration:
     description: "Nextcloud administrator password, set on first install. Change it here before the very first start."
   trusted_domains:
     name: Trusted Domains
-    description: "Space-separated list of additional hostnames/IPs Nextcloud should accept requests for (e.g. behind a reverse proxy)."
+    description: "Space-separated hostnames/IPs Nextcloud accepts requests for. Add the LAN IP or domain you open it with BEFORE the first start (applied on first install only, later use occ). Default covers the usual HA hostnames."
   db_type:
     name: Database Type
     description: "Database backend to use. 'sqlite' is fine for testing only; 'mysql' (MariaDB) or 'pgsql' are recommended for production."
