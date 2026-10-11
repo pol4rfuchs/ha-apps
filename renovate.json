@@ -153,6 +153,33 @@
       ],
       "semanticCommitType": "fix",
       "description": "MAS-Versions-Bumps default zu 'chore', das triggert bei Release Please keinen Release/Image-Rebuild (siehe PR #311 — gemerged, aber ohne Release/Package geblieben). Force 'fix' analog zur matrix-synapse-Regel oben."
+    },
+    {
+      "description": "Automerge nur fuer risikoarme Updates: Minor/Patch von npm-/pip-Abhaengigkeiten und GitHub Actions, erst nach 3 Tagen Wartezeit und nur bei gruenen Checks (Smoke-Test, AppArmor, Lint). Majors bleiben manuell (siehe appbuildrules 7, gesammelt testen).",
+      "matchManagers": [
+        "npm",
+        "pip_requirements",
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "minimumReleaseAge": "3 days",
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Apps mit Datenbank/Migrationen werden NIE automatisch gemergt (kein Downgrade moeglich). Muss nach der Automerge-Regel stehen, damit sie gewinnt.",
+      "matchFileNames": [
+        "forgejo/**",
+        "nextcloud/**",
+        "matrix_synapse/**",
+        "matrix_auth_service/**",
+        "vaultwarden/**",
+        "restic_backup/**"
+      ],
+      "automerge": false
     }
   ],
   "ignorePaths": [
