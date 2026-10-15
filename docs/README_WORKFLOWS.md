@@ -26,15 +26,15 @@ Package settings → Manage Actions access → pol4rfuchs/ha-apps → Write/Admi
 Packages to check:
 
 ```text
-intiface-ha-app
-matrix-synapse-ha-app
-navidrome-ha-app
-npm-ha-app
-ntfy-ha-app
-ntfy-manager-ha-app
-searxng-ha-app
-teamspeak6-ha-app
-teamspeak6-manager-ha-app
+intiface_central
+matrix_synapse
+navidrome
+nginx_proxy_manager
+ntfy
+ntfy_manager
+searxng
+teamspeak6
+ts6_manager
 ```
 
 A failed build with this error is a package access problem, not a workflow-code problem:

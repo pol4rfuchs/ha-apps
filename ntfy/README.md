@@ -8,10 +8,10 @@
 
 <div align="center">
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.29.0-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
-[![App Version](https://img.shields.io/badge/ntfy--ha--app-v1.2.10-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/ntfy-v1.2.10-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Claude%20Code-C2410C?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=2D2D2D)](https://www.anthropic.com/claude-code)
 
@@ -639,7 +639,7 @@ ntfy publish --title="HA Alert" --priority=5 ha-alerts "Something needs attentio
 Recommended repository layout:
 
 ```text
-ntfy-ha-app/
+ha-apps/
 ├── repository.yaml
 ├── README.md
 └── ntfy/

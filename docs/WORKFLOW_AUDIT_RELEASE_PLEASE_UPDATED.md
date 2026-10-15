@@ -12,18 +12,18 @@ This document supersedes the older v4 audit text. The previous audit still descr
 
 | Add-on | Current `config.yaml` version | Image | Release Please |
 |---|---:|---|---:|
-| `forgejo` | `16.0.0` | `ghcr.io/pol4rfuchs/forgejo-ha-app` | manual |
-| `intiface_central` | `1.0.0` | `ghcr.io/pol4rfuchs/intiface-ha-app` | yes |
-| `matrix_synapse` | `1.2.11` | `ghcr.io/pol4rfuchs/matrix-synapse-ha-app` | yes |
-| `navidrome` | `2.1.2` | `ghcr.io/pol4rfuchs/navidrome-ha-app` | yes |
-| `nginx_proxy_manager` | `2.1.3` | `ghcr.io/pol4rfuchs/npm-ha-app` | yes |
-| `ntfy` | `1.1.8` | `ghcr.io/pol4rfuchs/ntfy-ha-app` | yes |
-| `ntfy_manager` | `0.2.1` | `ghcr.io/pol4rfuchs/ntfy-manager-ha-app` | yes |
-| `nextcloud` | `33.0.6` | `ghcr.io/pol4rfuchs/nextcloud-ha-app` | yes |
-| `searxng` | `1.0.2` | `ghcr.io/pol4rfuchs/searxng-ha-app` | yes |
-| `teamspeak6` | `1.1.13` | `ghcr.io/pol4rfuchs/teamspeak6-ha-app` | yes |
-| `ts6_manager` | `1.0.4` | `ghcr.io/pol4rfuchs/teamspeak6-manager-ha-app` | yes |
-| `unbound` | `1.24.2-ha38-pol4r1` | `ghcr.io/pol4rfuchs/unbound-ha-app` | manual |
+| `forgejo` | `16.0.0` | `ghcr.io/pol4rfuchs/forgejo` | manual |
+| `intiface_central` | `1.0.0` | `ghcr.io/pol4rfuchs/intiface_central` | yes |
+| `matrix_synapse` | `1.2.11` | `ghcr.io/pol4rfuchs/matrix_synapse` | yes |
+| `navidrome` | `2.1.2` | `ghcr.io/pol4rfuchs/navidrome` | yes |
+| `nginx_proxy_manager` | `2.1.3` | `ghcr.io/pol4rfuchs/nginx_proxy_manager` | yes |
+| `ntfy` | `1.1.8` | `ghcr.io/pol4rfuchs/ntfy` | yes |
+| `ntfy_manager` | `0.2.1` | `ghcr.io/pol4rfuchs/ntfy_manager` | yes |
+| `nextcloud` | `33.0.6` | `ghcr.io/pol4rfuchs/nextcloud` | yes |
+| `searxng` | `1.0.2` | `ghcr.io/pol4rfuchs/searxng` | yes |
+| `teamspeak6` | `1.1.13` | `ghcr.io/pol4rfuchs/teamspeak6` | yes |
+| `ts6_manager` | `1.0.4` | `ghcr.io/pol4rfuchs/ts6_manager` | yes |
+| `unbound` | `1.24.2-ha38-pol4r1` | `ghcr.io/pol4rfuchs/unbound` | manual |
 
 ## Current Release Please files
 
@@ -235,18 +235,18 @@ Package settings → Manage Actions access → pol4rfuchs/ha-apps → Write/Admi
 Check at least:
 
 ```text
-forgejo-ha-app
-intiface-ha-app
-matrix-synapse-ha-app
-navidrome-ha-app
-npm-ha-app
-ntfy-ha-app
-ntfy-manager-ha-app
-nextcloud-ha-app
-searxng-ha-app
-teamspeak6-ha-app
-teamspeak6-manager-ha-app
-unbound-ha-app
+forgejo
+intiface_central
+matrix_synapse
+navidrome
+nginx_proxy_manager
+ntfy
+ntfy_manager
+nextcloud
+searxng
+teamspeak6
+ts6_manager
+unbound
 ```
 
 Release Please only creates automatic tags for the 10 managed add-ons, but manual/dispatch GHCR builds can still involve the full `addons.json` list.
@@ -290,7 +290,7 @@ ntfy
 11. Confirm GHCR has:
 
 ```text
-ghcr.io/pol4rfuchs/ntfy-ha-app:<version>
+ghcr.io/pol4rfuchs/ntfy:<version>
 ```
 
 12. Confirm Home Assistant can pull/update the add-on.
