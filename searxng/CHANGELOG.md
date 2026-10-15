@@ -2,36 +2,7 @@
 
 ## [1.0.37](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.36...searxng-v1.0.37) (2026-10-15)
 
-
-### Bug Fixes
-
-* **searxng:** update upstream to 2026.10.11-a ([#519](https://github.com/pol4rfuchs/ha-apps/issues/519)) ([12524c6](https://github.com/pol4rfuchs/ha-apps/commit/12524c69785aafe5a55c3149a17b5c2f577e9dc7))
-* **searxng:** update upstream to 2026.10.4-ce ([#477](https://github.com/pol4rfuchs/ha-apps/issues/477)) ([09e75ed](https://github.com/pol4rfuchs/ha-apps/commit/09e75ed6d59902bbd60266d844b6c7246eef3340))
-* **searxng:** update upstream to 2026.10.9-f4 (changelog: https://git… ([#490](https://github.com/pol4rfuchs/ha-apps/issues/490)) ([51fe6be](https://github.com/pol4rfuchs/ha-apps/commit/51fe6be52617041d4fc3a1de81843428bba2cb63))
-* **searxng:** update upstream to 2026.7.25-09 ([#224](https://github.com/pol4rfuchs/ha-apps/issues/224)) ([1045342](https://github.com/pol4rfuchs/ha-apps/commit/1045342a966c70ed32652da72fe43bd32a158b6b))
-* **searxng:** update upstream to 2026.7.28-c7 ([#245](https://github.com/pol4rfuchs/ha-apps/issues/245)) ([5b5a396](https://github.com/pol4rfuchs/ha-apps/commit/5b5a3964fcf16cf193264599ff8ad5624fd342db))
-* **searxng:** update upstream to 2026.8.1-889 ([#258](https://github.com/pol4rfuchs/ha-apps/issues/258)) ([29d6700](https://github.com/pol4rfuchs/ha-apps/commit/29d6700f4cd8b112a622d43094687e34eb841ad5))
-* **searxng:** update upstream to 2026.8.10-0a (changelog: https://github.com/searxng/searxng/releases) ([#286](https://github.com/pol4rfuchs/ha-apps/issues/286)) ([47e579f](https://github.com/pol4rfuchs/ha-apps/commit/47e579f29f6f6d42af9535fa55fb023fb605c615))
-* **searxng:** update upstream to 2026.8.11-e8 (changelog: https://github.com/searxng/searxng/releases) ([#289](https://github.com/pol4rfuchs/ha-apps/issues/289)) ([34d7f87](https://github.com/pol4rfuchs/ha-apps/commit/34d7f879413b914eade84fa1ebca7a934ed1f49a))
-* **searxng:** update upstream to 2026.8.12-56 (changelog: https://github.com/searxng/searxng/releases) ([#295](https://github.com/pol4rfuchs/ha-apps/issues/295)) ([b4ba31c](https://github.com/pol4rfuchs/ha-apps/commit/b4ba31c27599636221ee6559c1e15a02ec9da4b3))
-* **searxng:** update upstream to 2026.8.14-09 (changelog: https://github.com/searxng/searxng/releases) ([#298](https://github.com/pol4rfuchs/ha-apps/issues/298)) ([159464b](https://github.com/pol4rfuchs/ha-apps/commit/159464bb8c1ea97849a4e953e1b7c28d4985e9aa))
-* **searxng:** update upstream to 2026.8.19-5f (changelog: https://github.com/searxng/searxng/releases) ([#315](https://github.com/pol4rfuchs/ha-apps/issues/315)) ([3e2dc38](https://github.com/pol4rfuchs/ha-apps/commit/3e2dc38cb622d2187b3a97dc969559bcd8c1d1e3))
-* **searxng:** update upstream to 2026.8.22-77 (changelog: https://github.com/searxng/searxng/releases) ([#321](https://github.com/pol4rfuchs/ha-apps/issues/321)) ([b9fb409](https://github.com/pol4rfuchs/ha-apps/commit/b9fb4094b67c35be61dcc564343146fa2020198f))
-* **searxng:** update upstream to 2026.8.28-a3 (changelog: https://github.com/searxng/searxng/releases) ([#336](https://github.com/pol4rfuchs/ha-apps/issues/336)) ([b90f0a6](https://github.com/pol4rfuchs/ha-apps/commit/b90f0a6019f52232a97866244a34ff01e845a8b2))
-* **searxng:** update upstream to 2026.8.29-45 (changelog: https://github.com/searxng/searxng/releases) ([#338](https://github.com/pol4rfuchs/ha-apps/issues/338)) ([c7a65c1](https://github.com/pol4rfuchs/ha-apps/commit/c7a65c1e5e266e5fe910568028cb97904e9bf8d9))
-* **searxng:** update upstream to 2026.8.3-aa0 ([#268](https://github.com/pol4rfuchs/ha-apps/issues/268)) ([a525786](https://github.com/pol4rfuchs/ha-apps/commit/a525786194d00017cd86a2f4312e41a6b6a826f4))
-* **searxng:** update upstream to 2026.8.5-168 ([#274](https://github.com/pol4rfuchs/ha-apps/issues/274)) ([481d376](https://github.com/pol4rfuchs/ha-apps/commit/481d376e095abbdd92da939578208d338a5f03e7))
-* **searxng:** update upstream to 2026.9.12-87 (changelog: https://github.com/searxng/searxng/releases) ([#377](https://github.com/pol4rfuchs/ha-apps/issues/377)) ([ccc6081](https://github.com/pol4rfuchs/ha-apps/commit/ccc6081865c9f512e74bc3ae325e6108bdcc6c98))
-* **searxng:** update upstream to 2026.9.19-36 (changelog: https://github.com/searxng/searxng/releases) ([#400](https://github.com/pol4rfuchs/ha-apps/issues/400)) ([dff53cb](https://github.com/pol4rfuchs/ha-apps/commit/dff53cbb865835d0719cd66e789251e5bd1c683d))
-* **searxng:** update upstream to 2026.9.25-48 (changelog: https://github.com/searxng/searxng/releases) ([#431](https://github.com/pol4rfuchs/ha-apps/issues/431)) ([b1ab0c9](https://github.com/pol4rfuchs/ha-apps/commit/b1ab0c993a76fb7764860170ccb3796c61d88c5c))
-* **searxng:** update upstream to 2026.9.3-745 (changelog: https://github.com/searxng/searxng/releases) ([#345](https://github.com/pol4rfuchs/ha-apps/issues/345)) ([90d84b4](https://github.com/pol4rfuchs/ha-apps/commit/90d84b4aa894e24ea57155a751157b863f8e2039))
-* **searxng:** update upstream to 2026.9.30-a9 (changelog: https://github.com/searxng/searxng/releases) ([#446](https://github.com/pol4rfuchs/ha-apps/issues/446)) ([c1437cc](https://github.com/pol4rfuchs/ha-apps/commit/c1437ccfff20417095e5452a2a7906cb2b2a21ea))
-* **searxng:** update upstream to 2026.9.4-15b (changelog: https://github.com/searxng/searxng/releases) ([#349](https://github.com/pol4rfuchs/ha-apps/issues/349)) ([c097809](https://github.com/pol4rfuchs/ha-apps/commit/c0978094aed4f5ce6ce0d5a5232e9b7c9ef2e573))
-* **searxng:** update upstream to 2026.9.6-360 (changelog: https://github.com/searxng/searxng/releases) ([#353](https://github.com/pol4rfuchs/ha-apps/issues/353)) ([0d3085a](https://github.com/pol4rfuchs/ha-apps/commit/0d3085a545626e6aed7285152eb64aaeeb9f23bc))
-* **searxng:** update upstream to 2026.9.8-3fd (changelog: https://github.com/searxng/searxng/releases) ([#362](https://github.com/pol4rfuchs/ha-apps/issues/362)) ([b1528dd](https://github.com/pol4rfuchs/ha-apps/commit/b1528dde72393dd96d8db74c11dbbfee5cd549df))
-
 ## [1.0.36](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.35...searxng-v1.0.36) (2026-10-14)
-
 
 ### Bug Fixes
 
@@ -39,13 +10,11 @@
 
 ## [1.0.35](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.34...searxng-v1.0.35) (2026-10-10)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.10.9-f4 (changelog: https://git… ([#490](https://github.com/pol4rfuchs/ha-apps/issues/490)) ([51fe6be](https://github.com/pol4rfuchs/ha-apps/commit/51fe6be52617041d4fc3a1de81843428bba2cb63))
 
 ## [1.0.34](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.33...searxng-v1.0.34) (2026-10-07)
-
 
 ### Bug Fixes
 
@@ -53,13 +22,11 @@
 
 ## [1.0.33](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.32...searxng-v1.0.33) (2026-10-01)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.9.30-a9 (changelog: https://github.com/searxng/searxng/releases) ([#446](https://github.com/pol4rfuchs/ha-apps/issues/446)) ([c1437cc](https://github.com/pol4rfuchs/ha-apps/commit/c1437ccfff20417095e5452a2a7906cb2b2a21ea))
 
 ## [1.0.32](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.31...searxng-v1.0.32) (2026-09-30)
-
 
 ### Bug Fixes
 
@@ -67,13 +34,11 @@
 
 ## [1.0.31](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.30...searxng-v1.0.31) (2026-09-19)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.9.19-36 (changelog: https://github.com/searxng/searxng/releases) ([#400](https://github.com/pol4rfuchs/ha-apps/issues/400)) ([dff53cb](https://github.com/pol4rfuchs/ha-apps/commit/dff53cbb865835d0719cd66e789251e5bd1c683d))
 
 ## [1.0.30](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.29...searxng-v1.0.30) (2026-09-13)
-
 
 ### Bug Fixes
 
@@ -81,13 +46,11 @@
 
 ## [1.0.29](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.28...searxng-v1.0.29) (2026-09-09)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.9.8-3fd (changelog: https://github.com/searxng/searxng/releases) ([#362](https://github.com/pol4rfuchs/ha-apps/issues/362)) ([b1528dd](https://github.com/pol4rfuchs/ha-apps/commit/b1528dde72393dd96d8db74c11dbbfee5cd549df))
 
 ## [1.0.28](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.27...searxng-v1.0.28) (2026-09-06)
-
 
 ### Bug Fixes
 
@@ -95,20 +58,17 @@
 
 ## [1.0.27](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.26...searxng-v1.0.27) (2026-09-04)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.9.4-15b (changelog: https://github.com/searxng/searxng/releases) ([#349](https://github.com/pol4rfuchs/ha-apps/issues/349)) ([c097809](https://github.com/pol4rfuchs/ha-apps/commit/c0978094aed4f5ce6ce0d5a5232e9b7c9ef2e573))
 
 ## [1.0.26](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.25...searxng-v1.0.26) (2026-09-03)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.9.3-745 (changelog: https://github.com/searxng/searxng/releases) ([#345](https://github.com/pol4rfuchs/ha-apps/issues/345)) ([90d84b4](https://github.com/pol4rfuchs/ha-apps/commit/90d84b4aa894e24ea57155a751157b863f8e2039))
 
 ## [1.0.25](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.24...searxng-v1.0.25) (2026-08-29)
-
 
 ### Bug Fixes
 
@@ -117,13 +77,11 @@
 
 ## [1.0.24](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.23...searxng-v1.0.24) (2026-08-23)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.8.22-77 (changelog: https://github.com/searxng/searxng/releases) ([#321](https://github.com/pol4rfuchs/ha-apps/issues/321)) ([b9fb409](https://github.com/pol4rfuchs/ha-apps/commit/b9fb4094b67c35be61dcc564343146fa2020198f))
 
 ## [1.0.23](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.22...searxng-v1.0.23) (2026-08-20)
-
 
 ### Bug Fixes
 
@@ -131,13 +89,11 @@
 
 ## [1.0.22](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.21...searxng-v1.0.22) (2026-08-14)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.8.14-09 (changelog: https://github.com/searxng/searxng/releases) ([#298](https://github.com/pol4rfuchs/ha-apps/issues/298)) ([159464b](https://github.com/pol4rfuchs/ha-apps/commit/159464bb8c1ea97849a4e953e1b7c28d4985e9aa))
 
 ## [1.0.21](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.20...searxng-v1.0.21) (2026-08-12)
-
 
 ### Bug Fixes
 
@@ -145,25 +101,7 @@
 
 ## [1.0.20](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.19...searxng-v1.0.20) (2026-08-12)
 
-
-### Bug Fixes
-
-* **searxng:** add de.yaml, io.hass.arch label, sync SEARXNG_VERSION arg with actual tag, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix and deprecated hassio_api ([a8ad070](https://github.com/pol4rfuchs/ha-apps/commit/a8ad0703bc8fad9a03f7c1c3397293e6aab34844))
-* **searxng:** update upstream to 2026.6.26-f8 ([#79](https://github.com/pol4rfuchs/ha-apps/issues/79)) ([8202f28](https://github.com/pol4rfuchs/ha-apps/commit/8202f28bd68b57b5e997bfe4463839a825e3657e))
-* **searxng:** update upstream to 2026.6.29-13 ([#99](https://github.com/pol4rfuchs/ha-apps/issues/99)) ([fce7080](https://github.com/pol4rfuchs/ha-apps/commit/fce708008c0311c0753be2b748c44b410787ff4d))
-* **searxng:** update upstream to 2026.7.12-74 ([#170](https://github.com/pol4rfuchs/ha-apps/issues/170)) ([7432bc1](https://github.com/pol4rfuchs/ha-apps/commit/7432bc12fb9dc3106b224d7a25b3bc877010c24b))
-* **searxng:** update upstream to 2026.7.19-6d ([#192](https://github.com/pol4rfuchs/ha-apps/issues/192)) ([62f05b0](https://github.com/pol4rfuchs/ha-apps/commit/62f05b07e5efe1e60449282db0ce93e698c32452))
-* **searxng:** update upstream to 2026.7.25-09 ([#224](https://github.com/pol4rfuchs/ha-apps/issues/224)) ([1045342](https://github.com/pol4rfuchs/ha-apps/commit/1045342a966c70ed32652da72fe43bd32a158b6b))
-* **searxng:** update upstream to 2026.7.28-c7 ([#245](https://github.com/pol4rfuchs/ha-apps/issues/245)) ([5b5a396](https://github.com/pol4rfuchs/ha-apps/commit/5b5a3964fcf16cf193264599ff8ad5624fd342db))
-* **searxng:** update upstream to 2026.7.6-556 ([#150](https://github.com/pol4rfuchs/ha-apps/issues/150)) ([f183af5](https://github.com/pol4rfuchs/ha-apps/commit/f183af5680ed7e6df7fa809a45813d3e4807a264))
-* **searxng:** update upstream to 2026.8.1-889 ([#258](https://github.com/pol4rfuchs/ha-apps/issues/258)) ([29d6700](https://github.com/pol4rfuchs/ha-apps/commit/29d6700f4cd8b112a622d43094687e34eb841ad5))
-* **searxng:** update upstream to 2026.8.10-0a (changelog: https://github.com/searxng/searxng/releases) ([#286](https://github.com/pol4rfuchs/ha-apps/issues/286)) ([47e579f](https://github.com/pol4rfuchs/ha-apps/commit/47e579f29f6f6d42af9535fa55fb023fb605c615))
-* **searxng:** update upstream to 2026.8.11-e8 (changelog: https://github.com/searxng/searxng/releases) ([#289](https://github.com/pol4rfuchs/ha-apps/issues/289)) ([34d7f87](https://github.com/pol4rfuchs/ha-apps/commit/34d7f879413b914eade84fa1ebca7a934ed1f49a))
-* **searxng:** update upstream to 2026.8.3-aa0 ([#268](https://github.com/pol4rfuchs/ha-apps/issues/268)) ([a525786](https://github.com/pol4rfuchs/ha-apps/commit/a525786194d00017cd86a2f4312e41a6b6a826f4))
-* **searxng:** update upstream to 2026.8.5-168 ([#274](https://github.com/pol4rfuchs/ha-apps/issues/274)) ([481d376](https://github.com/pol4rfuchs/ha-apps/commit/481d376e095abbdd92da939578208d338a5f03e7))
-
 ## [1.0.19](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.18...searxng-v1.0.19) (2026-08-11)
-
 
 ### Bug Fixes
 
@@ -171,13 +109,11 @@
 
 ## [1.0.18](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.17...searxng-v1.0.18) (2026-08-10)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.8.10-0a (changelog: https://github.com/searxng/searxng/releases) ([#286](https://github.com/pol4rfuchs/ha-apps/issues/286)) ([47e579f](https://github.com/pol4rfuchs/ha-apps/commit/47e579f29f6f6d42af9535fa55fb023fb605c615))
 
 ## [1.0.17](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.16...searxng-v1.0.17) (2026-08-04)
-
 
 ### Bug Fixes
 
@@ -185,13 +121,11 @@
 
 ## [1.0.16](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.15...searxng-v1.0.16) (2026-08-04)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.8.3-aa0 ([#268](https://github.com/pol4rfuchs/ha-apps/issues/268)) ([a525786](https://github.com/pol4rfuchs/ha-apps/commit/a525786194d00017cd86a2f4312e41a6b6a826f4))
 
 ## [1.0.15](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.14...searxng-v1.0.15) (2026-08-02)
-
 
 ### Bug Fixes
 
@@ -199,23 +133,7 @@
 
 ## [1.0.14](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.13...searxng-v1.0.14) (2026-07-30)
 
-
-### Bug Fixes
-
-* **searxng:** add de.yaml, io.hass.arch label, sync SEARXNG_VERSION arg with actual tag, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix and deprecated hassio_api ([a8ad070](https://github.com/pol4rfuchs/ha-apps/commit/a8ad0703bc8fad9a03f7c1c3397293e6aab34844))
-* **searxng:** update upstream to 2026.6.15-cf ([1b8d10e](https://github.com/pol4rfuchs/ha-apps/commit/1b8d10e5862c478b65a92088248796f840f5019d))
-* **searxng:** update upstream to 2026.6.15-cf ([9af53ef](https://github.com/pol4rfuchs/ha-apps/commit/9af53efd2347bc8cda20de59de60198d04a8ac40))
-* **searxng:** update upstream to 2026.6.22-ae ([#52](https://github.com/pol4rfuchs/ha-apps/issues/52)) ([2bd14b4](https://github.com/pol4rfuchs/ha-apps/commit/2bd14b4f137b79a32e762e5ac59d883d7a99d5c7))
-* **searxng:** update upstream to 2026.6.26-f8 ([#79](https://github.com/pol4rfuchs/ha-apps/issues/79)) ([8202f28](https://github.com/pol4rfuchs/ha-apps/commit/8202f28bd68b57b5e997bfe4463839a825e3657e))
-* **searxng:** update upstream to 2026.6.29-13 ([#99](https://github.com/pol4rfuchs/ha-apps/issues/99)) ([fce7080](https://github.com/pol4rfuchs/ha-apps/commit/fce708008c0311c0753be2b748c44b410787ff4d))
-* **searxng:** update upstream to 2026.7.12-74 ([#170](https://github.com/pol4rfuchs/ha-apps/issues/170)) ([7432bc1](https://github.com/pol4rfuchs/ha-apps/commit/7432bc12fb9dc3106b224d7a25b3bc877010c24b))
-* **searxng:** update upstream to 2026.7.19-6d ([#192](https://github.com/pol4rfuchs/ha-apps/issues/192)) ([62f05b0](https://github.com/pol4rfuchs/ha-apps/commit/62f05b07e5efe1e60449282db0ce93e698c32452))
-* **searxng:** update upstream to 2026.7.25-09 ([#224](https://github.com/pol4rfuchs/ha-apps/issues/224)) ([1045342](https://github.com/pol4rfuchs/ha-apps/commit/1045342a966c70ed32652da72fe43bd32a158b6b))
-* **searxng:** update upstream to 2026.7.28-c7 ([#245](https://github.com/pol4rfuchs/ha-apps/issues/245)) ([5b5a396](https://github.com/pol4rfuchs/ha-apps/commit/5b5a3964fcf16cf193264599ff8ad5624fd342db))
-* **searxng:** update upstream to 2026.7.6-556 ([#150](https://github.com/pol4rfuchs/ha-apps/issues/150)) ([f183af5](https://github.com/pol4rfuchs/ha-apps/commit/f183af5680ed7e6df7fa809a45813d3e4807a264))
-
 ## [1.0.13](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.12...searxng-v1.0.13) (2026-07-30)
-
 
 ### Bug Fixes
 
@@ -223,13 +141,11 @@
 
 ## [1.0.12](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.11...searxng-v1.0.12) (2026-07-25)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.7.25-09 ([#224](https://github.com/pol4rfuchs/ha-apps/issues/224)) ([1045342](https://github.com/pol4rfuchs/ha-apps/commit/1045342a966c70ed32652da72fe43bd32a158b6b))
 
 ## [1.0.11](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.10...searxng-v1.0.11) (2026-07-21)
-
 
 ### Bug Fixes
 
@@ -237,13 +153,11 @@
 
 ## [1.0.10](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.9...searxng-v1.0.10) (2026-07-21)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.7.19-6d ([#192](https://github.com/pol4rfuchs/ha-apps/issues/192)) ([62f05b0](https://github.com/pol4rfuchs/ha-apps/commit/62f05b07e5efe1e60449282db0ce93e698c32452))
 
 ## [1.0.9](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.8...searxng-v1.0.9) (2026-07-13)
-
 
 ### Bug Fixes
 
@@ -251,13 +165,11 @@
 
 ## [1.0.8](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.7...searxng-v1.0.8) (2026-07-06)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.7.6-556 ([#150](https://github.com/pol4rfuchs/ha-apps/issues/150)) ([f183af5](https://github.com/pol4rfuchs/ha-apps/commit/f183af5680ed7e6df7fa809a45813d3e4807a264))
 
 ## [1.0.7](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.6...searxng-v1.0.7) (2026-06-29)
-
 
 ### Bug Fixes
 
@@ -265,13 +177,11 @@
 
 ## [1.0.6](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.5...searxng-v1.0.6) (2026-06-27)
 
-
 ### Bug Fixes
 
 * **searxng:** update upstream to 2026.6.26-f8 ([#79](https://github.com/pol4rfuchs/ha-apps/issues/79)) ([8202f28](https://github.com/pol4rfuchs/ha-apps/commit/8202f28bd68b57b5e997bfe4463839a825e3657e))
 
 ## [1.0.5](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.4...searxng-v1.0.5) (2026-06-22)
-
 
 ### Bug Fixes
 
@@ -279,14 +189,7 @@
 
 ## [1.0.4](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.3...searxng-v1.0.4) (2026-06-16)
 
-
-### Bug Fixes
-
-* **searxng:** update upstream to 2026.6.15-cf ([1b8d10e](https://github.com/pol4rfuchs/ha-apps/commit/1b8d10e5862c478b65a92088248796f840f5019d))
-* **searxng:** update upstream to 2026.6.15-cf ([9af53ef](https://github.com/pol4rfuchs/ha-apps/commit/9af53efd2347bc8cda20de59de60198d04a8ac40))
-
 ## [1.0.3](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.2...searxng-vv1.0.3) (2026-06-15)
-
 
 ### Bug Fixes
 
