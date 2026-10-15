@@ -121,3 +121,10 @@
 - name: "priority/low"
   color: "0e8a16"
   description: "Niedrige Priorität"
+# ── Release Please (nicht entfernen, nicht loeschen) ───────────────────────────
+- name: "autorelease: pending"
+  color: "ededed"
+  description: "Release Please: Release-PR offen"
+- name: "autorelease: tagged"
+  color: "ededed"
+  description: "Release Please: Release erstellt und getaggt"
