@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.0.37](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.36...searxng-v1.0.37) (2026-10-15)
+
+
+### Bug Fixes
+
+* **searxng:** update upstream to 2026.10.11-a ([#519](https://github.com/pol4rfuchs/ha-apps/issues/519)) ([12524c6](https://github.com/pol4rfuchs/ha-apps/commit/12524c69785aafe5a55c3149a17b5c2f577e9dc7))
+* **searxng:** update upstream to 2026.10.4-ce ([#477](https://github.com/pol4rfuchs/ha-apps/issues/477)) ([09e75ed](https://github.com/pol4rfuchs/ha-apps/commit/09e75ed6d59902bbd60266d844b6c7246eef3340))
+* **searxng:** update upstream to 2026.10.9-f4 (changelog: https://git… ([#490](https://github.com/pol4rfuchs/ha-apps/issues/490)) ([51fe6be](https://github.com/pol4rfuchs/ha-apps/commit/51fe6be52617041d4fc3a1de81843428bba2cb63))
+* **searxng:** update upstream to 2026.7.25-09 ([#224](https://github.com/pol4rfuchs/ha-apps/issues/224)) ([1045342](https://github.com/pol4rfuchs/ha-apps/commit/1045342a966c70ed32652da72fe43bd32a158b6b))
+* **searxng:** update upstream to 2026.7.28-c7 ([#245](https://github.com/pol4rfuchs/ha-apps/issues/245)) ([5b5a396](https://github.com/pol4rfuchs/ha-apps/commit/5b5a3964fcf16cf193264599ff8ad5624fd342db))
+* **searxng:** update upstream to 2026.8.1-889 ([#258](https://github.com/pol4rfuchs/ha-apps/issues/258)) ([29d6700](https://github.com/pol4rfuchs/ha-apps/commit/29d6700f4cd8b112a622d43094687e34eb841ad5))
+* **searxng:** update upstream to 2026.8.10-0a (changelog: https://github.com/searxng/searxng/releases) ([#286](https://github.com/pol4rfuchs/ha-apps/issues/286)) ([47e579f](https://github.com/pol4rfuchs/ha-apps/commit/47e579f29f6f6d42af9535fa55fb023fb605c615))
+* **searxng:** update upstream to 2026.8.11-e8 (changelog: https://github.com/searxng/searxng/releases) ([#289](https://github.com/pol4rfuchs/ha-apps/issues/289)) ([34d7f87](https://github.com/pol4rfuchs/ha-apps/commit/34d7f879413b914eade84fa1ebca7a934ed1f49a))
+* **searxng:** update upstream to 2026.8.12-56 (changelog: https://github.com/searxng/searxng/releases) ([#295](https://github.com/pol4rfuchs/ha-apps/issues/295)) ([b4ba31c](https://github.com/pol4rfuchs/ha-apps/commit/b4ba31c27599636221ee6559c1e15a02ec9da4b3))
+* **searxng:** update upstream to 2026.8.14-09 (changelog: https://github.com/searxng/searxng/releases) ([#298](https://github.com/pol4rfuchs/ha-apps/issues/298)) ([159464b](https://github.com/pol4rfuchs/ha-apps/commit/159464bb8c1ea97849a4e953e1b7c28d4985e9aa))
+* **searxng:** update upstream to 2026.8.19-5f (changelog: https://github.com/searxng/searxng/releases) ([#315](https://github.com/pol4rfuchs/ha-apps/issues/315)) ([3e2dc38](https://github.com/pol4rfuchs/ha-apps/commit/3e2dc38cb622d2187b3a97dc969559bcd8c1d1e3))
+* **searxng:** update upstream to 2026.8.22-77 (changelog: https://github.com/searxng/searxng/releases) ([#321](https://github.com/pol4rfuchs/ha-apps/issues/321)) ([b9fb409](https://github.com/pol4rfuchs/ha-apps/commit/b9fb4094b67c35be61dcc564343146fa2020198f))
+* **searxng:** update upstream to 2026.8.28-a3 (changelog: https://github.com/searxng/searxng/releases) ([#336](https://github.com/pol4rfuchs/ha-apps/issues/336)) ([b90f0a6](https://github.com/pol4rfuchs/ha-apps/commit/b90f0a6019f52232a97866244a34ff01e845a8b2))
+* **searxng:** update upstream to 2026.8.29-45 (changelog: https://github.com/searxng/searxng/releases) ([#338](https://github.com/pol4rfuchs/ha-apps/issues/338)) ([c7a65c1](https://github.com/pol4rfuchs/ha-apps/commit/c7a65c1e5e266e5fe910568028cb97904e9bf8d9))
+* **searxng:** update upstream to 2026.8.3-aa0 ([#268](https://github.com/pol4rfuchs/ha-apps/issues/268)) ([a525786](https://github.com/pol4rfuchs/ha-apps/commit/a525786194d00017cd86a2f4312e41a6b6a826f4))
+* **searxng:** update upstream to 2026.8.5-168 ([#274](https://github.com/pol4rfuchs/ha-apps/issues/274)) ([481d376](https://github.com/pol4rfuchs/ha-apps/commit/481d376e095abbdd92da939578208d338a5f03e7))
+* **searxng:** update upstream to 2026.9.12-87 (changelog: https://github.com/searxng/searxng/releases) ([#377](https://github.com/pol4rfuchs/ha-apps/issues/377)) ([ccc6081](https://github.com/pol4rfuchs/ha-apps/commit/ccc6081865c9f512e74bc3ae325e6108bdcc6c98))
+* **searxng:** update upstream to 2026.9.19-36 (changelog: https://github.com/searxng/searxng/releases) ([#400](https://github.com/pol4rfuchs/ha-apps/issues/400)) ([dff53cb](https://github.com/pol4rfuchs/ha-apps/commit/dff53cbb865835d0719cd66e789251e5bd1c683d))
+* **searxng:** update upstream to 2026.9.25-48 (changelog: https://github.com/searxng/searxng/releases) ([#431](https://github.com/pol4rfuchs/ha-apps/issues/431)) ([b1ab0c9](https://github.com/pol4rfuchs/ha-apps/commit/b1ab0c993a76fb7764860170ccb3796c61d88c5c))
+* **searxng:** update upstream to 2026.9.3-745 (changelog: https://github.com/searxng/searxng/releases) ([#345](https://github.com/pol4rfuchs/ha-apps/issues/345)) ([90d84b4](https://github.com/pol4rfuchs/ha-apps/commit/90d84b4aa894e24ea57155a751157b863f8e2039))
+* **searxng:** update upstream to 2026.9.30-a9 (changelog: https://github.com/searxng/searxng/releases) ([#446](https://github.com/pol4rfuchs/ha-apps/issues/446)) ([c1437cc](https://github.com/pol4rfuchs/ha-apps/commit/c1437ccfff20417095e5452a2a7906cb2b2a21ea))
+* **searxng:** update upstream to 2026.9.4-15b (changelog: https://github.com/searxng/searxng/releases) ([#349](https://github.com/pol4rfuchs/ha-apps/issues/349)) ([c097809](https://github.com/pol4rfuchs/ha-apps/commit/c0978094aed4f5ce6ce0d5a5232e9b7c9ef2e573))
+* **searxng:** update upstream to 2026.9.6-360 (changelog: https://github.com/searxng/searxng/releases) ([#353](https://github.com/pol4rfuchs/ha-apps/issues/353)) ([0d3085a](https://github.com/pol4rfuchs/ha-apps/commit/0d3085a545626e6aed7285152eb64aaeeb9f23bc))
+* **searxng:** update upstream to 2026.9.8-3fd (changelog: https://github.com/searxng/searxng/releases) ([#362](https://github.com/pol4rfuchs/ha-apps/issues/362)) ([b1528dd](https://github.com/pol4rfuchs/ha-apps/commit/b1528dde72393dd96d8db74c11dbbfee5cd549df))
+
 ## [1.0.36](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.35...searxng-v1.0.36) (2026-10-14)
 
 
