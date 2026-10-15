@@ -82,8 +82,9 @@ jobs:
             tag_prefix: ntfy-manager
             reason: "Internal app add-on; no external upstream version/ref is declared in-repo."
           - addon: searxng
-            mode: dockerhub_from_tag
+            mode: dockerhub_arg_tag
             dockerhub_repo: searxng/searxng
+            arg_name: SEARXNG_VERSION
             image_prefix: searxng/searxng
             tag_prefix: searxng
           - addon: nextcloud
