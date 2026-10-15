@@ -51,19 +51,23 @@ jobs:
             return 1
           }
 
+          # Gilt fuer beide Endpoints: /pulls-Objekte haben kein pull_request-Feld
+          # (null), /issues-Objekte die PRs sind, haben es und werden uebersprungen.
           lock_stale() {
-            local label=$1 url=$2 filter=$3 num
+            local label=$1 url=$2 num
             if ! fetch_all "${url}"; then
               echo "::warning::Skipping ${label} locking: GitHub API not available, retrying on next run"
               return 0
             fi
-            jq -r --arg cutoff "${cutoff}" "${filter}" "${tmp}" | while read -r num; do
+            jq -r --arg cutoff "${cutoff}"               '.[] | select(
+                .locked == false
+                and .pull_request == null
+                and .updated_at < $cutoff
+              ) | .number'               "${tmp}" | while read -r num; do
               echo "Locking ${label} #${num}"
               gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
             done
           }
 
-          lock_stale "issue" "repos/${REPO}/issues?state=closed&per_page=100" \
-            '.[] | select(.locked == false and .pull_request == null and .updated_at < $cutoff) | .number'
-          lock_stale "PR" "repos/${REPO}/pulls?state=closed&per_page=100" \
-            '.[] | select(.locked == false and .updated_at < $cutoff) | .number'
+          lock_stale "issue" "repos/${REPO}/issues?state=closed&per_page=100"
+          lock_stale "PR" "repos/${REPO}/pulls?state=closed&per_page=100"
