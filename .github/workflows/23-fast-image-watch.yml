@@ -87,8 +87,9 @@ jobs:
             tag_prefix: teamspeak6
             changelog_repo: teamspeak/teamspeak6-server
           - addon: searxng
-            mode: dockerhub_from_tag
+            mode: dockerhub_arg_tag
             dockerhub_repo: searxng/searxng
+            arg_name: SEARXNG_VERSION
             image_prefix: searxng/searxng
             tag_prefix: searxng
             changelog_repo: searxng/searxng
