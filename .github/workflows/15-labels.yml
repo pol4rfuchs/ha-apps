@@ -1,5 +1,8 @@
 ---
-# Synct Labels täglich + manuell (.github/labels.yml im Repo als Source of Truth)
+# Synct die Labels aus .github/labels.yml (taeglich + bei Aenderung + manuell).
+# prune: false ist Pflicht: Release Please verwaltet "autorelease: pending/tagged"
+# selbst. Wuerde der Sync diese Labels loeschen, findet Release Please beim Merge
+# das Release-PR nicht mehr und legt Tag + GHCR-Image nicht an.
 name: 15 Sync Labels
 
 # yamllint disable-line rule:truthy
@@ -16,7 +19,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: labels-${{ github.ref }}
@@ -24,4 +26,22 @@ concurrency:
 
 jobs:
   labels:
-    uses: hassio-addons/workflows/.github/workflows/labels.yaml@e0c532a7b0fb264b3ff0c718c2c0308a0c8c1390 # v4.0.0
+    name: Sync labels
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Label Syncer
+        uses: micnncim/action-label-syncer@3abd5ab72fda571e69fffd97bd4e0033dd5f495c # v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          manifest: .github/labels.yml
+          prune: false
