@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.6...ts6_manager-v1.1.7) (2026-10-16)
+
+
+### Bug Fixes
+
+* **ts6_manager:** make log_level option effective for the backend ([#544](https://github.com/pol4rfuchs/ha-apps/issues/544)) ([0140a80](https://github.com/pol4rfuchs/ha-apps/commit/0140a80903e4ff881756cbca858215c475bec789))
+
 ## [1.1.6](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.5...ts6_manager-v1.1.6) (2026-10-04)
 
 
