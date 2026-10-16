@@ -23,9 +23,15 @@ data volume:
 
 ```
 /data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)
 ```
+
+The Nextcloud code itself is not stored: it comes from the add-on image and is
+restored on every start.
 
 A Home Assistant full backup (which includes add-on data by default)
 already covers this. If you back up manually, back up the entire

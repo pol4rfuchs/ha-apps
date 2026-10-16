@@ -76,11 +76,17 @@ All data is stored under `/data/nextcloud/` in the add-on's persistent volume:
 
 ```
 /data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)
 ```
 
-On image updates only the app layer changes — user files in `data/` are never touched.
+The Nextcloud code itself is not stored: it comes from the add-on image and is
+restored on every start.
+
+On add-on updates only the app code changes. Nextcloud's own `occ upgrade` runs automatically when the new version is newer; user files in `data/` are never touched. Downgrades and skipping a major version are refused.
 
 ## Trusted domains
 
