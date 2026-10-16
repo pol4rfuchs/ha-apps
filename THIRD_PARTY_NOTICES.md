@@ -23,7 +23,7 @@ remain under their respective upstream licenses.
 | Navidrome | Navidrome | https://github.com/navidrome/navidrome | See upstream license |
 | Nginx Proxy Manager | Nginx Proxy Manager | https://github.com/NginxProxyManager/nginx-proxy-manager | See upstream license |
 | Intiface Central | Intiface / Buttplug ecosystem | https://github.com/intiface | See upstream license |
-| Forgejo | Forgejo | https://codeberg.org/forgejo/forgejo | GPL-3.0-or-later (versions before 9.0: MIT) |
+| Forgejo | Forgejo | https://forgejo.org | GPL-3.0-or-later (versions before 9.0: MIT) |
 | Nextcloud | Nextcloud Server | https://github.com/nextcloud/server | AGPL-3.0 |
 | Unbound | Unbound (NLnet Labs) | https://github.com/NLnetLabs/unbound | BSD-3-Clause |
 | Restic Backup | restic | https://github.com/restic/restic | BSD-2-Clause |
