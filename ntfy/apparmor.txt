@@ -47,10 +47,6 @@ profile ntfy_addon flags=(attach_disconnected,mediate_deleted) {
   /data/                       rw,
   /data/**                     rw,
 
-  # Mapped folder (backup:rw)
-  /backup/                     rw,
-  /backup/**                   rw,
-
   # /tmp
   /tmp/                        rw,
   /tmp/**                      rw,
