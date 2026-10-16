@@ -95,10 +95,6 @@ _env_write ND_DATAFOLDER  "${ND_DATAFOLDER}"
 _env_write ND_ADDRESS     "0.0.0.0"
 _env_write ND_PORT        "4533"
 
-# HA Ingress:
-# ND_BASEURL NICHT setzen — nginx (sub_filter) übernimmt das href-Rewriting.
-# X-Frame-Options: SAMEORIGIN wird von nginx als Header gesetzt.
-
 # --- Alle ND_* aus options.json exportieren ---
 bashio::log.info "Exportiere Navidrome-Variablen:"
 

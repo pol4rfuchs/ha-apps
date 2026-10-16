@@ -1,12 +1,5 @@
 ---
 configuration:
-  PUID:
-    name: User ID
-    description: UID the Navidrome process runs as. 0 = root.
-  PGID:
-    name: Group ID
-    description: GID the Navidrome process runs as. 0 = root.
-
   ND_MUSICFOLDER:
     name: Music folder
     description: >-
@@ -27,15 +20,6 @@ configuration:
     name: Log level
     description: "Log verbosity: error, warn, info, debug, trace."
 
-  ND_UIWELCOMEMESSAGE:
-    name: Welcome Message
-    description: Text shown on the login screen.
-  ND_UILOGINBACKGROUNDURL:
-    name: Login Background Image URL
-    description: URL of a custom background image for the login page.
-  ND_DEFAULTTHEME:
-    name: Default Theme
-    description: "Theme name, e.g. Dark, Light, Spotify-ish. Empty = built-in default."
   ND_ENABLESTARRATING:
     name: Enable Star Ratings
     description: Show 5-star ratings in the UI.
@@ -48,11 +32,6 @@ configuration:
   ND_ENABLESHARING:
     name: Enable Sharing
     description: Allow public share links for tracks and playlists.
-  ND_SHAREURL:
-    name: Share Base URL
-    description: >-
-      Public base URL for share links. Needed if Navidrome runs behind
-      a VPN (e.g. Tailscale).
   ND_ENABLEGRAVATAR:
     name: Enable Gravatar
     description: Use Gravatar as the profile picture (requires an email on the user account).
@@ -68,9 +47,6 @@ configuration:
   ND_AUTOIMPORTPLAYLISTS:
     name: Auto-import Playlists
     description: Automatically read .m3u/.m3u8 playlist files found in the music folder.
-  ND_PLAYLISTSPATH:
-    name: Playlists Folder
-    description: Folder Navidrome watches for playlist files. Default = music folder.
   ND_IGNOREDARTICLES:
     name: Ignored Articles
     description: Space-separated list of articles ignored when sorting.
@@ -89,12 +65,6 @@ configuration:
     description: >-
       "taglib" (default, fast) or "ffmpeg" (supports more formats, e.g.
       Opus, AAC in MP4). Requires ffmpeg to be installed when set to "ffmpeg".
-  ND_FFMPEGPATH:
-    name: ffmpeg Path
-    description: >-
-      Path to the ffmpeg binary. Empty = auto-detect (/usr/bin/ffmpeg).
-      Only relevant when the scanner extractor is set to ffmpeg or transcoding is used.
-
   ND_TRANSCODINGCACHESIZE:
     name: Transcoding Cache Size
     description: Size of the transcoding cache. "0" = disabled.
@@ -116,53 +86,21 @@ configuration:
   ND_SESSIONTIMEOUT:
     name: Session Timeout
     description: Inactive browser sessions are closed after this duration (e.g. "30m", "2h").
-  ND_EXTAUTH_USERHEADER:
-    name: Reverse Proxy User Header
-    description: >-
-      Name of the HTTP header the upstream reverse proxy uses to carry the
-      authenticated username (e.g. "Remote-User" for Authelia/NPM).
-  ND_EXTAUTH_TRUSTEDSOURCES:
-    name: Reverse Proxy Whitelist
-    description: >-
-      CIDRs allowed to send this header (e.g. "127.0.0.1/32,192.168.1.0/24").
-      Security-critical — never set to 0.0.0.0/0!
-
   ND_LASTFM_ENABLED:
     name: Enable Last.fm
     description: Enable Last.fm scrobbling and metadata.
   ND_LASTFM_LANGUAGE:
     name: Last.fm Language
     description: Two-letter ISO language code for Last.fm metadata (e.g. "de", "en").
-  ND_LASTFM_APIKEY:
-    name: Last.fm API Key
-  ND_LASTFM_SECRET:
-    name: Last.fm API Secret
-
   ND_LISTENBRAINZ_ENABLED:
     name: Enable ListenBrainz
     description: Enable ListenBrainz scrobbling.
-
-  ND_SPOTIFY_ID:
-    name: Spotify Client ID
-    description: Required for artist images from Spotify.
-  ND_SPOTIFY_SECRET:
-    name: Spotify Client Secret
-    description: Required for artist images from Spotify.
 
   ND_JUKEBOX_ENABLED:
     name: Enable Jukebox
     description: >-
       Play audio directly on the server hardware (e.g. speakers attached to
       a Raspberry Pi). Requires an ALSA device and privileged mode.
-  ND_JUKEBOX_DEFAULT:
-    name: Jukebox Default Device
-    description: Default audio device when multiple are configured (ALSA device name).
-  ND_JUKEBOX_DEVICES:
-    name: Jukebox Devices
-    description: >-
-      Comma-separated list of ALSA audio devices available for Jukebox
-      (e.g. "hw:0,0" or "default").
-
   ND_DEFAULTPLAYLISTPUBLICVISIBILITY:
     name: Playlists Public by Default
     description: Set newly imported playlists to public by default.
@@ -173,6 +111,3 @@ configuration:
   ND_ENABLEINSIGHTSCOLLECTOR:
     name: Anonymous Usage Statistics
     description: Send anonymous usage statistics to the Navidrome project. Disabled by default.
-  ND_GATRACKINGID:
-    name: Google Analytics ID
-    description: Optional GA tracking ID for the Navidrome UI.

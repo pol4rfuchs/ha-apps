@@ -40,7 +40,10 @@ Key options:
 | `ND_DATAFOLDER` | `/data` | Database and cache location. **Must stay under `/data`** (always persistent) or under `/config/addons_config/navidrome` *only if* `addon_config` is in the add-on's `map` config — any other path is wiped on restart. |
 | `ND_SCANNER_SCHEDULE` | `@every 24h` | Auto-scan interval. `0` disables. |
 | `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
+| `ND_EXTRA_MUSIC_FOLDERS` | — | Comma-separated extra music folders (e.g. `/share/music2,/media/usb/music`). Each existing folder is linked into `ND_MUSICFOLDER` at start. |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware (requires sound device). |
+
+The add-on runs Navidrome as **root**; there is no `PUID`/`PGID` option. Last.fm API key/secret, Spotify credentials, external authentication and jukebox devices cannot be configured through the add-on options.
 
 ---
 
