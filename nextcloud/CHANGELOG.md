@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.22](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.21...nextcloud-v33.0.22) (2026-10-16)
+
+
+### Bug Fixes
+
+* **nextcloud:** bump upstream only within the current major, correct docs ([#573](https://github.com/pol4rfuchs/ha-apps/issues/573)) ([1893e08](https://github.com/pol4rfuchs/ha-apps/commit/1893e08bbd342818a18444940e4043efdaa2c4ba))
+
 ## [33.0.21](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.20...nextcloud-v33.0.21) (2026-10-16)
 
 
