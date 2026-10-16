@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.5...matrix_auth_service-v1.0.6) (2026-10-16)
+
+
+### Bug Fixes
+
+* **matrix_auth_service:** make the add-on run, and handle the DB password safely ([#572](https://github.com/pol4rfuchs/ha-apps/issues/572)) ([ea03769](https://github.com/pol4rfuchs/ha-apps/commit/ea03769243636b455da289a9d40392533477eaa4))
+
 ## [1.0.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.4...matrix_auth_service-v1.0.5) (2026-10-14)
 
 
