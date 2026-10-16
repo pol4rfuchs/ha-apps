@@ -22,13 +22,15 @@
 
 | Property | Value |
 |---|---|
-| **Engine** | `intiface-engine` (x64, via box64 on ARM) |
+| **Engine** | `intiface-engine`, compiled from source for the target architecture |
 | **Engine version** | `4.0.2` |
-| **Web UI port** | `12346` |
-| **Intiface port** | `12345` |
-| **Arch** | `amd64`, `aarch64` (via box64) |
-| **Bluetooth** | Host BLE passthrough |
+| **Web UI port** | `8199` |
+| **Intiface port** | `12345` (option `engine_ws_port`) |
+| **Arch** | `amd64`, `aarch64` (both native) |
+| **Bluetooth** | Host BLE passthrough (D-Bus) |
 | **USB/HID** | Host kernel passthrough |
+
+> **Status:** experimental and frozen. The app has no login and is meant for your LAN or a VPN only. See the *Local and external access* section in [DOCS.md](DOCS.md).
 
 ---
 
@@ -36,11 +38,11 @@
 
 - **Browser WebGUI** — no VNC, no X11, no noVNC overhead
 - **Device control** directly in the browser with vibration sliders
-- **Pattern Editor** — create, save and play vibration patterns
+- **Pattern Editor** — create, save and play vibration patterns (patterns are stored in the browser)
 - **MQTT Bridge** — each device/motor available as an MQTT topic
-- **Home Assistant MQTT Discovery** — automatic entities without YAML
-- **Bluetooth LE + USB/HID** via host kernel passthrough
-- **aarch64** support via [box64](https://github.com/ptitSeb/box64)
+- **Home Assistant MQTT Discovery** — automatic entities without YAML (opt-in)
+- **Bluetooth LE + USB/HID** via host passthrough
+- **Native `aarch64` build**, no emulation
 
 ---
 
@@ -76,7 +78,7 @@ Install **Intiface Central**. If you want MQTT integration, set the broker optio
 
 ### Step 3 — Start
 
-Click **Open Web UI** — the browser interface opens on port `12346`.
+Click **Open Web UI** — the browser interface opens on port `8199`.
 
 ---
 
@@ -84,11 +86,18 @@ Click **Open Web UI** — the browser interface opens on port `12346`.
 
 | Option | Default | Description |
 |---|---|---|
-| `mqtt_host` | — | MQTT broker hostname or IP. Leave empty to disable MQTT bridge. |
+| `engine_ws_port` | `12345` | Port of the Buttplug WebSocket server (external clients connect here). |
+| `use_bluetooth_le` | `true` | Enable Bluetooth LE devices. |
+| `use_hid` | `true` | Enable USB/HID devices (e.g. Lovense dongle). |
+| `use_serial` | `false` | Enable serial-port devices. |
+| `log_level` | `info` | Log level of the engine: `error` / `warn` / `info` / `debug`. |
+| `mqtt_host` | — | MQTT broker hostname or IP. Leave empty to disable the MQTT bridge. |
 | `mqtt_port` | `1883` | MQTT broker port. |
-| `mqtt_username` | — | MQTT username. |
-| `mqtt_password` | — | MQTT password. |
-| `mqtt_discovery` | `true` | Enable HA MQTT auto-discovery. |
+| `mqtt_user` | — | MQTT username. |
+| `mqtt_pass` | — | MQTT password. |
+| `mqtt_topic_prefix` | `buttplug` | Prefix of all MQTT topics. |
+| `ha_discovery` | `false` | Create Home Assistant entities through MQTT discovery. |
+| `ha_discovery_prefix` | `homeassistant` | Discovery prefix of your MQTT integration. |
 
 ---
 
@@ -97,38 +106,41 @@ Click **Open Web UI** — the browser interface opens on port `12346`.
 | Port | Protocol | Purpose |
 |---|---|---|
 | `12345` | TCP | Intiface Engine WebSocket (external clients) |
-| `12346` | TCP | WebGUI |
+| `8199` | TCP | WebGUI |
 
 ---
 
 ## 🔵 Bluetooth & USB
 
-Bluetooth LE and USB/HID devices are accessed directly through the host kernel — no additional configuration required.
-
-On aarch64 (Raspberry Pi), the x64 intiface-engine binary runs via box64. Bluetooth and USB are unaffected — they run natively through the host.
+Bluetooth LE and USB/HID devices are accessed directly through the host (D-Bus and kernel) — no additional configuration required. The engine is built natively for your architecture, so Raspberry Pi (`aarch64`) and x86 behave the same.
 
 ---
 
 ## 🏠 MQTT topics
 
-Each device and motor is exposed as:
+With `mqtt_host` set, devices are available under the configured prefix (default `buttplug`):
 
-```
-intiface/devices/<device_id>/motor/<motor_index>/vibrate
-```
+| Topic | Description |
+|---|---|
+| `buttplug/<idx>/motor/<m>/set` | Set vibration intensity (`0.0`–`1.0`) |
+| `buttplug/<idx>/motor/<m>/state` | Current state |
+| `buttplug/<idx>/stop` | Stop the device |
+| `buttplug/<idx>/vibrate` | JSON array of motor intensities |
+| `buttplug/<idx>/availability` | `online` / `offline` |
+| `buttplug/scan/start`, `buttplug/scan/stop` | Start / stop scanning |
+| `buttplug/stop_all` | Stop all devices |
 
-Publish a value between `0.0` and `1.0` to control intensity.
-
-HA MQTT Discovery creates entities automatically when `mqtt_discovery: true`.
+With `ha_discovery: true`, Home Assistant creates a number entity per motor, a stop button and a connection sensor automatically.
 
 ---
 
 ## 💾 Data persistence
 
 ```text
-/data/
-└── patterns/    ← Saved vibration patterns
+/data/home/    ← intiface-engine data
 ```
+
+Vibration patterns are saved in your browser (localStorage), not on the server.
 
 ---
 
@@ -136,11 +148,11 @@ HA MQTT Discovery creates entities automatically when `mqtt_discovery: true`.
 
 | Problem | Fix |
 |---|---|
-| Web UI not opening | Check port `12346` in the Network tab |
-| Device not found | Ensure Bluetooth is enabled on the host; restart add-on |
-| box64 error on ARM | Check add-on log; verify `ENGINE_VERSION` in Dockerfile matches a current release |
-| MQTT entities not appearing | Verify broker hostname and that MQTT integration is configured in HA |
-| Engine binary download fails | Check current release URL at [intiface-engine releases](https://github.com/intiface/intiface-engine/releases) and update `ENGINE_VERSION` in the Dockerfile |
+| Web UI not opening | Check port `8199` in the Network tab |
+| Device not found | Ensure Bluetooth is enabled on the host; restart the add-on |
+| Engine does not start with `use_serial: true` | Update to a version of the add-on that passes `--use-serial` (older versions passed an argument the engine rejects) |
+| MQTT entities not appearing | Verify broker hostname, that the MQTT integration is configured in HA, and that `ha_discovery` is `true` |
+| Need more detail in the log | Set `log_level: debug` |
 
 ---
 
@@ -149,7 +161,7 @@ HA MQTT Discovery creates entities automatically when `mqtt_discovery: true`.
 | Arch | Support |
 |---|---|
 | `amd64` | ✅ Native |
-| `aarch64` | ✅ via box64 |
+| `aarch64` | ✅ Native |
 
 ---
 
