@@ -2,7 +2,7 @@
 
 Experimental, local-first UniFi OS monitoring and management app for Home Assistant.
 
-## Current scope — v0.7.2
+## Current scope
 
 - Home Assistant Ingress UI with functional navigation and inventory detail views
 - Local UniFi Network API connectivity using a dedicated API key
@@ -13,7 +13,7 @@ Experimental, local-first UniFi OS monitoring and management app for Home Assist
 - Optional ntfy notifications for connection, new-client, and device-health events
 - Explicit UniFi device offline/recovery monitoring with configurable grace polling
 - Multi-architecture support for `aarch64` and `amd64`
-- AppArmor confinement and s6-overlay lifecycle handling
+- s6-overlay lifecycle handling; an AppArmor profile is shipped but not enforced (`apparmor: false`)
 
 ## Installation
 
