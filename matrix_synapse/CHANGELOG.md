@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.9](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.8...matrix_synapse-v1.7.9) (2026-10-16)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** handle the DB password safely, correct README/TURN docs, guard cd ([#571](https://github.com/pol4rfuchs/ha-apps/issues/571)) ([d91ac57](https://github.com/pol4rfuchs/ha-apps/commit/d91ac57f2228535ceb9fa96a49211d9d82a81388))
+
 ## [1.7.8](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.7...matrix_synapse-v1.7.8) (2026-10-16)
 
 
