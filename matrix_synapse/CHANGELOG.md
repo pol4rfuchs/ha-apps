@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.7.8](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.7...matrix_synapse-v1.7.8) (2026-10-16)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** remove maintainer-specific defaults, make federation toggle effective ([#546](https://github.com/pol4rfuchs/ha-apps/issues/546)) ([589e739](https://github.com/pol4rfuchs/ha-apps/commit/589e739d2e08635fad4979d097aa3826e881806d))
+
 ## [1.7.7](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.6...matrix_synapse-v1.7.7) (2026-10-11)
 
 
