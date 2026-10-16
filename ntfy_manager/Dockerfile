@@ -8,7 +8,7 @@ WORKDIR /opt/ntfy-admin
 COPY package*.json ./
 COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
-RUN npm install --no-audit --no-fund --include=dev
+RUN npm ci --no-audit --no-fund --include=dev
 COPY apps ./apps
 
 # DL3003: use WORKDIR instead of cd

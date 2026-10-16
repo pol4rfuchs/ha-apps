@@ -8,7 +8,8 @@ mkdir -p /data/logs
 
 export NODE_ENV="production"
 export API_PORT="3000"
-export LOG_LEVEL="$(bashio::config 'log_level')"
+LOG_LEVEL="$(bashio::config 'log_level')"
+export LOG_LEVEL
 export SESSION_COOKIE_NAME="ntfy_admin_token"
 
 if [[ ! -f /data/jwt_secret ]]; then
@@ -16,15 +17,23 @@ if [[ ! -f /data/jwt_secret ]]; then
     chmod 600 /data/jwt_secret
     bashio::log.info "Generated new JWT secret (persisted in /data/jwt_secret)"
 fi
-export JWT_SECRET="$(cat /data/jwt_secret)"
+JWT_SECRET="$(cat /data/jwt_secret)"
+export JWT_SECRET
 
-export NTFY_BASE_URL="$(bashio::config 'ntfy_base_url')"
-export NTFY_AUTH_TYPE="$(bashio::config 'ntfy_auth_type')"
-export NTFY_USERNAME="$(bashio::config 'ntfy_username')"
-export NTFY_PASSWORD="$(bashio::config 'ntfy_password')"
-export NTFY_BEARER_TOKEN="$(bashio::config 'ntfy_bearer_token')"
-export NTFY_DEFAULT_TOPICS="$(bashio::config 'default_topics | join(",")')"
-export ALLOW_LOGIN_OVERRIDE="$(bashio::config 'allow_login_override')"
+NTFY_BASE_URL="$(bashio::config 'ntfy_base_url')"
+export NTFY_BASE_URL
+NTFY_AUTH_TYPE="$(bashio::config 'ntfy_auth_type')"
+export NTFY_AUTH_TYPE
+NTFY_USERNAME="$(bashio::config 'ntfy_username')"
+export NTFY_USERNAME
+NTFY_PASSWORD="$(bashio::config 'ntfy_password')"
+export NTFY_PASSWORD
+NTFY_BEARER_TOKEN="$(bashio::config 'ntfy_bearer_token')"
+export NTFY_BEARER_TOKEN
+NTFY_DEFAULT_TOPICS="$(bashio::config 'default_topics | join(",")')"
+export NTFY_DEFAULT_TOPICS
+ALLOW_LOGIN_OVERRIDE="$(bashio::config 'allow_login_override')"
+export ALLOW_LOGIN_OVERRIDE
 
 bashio::log.info "ntfy base URL : ${NTFY_BASE_URL}"
 bashio::log.info "ntfy auth type: ${NTFY_AUTH_TYPE}"
@@ -32,5 +41,5 @@ bashio::log.info "ntfy auth type: ${NTFY_AUTH_TYPE}"
 [[ -n "${NTFY_BEARER_TOKEN}" ]] && bashio::log.info "ntfy bearer token configured"
 
 bashio::log.info "Starting Express API on 127.0.0.1:${API_PORT} ..."
-cd /opt/ntfy-admin/apps/api
+cd /opt/ntfy-admin/apps/api || exit 1
 exec node dist/index.js
