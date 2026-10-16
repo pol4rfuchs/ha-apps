@@ -33,20 +33,24 @@ until pg_isready -h 127.0.0.1 -p 5433 -U mas >/dev/null 2>&1; do
     fi
 done
 
+# Reihenfolge: spätere --config-Dateien überschreiben frühere. secrets.yaml kommt
+# von "mas-cli config generate" und enthält die komplette Standard-Config (auch
+# database.uri, http, matrix); sie muss daher VOR unserer config.yaml stehen,
+# sonst überschreibt sie DB-URI und Synapse-Kopplung mit Standardwerten.
 bashio::log.info "Führe Datenbank-Migration aus..."
-mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     database migrate || {
         bashio::log.error "mas-cli database migrate fehlgeschlagen!"
         exit 1
     }
 
 bashio::log.info "Synchronisiere Clients/Policy-Config..."
-mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     config sync --prune || {
         bashio::log.error "mas-cli config sync fehlgeschlagen!"
         exit 1
     }
 
 bashio::log.info "Starte Matrix Authentication Service..."
-exec mas-cli --config "${CONFIG_MAIN}" --config "${CONFIG_SECRETS}" \
+exec mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     server 2>&1

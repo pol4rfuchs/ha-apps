@@ -2,7 +2,7 @@
 # S6 Service: PostgreSQL (eigene Instanz für MAS, getrennt von Synapse-DB)
 
 PG_DATA="/data/mas/postgresql"
-PG_BIN="/usr/lib/postgresql/15/bin"
+PG_BIN="/usr/lib/postgresql/17/bin"
 MARKER="/data/mas/.pg_initialized"
 
 # ── Warten bis cont-init die DB vollständig initialisiert hat ─────────────

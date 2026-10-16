@@ -22,7 +22,7 @@ options:
   synapse_server_name: example.org
   synapse_endpoint: http://xxxxx-matrix-server:8008
   synapse_secret: ''
-  postgres_password: change-me
+  postgres_password: ''
   admin_users: ''
   password_registration_enabled: false
   password_login_enabled: true
