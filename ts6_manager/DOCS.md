@@ -64,7 +64,7 @@ s6-overlay Services:
 
 | Option | Standard | Beschreibung |
 |--------|----------|--------------|
-| `log_level` | `info` | Log-Level (trace/debug/info/warning/error/fatal) |
+| `log_level` | `info` | Log-Level des Backends (trace/debug/info/notice/warning/error/fatal). Das Backend loggt über `console.*`, die Stufen werden dort gefiltert (`log`/`info` = info, `warn` = warning, `error` = error). nginx und der Video-Sidecar sind nicht betroffen. |
 
 ## Local and external access
 
