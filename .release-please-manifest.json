@@ -5,7 +5,7 @@
   "nginx_proxy_manager": "2.1.7",
   "navidrome": "2.1.11",
   "restic_backup": "0.2.3",
-  "ntfy": "1.2.10",
+  "ntfy": "1.2.11",
   "ntfy_manager": "0.2.15",
   "nextcloud": "33.0.21",
   "searxng": "1.0.37",
