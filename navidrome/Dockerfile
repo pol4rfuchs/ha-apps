@@ -11,7 +11,7 @@ LABEL \
   io.hass.type="app" \
   io.hass.version="${BUILD_VERSION}" \
   maintainer="Pol4rFuchs (https://github.com/pol4rfuchs)"
-# DL3002: root required — HA add-on runs as root, Navidrome drops privileges internally
+# DL3002: root required — the HA add-on runs as root and so does Navidrome (there is no PUID/PGID handling)
 # hadolint ignore=DL3002
 USER root
 RUN apk add --no-cache \
@@ -19,8 +19,6 @@ RUN apk add --no-cache \
   curl \
   ca-certificates \
   jq \
-  nginx \
-  shadow \
   procps \
   && mkdir -p /etc/cont-init.d \
   && chmod -R 755 /etc/cont-init.d
@@ -56,7 +54,7 @@ LABEL \
   org.opencontainers.image.title="${BUILD_NAME}" \
   org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
   org.opencontainers.image.vendor="Home Assistant Add-ons" \
-  org.opencontainers.image.licenses="MIT" \
+  org.opencontainers.image.licenses="GPL-3.0" \
   org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
   org.opencontainers.image.created="${BUILD_DATE}" \
   org.opencontainers.image.revision="${BUILD_REF}" \

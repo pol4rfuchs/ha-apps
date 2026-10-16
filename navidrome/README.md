@@ -67,15 +67,17 @@ All options map 1:1 to [Navidrome environment variables](https://www.navidrome.o
 |---|---|---|
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
 | `ND_DATAFOLDER` | `/data` | Database and cache location. |
-| `ND_SCANSCHEDULE` | `@every 24h` | Cron or duration. `0` = disabled. |
+| `ND_SCANNER_SCHEDULE` | `@every 24h` | Cron or duration. `0` = disabled. |
 | `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
 | `ND_ENABLEDOWNLOADS` | `true` | Allow downloading tracks from the UI. |
-| `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware. |
-| `ND_LASTFM_ENABLED` | `false` | Last.fm scrobbling and metadata. |
+| `ND_EXTRA_MUSIC_FOLDERS` | — | Comma-separated extra music folders; each is linked into `ND_MUSICFOLDER`. |
+| `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware. Needs jukebox devices, which are not configurable here. |
+| `ND_LASTFM_ENABLED` | `false` | Last.fm scrobbling and metadata. The API key and secret cannot be set here, see below. |
 | `ND_LISTENBRAINZ_ENABLED` | `false` | ListenBrainz scrobbling. |
-| `ND_SPOTIFY_ID` | — | Spotify Client ID for artist images. |
-| `ND_SPOTIFY_SECRET` | — | Spotify Client Secret. |
-| `ND_REVERSEPROXYUSERHEADER` | — | SSO header (e.g. `Remote-User`). |
+
+Only the options listed in the add-on configuration exist; the Supervisor rejects anything else. Not available as options: Last.fm API key and secret, Spotify credentials, external authentication (reverse-proxy SSO header) and jukebox devices.
+
+The add-on runs Navidrome as root. There is no `PUID`/`PGID` setting; files that Navidrome writes into your music folder belong to root.
 
 Full option reference: <https://www.navidrome.org/docs/usage/configuration-options/>
 

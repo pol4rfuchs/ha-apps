@@ -21,12 +21,4 @@ bashio::log.blue "-----------------------------------------------------------"
 bashio::log.blue "  Navidrome binary: $(/app/navidrome --version 2>&1 | head -1 || echo 'n/a')"
 bashio::log.blue "-----------------------------------------------------------"
 
-# PUID / PGID
-if bashio::config.has_value "PUID" && bashio::config.has_value "PGID"; then
-  PUID="$(bashio::config 'PUID')"
-  PGID="$(bashio::config 'PGID')"
-  bashio::log.blue "  PUID: ${PUID}  PGID: ${PGID}"
-  usermod -o -u "${PUID}" navidrome 2>/dev/null || true
-  groupmod -o -g "${PGID}" navidrome 2>/dev/null || true
-fi
 bashio::log.blue "-----------------------------------------------------------"

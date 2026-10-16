@@ -35,9 +35,8 @@ map:
 options:
   ND_MUSICFOLDER: /media/music
   ND_DATAFOLDER: /data
+  ND_EXTRA_MUSIC_FOLDERS: ''
   ND_LOGLEVEL: info
-  PUID: 0
-  PGID: 0
   ND_ENABLESTARRATING: true
   ND_ENABLEFAVOURITES: true
   ND_ENABLEDOWNLOADS: true
@@ -66,9 +65,8 @@ options:
 schema:
   ND_MUSICFOLDER: str
   ND_DATAFOLDER: str
+  ND_EXTRA_MUSIC_FOLDERS: str?
   ND_LOGLEVEL: list(error|warn|info|debug|trace)
-  PUID: int
-  PGID: int
   ND_ENABLESTARRATING: bool
   ND_ENABLEFAVOURITES: bool
   ND_ENABLEDOWNLOADS: bool
