@@ -143,4 +143,6 @@ View logs in Home Assistant: **Settings** > **Add-ons** > **Unbound DNS** > **Lo
 
 ## License
 
-MIT License
+MIT License. This add-on is a hardened fork of [fenio/ha-addons](https://github.com/fenio/ha-addons), which is MIT-licensed.
+
+Unbound itself (NLnet Labs) is licensed under the BSD 3-Clause License, see [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).

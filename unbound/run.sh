@@ -185,6 +185,27 @@ else
     bashio::log.warning "Failed to update root hints, using bundled copy"
 fi
 
+# ── unbound-control keys ───────────────────────────────────────────────────
+# Generated once per installation (not in the image, where they would be the
+# same for everyone) and kept in /data. unbound and unbound-control look for
+# them in /etc/unbound, so link them there on every start. The server runs as
+# the unbound user and re-reads the files on reload, so they must be readable
+# by that group.
+CONTROL_DIR="/data/unbound-control"
+if [ ! -f "${CONTROL_DIR}/unbound_control.key" ] || [ ! -f "${CONTROL_DIR}/unbound_server.key" ]; then
+    bashio::log.info "Generating unbound-control keys (first start) ..."
+    mkdir -p "${CONTROL_DIR}"
+    unbound-control-setup -d "${CONTROL_DIR}" >/dev/null 2>&1 \
+        || { bashio::log.error "unbound-control-setup failed"; exit 1; }
+fi
+chown root:unbound "${CONTROL_DIR}" "${CONTROL_DIR}"/*
+chmod 0750 "${CONTROL_DIR}"
+chmod 0640 "${CONTROL_DIR}"/*.key
+chmod 0644 "${CONTROL_DIR}"/*.pem
+for f in unbound_server.key unbound_server.pem unbound_control.key unbound_control.pem; do
+    ln -sf "${CONTROL_DIR}/${f}" "/etc/unbound/${f}"
+done
+
 # Seed config.json from options.json on first run
 python3 /web/config_gen.py --seed-if-needed
 
