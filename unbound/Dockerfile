@@ -2,7 +2,7 @@
 # in the whole file, or buildx silently fails to resolve them in later
 # stages ("base name (${BUILD_FROM}) should not be blank" — see
 # moby/moby#38379). Both belong here, not next to their respective stages.
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 ARG UNBOUND_VERSION=1.26.1
 
 # ---------------------------------------------------------------------------
@@ -131,10 +131,8 @@ RUN mkdir -p \
       chmod 0644 /var/lib/unbound/root.key; \
     fi
 
-# Set up unbound-control keys for stats access
-RUN unbound-control-setup && \
-    find /etc/unbound -type d -exec chmod 0755 {} \; && \
-    find /etc/unbound -type f -exec chmod 0644 {} \;
+# The unbound-control keys are NOT generated here: keys created at build time would
+# be identical in every published image. run.sh creates them on the first start.
 
 # Copy web application
 COPY web/ /web/
