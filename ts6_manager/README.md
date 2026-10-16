@@ -12,7 +12,7 @@
 [![Upstream](https://img.shields.io/badge/Upstream-clusterzx%2Fts6--manager-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/clusterzx/ts6-manager)
 [![App Version](https://img.shields.io/badge/ts6--manager-1.1.7-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
-[![License](https://img.shields.io/badge/License-MIT-2ECC71?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache--2.0-2ECC71?style=for-the-badge)](LICENSE)
 
 **Web-based Management Interface für deinen TeamSpeak 6 Server — als sauber verpacktes Home Assistant Add-on.**
 
@@ -365,9 +365,8 @@ ha-apps/
 |---|---|
 | `repository.yaml` | Identifies the repository as a Home Assistant add-on repository |
 | `ts6_manager/config.yaml` | Add-on metadata, ports, schema, options and UI settings |
-| `ts6_manager/build.yaml` | Build configuration per architecture |
 | `ts6_manager/Dockerfile` | Builds the single-image TS6 Manager add-on |
-| `ts6_manager/rootfs/run.sh` | Startup script inside the add-on |
+| `ts6_manager/rootfs/` | s6-overlay services (init, backend, sidecar, nginx) and the nginx config |
 | `ts6_manager/DOCS.md` | Add-on Store documentation |
 | `ts6_manager/CHANGELOG.md` | Version history |
 
