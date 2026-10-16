@@ -33,5 +33,5 @@ ADMIN_UI_USER=$(sed -n '1p' "${AUTH_FILE}")
 ADMIN_UI_PASSWORD=$(sed -n '2p' "${AUTH_FILE}")
 
 bashio::log.info "Starte Synapse Admin UI (Ketesa) auf Port 8090 mit Basic-Auth..."
-cd /data/matrix/synapse-admin
+cd /data/matrix/synapse-admin || exit 1
 exec python3 /usr/local/bin/admin-ui-auth-server.py 2>&1

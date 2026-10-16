@@ -66,6 +66,29 @@ mkdir -p "${SYNAPSE_DATA}" "${PG_DATA}" "/media/matrix" \
          "${DATA_DIR}/element-web" "${DATA_DIR}/element-call" \
          "${BACKUP_DIR}"
 
+# ── DB-Passwort ───────────────────────────────────────────────────────────
+# Option > gespeicherter Wert > generieren. Ohne Eintrag in der Option wird ein
+# zufälliges Passwort erzeugt und nur in /data abgelegt (nicht im Log).
+PG_PASSWORD_FILE="${DATA_DIR}/.pg_password"
+if [ -z "${PG_PASSWORD}" ]; then
+    if [ -f "${PG_PASSWORD_FILE}" ]; then
+        PG_PASSWORD=$(cat "${PG_PASSWORD_FILE}")
+        bashio::log.info "✅ postgres_password aus Speicher geladen"
+    else
+        PG_PASSWORD=$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)
+        (umask 077; printf '%s\n' "${PG_PASSWORD}" > "${PG_PASSWORD_FILE}")
+        bashio::log.info "✅ postgres_password generiert und gespeichert (nur in ${PG_PASSWORD_FILE})"
+    fi
+fi
+
+# Setzt das Passwort der DB-Rolle. Das Passwort geht als psql-Variable ein und
+# wird von psql selbst als SQL-Literal quotiert (:'pw') — Sonderzeichen wie '
+# oder " brechen weder das SQL noch die Shell.
+pg_set_password() {
+    printf '%s\n' "$1 synapse WITH PASSWORD :'pw';" \
+        | gosu postgres psql -v ON_ERROR_STOP=1 -v pw="${PG_PASSWORD}" >/dev/null
+}
+
 # ── PostgreSQL init (einmalig) ────────────────────────────────────────────
 if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
     bashio::log.info "Initialisiere PostgreSQL Datenbank..."
@@ -100,7 +123,7 @@ EOF
 
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_init.log start -w -t 30
-    gosu postgres psql -c "CREATE USER synapse WITH PASSWORD '${PG_PASSWORD}';"
+    pg_set_password "CREATE USER" || { bashio::log.error "Konnte die DB-Rolle 'synapse' nicht anlegen."; exit 1; }
     gosu postgres psql -c "CREATE DATABASE synapse ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER synapse;"
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
 
@@ -109,6 +132,14 @@ EOF
 else
     bashio::log.info "✅ PostgreSQL bereits initialisiert"
     touch "${PG_MARKER}"
+    # Die Rolle wurde beim ersten Start mit dem damaligen Passwort angelegt.
+    # Wurde die Option seitdem geändert, passt die DB nicht mehr zur Config
+    # (Anmeldung schlägt fehl) — bei jedem Start angleichen.
+    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
+        -D "${PG_DATA}" -l /tmp/pg_sync.log start -w -t 30 \
+        || { bashio::log.error "PostgreSQL startet nicht — siehe /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
+    pg_set_password "ALTER USER" || { bashio::log.error "Konnte das DB-Passwort nicht angleichen."; exit 1; }
+    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
 fi
 
 # ── Synapse Signing Key ───────────────────────────────────────────────────
@@ -245,6 +276,10 @@ registration_shared_secret: \"${REG_SECRET}\"
     MSC4108_FLAG=""
 fi
 
+# Das Passwort als JSON-String (inkl. Anführungszeichen) schreiben: das ist ein
+# gültiger YAML-Double-Quoted-Wert, auch mit " und \ im Passwort.
+PG_PASSWORD_YAML=$(jq -rn --arg p "${PG_PASSWORD}" '$p|@json')
+
 cat > "${SYNAPSE_CONFIG}" << EOF
 server_name: "${SERVER_NAME}"
 # public_baseurl ist zwingend nötig, damit Synapse extra_well_known_client_content
@@ -271,7 +306,7 @@ database:
   name: psycopg2
   args:
     user: synapse
-    password: "${PG_PASSWORD}"
+    password: ${PG_PASSWORD_YAML}
     database: synapse
     host: 127.0.0.1
     port: 5432

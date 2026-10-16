@@ -104,7 +104,7 @@ options:
   telegram_bridge_enabled: false
   max_upload_size_mb: 50
   enable_synapse_admin: true
-  postgres_password: changeme_bitte_aendern
+  postgres_password: ''
   log_level: WARNING
   ntfy_url: ''
   enable_voice_calls: false

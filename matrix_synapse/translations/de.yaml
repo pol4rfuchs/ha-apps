@@ -23,7 +23,7 @@ configuration:
     description: "Startet die Synapse-Admin-Weboberfläche auf Port 8090."
   postgres_password:
     name: PostgreSQL-Passwort
-    description: "Passwort für den internen Synapse-Datenbankbenutzer."
+    description: "Passwort für den internen Synapse-Datenbankbenutzer. Leer lassen: es wird eines erzeugt (gespeichert in /data/matrix/.pg_password). Ein hier gesetzter Wert wird bei jedem Start in der Datenbank übernommen."
   log_level:
     name: Log-Level
     description: "Detailgrad der Synapse-Protokollierung. WARNING wird für den Normalbetrieb empfohlen."
