@@ -32,29 +32,15 @@ mariadb_host: core-mariadb
 mariadb_port: 3306
 mariadb_name: npm
 mariadb_user: npm
-```
-
-4. Passwort in `secrets.yaml`:
-
-```yaml
 mariadb_password: "dein_passwort"
 ```
 
----
+Das Passwort ist als Passwortfeld deklariert und wird in der Oberfläche
+maskiert. Wer die Werte aus der HA-`secrets.yaml` beziehen will, trägt sie dort
+mit `!secret` ein, das löst der Supervisor beim Speichern auf.
 
-## Secrets (`secrets.yaml`)
-
-| Key                | Beschreibung                          |
-|--------------------|---------------------------------------|
-| `mariadb_password` | Passwort für MariaDB-Verbindung       |
-| `npm_jwt_secret`   | Eigener JWT-Secret (optional)         |
-
-Beispiel `secrets.yaml`:
-
-```yaml
-mariadb_password: "supergeheim123"
-npm_jwt_secret: "einlangesrandommjwtsecret"
-```
+Die Sitzungsschlüssel (JWT) erzeugt NPM selbst und legt sie unter
+`/data/keys.json` ab. Dafür gibt es keine Option.
 
 ---
 
@@ -111,8 +97,6 @@ NPM unterstützt Dark Mode nativ. Aktivierung in der UI:
 ## Optionale Einstellungen
 
 ```yaml
-http_port: 80         # HTTP-Port (Standard: 80)
-https_port: 443       # HTTPS-Port (Standard: 443)
 disable_ipv6: false   # IPv6 deaktivieren
 log_level: info       # info | warning | error | debug
 ```
@@ -125,7 +109,7 @@ log_level: info       # info | warning | error | debug
 → Add-on neu starten, Host-Port 81 in der Netzwerk-Konfiguration der App prüfen
 
 **MariaDB Verbindungsfehler:**
-→ MariaDB Add-on läuft? User/DB existiert? Passwort in secrets.yaml korrekt?
+→ MariaDB Add-on läuft? User/DB existiert? `mariadb_password` korrekt?
 
 **Zertifikat-Erneuerung schlägt fehl:**
 → Logs prüfen unter: **NPM UI → Logs → Access/Error**
