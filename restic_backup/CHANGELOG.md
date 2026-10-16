@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/pol4rfuchs/ha-apps/compare/restic_backup-v0.2.1...restic_backup-v0.2.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* **restic_backup:** use valid map type all_addon_configs ([#545](https://github.com/pol4rfuchs/ha-apps/issues/545)) ([17cf5b0](https://github.com/pol4rfuchs/ha-apps/commit/17cf5b03868909727d1922da2f8ba15eb270b1b3))
+
 ## [0.2.1](https://github.com/pol4rfuchs/ha-apps/compare/restic_backup-v0.2.0...restic_backup-v0.2.1) (2026-07-22)
 
 
