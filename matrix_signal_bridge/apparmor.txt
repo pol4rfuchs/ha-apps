@@ -3,12 +3,20 @@
 profile matrix_signal_bridge flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
+  # Namensauflösung + TLS-Zertifikate (Homeserver, Signal-Backend)
+  /etc/resolv.conf               r,
+  /etc/hosts                     r,
+  /etc/nsswitch.conf             r,
+  /etc/ssl/certs/**              r,
+  /usr/share/ca-certificates/**  r,
+
   # ── s6-overlay Baseline (Pflicht — sonst Crash-Loop beim Restart) ────────
   /init                          ix,
   /package/**                    ix,
   /command/**                    ix,
-  /run/s6/**                     ix,
-  /etc/s6-overlay/**             ix,
+  /run/s6/**                     rix,
+  /run/{,**}                     rwk,
+  /etc/s6-overlay/**             rix,
   /etc/services.d/**             rwix,
   /etc/cont-init.d/**            rwix,
   /etc/cont-finish.d/**          rwix,
@@ -17,17 +25,26 @@ profile matrix_signal_bridge flags=(attach_disconnected,mediate_deleted) {
   /etc/s6-overlay/s6-rc.d/signal_bridge/run    ix,
   /etc/s6-overlay/s6-rc.d/signal_bridge/finish ix,
 
-  # Binary + Tools
-  /usr/bin/mautrix-signal mr,
-  /usr/bin/yq mr,
+  # Shell, Coreutils (bash, cp, mkdir, grep, awk, date, jq, yq, ...), bashio
+  # und die s6-Helfer (s6-envdir, importas, ... liegen in /usr/bin).
+  # Per strace im Image ermittelt: Init + Run-Skript starten genau diese Tools.
+  /bin/**                        ix,
+  /usr/bin/**                    ix,
+  /usr/sbin/**                   ix,
+  /usr/local/bin/**              ix,
+  /usr/lib/bashio/**             rix,
+  /etc/profile.d/**              r,
+  /dev/tty                       rw,
 
   # Beispiel-Config (Read-only-Quelle für Erststart)
   /opt/mautrix-signal/** r,
 
   # Daten (SQLite-DB, State-Store, config.yaml, registration.yaml)
+  /data/ rw,
   /data/** rwk,
 
   # Shared Volume für registration.yaml → Synapse
+  /share/ r,
   /share/signal_bridge_registration.yaml rw,
 
   # Optionen
