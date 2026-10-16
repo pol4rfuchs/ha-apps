@@ -16,7 +16,7 @@ ARG NTFY_VERSION=2.29.0
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.name="ntfy" \
     io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.title="ntfy Home Assistant Add-on" \

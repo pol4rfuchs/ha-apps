@@ -19,7 +19,7 @@ ARG BUILD_VERSION
 LABEL \
   io.hass.name="Intiface Central" \
   io.hass.description="Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.arch="${BUILD_ARCH}" \
   io.hass.version="${BUILD_VERSION}"
 ENV DEBIAN_FRONTEND=noninteractive \

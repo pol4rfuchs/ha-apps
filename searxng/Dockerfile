@@ -13,7 +13,7 @@ ENTRYPOINT ["/run.sh"]
 
 LABEL \
     io.hass.name="SearXNG" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \

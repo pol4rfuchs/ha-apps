@@ -100,7 +100,7 @@ ARG TS6_MANAGER_REF
 LABEL io.hass.name="TS6 Manager" \
       io.hass.description="Web-based management interface for TeamSpeak 6 servers" \
       io.hass.arch="${BUILD_ARCH}" \
-      io.hass.type="addon" \
+      io.hass.type="app" \
       io.hass.version="${BUILD_VERSION}" \
       maintainer="Pol4rFuchs" \
       org.opencontainers.image.source="https://github.com/pol4rfuchs/ts6-manager" \

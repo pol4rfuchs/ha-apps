@@ -35,7 +35,7 @@ ARG TELEGRAM_VERSION
 
 LABEL \
   io.hass.version="${BUILD_VERSION}" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.name="matrix_telegram_bridge" \
   io.hass.arch="${BUILD_ARCH}" \
   org.opencontainers.image.title="Telegram Bridge (mautrix) HA Add-on" \

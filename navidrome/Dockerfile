@@ -8,7 +8,7 @@ ARG BUILD_VERSION
 LABEL \
   io.hass.name="Navidrome" \
   io.hass.description="Modern Music Server and Streamer compatible with Subsonic/Airsonic" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.version="${BUILD_VERSION}" \
   maintainer="Pol4rFuchs (https://github.com/pol4rfuchs)"
 # DL3002: root required — HA add-on runs as root, Navidrome drops privileges internally

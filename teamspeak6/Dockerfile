@@ -26,7 +26,7 @@ LABEL \
     io.hass.name="TeamSpeak 6 Server" \
     io.hass.description="TeamSpeak 6 Voice Server — ARM64 & amd64" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
     org.opencontainers.image.base.name="teamspeaksystems/teamspeak6-server:${TEAMSPEAK_VERSION}"

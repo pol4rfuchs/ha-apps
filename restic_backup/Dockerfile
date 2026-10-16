@@ -9,7 +9,7 @@ ARG BUILD_VERSION=dev
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.name="restic_backup" \
     io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.title="Restic Backup Home Assistant Add-on" \
