@@ -49,6 +49,12 @@ exposed via the add-on's own `map:` block in `config.yaml` (currently:
 `ssl:ro`). Adding a path to `backup_paths` that isn't mapped does nothing —
 the directory simply won't exist inside the container.
 
+## Local and external access
+
+**Local (LAN):** the add-on has no web interface and publishes no ports. It only runs `restic` on a schedule; control it through the add-on options and read the result in the Log tab or in the ntfy notification.
+
+**External (internet):** there is nothing to forward and nothing should be. The add-on only makes outgoing connections: to your S3/B2/MinIO-compatible repository (if you set `aws_*`) and to your ntfy server. Keep the repository itself private; a local repository under `/share` is part of Home Assistant's file shares, so do not expose that share to the internet either. The restic repository is encrypted with `restic_password` — store that password somewhere safe, without it the backups cannot be restored.
+
 ## AppArmor
 
 The bundled `apparmor.txt` profile covers:

@@ -5,6 +5,11 @@
 # Invoked either by cron (see run.sh) or once at startup if run_on_start=true.
 set -uo pipefail  # no -e: we need to reach the ntfy notification even on failure
 
+# This script runs as its own process (cron), so the log level chosen in run.sh
+# does not carry over: apply the add-on option here as well.
+LOG_LEVEL="$(bashio::config 'log_level')"
+bashio::log.level "${LOG_LEVEL}"
+
 LOCK_FILE="/tmp/restic-backup.lock"
 if [ -e "${LOCK_FILE}" ]; then
     bashio::log.warning "Backup already in progress (lock file present) — skipping this run."
@@ -26,6 +31,12 @@ if [ "${#BACKUP_PATHS[@]}" -eq 0 ]; then
     exit 1
 fi
 
+# debug/trace: let restic itself report more (lists processed files).
+RESTIC_VERBOSE=()
+case "${LOG_LEVEL}" in
+    debug|trace) RESTIC_VERBOSE=(--verbose) ;;
+esac
+
 EXCLUDE_ARGS=()
 for pattern in "${EXCLUDE_PATTERNS[@]}"; do
     [ -n "${pattern}" ] && EXCLUDE_ARGS+=(--exclude "${pattern}")
@@ -34,7 +45,7 @@ done
 # --- run the backup ---------------------------------------------------------
 bashio::log.info "Starting restic backup of: ${BACKUP_PATHS[*]}"
 BACKUP_JSON=$(mktemp)
-if restic backup "${BACKUP_PATHS[@]}" "${EXCLUDE_ARGS[@]}" --json > "${BACKUP_JSON}" 2>/tmp/restic-backup.err; then
+if restic backup "${BACKUP_PATHS[@]}" "${EXCLUDE_ARGS[@]}" "${RESTIC_VERBOSE[@]}" --json > "${BACKUP_JSON}" 2>/tmp/restic-backup.err; then
     ADDED=$(jq -rs 'map(select(.message_type=="summary")) | last | .data_added // 0' "${BACKUP_JSON}" 2>/dev/null || echo "?")
     FILES=$(jq -rs 'map(select(.message_type=="summary")) | last | .files_new // 0' "${BACKUP_JSON}" 2>/dev/null || echo "?")
     SUMMARY_LINES+=("Backup OK — new data: ${ADDED} bytes, new files: ${FILES}")
