@@ -104,8 +104,8 @@ jobs:
               raise SystemExit("missing arch")
 
           arch_map = {
-              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-24.04",    "suffix": "amd64"},
-              "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64"},
+              "amd64":   {"platform": "linux/amd64",  "runner": "ubuntu-24.04",    "suffix": "amd64", "build_arch": "amd64"},
+              "aarch64": {"platform": "linux/arm64",  "runner": "ubuntu-24.04-arm", "suffix": "arm64", "build_arch": "aarch64"},
           }
           bad = sorted(set(arch) - set(arch_map))
           if bad:
@@ -113,7 +113,8 @@ jobs:
 
           matrix = [{"platform": arch_map[a]["platform"],
                      "runner":   arch_map[a]["runner"],
-                     "suffix":   arch_map[a]["suffix"]} for a in arch]
+                     "suffix":   arch_map[a]["suffix"],
+                     "build_arch": arch_map[a]["build_arch"]} for a in arch]
 
           print(f"image={image}")
           print(f"version={version}")
@@ -175,7 +176,10 @@ jobs:
           load: ${{ !inputs.publish }}
           provenance: false
           sbom: false
+          # BUILD_ARCH uses the Home Assistant arch name (amd64/aarch64), not the
+          # buildx suffix; it feeds io.hass.arch and the other ${BUILD_ARCH} labels.
           build-args: |
+            BUILD_ARCH=${{ matrix.build_arch }}
             BUILD_VERSION=${{ needs.prepare.outputs.version }}
             VERSION=${{ needs.prepare.outputs.version }}
           tags: |
