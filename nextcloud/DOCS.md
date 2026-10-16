@@ -5,11 +5,11 @@ installation/quickstart steps in the README.
 
 ## Secrets
 
-- **`admin_password`** defaults to `changeme` — **change this before the
-  very first start**. It's only applied during the initial Nextcloud
-  install; changing it afterwards in the add-on options does **not**
-  change the actual account password (use the Nextcloud UI or `occ user:resetpassword`
-  for that once it's running).
+- **`admin_password`** has no default and is **required for the first
+  start** — the add-on stops with an error while it is empty. It's only
+  applied during the initial Nextcloud install; changing it afterwards in
+  the add-on options does **not** change the actual account password (use
+  the Nextcloud UI or `occ user:resetpassword` for that once it's running).
 - **`db_password`** is the database user's password — must match whatever
   you configured on the MariaDB/Postgres side.
 
@@ -23,9 +23,15 @@ data volume:
 
 ```
 /data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)
 ```
+
+The Nextcloud code itself is not stored: it comes from the add-on image and is
+restored on every start.
 
 A Home Assistant full backup (which includes add-on data by default)
 already covers this. If you back up manually, back up the entire
