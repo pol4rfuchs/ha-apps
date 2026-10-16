@@ -47,6 +47,10 @@ profile ntfy_addon flags=(attach_disconnected,mediate_deleted) {
   /data/                       rw,
   /data/**                     rw,
 
+  # Add-on config folder (ha_token.txt copy)
+  /config/                     rw,
+  /config/**                   rw,
+
   # /tmp
   /tmp/                        rw,
   /tmp/**                      rw,
