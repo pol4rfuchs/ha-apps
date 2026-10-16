@@ -91,7 +91,7 @@ effective_cache_size = 256MB
 logging_collector = off
 log_min_messages = warning
 datestyle = 'iso, mdy'
-timezone = 'Europe/Vienna'
+timezone = 'UTC'
 lc_messages = 'C'
 lc_monetary = 'C'
 lc_numeric = 'C'
@@ -171,6 +171,41 @@ if [ "${ENABLE_FEDERATION}" = "true" ]; then
     FEDERATE_FLAG="true"
 else
     FEDERATE_FLAG="false"
+fi
+
+# enable_federation=false muss auch in Synapse selbst greifen, nicht nur im
+# Element-Web-Default (default_federate). Eine leere federation_domain_whitelist
+# sperrt jede ein- und ausgehende Föderation.
+if [ "${ENABLE_FEDERATION}" = "true" ]; then
+    FEDERATION_BLOCK=""
+else
+    FEDERATION_BLOCK="
+# Föderation deaktiviert (enable_federation: false)
+federation_domain_whitelist: []
+"
+    bashio::log.info "🔒 Föderation deaktiviert — federation_domain_whitelist ist leer"
+fi
+
+# ── ip_range_whitelist aus ntfy_url ableiten ──────────────────────────────
+# Synapses Standard-Blacklist greift auch für HTTP-Pusher. Liegt der ntfy-Server
+# im privaten Netz, wird nur dessen (aufgelöste) IPv4 freigegeben. Ohne
+# ntfy_url oder bei öffentlicher Adresse entsteht keine Ausnahme.
+IP_WHITELIST_BLOCK=""
+if [ -n "${NTFY_URL}" ]; then
+    NTFY_HOST=$(echo "${NTFY_URL}" | sed -e 's|^[a-zA-Z]*://||' -e 's|[/?#].*$||' -e 's|^.*@||' -e 's|:[0-9]*$||')
+    if echo "${NTFY_HOST}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+        NTFY_IP="${NTFY_HOST}"
+    else
+        NTFY_IP=$(getent ahostsv4 "${NTFY_HOST}" 2>/dev/null | awk 'NR==1{print $1}')
+    fi
+    if echo "${NTFY_IP}" | grep -Eq '^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)'; then
+        IP_WHITELIST_BLOCK="
+# ntfy-Push-Server liegt im privaten Netz (aus ntfy_url abgeleitet)
+ip_range_whitelist:
+  - '${NTFY_IP}'
+"
+        bashio::log.info "ntfy liegt im privaten Netz — ip_range_whitelist: ${NTFY_IP}"
+    fi
 fi
 
 # ── MAS-Delegation (Variante B: expliziter Toggle) ────────────────────────
@@ -281,15 +316,7 @@ url_preview_ip_range_blacklist:
   - '10.0.0.0/8'
   - '172.16.0.0/12'
   - '192.168.0.0/16'
-
-# ── ip_range_whitelist — Ausnahme für lokal gehosteten ntfy-Push-Server ──
-# Synapses Standard-ip_range_blacklist (privater IP-Bereich) greift auch
-# für HTTP-Pusher-Requests, nicht nur für URL-Previews. Der ntfy-Server
-# liegt im selben privaten Netz (Split-Horizon-DNS löst die Domain intern
-# direkt auf die LAN-IP auf) — ohne explizite Whitelist blockiert Synapse
-# den Push aus SSRF-Schutzgründen und schlägt mit DNSLookupError fehl.
-ip_range_whitelist:
-  - '10.10.20.10'
+${IP_WHITELIST_BLOCK}${FEDERATION_BLOCK}
 EOF
 
 # ── Bridge Appservice Registration (mautrix-* Bridges via /share) ────────
@@ -621,7 +648,7 @@ cat > /data/matrix/element-web/config.json << EOF
             "server_name": "${SERVER_NAME}"
         }
     },
-    "brand": "Matrix @ Home",
+    "brand": "Matrix",
     "default_theme": "dark",
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
@@ -637,7 +664,7 @@ cat > /data/matrix/element-web/config.${LOCAL_IP}.json << EOF
             "server_name": "${SERVER_NAME}"
         }
     },
-    "brand": "Matrix @ Home",
+    "brand": "Matrix",
     "default_theme": "dark",
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
@@ -653,7 +680,7 @@ cat > /data/matrix/element-web/config.${ELEMENT_DOMAIN}.json << EOF
             "server_name": "${SERVER_NAME}"
         }
     },
-    "brand": "Matrix @ Home",
+    "brand": "Matrix",
     "default_theme": "dark",
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
