@@ -111,9 +111,9 @@ FORGEJO__packages__ENABLED=true
 ## 📜 License
 
 ```text
-MIT
+Apache-2.0 (add-on wrapper)  /  GPL-3.0-or-later (Forgejo)
 ```
 
-This add-on wrapper is licensed under the MIT License.
+The add-on wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
 
-Forgejo is licensed under [MIT](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/LICENSE).
+Forgejo itself is licensed under the [GPL version 3.0 or any later version](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/LICENSE); versions before 9.0 were MIT.
