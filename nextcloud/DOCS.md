@@ -16,6 +16,12 @@ installation/quickstart steps in the README.
 Both are declared as `password` schema types, so the Supervisor UI masks
 them.
 
+## Versions and updates
+
+The add-on version (for example `33.0.x`) is a release counter of this repository, **not** the Nextcloud version. The Nextcloud version is the one in the image (see the `NEXTCLOUD_TAG` build argument and the badge in the README).
+
+Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the add-on runs `occ upgrade` when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version.
+
 ## Backup
 
 All persistent state lives under `/data/nextcloud/` in the add-on's own

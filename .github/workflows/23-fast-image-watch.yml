@@ -98,7 +98,9 @@ jobs:
             dockerhub_repo: library/nextcloud
             arg_name: NEXTCLOUD_TAG
             tag_prefix: nextcloud
-            tag_filter: '^\d+\.\d+\.\d+-apache$'
+            # Nextcloud cannot skip a major version, so only the current major is bumped
+            # automatically. Raise the number by hand, one major at a time.
+            tag_filter: '^35\.\d+\.\d+-apache$'
             changelog_repo: nextcloud/server
           - addon: forgejo
             mode: codeberg_latest_release_arg
