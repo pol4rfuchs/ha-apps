@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.10...ntfy-v1.2.11) (2026-10-16)
+
+
+### Bug Fixes
+
+* **ntfy:** start on a fresh install, keep the HA token out of the log, correct the docs ([#570](https://github.com/pol4rfuchs/ha-apps/issues/570)) ([a3ec30a](https://github.com/pol4rfuchs/ha-apps/commit/a3ec30a2e76af727c5b1224f6534d77c591be34f))
+
 ## [1.2.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.9...ntfy-v1.2.10) (2026-10-10)
 
 
