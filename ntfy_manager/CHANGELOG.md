@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.15](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.14...ntfy_manager-v0.2.15) (2026-10-16)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** build from a lockfile and stop masking errors in the start script ([#566](https://github.com/pol4rfuchs/ha-apps/issues/566)) ([ed914b6](https://github.com/pol4rfuchs/ha-apps/commit/ed914b6070b085e333488c1ea27c897467e265e8))
+
 ## [0.2.14](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.13...ntfy_manager-v0.2.14) (2026-10-04)
 
 ### Bug Fixes
