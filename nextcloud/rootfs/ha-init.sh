@@ -77,6 +77,17 @@ fi
 
 chown -R www-data:www-data "${NC_BASE}"
 
+# ── Admin password: no default, required for the first install ────────────────
+# Nextcloud does not enforce a password change, so the add-on ships no default.
+# The password is only used by the initial install; once config.php exists it
+# is ignored.
+if [[ ! -f "${NC_BASE}/html/config/config.php" ]]; then
+    if [[ -z "${ADMIN_PASS}" || "${ADMIN_PASS}" == "changeme" ]]; then
+        log "ERROR: admin_password is empty (or 'changeme'). Set a strong admin password in the add-on options before the first start."
+        exit 1
+    fi
+fi
+
 # ── Export Nextcloud env vars (used by official /entrypoint.sh) ───────────────
 export NEXTCLOUD_ADMIN_USER="${ADMIN_USER}"
 export NEXTCLOUD_ADMIN_PASSWORD="${ADMIN_PASS}"

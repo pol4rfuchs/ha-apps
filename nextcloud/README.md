@@ -58,7 +58,7 @@
 | Option | Default | Description |
 |---|---|---|
 | `admin_user` | `admin` | Initial admin username |
-| `admin_password` | `changeme` | Initial admin password — **change this** |
+| `admin_password` | `""` | Initial admin password — **required**, the first start fails while it is empty |
 | `trusted_domains` | `"homeassistant.local homeassistant"` | Space-separated list, e.g. `"nextcloud.example.com 192.0.2.10"` — add the LAN IP or domain you use **before the first start** |
 | `db_type` | `mysql` | `mysql` / `pgsql` / `sqlite` |
 | `db_host` | `core-mariadb` | MariaDB hostname (HA internal: `core-mariadb`) |

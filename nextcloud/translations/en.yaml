@@ -5,7 +5,7 @@ configuration:
     description: "Nextcloud administrator username, created on first install."
   admin_password:
     name: Admin Password
-    description: "Nextcloud administrator password, set on first install. Change it here before the very first start."
+    description: "Nextcloud administrator password, set on first install. Required: the first start fails while this is empty."
   trusted_domains:
     name: Trusted Domains
     description: "Space-separated hostnames/IPs Nextcloud accepts requests for. Add the LAN IP or domain you open it with BEFORE the first start (applied on first install only, later use occ). Default covers the usual HA hostnames."
