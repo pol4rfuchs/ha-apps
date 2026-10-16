@@ -12,6 +12,7 @@ arch:
   - amd64
   - aarch64
 image: ghcr.io/pol4rfuchs/forgejo
+stage: experimental
 init: false
 ingress: false
 webui: http://[HOST]:[PORT:3000]

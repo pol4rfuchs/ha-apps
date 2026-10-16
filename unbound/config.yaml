@@ -5,6 +5,7 @@ url: "https://github.com/pol4rfuchs/ha-apps"
 version: "1.26.1-ha2-pol4r1"
 slug: "unbound"
 image: "ghcr.io/pol4rfuchs/unbound"
+stage: experimental
 init: false
 ingress: true
 ingress_port: 2137
