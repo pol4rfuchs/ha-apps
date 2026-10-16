@@ -21,5 +21,5 @@ while [ ! -f "${EC_DIR}/index.html" ]; do
 done
 
 bashio::log.info "🚀 Starte Element Call WebApp auf Port 7081..."
-cd "${EC_DIR}"
+cd "${EC_DIR}" || exit 1
 exec python3 -m http.server 7081 2>&1
