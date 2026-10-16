@@ -252,9 +252,11 @@ On first start you should see something like:
 
 ```text
 Admin user 'admin' ready
-HA integration token created: tk_XXXXXXXXXXXXXXXX
-Saved to: /data/ntfy/ha_token.txt
+HA integration token created: tk_ab12cd34…
+The full token is not printed to the log.
 ```
+
+The full token is stored in `/data/ntfy/ha_token.txt`. A readable copy is placed in the add-on config folder (`/addon_configs/<slug>_ntfy/ha_token.txt`, reachable through Samba or the SSH add-on).
 
 ---
 
@@ -349,13 +351,13 @@ Recommended path:
 http://homeassistant.local:4280
 ```
 
-5. Token: use the token from:
+5. Token: use the token from the add-on config folder:
 
 ```text
-/data/ntfy/ha_token.txt
+/addon_configs/<slug>_ntfy/ha_token.txt
 ```
 
-The token is also printed in the add-on log on first start.
+The log only shows the first characters of the token.
 
 ---
 

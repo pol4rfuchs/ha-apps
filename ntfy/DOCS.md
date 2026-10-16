@@ -38,7 +38,7 @@ Starting ntfy → http://homeassistant.local:4280
 
 ### Step 4 — Open the web UI
 
-> ⚠️ **Do NOT use the HA sidebar link** — it will show a white screen (known incompatibility with HA Ingress). Always open ntfy directly:
+> ⚠️ **Ingress is not supported** — ntfy's web app uses absolute asset paths and shows a white screen inside Home Assistant's Ingress frame. Open ntfy directly (the *Open Web UI* button of the add-on does this):
 
 ```
 http://homeassistant.local:4280
@@ -56,15 +56,22 @@ On first startup, the add-on automatically creates a persistent API token for th
 /data/ntfy/ha_token.txt
 ```
 
-The token is printed clearly in the **Log** tab on first start. Copy it once and store it in `secrets.yaml`:
+The **Log** tab shows only the start of the token (`tk_ab12cd34…`). The full token is not printed. A readable copy is placed in the add-on config folder on every start:
+
+```
+/addon_configs/<slug>_ntfy/ha_token.txt
+```
+
+Open it through Samba, the SSH add-on or the File editor and store the token in `secrets.yaml`:
 
 ```yaml
 ntfy_token: tk_XXXXXXXXXXXXXXXX
+ntfy_auth_header: "Bearer tk_XXXXXXXXXXXXXXXX"
 ```
 
 On subsequent restarts the file already exists — no duplicate token is created.
 
-If the token is lost, delete `/data/ntfy/ha_token.txt` and restart the add-on to generate a new one.
+If the token is lost or exposed, revoke it in the ntfy Web UI (Account → Access Tokens), delete `/data/ntfy/ha_token.txt` and restart the add-on to generate a new one. Deleting the file alone does not invalidate the old token.
 
 ---
 
@@ -106,7 +113,7 @@ rest_command:
     url: "http://homeassistant.local:4280/{{ topic }}"
     method: POST
     headers:
-      Authorization: "Bearer {{ secret('ntfy_token') }}"
+      Authorization: !secret ntfy_auth_header
       Title: "{{ title | default('') }}"
       Priority: "{{ priority | default('3') }}"
       Tags: "{{ tags | default('') }}"
@@ -145,11 +152,19 @@ action:
 | `auth_default_access` | deny-all | Unauthenticated access: `deny-all` · `read-only` · `write-only` · `read-write` |
 | `enable_signup` | true | Allow self-registration via web UI |
 | `enable_login` | true | Show login form in web UI |
-| `enable_reservations` | false | Allow users to reserve topic names |
+| `enable_reservations` | true | Allow users to reserve topic names |
 | `cache_duration` | 12h | How long messages are cached (e.g. `12h`, `7d`) |
 | `attachment_file_size_limit` | 15M | Max size per attachment — requires `base_url` |
 | `attachment_total_size_limit` | 5G | Total attachment storage — requires `base_url` |
+| `attachment_expiry_duration` | 3h | How long attachments are kept |
+| `visitor_attachment_total_size_limit` | 1G | Attachment storage per visitor |
+| `visitor_attachment_daily_bandwidth_limit` | 5G | Attachment download bandwidth per visitor and day |
 | `keepalive_interval` | 45s | Keepalive for SSE/WebSocket connections |
+| `manager_interval` | 3m | Interval of ntfy's cleanup (manager) run |
+| `visitor_request_limit_burst` | 1000 | Requests a visitor may burst |
+| `visitor_request_limit_replenish` | 1s | How fast the request allowance refills |
+| `visitor_message_daily_limit` | 1000000 | Messages per visitor and day |
+| `message_size_limit` | 4096 | Maximum message size in bytes |
 | `upstream_base_url` | — | iOS push: set to `https://ntfy.sh` — requires `base_url` |
 | `admin_username` | — | Admin account username — created automatically on startup |
 | `admin_password` | — | Admin account password |
@@ -278,11 +293,19 @@ All data is stored in `/data/ntfy/` and included in HA backups automatically:
 
 ---
 
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:4280`. The web UI and API require a login for everything by default (`auth_default_access: deny-all`). There is no Ingress, so Home Assistant's own authentication does not apply.
+
+**External (internet):** only through a reverse proxy with TLS (see *Reverse Proxy* above), which ntfy needs anyway for iOS push and UnifiedPush (`base_url` must be an HTTPS address). Before you expose it, set `enable_signup: false` — with the default `true`, anyone who can reach the port can create an account — and keep `auth_default_access` on `deny-all`. A VPN is the safer choice if only your own devices publish and subscribe. Do not forward port `4280` itself to the internet.
+
+---
+
 ## Known Limitations
 
 | Issue | Explanation |
 |-------|-------------|
-| **White screen in HA sidebar** | ntfy's SPA uses absolute asset paths — incompatible with HA Ingress. Use the direct URL `:4280` instead of the HA sidebar link. |
+| **White screen inside Home Assistant** | ntfy's SPA uses absolute asset paths — incompatible with HA Ingress. Use the direct URL `:4280` or the *Open Web UI* button. |
 | **Token listing not available via API** | ntfy's REST API has no endpoint to list a user's existing tokens. Create tokens via ntfy_manager's Tokens tab; view/revoke existing ones in the ntfy Web UI → Account → Access Tokens. |
 | **Cannot change a user's role after creation** | ntfy's API has no endpoint for role changes on existing users. Workaround: set `admin_username` in this add-on's config for admin accounts. |
 | **Cannot delete/modify admin accounts via the API** | ntfy returns 401 for admin-role accounts on these endpoints. Manage admin accounts via this add-on's configuration only. |

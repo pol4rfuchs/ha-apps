@@ -6,6 +6,8 @@
 readonly CONFIG_FILE="/etc/ntfy/server.yml"
 readonly AUTH_FILE="/data/ntfy/user.db"
 readonly HA_TOKEN_FILE="/data/ntfy/ha_token.txt"  # Fix 1: persisted HA token
+# Readable copy in the add-on config folder (/addon_configs/<slug>_ntfy/ on the host)
+readonly HA_TOKEN_COPY="/config/ha_token.txt"
 
 bashio::log.info "Starting ntfy add-on …"
 
@@ -186,6 +188,14 @@ provision_admin_tier() {
 # Token is written to /data/ntfy/ha_token.txt (survives restarts + backups).
 # On subsequent starts the file already exists — no duplicate token created.
 # ---------------------------------------------------------------------------
+# Writes a copy of the token to the add-on config folder so it can be read
+# without the log (Samba/SSH). The log only ever shows the start of the token.
+export_ha_token() {
+    if [ -d /config ]; then
+        (umask 077; printf '%s\n' "$1" > "${HA_TOKEN_COPY}")
+    fi
+}
+
 provision_ha_token() {
     local username="$1"
 
@@ -193,7 +203,8 @@ provision_ha_token() {
     if [ -f "${HA_TOKEN_FILE}" ]; then
         local existing
         existing=$(cat "${HA_TOKEN_FILE}")
-        bashio::log.info "HA token already provisioned → ${existing:0:16}…"
+        bashio::log.info "HA token already provisioned → ${existing:0:8}…"
+        export_ha_token "${existing}"
         return
     fi
 
@@ -205,10 +216,11 @@ provision_ha_token() {
 
     bashio::log.info "Provisioning HA integration token for '${username}' …"
     local token_output
-    local token_rc
+    local token_rc=0
+    # bashio runs with errexit: a failing command substitution would end the
+    # whole add-on, so capture the exit code instead.
     token_output=$(NTFY_AUTH_FILE="${AUTH_FILE}" \
-        timeout 15 ntfy token add --label="Home Assistant" "${username}" </dev/null 2>&1)
-    token_rc=$?
+        timeout 15 ntfy token add --label="Home Assistant" "${username}" </dev/null 2>&1) || token_rc=$?
 
     if [ "${token_rc}" -eq 124 ]; then
         bashio::log.warning "Token provisioning timed out after 15s — skipping for now."
@@ -218,27 +230,55 @@ provision_ha_token() {
 
     # ntfy token add output format: "token tk_XXXX (label) expires never"
     local token
-    token=$(printf '%s' "${token_output}" | grep -oE 'tk_[A-Za-z0-9]+' | head -1)
+    token=$(printf '%s' "${token_output}" | grep -oE 'tk_[A-Za-z0-9]+' | head -1 || true)
 
     if [ -n "${token}" ]; then
         printf '%s\n' "${token}" > "${HA_TOKEN_FILE}"
         chmod 600 "${HA_TOKEN_FILE}"
+        export_ha_token "${token}"
         bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        bashio::log.info " HA integration token created:"
-        bashio::log.info " ${token}"
-        bashio::log.info " Saved to: ${HA_TOKEN_FILE}"
-        bashio::log.info " Use this in secrets.yaml:"
-        bashio::log.info "   ntfy_token: ${token}"
+        bashio::log.info " HA integration token created: ${token:0:8}…"
+        bashio::log.info " The full token is not printed to the log."
+        bashio::log.info " Read it from the add-on config folder:"
+        bashio::log.info "   /addon_configs/<slug>_ntfy/ha_token.txt"
+        bashio::log.info " Then use it in secrets.yaml as ntfy_token."
         bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     else
-        bashio::log.warning "Token provisioning failed — output: ${token_output}"
+        # The output may contain a token (if only the parsing failed): mask it.
+        bashio::log.warning "Token provisioning failed — output: $(printf '%s' "${token_output}" | sed -E 's/tk_[A-Za-z0-9]+/tk_…/g')"
         bashio::log.warning "Run manually: ntfy_token ${username} 'Home Assistant'"
     fi
 }
 
 # ---------------------------------------------------------------------------
-# Execution order: user → tier → token
+# The ntfy CLI (user/tier/token) refuses to work until the server has created
+# the auth database ("auth-file does not exist; please start the server at least
+# once"). On a fresh install start the server once, wait until it is healthy and
+# stop it again; then the CLI calls below work. The CLI calls swallow errors
+# (|| true), so without this the admin user and token silently never exist.
 # ---------------------------------------------------------------------------
+ensure_auth_db() {
+    [ -f "${AUTH_FILE}" ] && return
+    bashio::log.info "First start: initializing the auth database …"
+    ntfy serve --config="${CONFIG_FILE}" >/dev/null 2>&1 &
+    local pid=$!
+    for _ in $(seq 1 30); do
+        if [ -f "${AUTH_FILE}" ] && curl -sf "http://127.0.0.1:4280/v1/health" >/dev/null 2>&1; then
+            break
+        fi
+        sleep 1
+    done
+    kill "${pid}" 2>/dev/null || true
+    wait "${pid}" 2>/dev/null || true
+    if [ ! -f "${AUTH_FILE}" ]; then
+        bashio::log.warning "Auth database was not created — admin user and token cannot be provisioned on this start."
+    fi
+}
+
+# ---------------------------------------------------------------------------
+# Execution order: auth db → user → tier → token
+# ---------------------------------------------------------------------------
+ensure_auth_db
 create_admin "${ADMIN_USER}" "${ADMIN_PASS}"
 provision_admin_tier "${ADMIN_USER}"
 provision_ha_token "${ADMIN_USER}"
