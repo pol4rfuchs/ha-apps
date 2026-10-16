@@ -31,7 +31,7 @@ LABEL \
     io.hass.name="ntfy HAOS Admin Panel" \
     io.hass.description="Full-featured admin console for ntfy on Home Assistant OS" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.title="ntfy HAOS Admin Panel" \

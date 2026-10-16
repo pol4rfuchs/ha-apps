@@ -69,6 +69,17 @@ RUN set -euo pipefail && \
 # ---------------------------------------------------------------------------
 FROM ${BUILD_FROM}
 
+ARG BUILD_ARCH
+ARG BUILD_VERSION=dev
+
+LABEL \
+    io.hass.name="Unbound" \
+    io.hass.description="Hardened recursive DNS resolver with built-in web UI" \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="app" \
+    io.hass.version="${BUILD_VERSION}" \
+    org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps"
+
 # Bring in the self-built Unbound (binaries, libs, man pages, default conf).
 COPY --from=unbound-builder /build-out/ /
 

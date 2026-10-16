@@ -9,11 +9,15 @@ ARG NEXTCLOUD_TAG=35.0.1-apache
 # restrictions imposed by linuxserver.io or other wrappers.
 FROM nextcloud:${NEXTCLOUD_TAG}
 
+# Build args declared before FROM are not visible after it.
+ARG BUILD_ARCH
+ARG BUILD_VERSION
+
 LABEL \
     io.hass.name="Nextcloud" \
     io.hass.description="A safe home for all your data" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     io.hass.url="https://github.com/pol4rfuchs/ha-apps/tree/main/nextcloud" \
     maintainer="pol4rfuchs"

@@ -29,7 +29,7 @@ ARG WHATSAPP_VERSION
 
 LABEL \
   io.hass.version="${BUILD_VERSION}" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.name="matrix_whatsapp_bridge" \
   io.hass.arch="${BUILD_ARCH}" \
   org.opencontainers.image.title="WhatsApp Bridge (mautrix) HA Add-on" \

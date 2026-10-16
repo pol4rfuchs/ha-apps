@@ -9,7 +9,7 @@ LABEL \
     io.hass.name="Matrix Server (ESS CE)" \
     io.hass.description="Matrix Homeserver (Synapse) + Element Web + Element Call (Voice/Video) — ESS Community Edition Style" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.title="Matrix Server (ESS CE)" \

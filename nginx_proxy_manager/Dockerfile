@@ -1,6 +1,17 @@
 ARG BUILD_VERSION
 FROM jc21/nginx-proxy-manager:2.16.0
 
+ARG BUILD_ARCH
+ARG BUILD_VERSION
+
+LABEL \
+    io.hass.name="Nginx Proxy Manager" \
+    io.hass.description="Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration." \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="app" \
+    io.hass.version="${BUILD_VERSION}" \
+    org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps"
+
 # ── jq für Supervisor API ─────────────────────────────────────────────────────
 RUN apt-get update \
     && apt-get install -y --no-install-recommends jq rsync \
