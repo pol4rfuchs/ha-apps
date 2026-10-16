@@ -30,6 +30,12 @@ Telefonnummer + SMS-/App-Bestätigungscode (Telegram-eigener Login-Flow, MTProto
 `login`-Befehl an den Bridge-Bot schicken, Telefonnummer eingeben, Code aus der Telegram-App
 oder SMS eintippen.
 
+## Lokaler und externer Zugriff
+
+**Lokal (LAN):** Die Bridge hat keine Weboberfläche und veröffentlicht keinen Host-Port. Der Appservice-Port `29317` ist nur im internen Netz von Home Assistant erreichbar, damit das Matrix-Synapse-Add-on die Bridge ansprechen kann (`appservice_address`). Die Kopplung ist durch `as_token`/`hs_token` in `/data/registration.yaml` geschützt; behandle `/data` und `/share/telegram_bridge_registration.yaml` wie ein Geheimnis.
+
+**Extern (Internet):** Empfehlung **nichts weiterleiten.** Die Bridge verbindet sich ausgehend zu Telegram; von außen muss nur Synapse erreichbar sein (siehe dessen Dokumentation), nie die Bridge selbst.
+
 ## Bekannte Einschränkungen / bewusste Vereinfachungen
 
 - **LottieConverter nicht im Image enthalten** (Ressourcenschonung, §12) — animierte
