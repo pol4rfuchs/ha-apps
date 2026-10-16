@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.21](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.20...nextcloud-v33.0.21) (2026-10-16)
+
+
+### Bug Fixes
+
+* **nextcloud:** make the add-on start, persist config/apps/themes, require admin password ([#548](https://github.com/pol4rfuchs/ha-apps/issues/548)) ([d95be00](https://github.com/pol4rfuchs/ha-apps/commit/d95be00e7d2b6572f4ba9748ec3db2c3053645ad))
+
 ## [33.0.20](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.19...nextcloud-v33.0.20) (2026-10-11)
 
 ### Bug Fixes
