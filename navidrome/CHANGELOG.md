@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.11](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.10...navidrome-v2.1.11) (2026-10-16)
+
+
+### Bug Fixes
+
+* **navidrome:** remove options that do nothing, make ND_EXTRA_MUSIC_FOLDERS real, correct the docs ([#567](https://github.com/pol4rfuchs/ha-apps/issues/567)) ([58f7746](https://github.com/pol4rfuchs/ha-apps/commit/58f77461b0a82d780129ab7018c27b257f580dfc))
+
 ## [2.1.10](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.9...navidrome-v2.1.10) (2026-09-27)
 
 ## [2.1.9](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.8...navidrome-v2.1.9) (2026-09-26)
