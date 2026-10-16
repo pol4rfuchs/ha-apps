@@ -28,7 +28,7 @@ MAIN="$(node -e "try{console.log(require('/app/package.json').main||'')}catch(e)
 [ -n "${MAIN}" ] && ENTRY="${MAIN}"
 
 echo "[ts6-backend] Starting (${ENTRY}) on :3001 ..."
-cd /app
+cd /app || exit 1
 # Preload only for the backend itself, not for the `node -e` helpers above.
 export NODE_OPTIONS="--require /usr/local/lib/ts6-loglevel.cjs"
 exec node "${ENTRY}"
