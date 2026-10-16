@@ -2,7 +2,7 @@
 # ARGs used in a FROM instruction must be declared before the *first* FROM
 # in the whole file, or buildx silently fails to resolve them later
 # (moby/moby#38379).
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:7.7.1
+ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:9.5.0
 ARG MAS_VERSION=1.27.0
 
 # ---------------------------------------------------------------------------
@@ -17,8 +17,9 @@ ARG MAS_VERSION=1.27.0
 FROM ghcr.io/element-hq/matrix-authentication-service:${MAS_VERSION} AS mas-src
 
 # ---------------------------------------------------------------------------
-# Stage 2: runtime — same hassio debian-base as the Synapse add-on, so
-# Postgres client tooling / bashio / gosu behave identically across both.
+# Stage 2: runtime — hassio debian-base 9.x (Debian 13, glibc 2.41). mas-cli is
+# built against glibc >= 2.39, so the older Debian 12 base of the Synapse add-on
+# (glibc 2.36) cannot run it. Debian 13 ships PostgreSQL 17.
 # ---------------------------------------------------------------------------
 FROM ${BUILD_FROM}
 
@@ -38,7 +39,7 @@ LABEL \
 
 # ── System Pakete ───────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql-15 postgresql-client-15 \
+    postgresql-17 postgresql-client-17 \
     curl ca-certificates jq gosu \
     && rm -rf /var/lib/apt/lists/*
 
