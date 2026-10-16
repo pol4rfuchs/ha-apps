@@ -2,7 +2,7 @@
 
 This guide starts from zero and explains how to install, configure, connect, and troubleshoot the Home Assistant app.
 
-> **Current status:** Experimental. Version 0.7.2 provides live UniFi inventory, device-health monitoring, persistent alerts, optional ntfy delivery, firewall capability detection, read-only firewall diagnostics and analysis, and local policy snapshots where Zone-Based Firewall is available. Firewall mutations remain safety-gated.
+> **Current status:** Experimental. This version provides live UniFi inventory, device-health monitoring, persistent alerts, optional ntfy delivery, firewall capability detection, read-only firewall diagnostics and analysis, and local policy snapshots where Zone-Based Firewall is available. Firewall mutations remain safety-gated.
 
 ## 1. What you need
 
@@ -51,7 +51,7 @@ The files must be located directly inside that directory:
 Do not create an extra nested directory such as:
 
 ```text
-/addons/unifi_os_control_center/unifi-os-control-center-v0.7.2/config.yaml
+/addons/unifi_os_control_center/unifi-os-control-center/config.yaml
 ```
 
 For a local source build, remove or comment out the `image:` line in `config.yaml`:
@@ -236,7 +236,7 @@ OPTIONS
 
 This guard runs before the request reaches UniFi. Keep it enabled during initial setup and monitoring-only operation.
 
-Setting the value to `false` only removes the local method guard. It does not automatically grant permissions that the API key or UniFi endpoint does not have. Version 0.7.2 exposes read endpoints and keeps all UniFi mutations behind explicit backend safety gates.
+Setting the value to `false` only removes the local method guard. It does not automatically grant permissions that the API key or UniFi endpoint does not have. This version exposes read endpoints and keeps all UniFi mutations behind explicit backend safety gates.
 
 ### `polling_interval`
 
@@ -511,7 +511,7 @@ After diagnosis, return the log level to `INFO`.
 
 ### UI opens but values look incomplete
 
-Version 0.7.2 is an experimental but functional monitoring milestone. Inventory, alerts, ntfy delivery, device-health transitions, and supported firewall read functions are live; destructive UniFi mutations are not enabled by default.
+This version is an experimental but functional monitoring milestone. Inventory, alerts, ntfy delivery, device-health transitions, and supported firewall read functions are live; destructive UniFi mutations are not enabled by default.
 
 ## 13. Security notes
 
@@ -632,7 +632,7 @@ The Alerts page can export the bounded SQLite alert history as JSON or CSV. Expo
 
 ## Device health monitoring
 
-Version 0.7.2 monitors only UniFi devices for which the official Network API returns an explicit online/offline state. Devices without an explicit state are not guessed and do not generate alerts.
+This version monitors only UniFi devices for which the official Network API returns an explicit online/offline state. Devices without an explicit state are not guessed and do not generate alerts.
 
 ```yaml
 notify_on_device_offline: true
