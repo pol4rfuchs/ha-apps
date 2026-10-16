@@ -41,7 +41,7 @@ LABEL \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
     org.opencontainers.image.vendor="pol4rfuchs" \
-    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.licenses="GPL-3.0-or-later" \
     org.opencontainers.image.url="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.created="${BUILD_DATE}" \

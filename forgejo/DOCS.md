@@ -58,11 +58,12 @@ for the full list of sections and keys.
 
 ## AppArmor
 
-`apparmor: true` is enabled with a profile covering the s6-overlay baseline
-plus Forgejo's own runtime paths (`/config`, SSH host keys, git binaries).
-If you add custom `app.ini` settings that make Forgejo read/write paths
-outside `/config` (e.g. a custom hook script location), the AppArmor
-profile needs a matching rule added for that path.
+The add-on ships an `apparmor.txt` profile (s6-overlay baseline plus Forgejo's
+own runtime paths), but `apparmor: false` is set in `config.yaml`, so the
+profile is **not enforced** at the moment. If AppArmor is enabled later and you
+use custom `app.ini` settings that make Forgejo read/write paths outside
+`/config` (e.g. a custom hook script location), the profile needs a matching
+rule for that path.
 
 ## Local and external access
 
