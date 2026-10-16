@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.8](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.7...ts6_manager-v1.1.8) (2026-10-16)
+
+
+### Bug Fixes
+
+* **ts6_manager:** correct the docs (no Ingress, port 8066, video_streaming) and guard cd ([#565](https://github.com/pol4rfuchs/ha-apps/issues/565)) ([8e95bce](https://github.com/pol4rfuchs/ha-apps/commit/8e95bce504e036b49300cdcaf68a95c920f3b1a7))
+
 ## [1.1.7](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.6...ts6_manager-v1.1.7) (2026-10-16)
 
 
