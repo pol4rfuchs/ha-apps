@@ -38,7 +38,7 @@
 - SQLite (default) or MariaDB add-on integration
 - Web UI on port `81`
 - Dark mode (native NPM UI)
-- AppArmor profile for secure container operation
+- AppArmor profile shipped in the repository (currently not enforced: `apparmor: false`)
 - HA backup compatible — data and certificates included in snapshots
 - Let's Encrypt with DNS-01 / Cloudflare / wildcard support
 - Multi-arch: `amd64` + `aarch64`
@@ -133,9 +133,11 @@ For DuckDNS: use the DuckDNS provider and enter your token.
 
 ```text
 /data/
-├── database.sqlite    ← SQLite database (if not using MariaDB)
-├── nginx/             ← Generated nginx configs
-└── letsencrypt/       ← Certificates and ACME data
+├── npm/
+│   ├── data/          ← database.sqlite (SQLite mode), generated nginx configs, NPM settings
+│   ├── letsencrypt/   ← Certificates and ACME data
+│   └── logs/          ← Access/error logs
+└── keys.json          ← Session key pair, created by NPM
 ```
 
 HA backups include the add-on `/data` directory automatically.

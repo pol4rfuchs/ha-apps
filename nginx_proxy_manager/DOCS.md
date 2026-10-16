@@ -80,10 +80,11 @@ Alle persistenten Daten liegen unter `/data/npm/`:
 /data/npm/
 ├── data/          # Datenbank, Konfiguration, Proxy-Hosts
 ├── letsencrypt/   # Zertifikate
-└── logs/          # Access/Error Logs (von Backup ausgeschlossen)
+└── logs/          # Access/Error Logs
+/data/keys.json    # Sitzungsschlüssel, wird von NPM selbst erzeugt
 ```
 
-HA-Snapshots sichern `/data/npm/data` und `/data/npm/letsencrypt` automatisch.
+HA-Backups sichern das gesamte `/data` des Add-ons, also auch die Logs und `keys.json`. Es gibt keine Ausschlüsse.
 
 ---
 
