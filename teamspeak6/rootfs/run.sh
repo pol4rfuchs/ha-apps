@@ -90,7 +90,36 @@ sync_from_runtime() {
     fi
 }
 
+# Periodic backup while the server runs. The runtime DB lives in /var/tsserver
+# (outside /data) and is otherwise only copied when the add-on stops cleanly,
+# so a crash, OOM kill or power loss lost everything since the last start.
+# SQLite's online backup API gives a consistent copy of the running database
+# (no WAL involved); the other files (SSH host key, allow/deny lists, file
+# transfer data) are copied as they are.
+TS_SYNC_INTERVAL="${TS_SYNC_INTERVAL:-300}"
+periodic_sync() {
+    while sleep "${TS_SYNC_INTERVAL}"; do
+        [ -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ] || continue
+        if sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
+            ".backup '${TS_SERVER_STORE}/tsserver.sqlitedb.tmp'" 2>/dev/null \
+            && mv -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp" "${TS_SERVER_STORE}/tsserver.sqlitedb"; then
+            local item
+            for item in "${TS_RUNTIME_DIR}"/*; do
+                case "${item}" in
+                    *.sqlitedb*) continue ;;
+                esac
+                [ -e "${item}" ] && cp -a "${item}" "${TS_SERVER_STORE}/" 2>/dev/null
+            done
+            echo "[INFO] Periodic backup to persistent store done."
+        else
+            rm -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp"
+            echo "[WARN] Periodic backup failed — /data may be outdated."
+        fi
+    done
+}
+
 migrate_legacy_data
+rm -f "${TS_SERVER_STORE}/"*.tmp 2>/dev/null || true
 sync_to_runtime
 
 # Clear TS6 logs on every restart
@@ -149,10 +178,15 @@ fi
 # 3. Delete WAL + SHM from runtime so the backup contains only the clean main DB
 # 4. Copy to /data
 TS_PID=""
+SYNC_PID=""
 _CLEANUP_DONE=0
 cleanup() {
     [ "${_CLEANUP_DONE}" = "1" ] && return
     _CLEANUP_DONE=1
+    if [ -n "${SYNC_PID}" ]; then
+        kill "${SYNC_PID}" 2>/dev/null || true
+        wait "${SYNC_PID}" 2>/dev/null || true
+    fi
     if [ -n "${TS_PID}" ]; then
         echo "[INFO] Pre-shutdown WAL checkpoint (server still running)..."
         sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
@@ -168,6 +202,9 @@ cleanup() {
     sync_from_runtime
 }
 trap cleanup EXIT TERM INT
+
+periodic_sync &
+SYNC_PID=$!
 
 if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
     echo "[INFO] Fresh server — waiting for admin token..."
