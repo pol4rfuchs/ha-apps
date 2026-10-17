@@ -53,12 +53,13 @@ jobs:
           set -euo pipefail
 
           # On pull_request events, only build add-ons whose folder actually
-          # changed in the diff. Shared/workflow-level files (e.g. the
-          # build-app.yaml reusable workflow itself) still fall through to
-          # "build everything", since a change there could affect every app.
+          # changed in the diff. Only the two workflows that define how apps are
+          # built (this one and the build-app.yaml reusable workflow) fall
+          # through to "build everything", since a change there could affect
+          # every app. Other workflow files (lint, lock, labels, ...) do not.
           if [ "${EVENT_NAME}" = "pull_request" ]; then
             CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}")
-            SHARED_CHANGED=$(printf '%s\n' "${CHANGED_FILES}" | grep -E '^\.github/workflows/' || true)
+            SHARED_CHANGED=$(printf '%s\n' "${CHANGED_FILES}" | grep -E '^\.github/workflows/(02-build-test\.yml|build-app\.yaml)$' || true)
           else
             CHANGED_FILES=""
             SHARED_CHANGED=""
