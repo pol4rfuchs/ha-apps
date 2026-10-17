@@ -87,6 +87,9 @@
 - name: "addon/unifi-os-control-center"
   color: "006fff"
   description: "Betrifft das UniFi OS Control Center Add-on"
+- name: "addon/vaultwarden"
+  color: "175ddc"
+  description: "Betrifft das Vaultwarden Add-on"
 # ── Wiki ───────────────────────────────────────────────────────────────────────
 - name: "wiki-drift"
   color: "fbca04"

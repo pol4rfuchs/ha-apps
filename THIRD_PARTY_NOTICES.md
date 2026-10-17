@@ -32,13 +32,14 @@ remain under their respective upstream licenses.
 | Matrix Signal Bridge | mautrix-signal | https://github.com/mautrix/signal | AGPL-3.0 |
 | Matrix Telegram Bridge | mautrix-telegram | https://github.com/mautrix/telegram | AGPL-3.0 |
 | UniFi OS Control Center | Original application of this repository | https://github.com/pol4rfuchs/ha-apps | Apache-2.0 (its third-party libraries keep their own licenses) |
+| Vaultwarden | Vaultwarden | https://github.com/dani-garcia/vaultwarden | AGPL-3.0 |
 
 ## Trademarks and Logos
 
 Names, logos and trademarks such as Home Assistant, TeamSpeak, ntfy,
 Matrix, SearXNG, Navidrome, Nginx Proxy Manager, Intiface, Forgejo,
-Nextcloud, Unbound, restic, WhatsApp, Signal, Telegram, UniFi (Ubiquiti)
-and other third-party marks belong to their respective owners.
+Nextcloud, Unbound, restic, WhatsApp, Signal, Telegram, UniFi (Ubiquiti),
+Vaultwarden, Bitwarden and other third-party marks belong to their respective owners.
 
 Use of those names or logos in this repository is for identification,
 compatibility and documentation purposes only.

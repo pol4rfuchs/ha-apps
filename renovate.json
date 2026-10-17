@@ -104,6 +104,12 @@
       "semanticCommitScope": "unifi_os_control_center"
     },
     {
+      "matchFileNames": [
+        "vaultwarden/**"
+      ],
+      "semanticCommitScope": "vaultwarden"
+    },
+    {
       "matchManagers": [
         "github-actions"
       ],

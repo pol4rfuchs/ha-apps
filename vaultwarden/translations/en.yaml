@@ -1,0 +1,282 @@
+---
+configuration:
+  log_level:
+    name: Log level
+    description: >-
+      Verbosity of the log output. Use debug only for troubleshooting.
+  domain:
+    name: Domain
+    description: >-
+      Public HTTPS URL clients use to reach Vaultwarden (DOMAIN). Needed for
+      e-mail links, attachments, WebAuthn and SSO.
+  ssl:
+    name: Enable HTTPS in the app
+    description: >-
+      Serve HTTPS directly from the app using the certificate and key from
+      /ssl. Not needed behind a reverse proxy.
+  certfile:
+    name: Certificate file
+    description: >-
+      Certificate file name inside /ssl (only used when HTTPS is enabled).
+  keyfile:
+    name: Key file
+    description: >-
+      Private key file name inside /ssl (only used when HTTPS is enabled).
+  admin_token:
+    name: Admin token (Argon2)
+    description: >-
+      Argon2id PHC hash of the admin password. Empty disables the admin panel.
+      Plain text values are refused.
+  signups_allowed:
+    name: Allow sign-ups
+    description: >-
+      Allow anyone who can reach the server to register. Off by default;
+      switch it on briefly to create your accounts, then turn it off again.
+  signups_verify:
+    name: Verify e-mail on sign-up
+    description: >-
+      Require e-mail verification for new accounts (needs SMTP).
+  signups_domains_whitelist:
+    name: Sign-up domain whitelist
+    description: >-
+      Comma-separated e-mail domains that may register even if sign-ups are
+      disabled.
+  invitations_allowed:
+    name: Allow invitations
+    description: >-
+      Allow organization admins to invite users, even if sign-ups are
+      disabled.
+  org_creation_users:
+    name: Who may create organizations
+    description: >-
+      Empty or all = everyone, none = nobody, or a comma-separated list of
+      e-mail addresses.
+  email_change_allowed:
+    name: Allow e-mail change
+    description: >-
+      Allow users to change their e-mail address.
+  emergency_access_allowed:
+    name: Allow emergency access
+    description: >-
+      Allow users to set up emergency access to their account.
+  sends_allowed:
+    name: Allow Sends
+    description: >-
+      Allow users to create Bitwarden Sends.
+  password_hints_allowed:
+    name: Allow password hints
+    description: >-
+      Allow users to set and request password hints.
+  show_password_hint:
+    name: Show password hint on page
+    description: >-
+      Show hints directly on the web page when SMTP is not configured. Not
+      recommended for reachable instances.
+  trash_auto_delete_days:
+    name: Auto-delete trash after (days)
+    description: >-
+      Permanently delete trashed items after this many days. 0 = never.
+  enable_websocket:
+    name: Enable WebSocket notifications
+    description: >-
+      Live sync notifications for web, desktop and browser clients.
+  ip_header:
+    name: Client IP header
+    description: >-
+      Header your reverse proxy uses to pass the client IP. none uses the
+      connection address.
+  ip_header_trusted_proxies:
+    name: Trusted proxies
+    description: >-
+      IPs or CIDR ranges the IP header is accepted from. Empty = local (any
+      non-public address, Vaultwarden default).
+  icon_service:
+    name: Icon service
+    description: >-
+      internal fetches favicons from the sites themselves, bitwarden redirects
+      clients to Bitwarden's icon service.
+  disable_icon_download:
+    name: Disable icon download
+    description: >-
+      Never contact other sites for favicons (on by default, so the sites in
+      your vault are not revealed). Icons already cached are kept and served
+      without expiry. Turn off to show site icons.
+  http_request_block_non_global_ips:
+    name: Block requests to local IPs
+    description: >-
+      Refuse outgoing requests (icons, webhooks) to non-public addresses.
+  login_ratelimit_seconds:
+    name: Login rate limit (seconds)
+    description: >-
+      Average seconds between login requests per IP.
+  login_ratelimit_max_burst:
+    name: Login rate limit burst
+    description: >-
+      Allowed burst of login requests (login and 2FA, minimum 2).
+  admin_ratelimit_seconds:
+    name: Admin rate limit (seconds)
+    description: >-
+      Average seconds between admin login requests per IP.
+  admin_ratelimit_max_burst:
+    name: Admin rate limit burst
+    description: >-
+      Allowed burst of admin login requests.
+  unauthenticated_ratelimit_seconds:
+    name: Unauthenticated rate limit (seconds)
+    description: >-
+      Average seconds between requests to unauthenticated endpoints (hints,
+      recovery mails, Sends) per IP.
+  unauthenticated_ratelimit_max_burst:
+    name: Unauthenticated rate limit burst
+    description: >-
+      Shared burst budget for unauthenticated endpoints.
+  smtp_host:
+    name: SMTP host
+    description: >-
+      SMTP server for e-mails (invitations, verification, 2FA codes).
+  smtp_port:
+    name: SMTP port
+    description: >-
+      0 = default of the chosen security mode (587, 465 or 25).
+  smtp_security:
+    name: SMTP security
+    description: >-
+      starttls (587), force_tls (implicit TLS, 465) or off (25).
+  smtp_from:
+    name: SMTP sender address
+    description: >-
+      Sender address, required together with the SMTP host.
+  smtp_from_name:
+    name: SMTP sender name
+    description: >-
+      Display name of the sender. Empty = Vaultwarden.
+  smtp_username:
+    name: SMTP username
+    description: >-
+      Leave empty for servers without authentication.
+  smtp_password:
+    name: SMTP password
+    description: >-
+      Required when a username is set.
+  smtp_auth_mechanism:
+    name: SMTP auth mechanism
+    description: >-
+      Comma-separated: Plain, Login, Xoauth2. Empty = automatic.
+  smtp_accept_invalid_certs:
+    name: Accept invalid certificates
+    description: >-
+      DANGEROUS: allows man-in-the-middle attacks. Last resort only.
+  smtp_accept_invalid_hostnames:
+    name: Accept invalid hostnames
+    description: >-
+      DANGEROUS: allows man-in-the-middle attacks. Last resort only.
+  smtp_debug:
+    name: SMTP debug logging
+    description: >-
+      Very verbose SMTP logging, may contain credentials. Troubleshooting
+      only.
+  push_enabled:
+    name: Enable push notifications
+    description: >-
+      Mobile push via the Bitwarden relay (external service). Needs
+      installation ID and key from bitwarden.com/host.
+  push_region:
+    name: Push region
+    description: >-
+      Data region the push keys were issued for.
+  push_installation_id:
+    name: Push installation ID
+    description: >-
+      Installation ID from bitwarden.com/host.
+  push_installation_key:
+    name: Push installation key
+    description: >-
+      Installation key from bitwarden.com/host.
+  sso_enabled:
+    name: Enable SSO (OpenID Connect)
+    description: >-
+      Allow login through an OpenID Connect identity provider.
+  sso_only:
+    name: SSO only
+    description: >-
+      Disable login with e-mail and master password.
+  sso_signups_allowed:
+    name: Allow sign-up via SSO
+    description: >-
+      Let the SSO flow create accounts. Disable for public providers.
+  sso_signups_match_email:
+    name: Match existing accounts by e-mail
+    description: >-
+      Link an SSO sign-up to an existing account with the same e-mail.
+  sso_allow_unknown_email_verification:
+    name: Allow unknown e-mail verification
+    description: >-
+      Together with e-mail matching this opens a possible account takeover.
+  sso_authority:
+    name: SSO authority URL
+    description: >-
+      Base URL of the OIDC server, without /.well-known/... and exactly as
+      your provider documents it.
+  sso_client_id:
+    name: SSO client ID
+    description: >-
+      Client ID registered at your identity provider.
+  sso_client_secret:
+    name: SSO client secret
+    description: >-
+      Client secret registered at your identity provider.
+  sso_scopes:
+    name: SSO scopes
+    description: >-
+      Space-separated extra scopes. Empty = email profile.
+  sso_pkce:
+    name: Use PKCE
+    description: >-
+      Use PKCE for the authorization code flow.
+  sso_authorize_extra_params:
+    name: SSO extra authorize parameters
+    description: >-
+      Additional URL parameters, for example to obtain refresh tokens.
+  yubico_client_id:
+    name: Yubico client ID
+    description: >-
+      Client ID for YubiKey OTP.
+  yubico_secret_key:
+    name: Yubico secret key
+    description: >-
+      Secret key for YubiKey OTP.
+  duo_ikey:
+    name: Duo client ID
+    description: >-
+      Global Duo integration key (needs secret key and API host too).
+  duo_skey:
+    name: Duo client secret
+    description: >-
+      Global Duo secret key.
+  duo_host:
+    name: Duo API host
+    description: >-
+      Duo API hostname.
+  hibp_api_key:
+    name: HIBP API key
+    description: >-
+      Enables breach checks against haveibeenpwned.com (external service).
+  experimental_client_feature_flags:
+    name: Experimental client feature flags
+    description: >-
+      Comma-separated flags. Flags removed in Vaultwarden 1.37.4 are dropped
+      automatically.
+  extra_env:
+    name: Extra environment variables
+    description: >-
+      Any other Vaultwarden setting as NAME/value pair (for example
+      ORG_EVENTS_ENABLED). Protected names are refused.
+    fields:
+      name:
+        name: Variable name
+        description: Upper-case environment variable name.
+      value:
+        name: Value
+        description: Value of the variable.
+network:
+  7277/tcp: Vaultwarden (Web Vault, API, WebSocket)

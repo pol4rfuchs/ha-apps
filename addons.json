@@ -16,5 +16,6 @@
   "matrix_signal_bridge",
   "matrix_telegram_bridge",
   "matrix_auth_service",
-  "unifi_os_control_center"
+  "unifi_os_control_center",
+  "vaultwarden"
 ]

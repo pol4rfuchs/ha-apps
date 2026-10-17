@@ -1,0 +1,51 @@
+#include <tunables/global>
+
+profile vaultwarden flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # --- s6-overlay-Baseline (PFLICHT, §8) ---
+  /init                          ix,
+  /package/**                    ix,
+  /command/**                    ix,
+  /run/s6/**                     ix,
+  /etc/s6-overlay/**             ix,
+  /etc/services.d/**             rwix,
+  /etc/cont-init.d/**            rwix,
+  /etc/cont-finish.d/**          rwix,
+
+  # Kein /run.sh: Start läuft über s6 (services.d), nicht über ein Entrypoint-Script.
+
+  # Privilege-Drop (s6-setuidgid auf User vaultwarden) und chown der Datenordner
+  capability chown,
+  capability dac_override,
+  capability fowner,
+  capability setuid,
+  capability setgid,
+
+  # --- App-spezifisch ---
+  /bin/**                        ix,
+  /usr/bin/**                    ix,
+  /usr/local/bin/**              ix,
+  /lib/**                        mr,
+  /usr/lib/**                    mr,
+  /etc/**                        r,
+  /usr/share/**                  r,
+  /opt/vaultwarden/**            r,
+
+  /data/                         r,
+  /data/**                       rwk,
+  /tmp/                          r,
+  /tmp/**                        rwk,
+  /ssl/**                        r,
+  /run/**                        rwk,
+
+  @{PROC}/**                     r,
+  /sys/fs/cgroup/**              r,
+
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+  network unix stream,
+  network unix dgram,
+}

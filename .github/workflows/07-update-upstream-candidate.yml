@@ -58,6 +58,11 @@ jobs:
             upstream_repo: navidrome/navidrome
             arg_name: NAVIDROME_VERSION
             tag_prefix: navidrome
+          - addon: vaultwarden
+            mode: github_latest_release_arg
+            upstream_repo: dani-garcia/vaultwarden
+            arg_name: VAULTWARDEN_VERSION
+            tag_prefix: vaultwarden
           - addon: nginx_proxy_manager
             mode: dockerhub_from_tag
             dockerhub_repo: jc21/nginx-proxy-manager

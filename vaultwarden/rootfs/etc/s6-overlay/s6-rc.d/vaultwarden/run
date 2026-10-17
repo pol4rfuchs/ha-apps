@@ -1,0 +1,231 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+# ---------------------------------------------------------------- Log-Level
+LOG_LEVEL_OPT="$(bashio::config 'log_level')"
+case "${LOG_LEVEL_OPT}" in
+  trace)   bashio::log.level debug; export LOG_LEVEL=trace ;;
+  warning) bashio::log.level warning; export LOG_LEVEL=warn ;;
+  *)       bashio::log.level "${LOG_LEVEL_OPT}"; export LOG_LEVEL="${LOG_LEVEL_OPT}" ;;
+esac
+
+# ------------------------------------------------------------------ Pfade
+DATA_DIR="/data/vaultwarden"
+SECRET_DIR="/tmp/secrets"
+TLS_DIR="/tmp/tls"
+
+mkdir -p "${DATA_DIR}" "${SECRET_DIR}" /tmp/vaultwarden
+chmod 700 "${DATA_DIR}" "${SECRET_DIR}"
+chown -R vaultwarden:vaultwarden "${DATA_DIR}" /tmp/vaultwarden
+chown vaultwarden:vaultwarden "${SECRET_DIR}"
+
+export DATA_FOLDER="${DATA_DIR}"
+export TMP_FOLDER="/tmp/vaultwarden"
+export ROCKET_ADDRESS="0.0.0.0"
+export ROCKET_PORT="7277"
+export ROCKET_PROFILE="release"
+export WEB_VAULT_FOLDER="${WEB_VAULT_FOLDER:-/opt/vaultwarden/web-vault}"
+
+if bashio::fs.file_exists "${DATA_DIR}/config.json"; then
+  bashio::log.warning "config.json gefunden (vom Admin-Panel gespeichert): diese Werte überschreiben die App-Optionen!"
+fi
+
+# ---------------------------------------------------- einfache Optionen -> ENV
+# Format: option:ENV_NAME – nur gesetzte (nicht leere) Werte werden exportiert.
+PLAIN_OPTIONS=(
+  domain:DOMAIN
+  signups_allowed:SIGNUPS_ALLOWED
+  signups_verify:SIGNUPS_VERIFY
+  signups_domains_whitelist:SIGNUPS_DOMAINS_WHITELIST
+  invitations_allowed:INVITATIONS_ALLOWED
+  org_creation_users:ORG_CREATION_USERS
+  email_change_allowed:EMAIL_CHANGE_ALLOWED
+  emergency_access_allowed:EMERGENCY_ACCESS_ALLOWED
+  sends_allowed:SENDS_ALLOWED
+  password_hints_allowed:PASSWORD_HINTS_ALLOWED
+  show_password_hint:SHOW_PASSWORD_HINT
+  enable_websocket:ENABLE_WEBSOCKET
+  ip_header:IP_HEADER
+  ip_header_trusted_proxies:IP_HEADER_TRUSTED_PROXIES
+  icon_service:ICON_SERVICE
+  http_request_block_non_global_ips:HTTP_REQUEST_BLOCK_NON_GLOBAL_IPS
+  login_ratelimit_seconds:LOGIN_RATELIMIT_SECONDS
+  login_ratelimit_max_burst:LOGIN_RATELIMIT_MAX_BURST
+  admin_ratelimit_seconds:ADMIN_RATELIMIT_SECONDS
+  admin_ratelimit_max_burst:ADMIN_RATELIMIT_MAX_BURST
+  unauthenticated_ratelimit_seconds:UNAUTHENTICATED_RATELIMIT_SECONDS
+  unauthenticated_ratelimit_max_burst:UNAUTHENTICATED_RATELIMIT_MAX_BURST
+  smtp_host:SMTP_HOST
+  smtp_security:SMTP_SECURITY
+  smtp_from:SMTP_FROM
+  smtp_from_name:SMTP_FROM_NAME
+  smtp_username:SMTP_USERNAME
+  smtp_auth_mechanism:SMTP_AUTH_MECHANISM
+  smtp_accept_invalid_certs:SMTP_ACCEPT_INVALID_CERTS
+  smtp_accept_invalid_hostnames:SMTP_ACCEPT_INVALID_HOSTNAMES
+  smtp_debug:SMTP_DEBUG
+  sso_enabled:SSO_ENABLED
+  sso_only:SSO_ONLY
+  sso_signups_allowed:SSO_SIGNUPS_ALLOWED
+  sso_signups_match_email:SSO_SIGNUPS_MATCH_EMAIL
+  sso_allow_unknown_email_verification:SSO_ALLOW_UNKNOWN_EMAIL_VERIFICATION
+  sso_authority:SSO_AUTHORITY
+  sso_client_id:SSO_CLIENT_ID
+  sso_scopes:SSO_SCOPES
+  sso_pkce:SSO_PKCE
+  sso_authorize_extra_params:SSO_AUTHORIZE_EXTRA_PARAMS
+  yubico_client_id:YUBICO_CLIENT_ID
+  duo_ikey:DUO_IKEY
+  duo_host:DUO_HOST
+  push_enabled:PUSH_ENABLED
+  push_installation_id:PUSH_INSTALLATION_ID
+  experimental_client_feature_flags:EXPERIMENTAL_CLIENT_FEATURE_FLAGS
+)
+for pair in "${PLAIN_OPTIONS[@]}"; do
+  key="${pair%%:*}"
+  env_name="${pair#*:}"
+  value="$(bashio::config "${key}")"
+  if [[ -n "${value}" && "${value}" != "null" ]]; then
+    export "${env_name}=${value}"
+  fi
+done
+
+# Zahlenoptionen: 0 = nicht gesetzt (Upstream-Default gilt), da HA kein leeres Zahlenfeld kennt
+for pair in trash_auto_delete_days:TRASH_AUTO_DELETE_DAYS smtp_port:SMTP_PORT; do
+  value="$(bashio::config "${pair%%:*}")"
+  if [[ -n "${value}" && "${value}" != "null" && "${value}" != "0" ]]; then
+    export "${pair#*:}=${value}"
+  fi
+done
+
+# ------------------------------------------------- Secrets -> *_FILE (tmpfs)
+SECRET_OPTIONS=(
+  admin_token:ADMIN_TOKEN_FILE
+  smtp_password:SMTP_PASSWORD_FILE
+  push_installation_key:PUSH_INSTALLATION_KEY_FILE
+  sso_client_secret:SSO_CLIENT_SECRET_FILE
+  yubico_secret_key:YUBICO_SECRET_KEY_FILE
+  duo_skey:DUO_SKEY_FILE
+  hibp_api_key:HIBP_API_KEY_FILE
+)
+for pair in "${SECRET_OPTIONS[@]}"; do
+  key="${pair%%:*}"
+  env_name="${pair#*:}"
+  value="$(bashio::config "${key}")"
+  if [[ -n "${value}" && "${value}" != "null" ]]; then
+    ( umask 077; printf '%s' "${value}" > "${SECRET_DIR}/${key}" )
+    chown vaultwarden:vaultwarden "${SECRET_DIR}/${key}"
+    export "${env_name}=${SECRET_DIR}/${key}"
+  fi
+done
+
+# ------------------------------------------------------------ Admin-Token
+if bashio::config.has_value 'admin_token'; then
+  # shellcheck disable=SC2016
+  if [[ "$(bashio::config 'admin_token')" != '$argon2id$'* ]]; then
+    bashio::exit.nok "admin_token muss ein Argon2id-PHC-Hash sein (\$argon2id\$...). Erzeugen mit: vaultwarden hash"
+  fi
+fi
+
+# ------------------------------------------------------------- Validierung
+if bashio::config.true 'push_enabled'; then
+  if ! bashio::config.has_value 'push_installation_id' || ! bashio::config.has_value 'push_installation_key'; then
+    bashio::exit.nok "push_enabled benötigt push_installation_id und push_installation_key."
+  fi
+  if [[ "$(bashio::config 'push_region')" == "eu" ]]; then
+    export PUSH_RELAY_URI="https://api.bitwarden.eu"
+    export PUSH_IDENTITY_URI="https://identity.bitwarden.eu"
+  else
+    export PUSH_RELAY_URI="https://push.bitwarden.com"
+    export PUSH_IDENTITY_URI="https://identity.bitwarden.com"
+  fi
+fi
+
+if bashio::config.true 'sso_enabled'; then
+  for req in sso_authority sso_client_id sso_client_secret; do
+    if ! bashio::config.has_value "${req}"; then
+      bashio::exit.nok "sso_enabled benötigt ${req}."
+    fi
+  done
+fi
+
+if bashio::config.has_value 'smtp_username' && ! bashio::config.has_value 'smtp_password'; then
+  bashio::exit.nok "smtp_username ist gesetzt, aber smtp_password fehlt."
+fi
+if bashio::config.has_value 'smtp_host' && ! bashio::config.has_value 'smtp_from'; then
+  bashio::log.warning "smtp_host ist gesetzt, aber smtp_from fehlt – Mailversand wird nicht funktionieren."
+fi
+
+if ! bashio::config.has_value 'domain'; then
+  bashio::log.warning "domain ist nicht gesetzt – Web Vault, WebAuthn, Mail-Links und SSO brauchen eine HTTPS-Domain."
+elif [[ "$(bashio::config 'domain')" != https://* ]]; then
+  bashio::log.warning "domain ist nicht HTTPS – der Web Vault funktioniert nur in einem Secure Context."
+fi
+
+if bashio::config.true 'signups_allowed' && ! bashio::fs.file_exists "${DATA_DIR}/config.json"; then
+  bashio::log.notice "Registrierung ist offen (signups_allowed) – nach dem Anlegen der Konten abschalten."
+fi
+
+# --------------------------------------------------------------------- TLS
+if bashio::config.true 'ssl'; then
+  CERT="/ssl/$(bashio::config 'certfile')"
+  KEY="/ssl/$(bashio::config 'keyfile')"
+  bashio::fs.file_exists "${CERT}" || bashio::exit.nok "Zertifikat ${CERT} nicht gefunden."
+  bashio::fs.file_exists "${KEY}"  || bashio::exit.nok "Schlüssel ${KEY} nicht gefunden."
+  mkdir -p "${TLS_DIR}"
+  chmod 700 "${TLS_DIR}"
+  cp "${CERT}" "${TLS_DIR}/cert.pem"
+  cp "${KEY}"  "${TLS_DIR}/key.pem"
+  chmod 600 "${TLS_DIR}/cert.pem" "${TLS_DIR}/key.pem"
+  chown -R vaultwarden:vaultwarden "${TLS_DIR}"
+  export ROCKET_TLS="{certs=\"${TLS_DIR}/cert.pem\",key=\"${TLS_DIR}/key.pem\"}"
+  bashio::log.info "HTTPS in der App aktiv."
+fi
+
+# ------------------------------------------------------------------- Icons
+if bashio::config.true 'disable_icon_download'; then
+  export DISABLE_ICON_DOWNLOAD=true
+  export ICON_CACHE_TTL=0
+fi
+
+# ------------------------------------------- entfernte Client-Feature-Flags
+if bashio::config.has_value 'experimental_client_feature_flags'; then
+  REMOVED_FLAGS=" ssh-agent ssh-key-vault-item mutual-tls anon-addy-self-host-alias simple-login-self-host-alias pm-25373-windows-biometrics-v2 pm-26340-linux-biometrics-v2 desktop-ui-migration-milestone-1 desktop-ui-migration-milestone-2 desktop-ui-migration-milestone-3 desktop-ui-migration-milestone-4 cxp-import-mobile cxp-export-mobile "
+  kept=()
+  IFS=',' read -ra flags <<< "$(bashio::config 'experimental_client_feature_flags')"
+  for flag in "${flags[@]}"; do
+    flag="${flag//[[:space:]]/}"
+    [[ -z "${flag}" ]] && continue
+    if [[ "${REMOVED_FLAGS}" == *" ${flag} "* ]]; then
+      bashio::log.warning "Feature-Flag '${flag}' wurde in Vaultwarden 1.37.4 entfernt und wird ignoriert."
+    else
+      kept+=("${flag}")
+    fi
+  done
+  if (( ${#kept[@]} > 0 )); then
+    EXPERIMENTAL_CLIENT_FEATURE_FLAGS="$(IFS=','; echo "${kept[*]}")"
+    export EXPERIMENTAL_CLIENT_FEATURE_FLAGS
+  else
+    unset EXPERIMENTAL_CLIENT_FEATURE_FLAGS
+  fi
+fi
+
+# --------------------------------------------------------------- extra_env
+PROTECTED_RE='^(DATA_FOLDER|TMP_FOLDER|DATABASE_URL|WEB_VAULT_FOLDER|WEB_VAULT_ENABLED|ENV_FILE|ROCKET_.*|RSA_KEY_FILENAME)$'
+for idx in $(bashio::config 'extra_env|keys'); do
+  name="$(bashio::config "extra_env[${idx}].name")"
+  value="$(bashio::config "extra_env[${idx}].value")"
+  if [[ "${name}" =~ ${PROTECTED_RE} ]]; then
+    bashio::exit.nok "extra_env: ${name} ist geschützt und darf nicht gesetzt werden."
+  fi
+  if [[ -n "${!name+x}" ]]; then
+    bashio::log.warning "extra_env: ${name} überschreibt einen bereits gesetzten Wert."
+  fi
+  export "${name}=${value}"
+done
+
+# ------------------------------------------------------------------- Start
+bashio::log.info "Starte Vaultwarden (Daten: ${DATA_DIR})"
+umask 077
+exec s6-setuidgid vaultwarden /usr/local/bin/vaultwarden

@@ -34,6 +34,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [Unbound](unbound/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | DNS | Validating, recursive DNS resolver with DNSSEC support |
 | [Restic Backup](restic_backup/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `custom build` | Backup | Scheduled restic backups of HA config/media/add-on data with ntfy alerting on failure |
 | [UniFi OS Control Center](unifi_os_control_center/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | Network | Local-first UniFi OS monitoring and management for Home Assistant |
+| [Vaultwarden](vaultwarden/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `dani-garcia/vaultwarden` [![GitHub Release](https://img.shields.io/github/v/release/dani-garcia/vaultwarden?style=flat-square&logo=github&label=)](https://github.com/dani-garcia/vaultwarden/releases) | Security | Lightweight Bitwarden-compatible password manager server (needs HTTPS reverse proxy) |
 
 ## Pipeline
 

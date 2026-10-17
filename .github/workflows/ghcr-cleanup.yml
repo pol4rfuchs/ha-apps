@@ -46,6 +46,7 @@ jobs:
           - ts6_manager
           - unbound
           - unifi_os_control_center
+          - vaultwarden
     steps:
       - name: Delete old untagged versions
         continue-on-error: true
