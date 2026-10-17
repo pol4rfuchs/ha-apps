@@ -2,7 +2,7 @@ ARG BUILD_ARCH
 ARG BUILD_VERSION
 # Bumped automatically by 07-update-upstream-candidate.yml and 23-fast-image-watch.yml
 # (dockerhub_arg_tag mode), restricted to the current major version.
-ARG NEXTCLOUD_TAG=35.0.1-apache
+ARG NEXTCLOUD_TAG=35.0.2-apache
 
 # ── Base: official Nextcloud image (multi-arch: amd64 + arm64v8) ──────────────
 # No HA base image — we use the official PHP/Apache image directly so that
