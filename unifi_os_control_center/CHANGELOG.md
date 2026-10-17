@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.8](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.7...unifi_os_control_center-v0.7.8) (2026-10-17)
+
+
+### Bug Fixes
+
+* **unifi_os_control_center:** update react monorepo to v19.3.1 ([#530](https://github.com/pol4rfuchs/ha-apps/issues/530)) ([4dfae27](https://github.com/pol4rfuchs/ha-apps/commit/4dfae279f118dd5de3508622a83512ab17ff1127))
+
 ## [0.7.7](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.6...unifi_os_control_center-v0.7.7) (2026-10-17)
 
 
