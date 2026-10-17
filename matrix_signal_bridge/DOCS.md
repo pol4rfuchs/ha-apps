@@ -36,6 +36,12 @@ Einstellungen, nicht über einen In-App-QR-Scanner. Bei Erst-Login fragt Signal,
 Nachrichten-Historie übertragen werden soll — optional, aber empfohlen für vollständigen
 Kontext in Matrix.
 
+## Lokaler und externer Zugriff
+
+**Lokal (LAN):** Die Bridge hat keine Weboberfläche und veröffentlicht keinen Host-Port. Der Appservice-Port `29328` ist nur im internen Netz von Home Assistant erreichbar, damit das Matrix-Synapse-Add-on die Bridge ansprechen kann (`appservice_address`). Die Kopplung ist durch `as_token`/`hs_token` in `/data/registration.yaml` geschützt; behandle `/data` und `/share/signal_bridge_registration.yaml` wie ein Geheimnis.
+
+**Extern (Internet):** Empfehlung **nichts weiterleiten.** Die Bridge verbindet sich ausgehend zu Signal; von außen muss nur Synapse erreichbar sein (siehe dessen Dokumentation), nie die Bridge selbst.
+
 ## Bekannte Einschränkungen
 
 - Registrierung als Signal-Primärgerät wird von der Bridge nicht unterstützt — nur

@@ -7,6 +7,7 @@ url: https://github.com/pol4rfuchs/ha-apps
 version: "0.2.3"
 slug: restic_backup
 image: ghcr.io/pol4rfuchs/restic_backup
+stage: experimental
 init: false
 panel_icon: mdi:archive-lock-outline
 arch:
