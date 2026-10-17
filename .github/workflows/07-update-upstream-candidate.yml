@@ -105,6 +105,13 @@ jobs:
             codeberg_repo: forgejo/forgejo
             arg_name: FORGEJO_IMAGE_VERSION
             tag_prefix: forgejo
+          - addon: unifi_toolkit
+            mode: noop
+            tag_prefix: unifi-toolkit
+            reason: >-
+              Upstream is pinned to a release tag plus a verified commit and a tested
+              constraints.txt (and checksummed Alpine.js/Chart.js). A bump of the version
+              alone would fail the commit check, so it is done by hand.
           - addon: unbound
             mode: noop
             tag_prefix: unbound

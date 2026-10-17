@@ -1,0 +1,10 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# unifi-toolkit is the only long-running process: when it ends, shut the
+# container down so the Home Assistant Supervisor can restart it cleanly.
+set -euo pipefail
+EXIT_CODE="${1:-1}"
+if [ "${EXIT_CODE}" -ne 0 ] && [ "${EXIT_CODE}" -ne 256 ]; then
+  bashio::log.error "UniFi Toolkit exited with code ${EXIT_CODE}"
+fi
+exec /run/s6/basedir/bin/halt

@@ -81,6 +81,12 @@
       "include-component-in-tag": true,
       "tag-separator": "-"
     },
+    "unifi_toolkit": {
+      "release-type": "simple",
+      "component": "unifi_toolkit",
+      "include-component-in-tag": true,
+      "tag-separator": "-"
+    },
     "unifi_os_control_center": {
       "release-type": "simple",
       "component": "unifi_os_control_center",

@@ -1,0 +1,43 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+LOG_LEVEL="$(bashio::config 'log_level')"
+bashio::log.level "${LOG_LEVEL,,}"
+
+# UniFi credentials live encrypted in the SQLite DB (entered in the Toolkit UI).
+# The Fernet key is generated once and kept next to the DB so backups restore both.
+KEY_FILE=/data/encryption.key
+DB_FILE=/data/unifi_toolkit.db
+if [ ! -s "${KEY_FILE}" ]; then
+  if [ -s "${DB_FILE}" ]; then
+    bashio::log.warning "Encryption key missing but a database exists: stored UniFi credentials can no longer be decrypted and must be re-entered."
+  fi
+  ( umask 077 && python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())' > "${KEY_FILE}" )
+  bashio::log.info "Generated a new encryption key"
+fi
+ENCRYPTION_KEY="$(<"${KEY_FILE}")"
+export ENCRYPTION_KEY
+
+export PYTHONDONTWRITEBYTECODE=1
+export LOG_LEVEL="${LOG_LEVEL^^}"
+export STALKER_REFRESH_INTERVAL
+STALKER_REFRESH_INTERVAL="$(bashio::config 'stalker_refresh_interval')"
+if bashio::config.true 'webhook_allow_private_ips'; then
+  export WEBHOOK_ALLOW_PRIVATE_IPS=true
+else
+  export WEBHOOK_ALLOW_PRIVATE_IPS=false
+fi
+
+# Only the HA Ingress gateway can reach the app (peer guard in ingress_shim),
+# so the Host-header rebinding check would only reject the HA hostname.
+export DEPLOYMENT_TYPE=local
+export ALLOWED_HOSTS='*'
+export APP_PORT=8000
+export DATABASE_URL="sqlite+aiosqlite:///${DB_FILE}"
+
+bashio::log.info "Starting UniFi Toolkit"
+# New files in /data (SQLite DB) are readable by root only.
+umask 077
+cd /app
+exec python3 /opt/ingress/launcher.py

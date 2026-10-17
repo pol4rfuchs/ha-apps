@@ -1,0 +1,68 @@
+#include <tunables/global>
+
+profile unifi_toolkit flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+
+  network inet stream,
+  network inet6 stream,
+  network netlink raw,
+
+  # s6-overlay baseline (appbuildrules 8). Same rules as the profiles that run
+  # under enforce on the Pi (restic_backup, mautrix bridges). /run/{,**} rwk is
+  # required: s6 creates /run/s6 and /run/service itself at every start, a rule
+  # for /run/s6/** alone does not allow creating the directory
+  # ("s6-mkdir: unable to mkdir /run/s6: Permission denied").
+  /init                          ix,
+  /package/**                    ix,
+  /command/**                    ix,
+  /run/{s6,s6-rc*,service}/**    ix,
+  /run/s6/**                     rix,
+  /run/{,**}                     rwk,
+  /etc/s6-overlay/**             rix,
+  /etc/services.d/**             rwix,
+  /etc/cont-init.d/**            rwix,
+  /etc/cont-finish.d/**          rwix,
+  /dev/tty                       rw,
+
+  # Shell, coreutils, bashio and the python interpreter
+  /bin/**                        ix,
+  /usr/bin/**                    ix,
+  /usr/sbin/**                   ix,
+  /usr/local/bin/**              ix,
+  /usr/lib/bashio/**             rix,
+  /usr/lib/**                    mr,
+  /usr/local/lib/**              mr,
+  /lib/**                        mr,
+  /etc/profile.d/**              r,
+
+  # directories themselves (stat/chdir/listdir seen in the strace run)
+  / r,
+  /app/ r,
+  /data/ rw,
+  /opt/ r,
+  /usr/ r,
+  /usr/local/ r,
+  /usr/local/bin/ r,
+  /usr/local/lib/ r,
+  /usr/share/zoneinfo/ r,
+  /sys/fs/cgroup/** r,
+
+  /app/** r,
+  /opt/** r,
+  /data/** rwkm,
+  /tmp/** rwkm,
+  /proc/** r,
+  /etc/ssl/** r,
+  /etc/localtime r,
+  /usr/share/zoneinfo/** r,
+  /etc/resolv.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/group r,
+
+  deny /proc/*/mem rwklx,
+  deny /sys/** wklx,
+}
