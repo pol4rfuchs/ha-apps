@@ -1,7 +1,7 @@
 ---
 name: Nginx Proxy Manager
 description: Manage Nginx reverse proxies with a clean UI, SSL and HA-native integration.
-version: "2.1.6"
+version: "2.1.7"
 slug: nginx_proxy_manager
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/nginx_proxy_manager
@@ -24,8 +24,7 @@ options:
   mariadb_port: 3306
   mariadb_name: npm
   mariadb_user: npm
-  http_port: 80
-  https_port: 443
+  mariadb_password: ''
   disable_ipv6: false
   log_level: info
 schema:
@@ -34,8 +33,7 @@ schema:
   mariadb_port: int?
   mariadb_name: str?
   mariadb_user: str?
-  http_port: int?
-  https_port: int?
+  mariadb_password: password?
   disable_ipv6: bool?
   log_level: list(info|warning|error|debug)
 map:

@@ -1,6 +1,6 @@
 ---
 name: ntfy
-version: "1.2.10"
+version: "1.2.11"
 slug: ntfy
 description: Self-hosted pub-sub notification service (ntfy.sh)
 url: https://github.com/pol4rfuchs/ha-apps
@@ -14,7 +14,8 @@ panel_icon: mdi:bell-badge
 panel_title: ntfy
 webui: http://[HOST]:[PORT:4280]/
 map:
-  - backup:rw
+  - type: addon_config
+    read_only: false
 ports:
   4280/tcp: 4280
 ports_description:

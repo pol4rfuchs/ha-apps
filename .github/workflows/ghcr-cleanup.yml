@@ -1,8 +1,15 @@
+---
 name: GHCR Cleanup
 
+# Der Cron-Trigger ist bewusst deaktiviert (nur manuell ueber workflow_dispatch).
+# Grund: Die Multi-Arch-Images entstehen per "docker buildx imagetools create"
+# aus Einzel-Digests. Nach dem Loeschen der Zwischentags (:<version>-amd64/-arm64)
+# erscheinen diese Child-Manifests in GHCR als "untagged". delete-only-untagged-
+# versions loescht sie dann, und aeltere Versionen sind nicht mehr pullbar.
+# Vor dem Wieder-Aktivieren auf ein Multi-Arch-faehiges Cleanup umstellen oder
+# erst an einem Test-Package pruefen. (Package-Namen = image: aus config.yaml.)
+# yamllint disable-line rule:truthy
 on:
-  schedule:
-    - cron: '0 3 * * 0'
   workflow_dispatch:
 
 permissions:
@@ -21,18 +28,24 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - forgejo-ha-app
-          - intiface-ha-app
-          - matrix-synapse-ha-app
-          - npm-ha-app
-          - teamspeak6-ha-app
-          - ntfy-ha-app
-          - teamspeak6-manager-ha-app
-          - searxng-ha-app
-          - navidrome-ha-app
-          - ntfy-manager-ha-app
-          - nextcloud-ha-app
-          - unbound-ha-app
+          - forgejo
+          - intiface_central
+          - matrix_auth_service
+          - matrix_signal_bridge
+          - matrix_synapse
+          - matrix_telegram_bridge
+          - matrix_whatsapp_bridge
+          - navidrome
+          - nextcloud
+          - nginx_proxy_manager
+          - ntfy
+          - ntfy_manager
+          - restic_backup
+          - searxng
+          - teamspeak6
+          - ts6_manager
+          - unbound
+          - unifi_os_control_center
           - vaultwarden
     steps:
       - name: Delete old untagged versions

@@ -2,10 +2,10 @@
 configuration:
   server_name:
     name: Servername
-    description: "Matrix-Servername / Domain (z.B. deine-domain.duckdns.org). Wird Teil deiner Matrix-ID: @user:server_name."
+    description: "Matrix-Servername / Domain (z.B. example.org). Wird Teil deiner Matrix-ID: @user:server_name."
   element_web_url:
     name: Element Web URL
-    description: "Externe HTTPS-URL für Element Web (z.B. https://element.deine-domain.duckdns.org)."
+    description: "Externe HTTPS-URL für Element Web (z.B. https://element.example.org)."
   enable_registration:
     name: Registrierung erlauben
     description: "Erlaubt neuen Nutzern, sich auf diesem Server zu registrieren."
@@ -23,7 +23,7 @@ configuration:
     description: "Startet die Synapse-Admin-Weboberfläche auf Port 8090."
   postgres_password:
     name: PostgreSQL-Passwort
-    description: "Passwort für den internen Synapse-Datenbankbenutzer."
+    description: "Passwort für den internen Synapse-Datenbankbenutzer. Leer lassen: es wird eines erzeugt (gespeichert in /data/matrix/.pg_password). Ein hier gesetzter Wert wird bei jedem Start in der Datenbank übernommen."
   log_level:
     name: Log-Level
     description: "Detailgrad der Synapse-Protokollierung. WARNING wird für den Normalbetrieb empfohlen."

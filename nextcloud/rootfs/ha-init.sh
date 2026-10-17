@@ -51,31 +51,67 @@ export NC_LOG_LEVEL_NUM
 log "Log level: ${LOG_LEVEL} (Nextcloud loglevel=${NC_LOG_LEVEL_NUM})"
 
 # ── Persistent data layout ────────────────────────────────────────────────────
-# HA mounts /data (add-on persistent storage).
-# Layout:
-#   /data/nextcloud/data   → NC user files (NEXTCLOUD_DATA_DIR)
-#   /data/nextcloud/html   → NC app code + config.php (symlinked from /var/www/html)
+# HA mounts /data (add-on persistent storage). Layout:
+#   /data/nextcloud/data         → NC user files (NEXTCLOUD_DATA_DIR)
+#   /data/nextcloud/config       → config.php (linked into /var/www/html)
+#   /data/nextcloud/custom_apps  → apps installed from the app store
+#   /data/nextcloud/themes       → themes
+#   /data/nextcloud/version.php  → version of the installed code
 #
-# On first boot html/ is empty — the official NC entrypoint installs NC there.
-# On subsequent boots the existing installation is reused.
-
+# /var/www/html is a VOLUME in the official image: it cannot be replaced by a
+# symlink, and the Supervisor creates a new container (= new, empty volume) on
+# every start. So the code only lives there for the lifetime of the container.
+# The official entrypoint's rsync --delete would also remove symlinks for the
+# persistent directories, so it must not run on an existing installation:
+#   * first start : the entrypoint installs normally; the before-starting hook
+#                   (20-persist-and-upgrade.sh) then moves config, custom_apps
+#                   and themes to /data/nextcloud and links them back.
+#   * later starts: this script restores the code and the links and presents
+#                   the image's version.php, so the entrypoint skips its
+#                   install/upgrade step; the hook runs `occ upgrade` itself
+#                   when the image is newer than the saved version.
 NC_BASE=/data/nextcloud
-mkdir -p "${NC_BASE}/data" "${NC_BASE}/html"
+NC_HTML=/var/www/html
+NC_SRC=/usr/src/nextcloud
+mkdir -p "${NC_BASE}/data"
 
-# Symlink /var/www/html → /data/nextcloud/html so NC installation persists
-# across container image updates (only triggered when NC version changes).
-if [[ ! -L /var/www/html ]]; then
-    log "Relinking /var/www/html → ${NC_BASE}/html"
-    # Copy existing image content on first boot so NC has its base files
-    if [[ -z "$(ls -A "${NC_BASE}/html" 2>/dev/null)" ]]; then
-        log "Copying NC base files into persistent volume (first boot)…"
-        cp -a /var/www/html/. "${NC_BASE}/html/"
-    fi
-    rm -rf /var/www/html
-    ln -s "${NC_BASE}/html" /var/www/html
+# Ownership: user data is only chowned once (it can be huge); the small
+# directories on every start.
+chown www-data:www-data "${NC_BASE}"
+for d in config custom_apps themes; do
+    [[ -d "${NC_BASE}/${d}" ]] && chown -R www-data:www-data "${NC_BASE}/${d}"
+done
+if [[ "$(stat -c %U "${NC_BASE}/data")" != "www-data" ]]; then
+    log "Setting ownership of ${NC_BASE}/data (first start)…"
+    chown -R www-data:www-data "${NC_BASE}/data"
 fi
 
-chown -R www-data:www-data "${NC_BASE}"
+if [[ -f "${NC_BASE}/config/config.php" ]]; then
+    log "Existing installation found, restoring code from the image…"
+    rsync -rlDog --chown=www-data:www-data --exclude-from=/upgrade.exclude "${NC_SRC}/" "${NC_HTML}/"
+    for d in config custom_apps themes; do
+        mkdir -p "${NC_BASE}/${d}"
+        chown www-data:www-data "${NC_BASE}/${d}"
+        rm -rf "${NC_HTML:?}/${d}"
+        ln -s "${NC_BASE}/${d}" "${NC_HTML}/${d}"
+        # /var/www/html is sticky (1777): the kernel (protected_symlinks) only lets
+        # www-data follow links that www-data owns.
+        chown -h www-data:www-data "${NC_HTML}/${d}"
+    done
+    cp "${NC_SRC}/version.php" "${NC_HTML}/version.php"
+    chown www-data:www-data "${NC_HTML}/version.php"
+fi
+
+# ── Admin password: no default, required for the first install ────────────────
+# Nextcloud does not enforce a password change, so the add-on ships no default.
+# The password is only used by the initial install; once config.php exists it
+# is ignored.
+if [[ ! -f "${NC_BASE}/config/config.php" ]]; then
+    if [[ -z "${ADMIN_PASS}" || "${ADMIN_PASS}" == "changeme" ]]; then
+        log "ERROR: admin_password is empty (or 'changeme'). Set a strong admin password in the add-on options before the first start."
+        exit 1
+    fi
+fi
 
 # ── Export Nextcloud env vars (used by official /entrypoint.sh) ───────────────
 export NEXTCLOUD_ADMIN_USER="${ADMIN_USER}"
@@ -86,6 +122,9 @@ export NEXTCLOUD_DATA_DIR="${NC_BASE}/data"
 # The official NC entrypoint splits on spaces for NEXTCLOUD_TRUSTED_DOMAINS.
 if [[ -n "${TRUSTED_DOMAINS}" ]]; then
     export NEXTCLOUD_TRUSTED_DOMAINS="${TRUSTED_DOMAINS}"
+    log "Trusted domains (applied on first install): ${TRUSTED_DOMAINS}"
+else
+    log "WARNING: trusted_domains is empty - Nextcloud will only accept 'localhost'. Add the hostname/IP you open it with (applies on first install; later use occ, see DOCS)."
 fi
 
 # ── Database ──────────────────────────────────────────────────────────────────
@@ -107,9 +146,12 @@ case "${DB_TYPE}" in
     ;;
   sqlite)
     log "DB: SQLite (not recommended for production)"
+    # The official entrypoint only installs unattended when this is set.
+    export SQLITE_DATABASE="nextcloud"
     ;;
   *)
     log "Unknown db_type '${DB_TYPE}', falling back to sqlite"
+    export SQLITE_DATABASE="nextcloud"
     ;;
 esac
 

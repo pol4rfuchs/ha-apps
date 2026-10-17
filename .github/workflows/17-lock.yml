@@ -1,5 +1,7 @@
 ---
 # Geschlossene Issues/PRs nach 30 Tagen automatisch locken
+# Reine Hausmeisterei: transiente GitHub-Fehler (5xx) werden wiederholt und
+# fuehren danach nur zu einer Warnung, nicht zu einem roten Lauf.
 name: 17 Lock
 
 # yamllint disable-line rule:truthy
@@ -21,8 +23,9 @@ jobs:
   lock:
     name: 🔒 Lock closed issues and PRs
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - name: Lock stale closed issues
+      - name: Lock stale closed issues and PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -30,33 +33,41 @@ jobs:
         run: |
           set -euo pipefail
           cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh api "repos/${REPO}/issues?state=closed&per_page=100" --paginate \
-            | jq -r --arg cutoff "${cutoff}" \
-              '.[] | select(
+          tmp=$(mktemp)
+          trap 'rm -f "${tmp}"' EXIT
+
+          # Alle Seiten holen. Bei Fehler (z. B. HTTP 504) oder wenn die Antwort
+          # kein Array ist (Fehlerobjekt), bis zu 4x mit steigender Wartezeit wiederholen.
+          fetch_all() {
+            local url=$1 attempt
+            for attempt in 1 2 3 4; do
+              if gh api "${url}" --paginate > "${tmp}" 2> /dev/null \
+                && jq -e -s 'all(.[]; type == "array")' "${tmp}" > /dev/null; then
+                return 0
+              fi
+              echo "::warning::GitHub API request failed (attempt ${attempt}/4): ${url}"
+              [ "${attempt}" -lt 4 ] && sleep $((attempt * 15))
+            done
+            return 1
+          }
+
+          # Gilt fuer beide Endpoints: /pulls-Objekte haben kein pull_request-Feld
+          # (null), /issues-Objekte die PRs sind, haben es und werden uebersprungen.
+          lock_stale() {
+            local label=$1 url=$2 num
+            if ! fetch_all "${url}"; then
+              echo "::warning::Skipping ${label} locking: GitHub API not available, retrying on next run"
+              return 0
+            fi
+            jq -r --arg cutoff "${cutoff}"               '.[] | select(
                 .locked == false
                 and .pull_request == null
                 and .updated_at < $cutoff
-              ) | .number' \
-          | while read -r num; do
-            echo "Locking issue #${num}"
-            gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
-          done
+              ) | .number'               "${tmp}" | while read -r num; do
+              echo "Locking ${label} #${num}"
+              gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
+            done
+          }
 
-      - name: Lock stale closed PRs
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          cutoff=$(date -d '30 days ago' --iso-8601=seconds)
-          gh api "repos/${REPO}/pulls?state=closed&per_page=100" --paginate \
-            | jq -r --arg cutoff "${cutoff}" \
-              '.[] | select(
-                .locked == false
-                and .updated_at < $cutoff
-              ) | .number' \
-          | while read -r num; do
-            echo "Locking PR #${num}"
-            gh issue lock "${num}" --repo "${REPO}" --reason resolved || true
-          done
+          lock_stale "issue" "repos/${REPO}/issues?state=closed&per_page=100"
+          lock_stale "PR" "repos/${REPO}/pulls?state=closed&per_page=100"

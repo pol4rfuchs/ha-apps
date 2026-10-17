@@ -14,7 +14,7 @@ configuration:
     description: "Secret für die Kopplung mit Synapse. Leer lassen zur automatischen Generierung — Wert danach ins Synapse-Add-on übertragen."
   postgres_password:
     name: PostgreSQL-Passwort
-    description: "Passwort für den internen MAS-Datenbankbenutzer (eigene DB, getrennt von Synapse)."
+    description: "Passwort des internen MAS-Datenbankbenutzers. Leer lassen: es wird eines erzeugt (gespeichert in /data/mas/.pg_password). Ein hier gesetzter Wert wird bei jedem Start in der Datenbank übernommen."
   admin_users:
     name: Admin-User
     description: "Komma-getrennte Liste von Matrix-Usernamen mit Admin-Rechten in MAS."

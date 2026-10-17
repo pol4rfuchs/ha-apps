@@ -45,7 +45,7 @@ ARG SIGNAL_VERSION
 
 LABEL \
   io.hass.version="${BUILD_VERSION}" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.name="matrix_signal_bridge" \
   io.hass.arch="${BUILD_ARCH}" \
   org.opencontainers.image.title="Signal Bridge (mautrix) HA Add-on" \

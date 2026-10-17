@@ -7,8 +7,8 @@ configuration:
   domain:
     name: "Domain / Hostname"
     description: >-
-      Öffentlich erreichbarer Hostname (z.B. 'git.home.example.com' oder '192.168.1.100').
-      Leer lassen → Ingress-Modus (HA ermittelt URL automatisch über Supervisor).
+      Hostname oder IP, über die du Forgejo aufrufst (z.B. 'git.home.example.com' oder '192.0.2.10').
+      Wird für Links und Clone-URLs genutzt. Leer = Forgejo nimmt 'localhost' an, im Log erscheint eine Warnung.
 
   ssl:
     name: "HTTPS aktivieren"

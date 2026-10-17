@@ -4,3 +4,15 @@
 *.sh text eol=lf
 Dockerfile text eol=lf
 *.md text eol=lf
+
+# s6 service scripts (run, finish, up, ...) and everything else under rootfs/
+# have no extension; a CRLF checkout on Windows breaks them in the image
+# ("bad interpreter"). Marker files in dependencies.d/contents.d stay untouched.
+**/rootfs/** text eol=lf
+**/rootfs/**/dependencies.d/** -text
+**/rootfs/**/contents.d/** -text
+apparmor.txt text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.cjs text eol=lf
+.gitattributes text eol=lf

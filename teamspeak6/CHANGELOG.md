@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.23](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.22...teamspeak6-v1.1.23) (2026-10-16)
+
+
+### Bug Fixes
+
+* **teamspeak6:** back up the database periodically, rewrite the outdated README and DOCS ([#575](https://github.com/pol4rfuchs/ha-apps/issues/575)) ([daa3e30](https://github.com/pol4rfuchs/ha-apps/commit/daa3e30d460b457dcda144dfe3572ce6ffc40b3e))
+
 ## [1.1.22](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.21...teamspeak6-v1.1.22) (2026-09-23)
 
 

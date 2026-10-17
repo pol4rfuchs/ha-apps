@@ -529,6 +529,10 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
             <tr><td><code>8083/tcp</code></td><td>MAS internal: health and metrics, not meant for the reverse proxy.</td></tr>
             </tbody>
         </table><blockquote>Creating the reverse-proxy route for <code>mas_domain</code> (e.g. in Nginx Proxy Manager) is still an open item in the add-on documentation.</blockquote>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the account UI runs on port <code>8082</code> (<code>http://&lt;ha-host&gt;:8082</code>). MAS uses <code>https://&lt;mas_domain&gt;/</code> as its public address (issuer), so the login flow only works through that HTTPS domain, not through the bare LAN IP. To use it locally, add a DNS rewrite for the domain to your local DNS server and put a reverse proxy with a certificate in front.</p>
+        <p><strong>Reverse-proxy route (for example Nginx Proxy Manager):</strong> create a proxy host with domain = <code>mas_domain</code>, scheme <code>http</code>, forward host = your HA host, port <code>8082</code>. Request a certificate and enable "Force SSL". Port <code>8083</code> (health check only) does not belong in the proxy.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>ok, only through the reverse proxy with TLS</strong> (Matrix clients need the public address). Never forward ports <code>8082</code> or <code>8083</code> directly. Keep <code>password_registration_enabled</code> off (default).</p>
       </div>
     </article>
 

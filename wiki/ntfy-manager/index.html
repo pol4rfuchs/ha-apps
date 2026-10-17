@@ -509,7 +509,7 @@
         <div class="step-num">4</div>
         <div class="step-body">
           <h4>Add-on starten &amp; Web UI öffnen</h4>
-          <p>Starten → <strong>Web UI öffnen</strong> (öffnet Browser-Tab, kein HA Ingress). Alternativ direkt via <code>http://homeassistant.local:&lt;PORT&gt;</code>.</p>
+          <p>Starten → Panel über die HA-Seitenleiste (Ingress) öffnen. Optional direkt via <code>http://&lt;HA-Host&gt;:8099</code>.</p>
         </div>
       </div>
     </div>
@@ -517,8 +517,16 @@
     <div class="alert info" style="margin-top:20px">
       <div class="alert-icon">ℹ️</div>
       <div class="alert-body">
-        <strong>Kein Ingress</strong>
-        ntfy Manager nutzt <code>webui:</code> statt HA Ingress — der Browser-Tab öffnet direkt den Add-on-Port. Für externen Zugriff einen NPM Proxy Host einrichten.
+        <strong>Ingress und optionaler Direktzugriff</strong>
+        Das Panel läuft über HA Ingress (Seitenleiste, geschützt durch dein HA-Login). Der Host-Port <code>8099</code> ist optional und kann im Netzwerk-Tab des Add-ons entfernt werden. In beiden Fällen verlangt das Panel einen ntfy-Login.
+      </div>
+    </div>
+
+    <div class="alert warn" style="margin-top:12px">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <strong>Externer Zugriff</strong>
+        Empfehlung: <strong>nicht empfohlen, nur VPN.</strong> Das Panel verwaltet ntfy-Nutzer, Tokens und ACLs. Wenn es dennoch veröffentlicht werden muss: Reverse Proxy mit TLS plus zusätzliche Zugriffskontrolle. Das Sitzungs-Cookie trägt kein <code>Secure</code>-Flag.
       </div>
     </div>
   </div>
@@ -540,22 +548,52 @@
         </thead>
         <tbody>
           <tr>
-            <td><code>ntfy_url</code></td>
-            <td><code>str</code></td>
-            <td><em>required</em></td>
-            <td>URL der ntfy-Instanz — z.B. <code>http://a0d7b954-ntfy:80</code> (Docker-intern) oder externe URL.</td>
+            <td><code>ntfy_base_url</code></td>
+            <td><code>url</code></td>
+            <td><code>http://homeassistant.local:4280</code></td>
+            <td>Adresse des ntfy-Servers, z. B. die interne Adresse des ntfy-Add-ons oder eine externe URL.</td>
           </tr>
           <tr>
-            <td><code>ntfy_token</code></td>
+            <td><code>ntfy_auth_type</code></td>
+            <td><code>list</code></td>
+            <td><code>basic</code></td>
+            <td><code>none</code> / <code>basic</code> / <code>bearer</code>: Art der Anmeldung gegenüber ntfy.</td>
+          </tr>
+          <tr>
+            <td><code>ntfy_username</code></td>
             <td><code>str?</code></td>
             <td><code>""</code></td>
-            <td>Admin-Token für Auth-geschützte ntfy-Instanzen (<code>auth-file</code> aktiv). Leer lassen wenn ntfy ohne Auth läuft.</td>
+            <td>Benutzername (bei <code>basic</code>).</td>
+          </tr>
+          <tr>
+            <td><code>ntfy_password</code></td>
+            <td><code>password?</code></td>
+            <td><code>""</code></td>
+            <td>Passwort (bei <code>basic</code>).</td>
+          </tr>
+          <tr>
+            <td><code>ntfy_bearer_token</code></td>
+            <td><code>password?</code></td>
+            <td><code>""</code></td>
+            <td>Zugriffstoken (bei <code>bearer</code>).</td>
+          </tr>
+          <tr>
+            <td><code>default_topics</code></td>
+            <td><code>list</code></td>
+            <td><code>ha-alerts, ha-info, ha-notify, ha-system</code></td>
+            <td>Vorgeschlagene Topics im Panel.</td>
+          </tr>
+          <tr>
+            <td><code>allow_login_override</code></td>
+            <td><code>bool</code></td>
+            <td><code>true</code></td>
+            <td>Erlaubt die Anmeldung mit anderen ntfy-Zugangsdaten im Panel. Für Kiosk-Setups auf <code>false</code> setzen.</td>
           </tr>
           <tr>
             <td><code>log_level</code></td>
-            <td><code>str</code></td>
+            <td><code>list</code></td>
             <td><code>info</code></td>
-            <td>Log-Level des Add-ons: <code>trace</code> / <code>debug</code> / <code>info</code> / <code>warning</code> / <code>error</code>.</td>
+            <td><code>debug</code> / <code>info</code> / <code>warn</code> / <code>error</code>.</td>
           </tr>
         </tbody>
       </table>
@@ -564,8 +602,17 @@
     <div class="code-block">
       <div class="label">config.yaml · options</div>
       <pre>options:
-  ntfy_url: "http://a0d7b954-ntfy:80"
-  ntfy_token: ""
+  ntfy_base_url: "http://homeassistant.local:4280"
+  ntfy_auth_type: "basic"
+  ntfy_username: ""
+  ntfy_password: ""
+  ntfy_bearer_token: ""
+  default_topics:
+    - ha-alerts
+    - ha-info
+    - ha-notify
+    - ha-system
+  allow_login_override: true
   log_level: "info"</pre>
     </div>
 

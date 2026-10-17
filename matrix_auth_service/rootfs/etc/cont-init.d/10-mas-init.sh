@@ -22,8 +22,31 @@ PG_MARKER="${DATA_DIR}/.pg_initialized"
 CONFIG_MAIN="${DATA_DIR}/config.yaml"
 CONFIG_SECRETS="${DATA_DIR}/secrets.yaml"
 SYNAPSE_SECRET_FILE="${DATA_DIR}/.synapse_secret"
+PG_PASSWORD_FILE="${DATA_DIR}/.pg_password"
 
 mkdir -p "${PG_DATA}" "${DATA_DIR}/logs"
+
+# ── DB-Passwort ───────────────────────────────────────────────────────────
+# Option > gespeicherter Wert > generieren. Ohne Eintrag in der Option wird ein
+# zufälliges Passwort erzeugt und nur in /data abgelegt (nicht im Log).
+if [ -z "${PG_PASSWORD}" ]; then
+    if [ -f "${PG_PASSWORD_FILE}" ]; then
+        PG_PASSWORD=$(cat "${PG_PASSWORD_FILE}")
+        bashio::log.info "✅ postgres_password aus Speicher geladen"
+    else
+        PG_PASSWORD=$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)
+        (umask 077; printf '%s\n' "${PG_PASSWORD}" > "${PG_PASSWORD_FILE}")
+        bashio::log.info "✅ postgres_password generiert und gespeichert (nur in ${PG_PASSWORD_FILE})"
+    fi
+fi
+
+# Setzt das Passwort der DB-Rolle. Das Passwort geht als psql-Variable ein und
+# wird von psql selbst als SQL-Literal quotiert (:'pw') — Sonderzeichen wie '
+# oder " brechen weder das SQL noch die Shell.
+pg_set_password() {
+    printf '%s\n' "$1 mas WITH PASSWORD :'pw';" \
+        | gosu postgres psql -p 5433 -v ON_ERROR_STOP=1 -v pw="${PG_PASSWORD}" >/dev/null
+}
 
 # ── PostgreSQL init (einmalig) ────────────────────────────────────────────
 # Eigene, von Synapse komplett getrennte Postgres-Instanz — kein Schema-
@@ -34,7 +57,7 @@ mkdir -p "${PG_DATA}" "${DATA_DIR}/logs"
 if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
     bashio::log.info "Initialisiere PostgreSQL Datenbank..."
     chown postgres:postgres "${PG_DATA}"
-    gosu postgres /usr/lib/postgresql/15/bin/initdb \
+    gosu postgres /usr/lib/postgresql/17/bin/initdb \
         --pgdata="${PG_DATA}" \
         --auth-local=trust \
         --auth-host=md5 \
@@ -55,24 +78,32 @@ effective_cache_size = 128MB
 logging_collector = off
 log_min_messages = warning
 datestyle = 'iso, mdy'
-timezone = 'Europe/Vienna'
+timezone = 'UTC'
 lc_messages = 'C'
 lc_monetary = 'C'
 lc_numeric = 'C'
 lc_time = 'C'
 EOF
 
-    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
+    gosu postgres /usr/lib/postgresql/17/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_init.log -o "-p 5433" start -w -t 30
-    gosu postgres psql -p 5433 -c "CREATE USER mas WITH PASSWORD '${PG_PASSWORD}';"
+    pg_set_password "CREATE USER" || { bashio::log.error "Konnte die DB-Rolle 'mas' nicht anlegen."; exit 1; }
     gosu postgres psql -p 5433 -c "CREATE DATABASE mas ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER mas;"
-    gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
+    gosu postgres /usr/lib/postgresql/17/bin/pg_ctl -D "${PG_DATA}" stop -w
 
     touch "${PG_MARKER}"
     bashio::log.info "✅ PostgreSQL initialisiert"
 else
     bashio::log.info "✅ PostgreSQL bereits initialisiert"
     touch "${PG_MARKER}"
+    # Die Rolle wurde beim ersten Start mit dem damaligen Passwort angelegt.
+    # Wurde die Option seitdem geändert, passt die DB nicht mehr zur Config
+    # (Anmeldung schlägt fehl) — bei jedem Start angleichen.
+    gosu postgres /usr/lib/postgresql/17/bin/pg_ctl \
+        -D "${PG_DATA}" -l /tmp/pg_sync.log -o "-p 5433" start -w -t 30 \
+        || { bashio::log.error "PostgreSQL startet nicht — siehe /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
+    pg_set_password "ALTER USER" || { bashio::log.error "Konnte das DB-Passwort nicht angleichen."; exit 1; }
+    gosu postgres /usr/lib/postgresql/17/bin/pg_ctl -D "${PG_DATA}" stop -w
 fi
 
 # ── Synapse Shared Secret ─────────────────────────────────────────────────
@@ -99,7 +130,7 @@ fi
 # vollständige Config inkl. zufälliger secrets/encryption + secrets/keys
 # nach stdout; wir behalten daraus nur den secrets-Teil und pflegen den
 # Rest (http/database/matrix/account/policy) selbst in CONFIG_MAIN.
-if [ ! -f "${CONFIG_SECRETS}" ]; then
+if [ ! -s "${CONFIG_SECRETS}" ]; then
     bashio::log.info "Generiere MAS Secrets (Encryption + Signing-Keys)..."
     mas-cli config generate > "${CONFIG_SECRETS}" 2>/tmp/mas_generate.log
     if [ ! -s "${CONFIG_SECRETS}" ]; then
@@ -134,6 +165,9 @@ fi
 # ── Haupt-Config (config.yaml) ────────────────────────────────────────────
 bashio::log.info "Schreibe MAS config.yaml..."
 
+# Das Passwort steht in der DB-URI und muss URL-kodiert sein (@ : / ? # % ...).
+PG_PASSWORD_URI=$(jq -rn --arg p "${PG_PASSWORD}" '$p|@uri')
+
 cat > "${CONFIG_MAIN}" << EOF
 # public_base/issuer sind zwingend nötig, damit MAS korrekte absolute
 # Redirect-URIs für den OAuth/OIDC-Flow baut — ohne diese zwei Zeilen war
@@ -163,7 +197,7 @@ http:
         - address: "0.0.0.0:8083"
 
 database:
-  uri: "postgresql://mas:${PG_PASSWORD}@127.0.0.1:5433/mas"
+  uri: "postgresql://mas:${PG_PASSWORD_URI}@127.0.0.1:5433/mas"
   max_connections: 10
 
 matrix:

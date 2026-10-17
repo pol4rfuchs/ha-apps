@@ -8,10 +8,10 @@
 
 <div align="center">
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-ntfy--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ntfy-ha-app)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.29.0-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
-[![App Version](https://img.shields.io/badge/ntfy--ha--app-v1.2.10-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/ntfy-v1.2.11-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Claude%20Code-C2410C?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=2D2D2D)](https://www.anthropic.com/claude-code)
 
@@ -117,7 +117,7 @@ This repository contains a complete **Home Assistant Add-on** that runs a self-h
 | **HA Add-on Name** | `ntfy` |
 | **HA Add-on Slug** | `ntfy` |
 | **Based on** | `ntfy v2.29.0` |
-| **App Version** | `v1.2.10` |
+| **App Version** | `v1.2.11` |
 | **Web UI Port** | `4280` |
 | **Main Data Path** | `/data/ntfy` |
 | **Auth Database** | `/data/ntfy/user.db` |
@@ -252,9 +252,11 @@ On first start you should see something like:
 
 ```text
 Admin user 'admin' ready
-HA integration token created: tk_XXXXXXXXXXXXXXXX
-Saved to: /data/ntfy/ha_token.txt
+HA integration token created: tk_ab12cd34…
+The full token is not printed to the log.
 ```
+
+The full token is stored in `/data/ntfy/ha_token.txt`. A readable copy is placed in the add-on config folder (`/addon_configs/<slug>_ntfy/ha_token.txt`, reachable through Samba or the SSH add-on).
 
 ---
 
@@ -349,13 +351,13 @@ Recommended path:
 http://homeassistant.local:4280
 ```
 
-5. Token: use the token from:
+5. Token: use the token from the add-on config folder:
 
 ```text
-/data/ntfy/ha_token.txt
+/addon_configs/<slug>_ntfy/ha_token.txt
 ```
 
-The token is also printed in the add-on log on first start.
+The log only shows the first characters of the token.
 
 ---
 
@@ -639,7 +641,7 @@ ntfy publish --title="HA Alert" --priority=5 ha-alerts "Something needs attentio
 Recommended repository layout:
 
 ```text
-ntfy-ha-app/
+ha-apps/
 ├── repository.yaml
 ├── README.md
 └── ntfy/

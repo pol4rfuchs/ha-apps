@@ -29,13 +29,20 @@ USE_SERIAL="$(read_opt use_serial false)"
 LOG_LEVEL="$(read_opt log_level info)"
 
 # ── intiface-engine Argumente ─────────────────────────────────────────────────
+# --log accepts error|warn|info|debug|trace (intiface-engine --help)
+case "$LOG_LEVEL" in
+  error|warn|info|debug|trace) ;;
+  *) echo "WARN: Unbekanntes log_level '$LOG_LEVEL' - verwende info"; LOG_LEVEL=info ;;
+esac
+
 ENGINE_ARGS=(
   --websocket-port "$ENGINE_PORT"
   --websocket-use-all-interfaces
+  --log "$LOG_LEVEL"
 )
 [ "$USE_BLE"    = "true" ] && ENGINE_ARGS+=(--use-bluetooth-le)
 [ "$USE_HID"    = "true" ] && ENGINE_ARGS+=(--use-hid)
-[ "$USE_SERIAL" = "true" ] && ENGINE_ARGS+=(--use-serial-port)
+[ "$USE_SERIAL" = "true" ] && ENGINE_ARGS+=(--use-serial)
 
 # ── D-Bus Setup ───────────────────────────────────────────────────────────────
 echo "INFO: D-Bus Socket: $(ls -la /run/dbus/system_bus_socket 2>/dev/null || echo 'FEHLT!')"
@@ -83,11 +90,11 @@ bt_trust_lovense() {
 # Nur ausführen wenn BLE aktiv
 if [ "$USE_BLE" = "true" ]; then
   bt_trust_lovense &
-  BT_TRUST_PID=$!
 fi
 
 # ── intiface-engine starten ───────────────────────────────────────────────────
-echo "INFO: Starte intiface-engine v${ENGINE_VERSION:-?} auf Port $ENGINE_PORT..."
+ENGINE_VERSION="$(/usr/local/bin/intiface-engine --version 2>/dev/null | head -1 || true)"
+echo "INFO: Starte intiface-engine ${ENGINE_VERSION:-?} auf Port $ENGINE_PORT (log: $LOG_LEVEL)..."
 /usr/local/bin/intiface-engine "${ENGINE_ARGS[@]}" &
 ENGINE_PID=$!
 

@@ -55,9 +55,8 @@ https://github.com/pol4rfuchs/ha-apps
 Install **Matrix Server (ESS CE)** and set at minimum:
 
 ```yaml
-server_name: "your-domain.duckdns.org"
-element_web_url: "https://your-domain.duckdns.org"
-postgres_password: "changeme_please"
+server_name: "example.org"
+element_web_url: "https://example.org"
 enable_registration: false
 ```
 
@@ -72,8 +71,8 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | Option | Default | Description |
 |---|---|---|
 | `server_name` | — | Your Matrix domain. **No trailing slash.** |
-| `element_web_url` | — | External HTTPS URL for Element Web. |
-| `postgres_password` | — | PostgreSQL password — set before first start. |
+| `element_web_url` | `https://example.org:7080` | External HTTPS URL for Element Web. |
+| `postgres_password` | — | Password of the internal database user. Leave empty: the add-on generates one and stores it in `/data/matrix/.pg_password`. If you set a value, it is applied to the database on every start. |
 | `enable_registration` | `false` | Allow public registration. |
 | `enable_federation` | `true` | Connect to the Matrix federation. |
 | `max_upload_size_mb` | `50` | Max media upload size in MB. |
@@ -84,6 +83,26 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | `element_call_url` | — | External HTTPS URL for Element Call. Only used if `enable_voice_calls` is `true`. |
 | `livekit_url` | — | WebSocket URL for LiveKit SFU (`wss://...`). Only used if `enable_voice_calls` is `true`. |
 | `livekit_jwt_url` | — | HTTPS URL for the LiveKit JWT bridge. Only used if `enable_voice_calls` is `true`. |
+| `registration_shared_secret` | — | Secret for admin-controlled user registration. Leave empty to auto-generate. |
+| `mas_enabled` | `false` | Delegates login/registration entirely to the matrix-auth-service add-on (required for Element X QR-code login). Disables native Synapse auth. |
+| `mas_endpoint` | `http://homeassistant.local:8082` | Internally reachable URL of the matrix-auth-service add-on (e.g. http://homeassistant.local:8082). |
+| `mas_secret` | — | Must exactly match the value generated/set in the matrix-auth-service add-on. |
+| `whatsapp_bridge_enabled` | `false` | Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge add-on running with its registration.yaml present in /share). |
+| `signal_bridge_enabled` | `false` | Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge add-on running with its registration.yaml present in /share). |
+| `telegram_bridge_enabled` | `false` | Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge add-on running with its registration.yaml present in /share). |
+| `enable_synapse_admin` | `true` | Start the Synapse Admin web UI on port 8090. |
+| `livekit_turn_enabled` | `false` | Off by default: calls use direct SFU UDP ports (30000-30020), which is more reliable on normal home/mobile networks. Only enable this if you're on a very restrictive network that only allows HTTPS/port 443 (the internal TURN server then uses that fallback path). |
+| `admin_ui_username` | `admin` | Basic-Auth username for the Ketesa (Admin UI) on port 8090. Protects the admin interface at the network level. |
+| `admin_ui_password` | — | Basic-Auth password for the Ketesa (Admin UI). Leave empty to auto-generate on first start (stored in /data/matrix/.admin_ui_auth, never logged). |
+| `media_retention_local_days` | `0` | Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever). |
+| `media_retention_remote_days` | `30` | Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default. |
+| `backup_enabled` | `true` | Periodically dump the Synapse database via pg_dump to /data/matrix/backups/ (consistent, unlike raw filesystem snapshots). |
+| `backup_interval_hours` | `24` | How often to run the pg_dump backup job. |
+| `backup_retention_days` | `7` | How many days of backups to keep before rotating out old dumps. |
+| `login_rate_limit_per_second` | `0.17` | Sustained allowed login attempts per second, per address/account (Synapse rc_login). Synapse default is 0.17. |
+| `login_rate_limit_burst` | `3` | Burst allowance for login attempts before rate limiting kicks in. |
+| `registration_rate_limit_per_second` | `0.17` | Sustained allowed registration attempts per second (Synapse rc_registration). Only relevant if enable_registration is true. |
+| `registration_rate_limit_burst` | `3` | Burst allowance for registration attempts before rate limiting kicks in. |
 
 > ⚠️ `server_name` cannot be changed after the first start — it becomes the permanent Matrix ID (`@user:server_name`).
 
@@ -100,11 +119,11 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | `8448` | Matrix Federation | Direct — port-forward required |
 | `7880` | LiveKit SFU | Via NPM (WebSocket required) |
 | `8089` | LiveKit JWT Bridge | Via NPM |
-| `3478/udp` | TURN (media control) | **Direct — port-forward required, cannot go via NPM** |
-| `5349/tcp` | TURN TLS fallback | Direct — port-forward required (only needed for strict corporate firewalls) |
-| `30000-30020/udp` | TURN Relay Range (media) | **Direct — port-forward required, cannot go via NPM** |
+| `3478/udp` | TURN (media control) | Only with `livekit_turn_enabled: true` — direct, cannot go via NPM |
+| `5349/tcp` | TURN TLS fallback | Only with `livekit_turn_enabled: true` — direct (only needed for strict corporate firewalls) |
+| `30000-30020/udp` | LiveKit media (direct SFU path, or TURN relay with `livekit_turn_enabled`) | **Direct — port-forward required, cannot go via NPM** |
 
-> ⚠️ The three TURN/relay rows are the most commonly missed step in setup — most guides only mention Federation as needing a direct router forward. Without UDP 3478 and the 30000-30020 relay range forwarded, calls will connect (signaling works fine over NPM) but carry no audio or video at all — even between two devices on the same LAN, since LiveKit always routes media through its built-in TURN server by design. The relay range is intentionally kept to 21 ports rather than LiveKit's 10,000-port default; see `NPM_SETUP.md` for why.
+> ⚠️ The media range is the most commonly missed step in setup — most guides only mention Federation as needing a direct router forward. Without UDP 30000-30020 forwarded, calls will connect (signaling works fine over NPM) but carry no audio or video at all, even between two devices on the same LAN. By default (`livekit_turn_enabled: false`) LiveKit uses this range directly; UDP 3478 and TCP 5349 are only needed if you enable the built-in TURN server. The range is intentionally kept to 21 ports rather than LiveKit's 10,000-port default; see `NPM_SETUP.md` for why.
 
 See [`NPM_SETUP.md`](NPM_SETUP.md) for the full Nginx Proxy Manager configuration.
 
@@ -129,7 +148,7 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 > ℹ️ This creates a **new** admin user. To promote an existing user to admin instead, update the database directly:
 > ```bash
 > docker exec -it addon_local_matrix_server \
->   gosu postgres psql -d synapse -c "UPDATE users SET admin = 1 WHERE name = '@username:your-domain.duckdns.org';"
+>   gosu postgres psql -d synapse -c "UPDATE users SET admin = 1 WHERE name = '@username:example.org';"
 > ```
 > Log out and back in afterwards — an already-active session won't pick up the change automatically.
 
@@ -199,10 +218,10 @@ Synapse does not need the ntfy URL in its config — the client registers the ga
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://matrix.your-domain.duckdns.org
-    username: "@homeassistant:your-domain.duckdns.org"
+    homeserver: https://matrix.example.org
+    username: "@homeassistant:example.org"
     password: "ha_user_password"
-    default_room: "#homeassistant:your-domain.duckdns.org"
+    default_room: "#homeassistant:example.org"
 ```
 
 See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full example with automations.
@@ -225,7 +244,7 @@ See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full exampl
 ## 🔍 Test federation
 
 ```
-https://federationtester.matrix.org/#your-domain.duckdns.org
+https://federationtester.matrix.org/#example.org
 ```
 
 ---
@@ -241,7 +260,7 @@ https://federationtester.matrix.org/#your-domain.duckdns.org
 | Web apps not loading | Extraction failed | Delete the relevant `.{app}_version` file in `/data/matrix/` + restart add-on |
 | Synapse token invalid | Add-on reinstalled, DB empty | Re-create admin user |
 | Federation broken | Port 8448 not forwarded | Router: 8448 → HA-IP:8448 |
-| Call connects but no audio/video | TURN UDP 3478 and/or the relay range 30000-30020 not forwarded on the router | Forward both directly (not via NPM) to the HA host. Needed even for calls between devices on the same LAN, since LiveKit always routes media through TURN. |
+| Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (and UDP 3478 / TCP 5349 if `livekit_turn_enabled` is `true`) | Forward them directly (not via NPM) to the HA host. Needed even for calls between devices on the same LAN. |
 | Login stuck loading / blank screen via `http://<LAN-IP>:7080` | Plain HTTP has no "secure context" — browsers disable WebCrypto (needed for E2E encryption) on anything that isn't HTTPS or `localhost` | Use the HTTPS domain (e.g. `https://element.your-domain`) instead, even from the LAN — most routers support NAT hairpinning so this works without leaving the network. Direct `:7080` IP access is a convenience fallback only and won't fully work by design. |
 
 ---

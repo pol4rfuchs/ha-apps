@@ -36,12 +36,12 @@ LABEL \
     io.hass.name="${BUILD_NAME}" \
     io.hass.description="${BUILD_DESCRIPTION}" \
     io.hass.arch="${BUILD_ARCH}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.title="${BUILD_NAME}" \
     org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
     org.opencontainers.image.vendor="pol4rfuchs" \
-    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.licenses="GPL-3.0-or-later" \
     org.opencontainers.image.url="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.created="${BUILD_DATE}" \
@@ -51,11 +51,13 @@ LABEL \
 # - gosu: sicheres Privilege-Dropping (git-User für Forgejo-Prozess)
 # - git: für Git-Operationen
 # - openssh-keygen: persistente SSH-Host-Keys generieren
-# - curl/jq: HA Supervisor API (Ingress-URL lesen) — oft schon in HA-Base
+# - gettext-envsubst: app.ini wird beim ersten Start per envsubst aus dem Template erzeugt
+# - curl/jq: allgemeine Hilfswerkzeuge, oft schon in der HA-Base
 RUN apk add --no-cache \
         gosu \
         git \
         openssh \
+        gettext-envsubst \
         curl \
         jq
 # Forgejo Binary + Tools aus Stage 1 kopieren

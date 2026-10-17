@@ -87,8 +87,9 @@ jobs:
             tag_prefix: ntfy-manager
             reason: "Internal app add-on; no external upstream version/ref is declared in-repo."
           - addon: searxng
-            mode: dockerhub_from_tag
+            mode: dockerhub_arg_tag
             dockerhub_repo: searxng/searxng
+            arg_name: SEARXNG_VERSION
             image_prefix: searxng/searxng
             tag_prefix: searxng
           - addon: nextcloud
@@ -96,7 +97,9 @@ jobs:
             dockerhub_repo: library/nextcloud
             arg_name: NEXTCLOUD_TAG
             tag_prefix: nextcloud
-            tag_filter: '^\d+\.\d+\.\d+-apache$'
+            # Nextcloud cannot skip a major version, so only the current major is bumped
+            # automatically. Raise the number by hand, one major at a time.
+            tag_filter: '^35\.\d+\.\d+-apache$'
           - addon: forgejo
             mode: codeberg_latest_release_arg
             codeberg_repo: forgejo/forgejo

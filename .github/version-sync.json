@@ -66,7 +66,7 @@
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
         "value_prefix": "v",
-        "badge": { "label": "ntfy--ha--app", "color": "2ECC71" },
+        "badge": { "label": "ntfy", "color": "2ECC71" },
         "table_row_label": "App Version",
         "table_value_format": "`{value}`"
       }

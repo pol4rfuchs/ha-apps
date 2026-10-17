@@ -11,7 +11,7 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) als Sing
 - Music Bots (Radio, YouTube via yt-dlp, Local Library)
 - Bot Flow Engine (visueller Node-Editor für Automations)
 - Embeddable Server Widgets (SVG/PNG/JSON)
-- Ingress-Unterstützung (kein offener Port nötig)
+- Eigene Weboberfläche auf Port 8066 (kein Ingress), mit eigenem Login
 
 ## Voraussetzungen
 
@@ -29,7 +29,7 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) als Sing
 
 3. Add-on starten
 
-4. Via Ingress öffnen → `/setup` → Admin-Account anlegen
+4. Weboberfläche öffnen (`http://<ha-host>:8066`, Button „Web-UI öffnen“) → `/setup` → Admin-Account anlegen
 
 5. Unter **Settings → Connections** den TS6-Server eintragen  
    (Host, WebQuery-Port, API-Key)
@@ -48,7 +48,7 @@ Die Secrets werden beim ersten Start automatisch generiert.
 ## Architektur im Container
 
 ```
-nginx :8099  (Ingress)
+nginx :8066  (Host-Port, kein Ingress)
   ├── /          → React SPA (statisch aus /var/www/html)
   ├── /api/      → Node.js Backend :3001
   ├── /socket.io → WebSocket Backend :3001
@@ -64,4 +64,11 @@ s6-overlay Services:
 
 | Option | Standard | Beschreibung |
 |--------|----------|--------------|
-| `log_level` | `info` | Log-Level (trace/debug/info/warning/error/fatal) |
+| `video_streaming` | `false` | Aktiviert den WebRTC-Medien-Sidecar zum Streamen von Video in TeamSpeak-Kanäle. Aus: der Sidecar läuft im Leerlauf und braucht kaum RAM/CPU. |
+| `log_level` | `info` | Log-Level des Backends (trace/debug/info/notice/warning/error/fatal). Das Backend loggt über `console.*`, die Stufen werden dort gefiltert (`log`/`info` = info, `warn` = warning, `error` = error). nginx und der Video-Sidecar sind nicht betroffen. |
+
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:8066`. There is no Ingress; the panel is protected by its own login only, not by Home Assistant authentication.
+
+**External (internet):** recommendation **VPN or trusted access only** (a reverse proxy with TLS plus an access layer such as VPN or Cloudflare Access). Never expose the WebQuery port `10080`. The public server widgets under `/widget/` are intentionally unauthenticated status views; they are the only part meant to be public.

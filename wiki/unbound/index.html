@@ -402,6 +402,7 @@
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data/config.json, backup</small></span></a>
       <a class="nav-item" href="#hardening" data-target="hardening"><span class="nav-icon">🔒</span><span><strong>Hardening</strong><small>Source build, CVEs, AppArmor</small></span></a>
       <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.25.2-ha3-pol4r1</small></span></a>
+      <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>No resolution, DNSSEC, port conflicts</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
     </nav>
@@ -630,6 +631,17 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
           </tbody>
         </table>
         <blockquote>This add-on has its own manual version scheme rather than Conventional Commits + Release Please, because upstream releases (source tarballs) don't map cleanly onto semantic-release automation.</blockquote>
+      </div>
+    </article>
+
+    <article id="external-access" class="doc-section glass-card" data-search="external-access external access internet reverse proxy vpn lan local https firewall port forward">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">External access</p><h2>Local and external access</h2></div></div>
+        <a class="section-link" href="#external-access">#external-access</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Local (LAN):</strong> DNS listens on <code>5053</code> (tcp/udp). Point your router, AdGuard upstream or clients at <code>&lt;ha-host&gt;:5053</code>. The web UI is Ingress-only (port 2137 is not mapped) and relies on the Home Assistant login; it has no login of its own, so the app rejects every request that does not come from the Ingress gateway. By default only private networks may query the resolver (access control).</p>
+        <p><strong>External (internet):</strong> <strong>never forward <code>5053</code>.</strong> An open resolver can be abused for DNS amplification attacks. If your router can only forward port 53, use a NAT redirect inside the LAN only.</p>
       </div>
     </article>
 

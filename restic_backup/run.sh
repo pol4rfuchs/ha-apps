@@ -9,20 +9,24 @@ REPOSITORY="$(bashio::config 'repository')"
 CRON_SCHEDULE="$(bashio::config 'cron_schedule')"
 RUN_ON_START="$(bashio::config 'run_on_start')"
 
+RESTIC_PASSWORD="$(bashio::config 'restic_password')"
 export RESTIC_REPOSITORY="${REPOSITORY}"
-export RESTIC_PASSWORD="$(bashio::config 'restic_password')"
+export RESTIC_PASSWORD
 
 # Optional S3/B2/MinIO-compatible credentials — only exported if set, so a
 # purely local repository (default: /share/restic-backup/repo) never needs
 # them and nothing empty leaks into the environment.
 if bashio::config.has_value 'aws_access_key_id'; then
-    export AWS_ACCESS_KEY_ID="$(bashio::config 'aws_access_key_id')"
+    AWS_ACCESS_KEY_ID="$(bashio::config 'aws_access_key_id')"
+    export AWS_ACCESS_KEY_ID
 fi
 if bashio::config.has_value 'aws_secret_access_key'; then
-    export AWS_SECRET_ACCESS_KEY="$(bashio::config 'aws_secret_access_key')"
+    AWS_SECRET_ACCESS_KEY="$(bashio::config 'aws_secret_access_key')"
+    export AWS_SECRET_ACCESS_KEY
 fi
 if bashio::config.has_value 'aws_default_region'; then
-    export AWS_DEFAULT_REGION="$(bashio::config 'aws_default_region')"
+    AWS_DEFAULT_REGION="$(bashio::config 'aws_default_region')"
+    export AWS_DEFAULT_REGION
 fi
 
 # Initialize the repository on first run. `restic snapshots` is used as a

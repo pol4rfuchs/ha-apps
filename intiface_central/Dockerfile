@@ -19,7 +19,7 @@ ARG BUILD_VERSION
 LABEL \
   io.hass.name="Intiface Central" \
   io.hass.description="Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities" \
-  io.hass.type="addon" \
+  io.hass.type="app" \
   io.hass.arch="${BUILD_ARCH}" \
   io.hass.version="${BUILD_VERSION}"
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -36,8 +36,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=engine-builder /usr/local/cargo/bin/intiface-engine /usr/local/bin/intiface-engine
 WORKDIR /opt/intiface-addon
-COPY package.json ./
-RUN npm install --omit=dev --no-audit --no-fund
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
 COPY server.js ./
 COPY run.sh /run.sh
 RUN chmod +x /run.sh

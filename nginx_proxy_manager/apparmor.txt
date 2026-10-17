@@ -47,10 +47,6 @@ profile nginx_proxy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   /data/                       rw,
   /data/**                     rw,
 
-  # Secrets from secrets.yaml (mounted read-only by Supervisor)
-  /etc/secrets/                r,
-  /etc/secrets/**               r,
-
   # /tmp (self-healing dummy certs, S6_BASEDIR)
   /tmp/                        rw,
   /tmp/**                      rw,

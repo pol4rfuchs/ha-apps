@@ -35,11 +35,10 @@
 ## ✨ Features
 
 - Official `jc21/nginx-proxy-manager` image — upstream updates apply directly
-- Secrets support — DB password and JWT secret from `secrets.yaml`
 - SQLite (default) or MariaDB add-on integration
 - Web UI on port `81`
 - Dark mode (native NPM UI)
-- AppArmor profile for secure container operation
+- AppArmor profile shipped in the repository (currently not enforced: `apparmor: false`)
 - HA backup compatible — data and certificates included in snapshots
 - Let's Encrypt with DNS-01 / Cloudflare / wildcard support
 - Multi-arch: `amd64` + `aarch64`
@@ -64,34 +63,28 @@ https://github.com/pol4rfuchs/ha-apps
 
 Install **Nginx Proxy Manager** and open the Configuration tab.
 
-Minimal config (SQLite, no secrets):
+Minimal config (SQLite):
 
 ```yaml
 # No required options for SQLite — just start
 ```
 
-With MariaDB and secrets:
+With MariaDB:
 
 ```yaml
-use_mariadb: true
+db_type: mariadb
 mariadb_host: "core-mariadb"
 mariadb_port: 3306
-mariadb_database: "npm"
-mariadb_username: !secret npm_db_user
-mariadb_password: !secret npm_db_password
-npm_jwt_secret: !secret npm_jwt_secret
+mariadb_name: "npm"
+mariadb_user: "npm"
+mariadb_password: "your-password"
 ```
 
 ### Step 3 — Start
 
 Open the Web UI at `http://[HA-IP]:81`.
 
-Default login credentials (change immediately):
-
-```
-Email:    admin@example.com
-Password: changeme
-```
+On first start NPM shows a setup wizard ("Welcome! Get started by creating your admin account."). Create the admin account right away: until you do, anyone on your LAN who can reach port 81 can create it. There is no default login (`admin@example.com` / `changeme`) since NPM 2.13.
 
 ---
 
@@ -99,13 +92,14 @@ Password: changeme
 
 | Option | Default | Description |
 |---|---|---|
-| `use_mariadb` | `false` | Use MariaDB add-on instead of SQLite. |
-| `mariadb_host` | `core-mariadb` | MariaDB hostname (HA add-on name). |
+| `db_type` | `sqlite` | `sqlite` or `mariadb`. |
+| `mariadb_host` | `""` | MariaDB hostname (HA add-on: `core-mariadb`). |
 | `mariadb_port` | `3306` | MariaDB port. |
-| `mariadb_database` | `npm` | Database name. |
-| `mariadb_username` | — | MariaDB username. |
-| `mariadb_password` | — | MariaDB password. Use `!secret`. |
-| `npm_jwt_secret` | — | JWT secret for session tokens. Use `!secret`. |
+| `mariadb_name` | `npm` | Database name. |
+| `mariadb_user` | `npm` | MariaDB username. |
+| `mariadb_password` | `""` | MariaDB password. |
+| `disable_ipv6` | `false` | Disable IPv6 in nginx. |
+| `log_level` | `info` | Log verbosity. |
 
 ---
 
@@ -139,9 +133,11 @@ For DuckDNS: use the DuckDNS provider and enter your token.
 
 ```text
 /data/
-├── database.sqlite    ← SQLite database (if not using MariaDB)
-├── nginx/             ← Generated nginx configs
-└── letsencrypt/       ← Certificates and ACME data
+├── npm/
+│   ├── data/          ← database.sqlite (SQLite mode), generated nginx configs, NPM settings
+│   ├── letsencrypt/   ← Certificates and ACME data
+│   └── logs/          ← Access/error logs
+└── keys.json          ← Session key pair, created by NPM
 ```
 
 HA backups include the add-on `/data` directory automatically.

@@ -1,7 +1,26 @@
 # Changelog
 
-## [33.0.19](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.18...nextcloud-v33.0.19) (2026-09-30)
+## [33.0.22](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.21...nextcloud-v33.0.22) (2026-10-16)
 
+
+### Bug Fixes
+
+* **nextcloud:** bump upstream only within the current major, correct docs ([#573](https://github.com/pol4rfuchs/ha-apps/issues/573)) ([1893e08](https://github.com/pol4rfuchs/ha-apps/commit/1893e08bbd342818a18444940e4043efdaa2c4ba))
+
+## [33.0.21](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.20...nextcloud-v33.0.21) (2026-10-16)
+
+
+### Bug Fixes
+
+* **nextcloud:** make the add-on start, persist config/apps/themes, require admin password ([#548](https://github.com/pol4rfuchs/ha-apps/issues/548)) ([d95be00](https://github.com/pol4rfuchs/ha-apps/commit/d95be00e7d2b6572f4ba9748ec3db2c3053645ad))
+
+## [33.0.20](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.19...nextcloud-v33.0.20) (2026-10-11)
+
+### Bug Fixes
+
+* **nextcloud:** default trusted domains to HA hostnames and warn when empty ([#502](https://github.com/pol4rfuchs/ha-apps/issues/502)) ([6640daf](https://github.com/pol4rfuchs/ha-apps/commit/6640dafe1fb7c6697675e26ad06574a727e4aae2))
+
+## [33.0.19](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.18...nextcloud-v33.0.19) (2026-09-30)
 
 ### Bug Fixes
 
@@ -9,13 +28,11 @@
 
 ## [33.0.18](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.17...nextcloud-v33.0.18) (2026-09-19)
 
-
 ### Bug Fixes
 
 * **nextcloud:** update upstream to 35.0.0-apach (changelog: https://github.com/nextcloud/server/releases) ([#392](https://github.com/pol4rfuchs/ha-apps/issues/392)) ([1dbbc35](https://github.com/pol4rfuchs/ha-apps/commit/1dbbc35e753e1a34d7b5e4d8ec37d03d1169291e))
 
 ## [33.0.17](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.16...nextcloud-v33.0.17) (2026-09-12)
-
 
 ### Bug Fixes
 
@@ -23,13 +40,11 @@
 
 ## [33.0.16](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.15...nextcloud-v33.0.16) (2026-08-15)
 
-
 ### Bug Fixes
 
 * **nextcloud:** update upstream to 34.0.3-apach (changelog: https://github.com/nextcloud/server/releases) ([#301](https://github.com/pol4rfuchs/ha-apps/issues/301)) ([292d218](https://github.com/pol4rfuchs/ha-apps/commit/292d218c6f14f93ccebeeaf7840d2e275264808f))
 
 ## [33.0.15](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.14...nextcloud-v33.0.15) (2026-07-25)
-
 
 ### Bug Fixes
 
@@ -37,13 +52,11 @@
 
 ## [33.0.14](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.13...nextcloud-v33.0.14) (2026-07-22)
 
-
 ### Bug Fixes
 
 * **nextcloud:** add DOCS.md and draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([b22acf4](https://github.com/pol4rfuchs/ha-apps/commit/b22acf4562dfa2d5b5cbe52e8680576169ccfa70))
 
 ## [33.0.13](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.12...nextcloud-v33.0.13) (2026-07-19)
-
 
 ### Bug Fixes
 
@@ -51,29 +64,15 @@
 
 ## [33.0.12](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.11...nextcloud-v33.0.12) (2026-07-06)
 
-
 ### Bug Fixes
 
 * **nextcloud:** update upstream to 34.0.1-apach ([#151](https://github.com/pol4rfuchs/ha-apps/issues/151)) ([546f476](https://github.com/pol4rfuchs/ha-apps/commit/546f47631317ae7e76c612e357e0152d603c46b6))
 
 ## [33.0.11](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.10...nextcloud-v33.0.11) (2026-06-17)
 
-
-### Bug Fixes
-
-* **nextcloud:** update upstream to 34.0.0-apach ([0012865](https://github.com/pol4rfuchs/ha-apps/commit/001286539355baaa7ebf0d40a66d2712f6bce4ae))
-* **nextcloud:** update upstream to 34.0.0-apach ([fb20f67](https://github.com/pol4rfuchs/ha-apps/commit/fb20f67271b8a15be190a2861b8035287e4189c2))
-
 ## [33.0.10](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.9...nextcloud-v33.0.10) (2026-06-17)
 
-
-### Bug Fixes
-
-* **nextcloud:** update upstream to 34.0.0-apach ([0012865](https://github.com/pol4rfuchs/ha-apps/commit/001286539355baaa7ebf0d40a66d2712f6bce4ae))
-* **nextcloud:** update upstream to 34.0.0-apach ([fb20f67](https://github.com/pol4rfuchs/ha-apps/commit/fb20f67271b8a15be190a2861b8035287e4189c2))
-
 ## [33.0.8](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-vv33.0.7...nextcloud-vv33.0.8) (2026-06-15)
-
 
 ### Bug Fixes
 

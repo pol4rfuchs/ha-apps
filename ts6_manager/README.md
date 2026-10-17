@@ -8,11 +8,11 @@
 
 <div align="center">
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-teamspeak6--manager--ha--app-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Upstream](https://img.shields.io/badge/Upstream-clusterzx%2Fts6--manager-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/clusterzx/ts6-manager)
-[![App Version](https://img.shields.io/badge/ts6--manager-1.1.6-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/ts6--manager-1.1.8-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
-[![License](https://img.shields.io/badge/License-MIT-2ECC71?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache--2.0-2ECC71?style=for-the-badge)](LICENSE)
 
 **Web-based Management Interface für deinen TeamSpeak 6 Server — als sauber verpacktes Home Assistant Add-on.**
 
@@ -90,7 +90,7 @@ This repository contains a complete **Home Assistant Add-on** that wraps [`clust
 |---|---|
 | **HA Add-on Name** | `TS6 Manager` |
 | **HA Add-on Slug** | `ts6_manager` |
-| **Add-on Version** | `1.1.6` |
+| **Add-on Version** | `1.1.8` |
 | **Default Web UI Port** | `8066` |
 | **Backend Target** | TeamSpeak 6 WebQuery HTTP API |
 | **TS6 WebQuery Port** | `10080` |
@@ -344,7 +344,7 @@ A full backup should preserve:
 Recommended repository layout:
 
 ```text
-teamspeak6-manager-ha-app/
+ha-apps/
 ├── repository.yaml
 ├── README.md
 └── ts6_manager/
@@ -365,9 +365,8 @@ teamspeak6-manager-ha-app/
 |---|---|
 | `repository.yaml` | Identifies the repository as a Home Assistant add-on repository |
 | `ts6_manager/config.yaml` | Add-on metadata, ports, schema, options and UI settings |
-| `ts6_manager/build.yaml` | Build configuration per architecture |
 | `ts6_manager/Dockerfile` | Builds the single-image TS6 Manager add-on |
-| `ts6_manager/rootfs/run.sh` | Startup script inside the add-on |
+| `ts6_manager/rootfs/` | s6-overlay services (init, backend, sidecar, nginx) and the nginx config |
 | `ts6_manager/DOCS.md` | Add-on Store documentation |
 | `ts6_manager/CHANGELOG.md` | Version history |
 

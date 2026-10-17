@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.4...intiface_central-v1.0.5) (2026-10-16)
+
+
+### Bug Fixes
+
+* **intiface_central:** make log_level work, fix the serial flag, rewrite the README, add a lockfile ([#569](https://github.com/pol4rfuchs/ha-apps/issues/569)) ([1eb0e85](https://github.com/pol4rfuchs/ha-apps/commit/1eb0e8530fa414c469e1d98cc9b4b02906a43798))
+
 ## [1.0.4](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.3...intiface_central-v1.0.4) (2026-07-22)
 
 

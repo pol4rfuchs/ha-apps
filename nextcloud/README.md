@@ -24,7 +24,7 @@
 |---|---|
 | **Base image** | `nextcloud:apache` (official) |
 | **Nextcloud version** | `35.0.1` |
-| **Add-on version** | `33.0.19` |
+| **Add-on version** | `33.0.22` |
 | **Default port** | `8280` |
 | **App store** | ✅ unrestricted |
 | **Arch** | `amd64`, `aarch64` |
@@ -58,8 +58,8 @@
 | Option | Default | Description |
 |---|---|---|
 | `admin_user` | `admin` | Initial admin username |
-| `admin_password` | `changeme` | Initial admin password — **change this** |
-| `trusted_domains` | `""` | Space-separated list, e.g. `"nextcloud.example.com 192.168.1.10"` |
+| `admin_password` | `""` | Initial admin password — **required**, the first start fails while it is empty |
+| `trusted_domains` | `"homeassistant.local homeassistant"` | Space-separated list, e.g. `"nextcloud.example.com 192.0.2.10"` — add the LAN IP or domain you use **before the first start** |
 | `db_type` | `mysql` | `mysql` / `pgsql` / `sqlite` |
 | `db_host` | `core-mariadb` | MariaDB hostname (HA internal: `core-mariadb`) |
 | `db_port` | `3306` | Database port |
@@ -76,11 +76,17 @@ All data is stored under `/data/nextcloud/` in the add-on's persistent volume:
 
 ```
 /data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)
 ```
 
-On image updates only the app layer changes — user files in `data/` are never touched.
+The Nextcloud code itself is not stored: it comes from the add-on image and is
+restored on every start.
+
+On add-on updates only the app code changes. Nextcloud's own `occ upgrade` runs automatically when the new version is newer; user files in `data/` are never touched. Downgrades and skipping a major version are refused.
 
 ## Trusted domains
 
@@ -110,9 +116,9 @@ php /var/www/html/occ config:system:set overwrite.cli.url --value="https://nextc
 ## 📜 License
 
 ```text
-MIT
+Apache-2.0 (add-on wrapper)  /  AGPL-3.0 (Nextcloud Server)
 ```
 
-This add-on wrapper is licensed under the MIT License.
+The add-on wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
 
 Nextcloud Server is licensed under [AGPL-3.0](https://github.com/nextcloud/server/blob/master/COPYING).

@@ -23,13 +23,23 @@ remain under their respective upstream licenses.
 | Navidrome | Navidrome | https://github.com/navidrome/navidrome | See upstream license |
 | Nginx Proxy Manager | Nginx Proxy Manager | https://github.com/NginxProxyManager/nginx-proxy-manager | See upstream license |
 | Intiface Central | Intiface / Buttplug ecosystem | https://github.com/intiface | See upstream license |
+| Forgejo | Forgejo | https://forgejo.org | GPL-3.0-or-later (versions before 9.0: MIT) |
+| Nextcloud | Nextcloud Server | https://github.com/nextcloud/server | AGPL-3.0 |
+| Unbound | Unbound (NLnet Labs) | https://github.com/NLnetLabs/unbound | BSD-3-Clause |
+| Restic Backup | restic | https://github.com/restic/restic | BSD-2-Clause |
+| Matrix Authentication Service | Matrix Authentication Service | https://github.com/element-hq/matrix-authentication-service | AGPL-3.0 |
+| Matrix WhatsApp Bridge | mautrix-whatsapp | https://github.com/mautrix/whatsapp | AGPL-3.0 |
+| Matrix Signal Bridge | mautrix-signal | https://github.com/mautrix/signal | AGPL-3.0 |
+| Matrix Telegram Bridge | mautrix-telegram | https://github.com/mautrix/telegram | AGPL-3.0 |
+| UniFi OS Control Center | Original application of this repository | https://github.com/pol4rfuchs/ha-apps | Apache-2.0 (its third-party libraries keep their own licenses) |
 | Vaultwarden | Vaultwarden | https://github.com/dani-garcia/vaultwarden | AGPL-3.0 |
 
 ## Trademarks and Logos
 
 Names, logos and trademarks such as Home Assistant, TeamSpeak, ntfy,
-Matrix, SearXNG, Navidrome, Nginx Proxy Manager, Intiface, Vaultwarden, Bitwarden and other
-third-party marks belong to their respective owners.
+Matrix, SearXNG, Navidrome, Nginx Proxy Manager, Intiface, Forgejo,
+Nextcloud, Unbound, restic, WhatsApp, Signal, Telegram, UniFi (Ubiquiti),
+Vaultwarden, Bitwarden and other third-party marks belong to their respective owners.
 
 Use of those names or logos in this repository is for identification,
 compatibility and documentation purposes only.

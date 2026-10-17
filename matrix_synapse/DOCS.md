@@ -11,8 +11,7 @@ Full Matrix homeserver stack: Synapse + Element Web + Element Call (Voice/Video)
 3. Install **Matrix Server (ESS CE)** and configure at minimum:
 
 ```yaml
-server_name: "your-domain.duckdns.org"
-postgres_password: "changeme_please"
+server_name: "example.org"
 enable_registration: false
 ```
 
@@ -41,11 +40,11 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 | `8448` | Matrix Federation | Direct — port-forward required |
 | `7880` | LiveKit SFU | Via NPM (WebSocket required) |
 | `8089` | LiveKit JWT Bridge | Via NPM |
-| `3478/udp` | TURN (media control) | Direct — port-forward required, cannot go via NPM |
-| `5349/tcp` | TURN TLS fallback | Direct — port-forward required, cannot go via NPM |
-| `30000-30020/udp` | TURN Relay Range (media) | Direct — port-forward required, cannot go via NPM |
+| `3478/udp` | TURN (media control) | Only with `livekit_turn_enabled: true` — direct, cannot go via NPM |
+| `5349/tcp` | TURN TLS fallback | Only with `livekit_turn_enabled: true` — direct, cannot go via NPM |
+| `30000-30020/udp` | LiveKit media (direct SFU path, or TURN relay with `livekit_turn_enabled`) | Direct — port-forward required, cannot go via NPM |
 
-> ⚠️ The TURN/relay ports are the most commonly missed step: calls will connect but carry no audio/video without them forwarded on your router — even between two devices on the same LAN, since LiveKit always routes media through TURN by design.
+> ⚠️ The media range is the most commonly missed step: calls will connect but carry no audio/video without UDP 30000-30020 forwarded on your router — even between two devices on the same LAN. UDP 3478 and TCP 5349 are only needed if you enable `livekit_turn_enabled` (off by default).
 
 See the [NPM_SETUP.md](https://github.com/pol4rfuchs/ha-apps/blob/main/matrix_synapse/NPM_SETUP.md) for the full Nginx Proxy Manager setup.
 
@@ -79,5 +78,16 @@ Element Web, Ketesa, and Element Call each compare their installed version again
 | Admin Panel shows "Something went wrong" | F12 → Application → Clear Site Data |
 | Federation broken | Router: forward port 8448 → HA-IP:8448 |
 | Element Web / Ketesa / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
-| Call connects but no audio/video | TURN UDP 3478 and/or relay range 30000-30020 not forwarded on the router (direct, not via NPM) |
+| Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (direct, not via NPM); with `livekit_turn_enabled` also UDP 3478 / TCP 5349 |
 | Login stuck loading via `http://<LAN-IP>:7080` | Plain HTTP has no secure context — browsers disable WebCrypto. Use the HTTPS domain instead, even from the LAN |
+
+## Local and external access
+
+**Local (LAN):** the services are reachable on the host ports listed above (Element Web `7080`, Synapse API `8008`, ...). Element needs a secure context (HTTPS) for end-to-end encryption, so plain `http://<ha-host>:7080` only works for a quick look. For real use put a reverse proxy with a certificate in front and point a local DNS rewrite at your HA host. A real `server_name` is required on the first start; placeholders such as `example.org` are refused.
+
+**External (internet):** recommendation **ok, with these rules:**
+
+- Element Web, Synapse API and LiveKit: only through a reverse proxy with TLS (for example Nginx Proxy Manager).
+- Federation (`8448`) and the LiveKit media range (and the TURN ports, if enabled) are meant to be port-forwarded directly (see the port table). This is the exception for a federating Matrix server. Set `enable_federation: false` for a private server; it is **on by default**.
+- Ketesa (admin UI, `8090`): **LAN or VPN only.** It is protected by basic auth (a password is generated when `admin_ui_password` is empty) but should not be public.
+- Registration is off by default (`enable_registration: false`). Keep it off.

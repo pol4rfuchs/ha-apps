@@ -103,3 +103,9 @@ nginx is set to `proxy_read_timeout 24h`. If you're behind a reverse proxy, chec
 
 **Reservation API returns 404**
 You're using a ntfy server too old to support reservations. Reservations are a paid-tier / self-host-with-payments feature.
+
+## Local and external access
+
+**Local (LAN):** open the panel from the Home Assistant sidebar (Ingress, protected by your HA login) or, optionally, directly on `http://<ha-host>:8099`. The direct port is optional; clear it in the add-on's Network tab if you only want Ingress. Either way the panel asks for an ntfy login, and the session cookie is encrypted.
+
+**External (internet):** recommendation **not recommended, VPN only.** The panel manages ntfy users, tokens and ACLs. If you must publish it, use a reverse proxy with TLS plus an additional access layer. The session cookie is not flagged `Secure` (the panel assumes plain HTTP behind Ingress).

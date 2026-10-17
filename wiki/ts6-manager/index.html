@@ -714,7 +714,7 @@ TS6 Manager → private LAN/container route → TS6 WebQuery :10080</code></pre>
         <ul>
           <li>Treat the WebQuery API key like a password.</li>
           <li>Do not expose WebQuery port <code>10080</code> to the internet.</li>
-          <li>Keep the manager behind Home Assistant authentication, VPN, trusted LAN or an external access-control layer.</li>
+          <li>Keep the manager behind a VPN, a trusted LAN or an external access-control layer. It has its own login but no Ingress, so Home Assistant authentication does not protect it.</li>
           <li>Never commit <code>secrets.env</code>, SQLite databases, API keys or backup archives to Git.</li>
           <li>Use a strong admin password in the setup wizard.</li>
           <li>Be careful with public widgets: they are status surfaces and should not leak private channel/client details you do not want public.</li>
@@ -730,6 +730,9 @@ TS6 Manager → private LAN/container route → TS6 WebQuery :10080</code></pre>
             <tr><td>API key rotated after leaks</td><td>Required after any suspected exposure.</td></tr>
           </tbody>
         </table>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:8066</code>. There is no Ingress; the panel is protected by its own login only, not by Home Assistant authentication.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>VPN or trusted access only</strong> (a reverse proxy with TLS plus an access layer such as VPN or Cloudflare Access). Never expose the WebQuery port <code>10080</code>. The public server widgets under <code>/widget/</code> are intentionally unauthenticated status views; they are the only part meant to be public.</p>
       </div>
     </article>
 

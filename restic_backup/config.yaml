@@ -4,7 +4,7 @@ description: >-
   Scheduled restic backups of HA config/media/addon data with ntfy alerting on
   failure
 url: https://github.com/pol4rfuchs/ha-apps
-version: "0.2.1"
+version: "0.2.3"
 slug: restic_backup
 image: ghcr.io/pol4rfuchs/restic_backup
 init: false
@@ -14,7 +14,7 @@ arch:
   - aarch64
 map:
   - homeassistant_config:ro
-  - addon_configs:ro
+  - all_addon_configs:ro
   - media:ro
   - share:rw
   - ssl:ro

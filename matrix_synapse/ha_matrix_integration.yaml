@@ -6,14 +6,14 @@
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://deine-domain.duckdns.org  # ← deinen Server eintragen
-    username: "@homeassistant:deine-domain.duckdns.org"
+    homeserver: https://example.org  # ← deinen Server eintragen
+    username: "@homeassistant:example.org"
     password: "dein_ha_matrix_passwort"
-    default_room: "#homeassistant:deine-domain.duckdns.org"
+    default_room: "#homeassistant:example.org"
     # Weitere Räume definieren:
     rooms:
-      - "#alarms:deine-domain.duckdns.org"
-      - "#presence:deine-domain.duckdns.org"
+      - "#alarms:example.org"
+      - "#presence:example.org"
 
 # ── Beispiel Automationen ──────────────────────────────────────────────────
 automation:
@@ -27,7 +27,7 @@ automation:
       - service: notify.matrix_notify
         data:
           message: "🚨 Bewegung erkannt!"
-          target: "#alarms:deine-domain.duckdns.org"
+          target: "#alarms:example.org"
 
   # Tagesübersicht morgens
   - alias: "Matrix: Tagesübersicht"
@@ -61,4 +61,4 @@ script:
       - service: notify.matrix_notify
         data:
           message: "{{ message }}"
-          target: "{{ room | default('#homeassistant:deine-domain.duckdns.org') }}"
+          target: "{{ room | default('#homeassistant:example.org') }}"

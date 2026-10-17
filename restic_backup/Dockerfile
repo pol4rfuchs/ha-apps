@@ -1,6 +1,6 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add restic_backup/build.yaml.
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
 FROM ${BUILD_FROM}
 
@@ -9,12 +9,12 @@ ARG BUILD_VERSION=dev
 
 LABEL \
     io.hass.version="${BUILD_VERSION}" \
-    io.hass.type="addon" \
+    io.hass.type="app" \
     io.hass.name="restic_backup" \
     io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.title="Restic Backup Home Assistant Add-on" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
-    org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.0" \
+    org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.7" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
     org.opencontainers.image.description="Scheduled restic backups with ntfy alerting, packaged as a Home Assistant add-on"
 

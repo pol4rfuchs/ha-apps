@@ -2,7 +2,7 @@
 configuration:
   log_level:
     name: Log-Level
-    description: "Detailgrad der TS6-Manager-Log-Ausgabe. 'info' für den Normalbetrieb, 'debug' zur Fehlersuche."
+    description: "Detailgrad der Backend-Log-Ausgabe des TS6 Managers. 'info' für den Normalbetrieb, 'debug' zur Fehlersuche. nginx und der Video-Sidecar sind nicht betroffen."
   video_streaming:
     name: Video-Streaming
     description: "Aktiviert den WebRTC-Sidecar zum Streamen von YouTube/Twitch/Direct-URL-Videos in TeamSpeak-Kanäle. Standardmäßig aus, um RAM/CPU zu sparen, solange ungenutzt; der Sidecar idled dann fast ohne Ressourcenverbrauch."

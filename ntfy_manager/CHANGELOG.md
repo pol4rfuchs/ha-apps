@@ -1,7 +1,13 @@
 # Changelog
 
-## [0.2.14](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.13...ntfy_manager-v0.2.14) (2026-10-04)
+## [0.2.15](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.14...ntfy_manager-v0.2.15) (2026-10-16)
 
+
+### Bug Fixes
+
+* **ntfy_manager:** build from a lockfile and stop masking errors in the start script ([#566](https://github.com/pol4rfuchs/ha-apps/issues/566)) ([ed914b6](https://github.com/pol4rfuchs/ha-apps/commit/ed914b6070b085e333488c1ea27c897467e265e8))
+
+## [0.2.14](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.13...ntfy_manager-v0.2.14) (2026-10-04)
 
 ### Bug Fixes
 
@@ -9,14 +15,7 @@
 
 ## [0.2.13](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.12...ntfy_manager-v0.2.13) (2026-07-23)
 
-
-### Bug Fixes
-
-* **ntfy_manager:** add de.yaml, draft apparmor profile (disabled pending manual test), --- header, drop -ha-app suffix ([f116752](https://github.com/pol4rfuchs/ha-apps/commit/f1167520005ecbe75a98381f82d52c95425abc92))
-* **ntfy_manager:** add missing .js extension to relative import (NodeNext moduleResolution) ([ca70913](https://github.com/pol4rfuchs/ha-apps/commit/ca7091376c2460f468ce579e1cfd6fe5a8e39b04))
-
 ## [0.2.13](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.12...ntfy_manager-v0.2.13) (2026-07-22)
-
 
 ### Bug Fixes
 
@@ -24,7 +23,6 @@
 * **ntfy_manager:** add missing .js extension to relative import (NodeNext moduleResolution) ([ca70913](https://github.com/pol4rfuchs/ha-apps/commit/ca7091376c2460f468ce579e1cfd6fe5a8e39b04))
 
 ## [0.2.12](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.11...ntfy_manager-v0.2.12) (2026-07-19)
-
 
 ### Bug Fixes
 
@@ -34,13 +32,11 @@
 
 ## [0.2.11](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.10...ntfy_manager-v0.2.11) (2026-06-29)
 
-
 ### Bug Fixes
 
 * **ntfy_manager:** real logout, clearer admin-role limit, request timeout ([222a9e8](https://github.com/pol4rfuchs/ha-apps/commit/222a9e811089a170a06c925a973067cb4b613c2c))
 
 ## [0.2.10](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.9...ntfy_manager-v0.2.10) (2026-06-27)
-
 
 ### Bug Fixes
 
@@ -48,29 +44,23 @@
 
 ## [0.2.9](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.8...ntfy_manager-v0.2.9) (2026-06-27)
 
-
 ### Bug Fixes
 
 * **ntfy_manager:** update react monorepo to v19 ([#87](https://github.com/pol4rfuchs/ha-apps/issues/87)) ([271b200](https://github.com/pol4rfuchs/ha-apps/commit/271b2002e8d3d88312f5b58e9b297393c1cee293))
 
 ## [0.2.8](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.7...ntfy_manager-v0.2.8) (2026-06-27)
 
-
 ### Bug Fixes
 
 * **ntfy_manager:** add missing vite-env.d.ts for TS6 compatibility, bump typescript to v6 ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
-* **ntfy_manager:** align vite to v8 for @vitejs/plugin-react v6 peer dep ([3b7957d](https://github.com/pol4rfuchs/ha-apps/commit/3b7957de33a2442a118cdffdbfed057dd6b03d7a))
 
 ## [0.2.7](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.6...ntfy_manager-v0.2.7) (2026-06-27)
-
 
 ### Bug Fixes
 
 * **ntfy_manager:** allow * wildcard in ACL topic patterns ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
-* **ntfy_manager:** clipboard fallback for insecure (HTTP) contexts ([56516c3](https://github.com/pol4rfuchs/ha-apps/commit/56516c30966c20d608d95221f8ab177edd0f1b38))
 
 ## [0.2.6](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.5...ntfy_manager-v0.2.6) (2026-06-26)
-
 
 ### Bug Fixes
 
@@ -78,13 +68,11 @@
 
 ## [0.2.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.4...ntfy_manager-v0.2.5) (2026-06-26)
 
-
 ### Bug Fixes
 
 * **ntfy_manager:** update dependency zod to v4 ([#73](https://github.com/pol4rfuchs/ha-apps/issues/73)) ([772c677](https://github.com/pol4rfuchs/ha-apps/commit/772c6772f4a597544da6bdf752d6b697573200f5))
 
 ## [0.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.3...ntfy_manager-v0.2.4) (2026-06-26)
-
 
 ### Bug Fixes
 
@@ -92,13 +80,11 @@
 
 ## [0.2.3](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.2...ntfy_manager-v0.2.3) (2026-06-26)
 
-
 ### Bug Fixes
 
 * **ntfy_manager:** update dependency express-rate-limit to v8 ([#67](https://github.com/pol4rfuchs/ha-apps/issues/67)) ([d887628](https://github.com/pol4rfuchs/ha-apps/commit/d887628689f207bfa797af9de39ecb9fa1004dea))
 
 ## [0.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.1...ntfy_manager-v0.2.2) (2026-06-26)
-
 
 ### Bug Fixes
 

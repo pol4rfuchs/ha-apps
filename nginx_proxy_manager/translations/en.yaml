@@ -15,12 +15,9 @@ configuration:
   mariadb_user:
     name: MariaDB User
     description: "MariaDB username with access to the database."
-  http_port:
-    name: HTTP Port
-    description: "Port for incoming HTTP traffic and Let's Encrypt ACME challenges. Default: 80."
-  https_port:
-    name: HTTPS Port
-    description: "Port for incoming HTTPS/SSL traffic. Default: 443."
+  mariadb_password:
+    name: MariaDB Password
+    description: "Password of the MariaDB user. Only used with db_type 'mariadb'."
   disable_ipv6:
     name: Disable IPv6
     description: "Disable IPv6 support in Nginx. Enable if your network does not support IPv6."

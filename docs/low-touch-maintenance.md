@@ -23,7 +23,7 @@
 | Area | Automated | Manual |
 |---|---|---|
 | Action/dep updates | ✅ Renovate (Wednesday schedule) | – |
-| Docker upstream bumps | ✅ Workflow `06` | – |
+| Docker upstream bumps | ✅ Workflows `07` and `23` | – |
 | Build & publish (GHCR) | ✅ Workflow `03` | – |
 | Lint/meta-validation | ✅ Workflows `00`, `01`, `12` | – |
 | Integrating new add-ons | – | ✅ |

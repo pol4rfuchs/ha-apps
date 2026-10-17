@@ -5,16 +5,22 @@ installation/quickstart steps in the README.
 
 ## Secrets
 
-- **`admin_password`** defaults to `changeme` — **change this before the
-  very first start**. It's only applied during the initial Nextcloud
-  install; changing it afterwards in the add-on options does **not**
-  change the actual account password (use the Nextcloud UI or `occ user:resetpassword`
-  for that once it's running).
+- **`admin_password`** has no default and is **required for the first
+  start** — the add-on stops with an error while it is empty. It's only
+  applied during the initial Nextcloud install; changing it afterwards in
+  the add-on options does **not** change the actual account password (use
+  the Nextcloud UI or `occ user:resetpassword` for that once it's running).
 - **`db_password`** is the database user's password — must match whatever
   you configured on the MariaDB/Postgres side.
 
 Both are declared as `password` schema types, so the Supervisor UI masks
 them.
+
+## Versions and updates
+
+The add-on version (for example `33.0.x`) is a release counter of this repository, **not** the Nextcloud version. The Nextcloud version is the one in the image (see the `NEXTCLOUD_TAG` build argument and the badge in the README).
+
+Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the add-on runs `occ upgrade` when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version.
 
 ## Backup
 
@@ -23,9 +29,15 @@ data volume:
 
 ```
 /data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)
 ```
+
+The Nextcloud code itself is not stored: it comes from the add-on image and is
+restored on every start.
 
 A Home Assistant full backup (which includes add-on data by default)
 already covers this. If you back up manually, back up the entire
@@ -63,3 +75,10 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"
 vendor image rather than the HA base image, and the profile's exact paths
 weren't verified against the real filesystem. See the profile's own header
 comment for the manual test steps to run before flipping it to `true`.
+
+## Local and external access
+
+**Local (LAN):** open `http://<ha-host>:8280`. Nextcloud only answers for hostnames listed in `trusted_domains`; anything else gives "Access through untrusted domain". The default covers `homeassistant.local` and `homeassistant`. If you open Nextcloud by IP, add that IP to `trusted_domains` **before the first start**. The option is only applied on the first install, afterwards use `occ` (see above). There is no `ssl` option; for HTTPS use a reverse proxy.
+
+**External (internet):** recommendation **ok, but only through a reverse proxy with TLS** (for example Nginx Proxy Manager). Never forward port `8280` directly. Add the public domain with `occ config:system:set trusted_domains` and set `overwriteprotocol` to `https` (see above). Enable two-factor authentication for all accounts and keep the admin account off public sharing.
+

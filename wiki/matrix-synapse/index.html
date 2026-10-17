@@ -450,7 +450,7 @@
       <div class="quick-card glass-card">
         <h3>⚡ Minimum Config</h3>
         <p>Set server_name BEFORE first start — cannot be changed after.</p>
-        <pre><code>server_name: "your-domain.duckdns.org"
+        <pre><code>server_name: "example.org"
 postgres_password: "strong_password"
 enable_registration: false</code></pre>
       </div>
@@ -509,8 +509,8 @@ Element Call/VC   → LiveKit SFU    :7880 (via NPM, WebSocket)</code></pre>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
         <h2 id="matrix-step-2"><a class="anchor" href="#matrix-step-2">#</a>Step 2 — Configure Before First Start</h2>
         <p>Set at minimum before starting:</p>
-        <pre><code>server_name: "your-domain.duckdns.org"
-element_web_url: "https://your-domain.duckdns.org"
+        <pre><code>server_name: "example.org"
+element_web_url: "https://example.org"
 postgres_password: "strong_password_here"
 enable_registration: false</code></pre>
         <blockquote><strong>server_name cannot be changed after first start.</strong> It becomes your permanent Matrix ID (<code>@user:server_name</code>).</blockquote>
@@ -579,6 +579,15 @@ enable_registration: false</code></pre>
           </tbody>
         </table>
         <p>See <code>NPM_SETUP.md</code> in the add-on repo for the complete Nginx Proxy Manager configuration.</p>
+        <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the services are reachable on the host ports listed above (Element Web <code>7080</code>, Synapse API <code>8008</code>, ...). Element needs a secure context (HTTPS) for end-to-end encryption, so plain <code>http://&lt;ha-host&gt;:7080</code> only works for a quick look. For real use put a reverse proxy with a certificate in front and point a local DNS rewrite at your HA host. A real <code>server_name</code> is required on the first start; placeholders such as <code>example.org</code> are refused.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>ok, with these rules:</strong></p>
+        <ul>
+          <li>Element Web, Synapse API and LiveKit: only through a reverse proxy with TLS (for example Nginx Proxy Manager).</li>
+          <li>Federation (<code>8448</code>) and the TURN ports are meant to be port-forwarded directly (see the port table). This is the exception for a federating Matrix server. Set <code>enable_federation: false</code> for a private server; it is <strong>on by default</strong>.</li>
+          <li>Ketesa (admin UI, <code>8090</code>): <strong>LAN or VPN only.</strong> It is protected by basic auth (a password is generated when <code>admin_ui_password</code> is empty) but should not be public.</li>
+          <li>Registration is off by default (<code>enable_registration: false</code>). Keep it off.</li>
+        </ul>
       </div>
     </article>
 
@@ -589,10 +598,10 @@ enable_registration: false</code></pre>
       </div>
       <div class="doc-content">
         <h2 id="admin-access"><a class="anchor" href="#admin-access">#</a>Access</h2>
-        <pre><code>External: https://admin.your-domain.duckdns.org
+        <pre><code>External: https://admin.example.org
 Local:    http://HA-IP:8090
 
-Homeserver URL: https://matrix.your-domain.duckdns.org
+Homeserver URL: https://matrix.example.org
 Username:       admin</code></pre>
         <blockquote>NPM Access List for <code>admin.*</code> must be set to <strong>Publicly Accessible</strong> — the auth comes from the Synapse Admin login itself, not NPM.</blockquote>
         <h2 id="admin-token"><a class="anchor" href="#admin-token">#</a>Get Admin Token Manually</h2>
@@ -658,10 +667,10 @@ Username:       admin</code></pre>
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://matrix.your-domain.duckdns.org
-    username: "@homeassistant:your-domain.duckdns.org"
+    homeserver: https://matrix.example.org
+    username: "@homeassistant:example.org"
     password: "ha_user_password"
-    default_room: "#homeassistant:your-domain.duckdns.org"</code></pre>
+    default_room: "#homeassistant:example.org"</code></pre>
         <p>See <code>ha_matrix_integration.yaml</code> in the add-on repo for automation examples.</p>
       </div>
     </article>
@@ -686,7 +695,7 @@ notify:
         </table>
         <h2 id="ts-resources"><a class="anchor" href="#ts-resources">#</a>Resources</h2>
         <pre><code># Test federation
-https://federationtester.matrix.org/#your-domain.duckdns.org
+https://federationtester.matrix.org/#example.org
 
 # Resource usage (Pi 4, 8 GB RAM)
 PostgreSQL:   ~100 MB   &lt;1% CPU

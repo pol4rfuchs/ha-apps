@@ -1,9 +1,13 @@
 # Changelog
 
+## [1.26.1-ha2-pol4r1] - 2026-10-11
+
+- Security: the web UI now rejects every request that does not come from the Home Assistant Ingress gateway (`172.30.32.2`) or loopback. The UI has no login of its own, so before this other containers on the add-on network could reach it directly.
+
+
 ## [1.26.1-ha1-pol4r1] - 2026-09-24
 
 - Bump Unbound to 1.26.1 (automated by Renovate PR #412, checksum-verified against NLnetLabs' published sha256).
-- TODO(fox): review upstream changelog for CVE/behavior notes and replace this line with the real summary before merging.
 
 
 ## [1.26.0-ha1-pol4r1] - 2026-08-06
@@ -17,13 +21,6 @@
   this bump; checksum verification against NLnetLabs' published
   sha256 remains automatic at build time.
 
-<!--
-  TODO(fox): CHANGELOG is missing the 1.25.1 → 1.25.2 jump entirely —
-  config.yaml was already at 1.25.2-ha3-pol4r1 before this entry, but the
-  last real changelog entry below is 1.25.1-ha8-pol4r1. If you remember
-  what ha1-ha3 of 1.25.2 changed, backfill it here; otherwise leave as-is,
-  this note is just so it isn't forgotten silently.
--->
 
 ## 1.25.1-ha8-pol4r1
 

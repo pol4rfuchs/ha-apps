@@ -14,7 +14,7 @@ If Home Assistant cannot pull an add-on image:
 
 1. Check your internet connection on the HA device
 2. Verify the image is public:
-   `https://ghcr.io/pol4rfuchs/<addon-slug>-ha-app`
+   `https://ghcr.io/pol4rfuchs/<addon-slug>`
 3. Check for IPv6 issues — try disabling IPv6 on your router if pulls time out
 4. Check Supervisor logs for `failed to pull` or `unauthorized` errors
 5. Restart the Supervisor:

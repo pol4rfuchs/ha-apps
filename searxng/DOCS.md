@@ -52,3 +52,9 @@ http://homeassistant.local:8080/search?q=your+query&format=json
 | Sidebar shows blank page | Use direct URL: `http://[HA-IP]:8080` |
 | Settings not applied | Restart the add-on after editing `settings.yml` |
 | Search returns no results | Check engine list in `settings.yml` — some engines may be rate-limited |
+
+## Local and external access
+
+**Local (LAN):** open it from the sidebar (Ingress) or on `http://<ha-host>:8080`. Neither has a login: a search engine used as the browser's default search cannot sit behind a login (exception class "no login by design"). Ingress and the host port share port 8080, so the app cannot restrict the port to the Ingress gateway. If you only want the sidebar, clear the host port under the add-on's **Network** tab.
+
+**External (internet):** recommendation **not recommended, VPN only.** A public SearXNG without authentication turns into an open search proxy that others can abuse in your name. If you publish it anyway, add authentication at the reverse proxy and set `set_base_url_for_ingress` to `false`. Your search queries leave the network to the search engines by design (exception).

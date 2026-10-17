@@ -7,9 +7,10 @@ Vollwertige HA-Integration des offiziellen [Nginx Proxy Managers](https://nginxp
 ## Erststart
 
 1. Add-on installieren und starten
-2. UI über **Ingress** (Seitenleiste) öffnen
-3. Standard-Login: `admin@example.com` / `changeme`
-4. **Sofort Passwort ändern!**
+2. UI über `http://<HA-Host>:81` öffnen (Button „Web-UI öffnen“ der App; es gibt kein Ingress)
+3. Beim ersten Öffnen zeigt NPM den Einrichtungsassistenten („Welcome! Get started by creating your admin account.“). Dort Name, E-Mail und Passwort für das Admin-Konto festlegen. Ein Standard-Login (`admin@example.com` / `changeme`) gibt es seit NPM 2.13 nicht mehr.
+4. **Den Assistenten sofort abschließen.** Bis dahin kann jeder im LAN, der Port 81 erreicht, das Admin-Konto selbst anlegen und die Proxy-Konfiguration übernehmen. Bestehende Installationen behalten nach einem Update ihre Zugangsdaten.
+5. Port `81` **nie** am Router weiterleiten (nur `80` und `443`).
 
 ---
 
@@ -31,29 +32,15 @@ mariadb_host: core-mariadb
 mariadb_port: 3306
 mariadb_name: npm
 mariadb_user: npm
-```
-
-4. Passwort in `secrets.yaml`:
-
-```yaml
 mariadb_password: "dein_passwort"
 ```
 
----
+Das Passwort ist als Passwortfeld deklariert und wird in der Oberfläche
+maskiert. Wer die Werte aus der HA-`secrets.yaml` beziehen will, trägt sie dort
+mit `!secret` ein, das löst der Supervisor beim Speichern auf.
 
-## Secrets (`secrets.yaml`)
-
-| Key                | Beschreibung                          |
-|--------------------|---------------------------------------|
-| `mariadb_password` | Passwort für MariaDB-Verbindung       |
-| `npm_jwt_secret`   | Eigener JWT-Secret (optional)         |
-
-Beispiel `secrets.yaml`:
-
-```yaml
-mariadb_password: "supergeheim123"
-npm_jwt_secret: "einlangesrandommjwtsecret"
-```
+Die Sitzungsschlüssel (JWT) erzeugt NPM selbst und legt sie unter
+`/data/keys.json` ab. Dafür gibt es keine Option.
 
 ---
 
@@ -63,9 +50,9 @@ npm_jwt_secret: "einlangesrandommjwtsecret"
 |------|---------------------------|
 | 80   | HTTP (Proxy-Traffic)      |
 | 443  | HTTPS (Proxy-Traffic)     |
-| 81   | NPM UI (via Ingress)      |
+| 81   | NPM Admin-UI (direkt, nur LAN) |
 
-> Port 81 wird **nicht** nach außen exponiert – der Zugriff erfolgt ausschließlich über HA Ingress.
+> Port 81 ist auf dem Host gemappt und im LAN erreichbar (kein Ingress). Er darf **nie** ins Internet weitergeleitet werden, siehe *Lokaler und externer Zugriff*.
 
 ---
 
@@ -93,10 +80,11 @@ Alle persistenten Daten liegen unter `/data/npm/`:
 /data/npm/
 ├── data/          # Datenbank, Konfiguration, Proxy-Hosts
 ├── letsencrypt/   # Zertifikate
-└── logs/          # Access/Error Logs (von Backup ausgeschlossen)
+└── logs/          # Access/Error Logs
+/data/keys.json    # Sitzungsschlüssel, wird von NPM selbst erzeugt
 ```
 
-HA-Snapshots sichern `/data/npm/data` und `/data/npm/letsencrypt` automatisch.
+HA-Backups sichern das gesamte `/data` des Add-ons, also auch die Logs und `keys.json`. Es gibt keine Ausschlüsse.
 
 ---
 
@@ -110,8 +98,6 @@ NPM unterstützt Dark Mode nativ. Aktivierung in der UI:
 ## Optionale Einstellungen
 
 ```yaml
-http_port: 80         # HTTP-Port (Standard: 80)
-https_port: 443       # HTTPS-Port (Standard: 443)
 disable_ipv6: false   # IPv6 deaktivieren
 log_level: info       # info | warning | error | debug
 ```
@@ -120,11 +106,17 @@ log_level: info       # info | warning | error | debug
 
 ## Problembehandlung
 
-**UI nicht erreichbar über Ingress:**
-→ Add-on neu starten, Ingress-Port 81 prüfen
+**UI nicht erreichbar:**
+→ Add-on neu starten, Host-Port 81 in der Netzwerk-Konfiguration der App prüfen
 
 **MariaDB Verbindungsfehler:**
-→ MariaDB Add-on läuft? User/DB existiert? Passwort in secrets.yaml korrekt?
+→ MariaDB Add-on läuft? User/DB existiert? `mariadb_password` korrekt?
 
 **Zertifikat-Erneuerung schlägt fehl:**
 → Logs prüfen unter: **NPM UI → Logs → Access/Error**
+
+## Lokaler und externer Zugriff
+
+**Lokal (LAN):** Die Admin-Oberfläche läuft direkt auf Port `81` (`http://<HA-Host>:81`), nicht über Ingress. Der Port ist auf dem Host gemappt und im ganzen LAN erreichbar. Direkt nach dem ersten Start den Einrichtungsassistenten abschließen und das Admin-Konto anlegen, vorher ist die Oberfläche ungeschützt.
+
+**Extern (Internet):** Die Ports `80` und `443` sind der Eingang für den Proxy-Traffic und dürfen am Router weitergeleitet werden, das ist der Zweck der App. Port `81` **nie** ins Internet, nur LAN oder VPN.
