@@ -17,5 +17,6 @@
   "matrix_telegram_bridge",
   "matrix_auth_service",
   "unifi_os_control_center",
-  "vaultwarden"
+  "vaultwarden",
+  "cortendesk"
 ]

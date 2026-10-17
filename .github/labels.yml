@@ -90,6 +90,9 @@
 - name: "addon/vaultwarden"
   color: "175ddc"
   description: "Betrifft das Vaultwarden Add-on"
+- name: "addon/cortendesk"
+  color: "c2410c"
+  description: "Betrifft das CortenDesk Add-on"
 # ── Wiki ───────────────────────────────────────────────────────────────────────
 - name: "wiki-drift"
   color: "fbca04"

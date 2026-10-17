@@ -1,0 +1,53 @@
+---
+configuration:
+  app_url:
+    name: Öffentliche URL (APP_URL)
+    description: >-
+      Adresse, unter der deine RustDesk-Clients diese App erreichen, inklusive
+      Schema und Console-Port, z. B. http://rd.example.com:21114. Der Host-Teil
+      wird den Clients als ID-Server (21116) und Relay (21117) mitgeteilt und
+      muss daher von außen erreichbar sein. Kein localhost verwenden.
+  admin_user:
+    name: Admin-Benutzername
+    description: >-
+      Benutzername des ersten Console-Administrators. Wird nur beim allerersten
+      Start verwendet, solange noch kein Benutzer existiert.
+  admin_password:
+    name: Admin-Passwort
+    description: >-
+      Passwort des ersten Console-Administrators. Wird nur beim allerersten
+      Start verwendet; später in der Console ändern.
+  native_webclient:
+    name: Web-Client
+    description: >-
+      Aktiviert den eingebauten Browser-Client. Er nutzt die interne
+      WebSocket-Bridge zu hbbs/hbbr (am Host nicht freigegeben). Standardmäßig aus.
+  id_server:
+    name: ID-Server (optional)
+    description: >-
+      Adresse des ID-Servers im Format host:port (z. B. rd.example.com:21116),
+      wenn sie von app_url abweichen soll. Leer = Host aus app_url mit Port 21116.
+  relay_server:
+    name: Relay (optional)
+    description: >-
+      Adresse des Relays im Format host:port (z. B. rd.example.com:21117). Diese
+      Adresse teilt hbbs den Clients für Relay-Sitzungen mit und muss für alle
+      Clients erreichbar sein. Leer = Host aus app_url mit Port 21117.
+  downloads_max_mb:
+    name: Upload-Limit Client-Downloads (MB)
+    description: >-
+      Maximale Größe von Client-Installern, die unter System > Client Downloads
+      hochgeladen werden. Leer lassen für den Upstream-Standard (512 MB).
+  log_level:
+    name: Log-Level
+    description: >-
+      Steuert die Ausführlichkeit der Log-Ausgabe von Console und
+      ID-/Relay-Server. Für die Fehlersuche auf DEBUG setzen.
+network:
+  8080/tcp: Console (Weboberfläche und Client-API)
+  21115/tcp: hbbs NAT-Typ-Test
+  21116/tcp: hbbs ID-Server (TCP)
+  21116/udp: hbbs ID-Server (UDP, Registrierung und Heartbeat)
+  21117/tcp: hbbr Relay
+  21118/tcp: hbbs WebSocket (nur intern, nicht gemappt)
+  21119/tcp: hbbr WebSocket (nur intern, nicht gemappt)

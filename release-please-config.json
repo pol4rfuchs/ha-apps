@@ -95,6 +95,12 @@
       "component": "vaultwarden",
       "include-component-in-tag": true,
       "tag-separator": "-"
+    },
+    "cortendesk": {
+      "release-type": "simple",
+      "component": "cortendesk",
+      "include-component-in-tag": true,
+      "tag-separator": "-"
     }
   }
 }
