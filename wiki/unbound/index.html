@@ -401,7 +401,7 @@
       <a class="nav-item" href="#custom-config" data-target="custom-config"><span class="nav-icon">🧩</span><span><strong>Custom Config</strong><small>Overlay files, full unbound.conf</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data/config.json, backup</small></span></a>
       <a class="nav-item" href="#hardening" data-target="hardening"><span class="nav-icon">🔒</span><span><strong>Hardening</strong><small>Source build, CVEs, AppArmor</small></span></a>
-      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.25.2-ha3-pol4r1</small></span></a>
+      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.26.1-ha2-pol4r1</small></span></a>
       <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>No resolution, DNSSEC, port conflicts</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
@@ -421,7 +421,7 @@
       <div class="hero-inner">
         <div class="hero-kicker"><span class="pulse"></span> UNBOUND · RECURSIVE DNS RESOLVER · HOME ASSISTANT ADD-ON</div>
         <h2>Unbound in <span class="accent">Teal Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Unbound DNS resolver add-on: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (1.25.1, CVE-2026-33278 fixed).</p>
+        <p class="hero-copy">Operations wiki for the Unbound DNS resolver add-on: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (built from upstream source, currently 1.26.1).</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#webui">📊 Web UI Tour</a>
@@ -430,9 +430,9 @@
 
         <div class="metric-grid">
           <div class="metric"><small>Add-on Slug</small><strong>unbound</strong></div>
-          <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:2137</strong></div>
+          <div class="metric"><small>Web UI</small><strong>HA sidebar (Ingress only)</strong></div>
           <div class="metric"><small>DNS Port</small><strong>5053/tcp+udp → 53</strong></div>
-          <div class="metric"><small>Upstream</small><strong>nlnetlabs/unbound 1.25.2</strong></div>
+          <div class="metric"><small>Upstream</small><strong>nlnetlabs/unbound 1.26.1</strong></div>
         </div>
       </div>
     </section>
@@ -441,14 +441,14 @@
       <div class="quick-card glass-card">
         <h3>⚡ Minimum Run Path</h3>
         <p>Install, start, open via sidebar — no YAML editing required.</p>
-        <pre><code>Web UI: http://homeassistant.local:2137
+        <pre><code>Web UI: HA sidebar (Ingress, port 2137 is not mapped)
 DNS:    5053/tcp + 5053/udp (mapped from container 53)</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>🛡️ Source-Built Hardening</h3>
-        <p>Built from Unbound 1.25.1 upstream source — 11 CVEs fixed vs. Alpine's 3.24 package (1.24.2), including CVE-2026-33278 (RCE).</p>
-        <pre><code>unbound version: 1.25.2 (running)
-add-on version:  1.25.2-ha3-pol4r1</code></pre>
+        <p>Built from upstream source instead of Alpine's package. Since 1.25.1 this fixed 11 CVEs compared with Alpine's 3.24 package (1.24.2), including CVE-2026-33278 (RCE).</p>
+        <pre><code>unbound version: 1.26.1
+add-on version:  1.26.1-ha2-pol4r1</code></pre>
       </div>
     </section>
 
@@ -583,7 +583,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       <div class="doc-content">
         <p>All runtime configuration lives in <code>/data/config.json</code>, managed exclusively through the web UI — blocklists, whitelist entries, local DNS records, server settings, query log data.</p>
         <pre><code>/data/config.json   # add-on's own persistent storage — survives restarts, updates, container recreation automatically</code></pre>
-        <blockquote>No extra <code>map:</code> entry is required for <code>/data</code> — it's the add-on's own storage. A Home Assistant full backup already includes it, and there are no secrets to manage: Unbound needs no credentials, and the web UI relies on Ingress/HA auth rather than a separate login.</blockquote>
+        <blockquote>No extra <code>map:</code> entry is required for <code>/data</code> — it's the add-on's own storage. A Home Assistant full backup already includes it, and there are no secrets to manage: Unbound needs no credentials, and the web UI relies on Ingress/HA auth rather than a separate login. The only generated secrets are the unbound-control keys in <code>/data/unbound-control</code>.</blockquote>
       </div>
     </article>
 
@@ -594,14 +594,16 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
       <div class="doc-content">
         <h2 id="ub-sourcebuild"><a class="anchor" href="#ub-sourcebuild">#</a>Why Source-Built</h2>
-        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This add-on builds <strong>1.25.1</strong> from upstream source instead, fixing 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
+        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This add-on builds Unbound from upstream source instead (currently <strong>1.26.1</strong>, checksum-verified against NLnet Labs' published SHA256). Moving from Alpine's package to 1.25.1 fixed 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
         <h2 id="ub-fixes"><a class="anchor" href="#ub-fixes">#</a>Stability & Hardening Fixes</h2>
         <table>
           <thead><tr><th>Area</th><th>Fix</th></tr></thead>
           <tbody>
             <tr><td>Crash-loop</td><td>Fixed via privilege-drop ordering and permission fixes.</td></tr>
             <tr><td>Versioning</td><td>Decoupled from Release Please — manual scheme <code>&lt;upstream&gt;-haNN-pol4rN</code>.</td></tr>
-            <tr><td>Base image</td><td>Bumped to <code>hassio-addons/base:21.0.0</code>.</td></tr>
+            <tr><td>Base image</td><td><code>hassio-addons/base:21.0.7</code>.</td></tr>
+            <tr><td>Web UI access</td><td>The web UI has no login of its own, so the app rejects every request that does not come from the Home Assistant Ingress gateway (<code>172.30.32.2</code>) or loopback. Before this, other containers on the Supervisor network could reach it.</td></tr>
+            <tr><td>unbound-control keys</td><td>No longer baked into the image (they would be identical for everyone). They are generated on the first start and kept in <code>/data/unbound-control</code>.</td></tr>
             <tr><td>Query-log permissions</td><td>Corrected file ownership so the web UI can read/write logs under the drop-privileges user.</td></tr>
             <tr><td>AppArmor</td><td>Profile tightened; <code>harden-algo</code> / <code>harden-below-nxdomain</code> enabled.</td></tr>
             <tr><td><code>mktemp</code></td><td>Fixed unsafe temp-file creation pattern.</td></tr>
@@ -611,13 +613,13 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
         <h2 id="ub-open"><a class="anchor" href="#ub-open">#</a>Open Items</h2>
         <ul>
           <li>ha7 Pi test — verify DNS resolving, ECS toggle behavior, no crash-loop after restart.</li>
-          <li>Web-UI auth review — Ingress is currently the sole access protection.</li>
+          <li>Web UI: Ingress (plus the gateway-only guard) is the only access protection, there is no separate login.</li>
           <li>GPG signature check for the source build, on top of the current SHA256 verification.</li>
         </ul>
       </div>
     </article>
 
-    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.25.2-ha3-pol4r1 unbound 1.25.1 1.25.2">
+    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.26.1-ha2-pol4r1 unbound 1.26.1">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
         <a class="section-link" href="#changelog">#changelog</a>
@@ -626,8 +628,8 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
         <table>
           <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td>unbound</td><td><code>1.25.2-ha3-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
-            <tr><td>Unbound (upstream)</td><td><code>1.25.2</code></td><td>Source-built, not the Alpine package.</td></tr>
+            <tr><td>unbound</td><td><code>1.26.1-ha2-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
+            <tr><td>Unbound (upstream)</td><td><code>1.26.1</code></td><td>Source-built, not the Alpine package.</td></tr>
           </tbody>
         </table>
         <blockquote>This add-on has its own manual version scheme rather than Conventional Commits + Release Please, because upstream releases (source tarballs) don't map cleanly onto semantic-release automation.</blockquote>
@@ -675,7 +677,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
           <a class="source-chip" href="https://nlnetlabs.nl/projects/unbound/about/"><span>🛡️</span><strong>Unbound Upstream</strong><small>NLnet Labs</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Unbound is licensed under the BSD 3-Clause license. Add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Unbound is licensed under the BSD 3-Clause license. The add-on wrapper is MIT, because it is a hardened fork of the MIT-licensed fenio/ha-addons.</blockquote>
       </div>
     </article>
 

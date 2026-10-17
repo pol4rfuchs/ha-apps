@@ -520,6 +520,7 @@ Config     → addon_configs/&lt;SLUG&gt;_searxng/settings.yml</code></pre>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>set_base_url_for_ingress</code></td><td><code>true</code></td><td>Auto-sets <code>SEARXNG_BASE_URL</code> to the HA Ingress URL. Disable only if using an external reverse proxy.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code> / <code>info</code> / <code>warning</code> / <code>error</code>. SearXNG itself only has an on/off debug switch: <code>debug</code> turns on verbose logging (<code>general.debug: true</code>), the other levels all result in standard logging.</td></tr>
           </tbody>
         </table>
         <h2 id="sxng-settings"><a class="anchor" href="#sxng-settings">#</a>settings.yml</h2>
@@ -611,7 +612,7 @@ rest_command:
           <a class="source-chip" href="https://docs.searxng.org/"><span>📖</span><strong>SearXNG Docs</strong><small>docs.searxng.org</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. SearXNG is licensed under AGPL-3.0. Add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. SearXNG is licensed under AGPL-3.0. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

@@ -405,7 +405,7 @@
     <nav class="nav" id="navList">
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, architecture</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
-      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>SQLite, MariaDB, secrets</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Configuration</strong><small>SQLite, MariaDB, password</small></span></a>
       <a class="nav-item" href="#first-start" data-target="first-start"><span class="nav-icon">✅</span><span><strong>First Start</strong><small>Setup wizard, first proxy host</small></span></a>
       <a class="nav-item" href="#ssl" data-target="ssl"><span class="nav-icon">🔐</span><span><strong>SSL & Let's Encrypt</strong><small>DNS-01, DuckDNS, wildcard</small></span></a>
       <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports & Networking</strong><small>80, 443, 81</small></span></a>
@@ -465,13 +465,13 @@ HTTPS:     :443 (public proxy)</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Nginx Proxy Manager</strong> is a reverse proxy management UI with SSL automation. This add-on wraps the official <code>jc21/nginx-proxy-manager</code> image with HA Supervisor integration, secrets support and optional MariaDB backend.</p>
+        <p><strong>Nginx Proxy Manager</strong> is a reverse proxy management UI with SSL automation. This add-on wraps the official <code>jc21/nginx-proxy-manager</code> image with HA Supervisor integration and an optional MariaDB backend.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><a href="#installation">Installation</a></td><td>Add repository, install, start.</td></tr>
-            <tr><td><a href="#configuration">Configuration</a></td><td>SQLite vs MariaDB, secrets, JWT.</td></tr>
+            <tr><td><a href="#configuration">Configuration</a></td><td>SQLite vs MariaDB, database password.</td></tr>
             <tr><td><a href="#first-start">First Start</a></td><td>Setup wizard, create the admin account.</td></tr>
             <tr><td><a href="#ssl">SSL & Let's Encrypt</a></td><td>DNS-01, DuckDNS, wildcard certs.</td></tr>
             <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Port conflicts, cert failures, DB issues.</td></tr>
@@ -513,7 +513,7 @@ nginx   → proxies :80/:443 to internal services</code></pre>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="configuration sqlite mariadb db_type secret password secrets yaml npm options http_port https_port disable_ipv6 log_level">
+    <article id="configuration" class="doc-section glass-card" data-search="configuration sqlite mariadb db_type password secret npm options disable_ipv6 log_level jwt keys json">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Options & Secrets</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
@@ -527,11 +527,10 @@ nginx   → proxies :80/:443 to internal services</code></pre>
 mariadb_host: core-mariadb
 mariadb_port: 3306
 mariadb_name: npm
-mariadb_user: npm</code></pre>
-        <p>Password goes in <code>secrets.yaml</code>, not the add-on config:</p>
-        <pre><code>mariadb_password: "dein_passwort"
-npm_jwt_secret: "einlangesrandommjwtsecret"</code></pre>
-        <blockquote>The DB password and JWT secret are no longer add-on config options — they were moved out of <code>options</code>/<code>schema</code> into <code>secrets.yaml</code> for security.</blockquote>
+mariadb_user: npm
+mariadb_password: "dein_passwort"</code></pre>
+        <p><code>mariadb_password</code> is a password field and is masked in the UI. To take the value from Home Assistant's <code>secrets.yaml</code>, enter it there with <code>!secret</code>; the Supervisor resolves it when saving.</p>
+        <blockquote>NPM creates its session keys (JWT) itself and stores them in <code>/data/keys.json</code>. There is no option for it.</blockquote>
         <h2 id="config-table"><a class="anchor" href="#config-table">#</a>All Options</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
@@ -541,20 +540,12 @@ npm_jwt_secret: "einlangesrandommjwtsecret"</code></pre>
             <tr><td><code>mariadb_port</code></td><td><code>3306</code></td><td>MariaDB port.</td></tr>
             <tr><td><code>mariadb_name</code></td><td><code>npm</code></td><td>Database name. (Renamed from <code>mariadb_database</code>.)</td></tr>
             <tr><td><code>mariadb_user</code></td><td><code>npm</code></td><td>MariaDB user. (Renamed from <code>mariadb_username</code>.)</td></tr>
-            <tr><td><code>http_port</code></td><td><code>80</code></td><td>HTTP port.</td></tr>
-            <tr><td><code>https_port</code></td><td><code>443</code></td><td>HTTPS port.</td></tr>
+            <tr><td><code>mariadb_password</code></td><td><em>empty</em></td><td>Password for the MariaDB connection (masked).</td></tr>
             <tr><td><code>disable_ipv6</code></td><td><code>false</code></td><td>Disable IPv6.</td></tr>
             <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>info / warning / error / debug</code>.</td></tr>
           </tbody>
         </table>
-        <h3 id="config-secrets"><a class="anchor" href="#config-secrets">#</a>Secrets (<code>secrets.yaml</code>)</h3>
-        <table>
-          <thead><tr><th>Key</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>mariadb_password</code></td><td>Password for the MariaDB connection.</td></tr>
-            <tr><td><code>npm_jwt_secret</code></td><td>Custom JWT secret (optional).</td></tr>
-          </tbody>
-        </table>
+        <p>The ports are fixed in the add-on (<code>80</code>, <code>81</code>, <code>443</code>). To change the host side, use the Network tab of the add-on.</p>
       </div>
     </article>
 
@@ -633,9 +624,11 @@ Domain:       your-subdomain.duckdns.org</code></pre>
       </div>
       <div class="doc-content">
         <pre><code>/data/
-├── database.sqlite    # NPM database (if not using MariaDB)
-├── nginx/             # Generated nginx configurations
-└── letsencrypt/       # Let's Encrypt certificates and ACME data</code></pre>
+├── npm/
+│   ├── data/          # database.sqlite (SQLite mode), generated nginx configs, NPM settings
+│   ├── letsencrypt/   # Certificates and ACME data
+│   └── logs/          # Access/error logs
+└── keys.json          # Session key pair, created by NPM</code></pre>
         <blockquote><strong>Important:</strong> The <code>letsencrypt/</code> folder contains your private keys and certificates. HA backups include it automatically.</blockquote>
         <h2 id="persistence-backup"><a class="anchor" href="#persistence-backup">#</a>Backup Workflow</h2>
         <ol>
@@ -678,7 +671,7 @@ Domain:       your-subdomain.duckdns.org</code></pre>
           <a class="source-chip" href="https://nginxproxymanager.com/guide/"><span>📖</span><strong>NPM Docs</strong><small>nginxproxymanager.com</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper for <code>jc21/nginx-proxy-manager</code>. NPM is MIT licensed. Add-on wrapper is MIT licensed.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper for <code>jc21/nginx-proxy-manager</code>. NPM is MIT licensed. The add-on wrapper is Apache-2.0 licensed.</blockquote>
       </div>
     </article>
 

@@ -520,7 +520,7 @@
             <tr><td><code>retention_weekly</code></td><td><code>4</code></td><td>Weekly snapshots kept.</td></tr>
             <tr><td><code>retention_monthly</code></td><td><code>6</code></td><td>Monthly snapshots kept.</td></tr>
             <tr><td><code>run_on_start</code></td><td><code>false</code></td><td>Run a backup immediately on add-on start (useful once, for verification).</td></tr>
-            <tr><td><code>aws_access_key_id</code> / <code>aws_secret_access_key</code></td><td><em>(empty)</em></td><td>Only for S3/MinIO/B2-compatible remote repositories.</td></tr>
+            <tr><td><code>aws_access_key_id</code> / <code>aws_secret_access_key</code> / <code>aws_default_region</code></td><td><em>(empty)</em></td><td>Only for S3/MinIO/B2-compatible remote repositories.</td></tr>
             <tr><td><code>ntfy_url</code> / <code>ntfy_topic</code> / <code>ntfy_username</code> / <code>ntfy_password</code></td><td><em>(empty)</em></td><td>Notification target; auth only if the topic requires it.</td></tr>
           </tbody>
         </table>
@@ -533,7 +533,7 @@
         <a class="section-link" href="#backup-paths">#backup-paths</a>
       </div>
       <div class="doc-content">
-        <p><code>backup_paths</code> only lists which <strong>mounted</strong> folders restic should walk — it does not mount anything itself. Each path listed must already be exposed via the add-on's own <code>map:</code> block in <code>config.yaml</code> (currently: <code>homeassistant_config:ro</code>, <code>addon_configs:ro</code>, <code>media:ro</code>, <code>share:rw</code>, <code>ssl:ro</code>).</p>
+        <p><code>backup_paths</code> only lists which <strong>mounted</strong> folders restic should walk — it does not mount anything itself. Each path listed must already be exposed via the add-on's own <code>map:</code> block in <code>config.yaml</code> (currently: <code>homeassistant_config:ro</code>, <code>all_addon_configs:ro</code>, <code>media:ro</code>, <code>share:rw</code>, <code>ssl:ro</code>). Note that <code>all_addon_configs</code> appears inside the container as <code>/addon_configs</code>.</p>
         <blockquote>Adding a path to <code>backup_paths</code> that isn't mapped does nothing — the directory simply won't exist inside the container. To back up <code>/media</code> too, add it to both <code>backup_paths</code> <strong>and</strong> confirm <code>media:ro</code> stays in <code>map:</code>.</blockquote>
       </div>
     </article>
@@ -581,6 +581,9 @@ restic restore latest --target /path/to/restore/to</code></pre>
           </tbody>
         </table>
         <p>All three are declared as <code>password</code> schema types, so the Supervisor UI masks them.</p>
+        <h2 id="rb-access"><a class="anchor" href="#rb-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the add-on has no web interface and publishes no ports. It only runs <code>restic</code> on a schedule; control it through the add-on options and read the result in the Log tab or in the ntfy notification.</p>
+        <p><strong>External (internet):</strong> there is nothing to forward and nothing should be. The add-on only makes outgoing connections, to your S3/B2/MinIO-compatible repository (if you set <code>aws_*</code>) and to your ntfy server. A local repository under <code>/share</code> is part of Home Assistant's file shares, so do not expose that share to the internet either.</p>
         <h2 id="rb-apparmor"><a class="anchor" href="#rb-apparmor">#</a>AppArmor</h2>
         <p>The bundled <code>apparmor.txt</code> profile covers: the s6-overlay baseline paths, the mapped read-only backup sources (<code>/homeassistant</code>, <code>/addon_configs</code>, <code>/media</code>, <code>/ssl</code>), the read-write repository target (<code>/share</code>), and <code>dcron</code>'s crontab files plus restic's own lock file under <code>/tmp</code>.</p>
         <blockquote>Extra mapped folders beyond the current <code>map:</code> block need a matching read (or read-write) AppArmor rule, or restic will silently fail to read/write it under enforcement.</blockquote>
@@ -617,7 +620,7 @@ restic restore latest --target /path/to/restore/to</code></pre>
           <a class="source-chip" href="https://ntfy.sh/"><span>🔔</span><strong>ntfy</strong><small>ntfy.sh</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Restic is licensed under BSD-2-Clause. Add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Restic is licensed under BSD-2-Clause. Add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

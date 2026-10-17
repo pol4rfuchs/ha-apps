@@ -408,7 +408,7 @@
 <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔐</span><span><strong>Security Notes</strong><small>Ports, query, passwords, public exposure</small></span></a>
 <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Startup, token, ports, clients</small></span></a>
 <a class="nav-item" href="#maintenance" data-target="maintenance"><span class="nav-icon">🧰</span><span><strong>Update &amp; Rollback Runbook</strong><small>Beta-safe update path</small></span></a>
-<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.20 add-on and beta12.1 server</small></span></a>
+<a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.1.23 add-on and beta13.1 server</small></span></a>
 <a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, beta, architecture</small></span></a>
 <a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer &amp; License</strong><small>Unofficial wrapper and licenses</small></span></a>
     </nav>
@@ -442,7 +442,7 @@
           <div class="metric"><small>Voice</small><strong>9987/udp</strong></div>
           <div class="metric"><small>Filetransfer</small><strong>30033/tcp</strong></div>
           <div class="metric"><small>WebQuery</small><strong>10080/tcp</strong></div>
-          <div class="metric"><small>Generated</small><strong>2026-04-29</strong></div>
+          <div class="metric"><small>Generated</small><strong>2026-10-17</strong></div>
         </div>
       </div>
     </section>
@@ -450,12 +450,9 @@
     <section class="control-strip">
       <div class="quick-card glass-card">
         <h3>⚡ Minimum Configuration</h3>
-        <p>Use this first, then expose only the required client ports.</p>
+        <p>Use this first, then expose only the required client ports. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the add-on options.</p>
         <pre><code>license_accepted: true
-server_name: "Home Assistant TeamSpeak Server"
-voice_port: 9987
-filetransfer_port: 30033
-query_http_port: 10080</code></pre>
+query_admin_password: ""   # empty = generated, printed in the log on first start</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>🧭 Runbook Health Matrix</h3>
@@ -484,7 +481,7 @@ query_http_port: 10080</code></pre>
 <tr><td>HA Add-on Slug</td><td><code>teamspeak6</code></td></tr>
 <tr><td>Official Upstream</td><td><a href="https://github.com/teamspeak/teamspeak6-server">teamspeak/teamspeak6-server</a></td></tr>
 <tr><td>Docker Image</td><td><a href="https://hub.docker.com/r/teamspeaksystems/teamspeak6-server"><code>teamspeaksystems/teamspeak6-server</code></a></td></tr>
-<tr><td>Target Version</td><td><code>6.0.0-beta11</code></td></tr>
+<tr><td>Target Version</td><td><code>6.0.0-beta13.1</code> (pinned in the Dockerfile)</td></tr>
 <tr><td>Voice Port</td><td><code>9987/udp</code></td></tr>
 <tr><td>Filetransfer</td><td><code>30033/tcp</code></td></tr>
 <tr><td>HTTP WebQuery</td><td><code>10080/tcp</code></td></tr>
@@ -526,10 +523,10 @@ Data:       /data/teamspeak6</code></pre>
 <h2>Official Image Status</h2>
 <ul>
 <li><code>teamspeaksystems/teamspeak6-server:latest</code> points to the current beta.</li>
-<li><code>teamspeaksystems/teamspeak6-server:6.0.0-beta11</code> is the versioned beta-11 tag.</li>
-<li>Docker Hub lists images for <code>linux/amd64</code> and <code>linux/arm64</code> under both <code>latest</code> and <code>6.0.0-beta11</code>.</li>
+<li><code>teamspeaksystems/teamspeak6-server:6.0.0-beta13.1</code> is the versioned tag the add-on is built on.</li>
+<li>Docker Hub lists images for <code>linux/amd64</code> and <code>linux/arm64</code>, so the add-on builds natively on both architectures.</li>
 </ul>
-<pre><code>docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta11</code></pre>
+<pre><code>docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta13.1</code></pre>
 <blockquote>This means the old community ARM workaround is no longer required for your HA add-on, as long as your build/config points to the official multi-arch image.</blockquote>
 
       </div>
@@ -551,13 +548,11 @@ Data:       /data/teamspeak6</code></pre>
 <tr><td>TS3 Licenses</td><td>TeamSpeak 3 Server licenses are not compatible with TeamSpeak 6 Server.</td></tr>
 <tr><td>Migration</td><td>There is currently no official direct migration path from TS3 Server to TS6 Server.</td></tr>
 <tr><td>Beta License</td><td>The server ships with a beta license; larger TS6 licenses are currently not generally upgradable.</td></tr>
-<tr><td>v6.0.0-beta9</td><td>Brings native ARM64 support and several server fixes.</td></tr>
+<tr><td>v6.0.0-beta9</td><td>Brought native ARM64 support and several server fixes.</td></tr>
 </tbody>
 </table>
 <h2>Update Note for Your Add-on</h2>
-<pre><code># Pin to a specific version instead of floating latest
-teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
-<blockquote><strong>Pinning is cleaner:</strong> For HA add-ons, a versioned image tag is more reproducible than <code>latest</code>.</blockquote>
+<p>The add-on pins the upstream version in its Dockerfile (<code>TEAMSPEAK_VERSION</code>, currently <code>6.0.0-beta13.1</code>), and Renovate proposes new tags. You never switch the image yourself: a new upstream version arrives as a normal add-on update.</p>
 
       </div>
     </article>
@@ -601,57 +596,35 @@ teamspeaksystems/teamspeak6-server:6.0.0-beta9</code></pre>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="add-on configuration ha ui options and ts env mapping alle praktischen werte sollen in home assistant über die add-on-configuration steuerbar sein. intern werden daraus teamspeak-server-parameter, umgebungsvariablen oder eine konfiguration erzeugt. basic server settings option default beschreibung server_name home assistant teamspeak server name, der im client sichtbar ist. server_password leer join-passwort. leer bedeutet offener server. max_clients 32 maximale gleichzeitige clients. welcome_message welcome to our teamspeak server! begrüßung beim connect. license &amp; admin option default beschreibung license_accepted false muss true sein, sonst startet der server nicht. query_admin_password leer passwort für serveradmin . leer = generiert beziehungsweise aus log entnehmen. log_level 3 0 critical · 1 error · 2 warning · 3 info · 4 debug. port options option default protokoll zweck voice_port 9987 udp voice-verbindungen. filetransfer_port 30033 tcp dateitransfers. query_port 10011 tcp raw serverquery. query_ssh_port 10022 tcp ssh serverquery. query_http_port 10080 tcp http webquery; wichtig für ts6 manager. official server environment mapping ts6 variable bedeutung ha-option tsserver_license_accepted license acceptance: accept oder 1 . license_accepted tsserver_default_port default udp voice port. voice_port tsserver_file_transfer_port tcp filetransfer port. filetransfer_port tsserver_query_http_enabled http query interface aktivieren. für manager-betrieb aktiv lassen tsserver_query_http_port http webquery port. query_http_port tsserver_query_admin_password serveradmin query-passwort. query_admin_password bei portänderungen müssen configuration-tab und network-tab logisch zusammenpassen. gerade filetransfer ist empfindlich, wenn interner port und veröffentlichter host-port auseinanderlaufen.">
+    <article id="configuration" class="doc-section glass-card" data-search="add-on configuration options license accepted query admin password log level fixed ports">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">CONFIGURATION.md</p><h2>Add-on Configuration</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
 
-<p>All practical values should be configurable in Home Assistant via the add-on configuration. Internally, these are mapped to TeamSpeak server parameters, environment variables, or a configuration file.</p>
-<h2>Basic Server Settings</h2>
+<p>The add-on has three options. Everything else (server name, server password, slot count, welcome message) is set in the TeamSpeak client or through ServerQuery, and the ports are fixed.</p>
+<h2>Add-on Options</h2>
 <table>
 <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
 <tbody>
-<tr><td><code>server_name</code></td><td><code>Home Assistant TeamSpeak Server</code></td><td>Name visible in the client.</td></tr>
-<tr><td><code>server_password</code></td><td><em>empty</em></td><td>Join password. Empty means open server.</td></tr>
-<tr><td><code>max_clients</code></td><td><code>32</code></td><td>Maximum concurrent clients.</td></tr>
-<tr><td><code>welcome_message</code></td><td><code>Welcome to our TeamSpeak Server!</code></td><td>Greeting shown on connect.</td></tr>
+<tr><td><code>license_accepted</code></td><td><code>false</code></td><td>Must be <code>true</code> (you accept the TeamSpeak server license), otherwise the add-on refuses to start.</td></tr>
+<tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password of the ServerQuery login <code>serveradmin</code>. If empty, TeamSpeak generates one on the first start and prints it in the log.</td></tr>
+<tr><td><code>log_level</code></td><td><code>3</code></td><td>TeamSpeak log level <code>0</code>–<code>4</code> (0 Critical · 1 Error · 2 Warning · 3 Info · 4 Debug).</td></tr>
 </tbody>
 </table>
-<h2>License & Admin</h2>
+<h2>Fixed Ports</h2>
 <table>
-<thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+<thead><tr><th>Port</th><th>Protocol</th><th>Purpose</th></tr></thead>
 <tbody>
-<tr><td><code>license_accepted</code></td><td><code>false</code></td><td>Must be <code>true</code>, otherwise the server will not start.</td></tr>
-<tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password for <code>serveradmin</code>. Empty = auto-generated, retrieve from log.</td></tr>
-<tr><td><code>log_level</code></td><td><code>3</code></td><td>0 Critical · 1 Error · 2 Warning · 3 Info · 4 Debug.</td></tr>
+<tr><td><code>9987</code></td><td>UDP</td><td>Voice connections.</td></tr>
+<tr><td><code>30033</code></td><td>TCP</td><td>File transfers.</td></tr>
+<tr><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td></tr>
+<tr><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td></tr>
+<tr><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery; required for TS6 Manager.</td></tr>
 </tbody>
 </table>
-<h2>Port Options</h2>
-<table>
-<thead><tr><th>Option</th><th>Default</th><th>Protocol</th><th>Purpose</th></tr></thead>
-<tbody>
-<tr><td><code>voice_port</code></td><td><code>9987</code></td><td>UDP</td><td>Voice connections.</td></tr>
-<tr><td><code>filetransfer_port</code></td><td><code>30033</code></td><td>TCP</td><td>File transfers.</td></tr>
-<tr><td><code>query_port</code></td><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td></tr>
-<tr><td><code>query_ssh_port</code></td><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td></tr>
-<tr><td><code>query_http_port</code></td><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery; required for TS6 Manager.</td></tr>
-</tbody>
-</table>
-<h2>Official Server Environment Mapping</h2>
-<table>
-<thead><tr><th>TS6 Variable</th><th>Description</th><th>HA Option</th></tr></thead>
-<tbody>
-<tr><td><code>TSSERVER_LICENSE_ACCEPTED</code></td><td>License acceptance: <code>accept</code> or <code>1</code>.</td><td><code>license_accepted</code></td></tr>
-<tr><td><code>TSSERVER_DEFAULT_PORT</code></td><td>Default UDP voice port.</td><td><code>voice_port</code></td></tr>
-<tr><td><code>TSSERVER_FILE_TRANSFER_PORT</code></td><td>TCP filetransfer port.</td><td><code>filetransfer_port</code></td></tr>
-<tr><td><code>TSSERVER_QUERY_HTTP_ENABLED</code></td><td>Enable HTTP query interface.</td><td>Keep active for Manager operation</td></tr>
-<tr><td><code>TSSERVER_QUERY_HTTP_PORT</code></td><td>HTTP WebQuery port.</td><td><code>query_http_port</code></td></tr>
-<tr><td><code>TSSERVER_QUERY_ADMIN_PASSWORD</code></td><td>serveradmin query password.</td><td><code>query_admin_password</code></td></tr>
-</tbody>
-</table>
-<blockquote>When changing ports, the Configuration tab and Network tab must match logically. File transfer in particular is sensitive when internal port and published host port diverge.</blockquote>
+<blockquote>The ports cannot be changed in the options. If a host port is already in use, change the host-side mapping in the add-on's Network tab; clients then connect to that host port.</blockquote>
 
       </div>
     </article>
@@ -753,7 +726,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="data-backup" class="doc-section glass-card" data-search="data persistence &amp; backup /data/teamspeak6 and ha backups persistenter datenpfad der serverzustand muss unter /data/teamspeak6 liegen, damit updates nicht channels, clients, rechte oder serverkonfiguration verlieren. /data/teamspeak6/ ├── ts6server.sqlitedb ├── ts6server.sqlitedb-wal ├── ts6server.sqlitedb-shm ├── tsserver.yaml / ts6.ini ├── serveradmin_password ├── query_ip_allowlist.txt ├── query_ip_denylist.txt └── logs/ └── ts6server_*.log was ist kritisch? datei/pfad wert warum ts6server.sqlitedb sehr hoch virtuelle server, channels, rechte, clientdaten. serveradmin_password hoch query-admin-zugang. tsserver.yaml / ts6.ini hoch generierte laufzeitkonfiguration. logs/ mittel debugging, token-fund, audit. home assistant backup settings → system → backups → create backup vor jedem image-wechsel oder beta-update ein ha-backup erstellen. bei ts6 ist das kein luxus, sondern deine rollback-strategie.">
+    <article id="data-backup" class="doc-section glass-card" data-search="data persistence backup /data/teamspeak6 server tsserver sqlitedb every 5 minutes ha backups">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">BACKUP.md</p><h2>Data Persistence &amp; Backup</h2></div></div>
         <a class="section-link" href="#data-backup">#data-backup</a>
@@ -761,80 +734,66 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       <div class="doc-content">
 
 <h2>Persistent Data Path</h2>
-<p>Server state must reside under <code>/data/teamspeak6</code> so that updates do not lose channels, clients, permissions, or server configuration.</p>
+<p>All data lives under <code>/data/teamspeak6</code>, which is included in Home Assistant backups.</p>
 <pre><code>/data/teamspeak6/
-├── ts6server.sqlitedb
-├── ts6server.sqlitedb-wal
-├── ts6server.sqlitedb-shm
-├── tsserver.yaml / ts6.ini
-├── serveradmin_password
-├── query_ip_allowlist.txt
-├── query_ip_denylist.txt
-└── logs/
-    └── ts6server_*.log</code></pre>
+├── server/             # persistent copy of the server data
+│   ├── tsserver.sqlitedb
+│   ├── ssh_host_rsa_key
+│   ├── query_ip_allowlist.txt
+│   ├── query_ip_denylist.txt
+│   └── files/
+├── logs/               # server logs (cleared on every start)
+└── .token_was_shown    # marker: the token was already printed</code></pre>
+<p>TeamSpeak works on a copy in <code>/var/tsserver</code> inside the container. The add-on restores that copy from <code>/data/teamspeak6/server</code> on start and writes it back <strong>every 5 minutes</strong> (a consistent copy of the running database) and when the add-on stops cleanly. After a crash or power loss you lose at most the last 5 minutes.</p>
 <h2>What Is Critical?</h2>
 <table>
 <thead><tr><th>File/Path</th><th>Importance</th><th>Why</th></tr></thead>
 <tbody>
-<tr><td><code>ts6server.sqlitedb</code></td><td>Very high</td><td>Virtual servers, channels, permissions, client data.</td></tr>
-<tr><td><code>serveradmin_password</code></td><td>High</td><td>Query admin access.</td></tr>
-<tr><td><code>tsserver.yaml</code> / <code>ts6.ini</code></td><td>High</td><td>Generated runtime configuration.</td></tr>
-<tr><td><code>logs/</code></td><td>Medium</td><td>Debugging, token retrieval, audit.</td></tr>
+<tr><td><code>server/tsserver.sqlitedb</code></td><td>Very high</td><td>Virtual servers, channels, permissions, client data.</td></tr>
+<tr><td><code>server/ssh_host_rsa_key</code></td><td>High</td><td>SSH ServerQuery host key.</td></tr>
+<tr><td><code>server/query_ip_allowlist.txt</code> / <code>query_ip_denylist.txt</code></td><td>Medium</td><td>Query access restrictions.</td></tr>
+<tr><td><code>logs/</code></td><td>Low</td><td>Debugging and token retrieval (cleared on every start).</td></tr>
 </tbody>
 </table>
 <h2>Home Assistant Backup</h2>
 <pre><code>Settings → System → Backups → Create Backup</code></pre>
-<blockquote>Create an HA backup before every image switch or beta update. For TS6, this is not a luxury but your rollback strategy.</blockquote>
+<blockquote>Create an HA backup before every beta update. For TS6, this is not a luxury but your rollback strategy.</blockquote>
 
       </div>
     </article>
 
-    <article id="project-structure" class="doc-section glass-card" data-search="project structure repository layout and file roles empfohlenes repo-layout teamspeak6/ ├── repository.yaml ├── readme.md ├── readmeeng.md ├── readmeger.md └── teamspeak6/ ├── config.yaml ├── build.yaml ├── dockerfile ├── docs.md ├── changelog.md ├── icon.png ├── logo.png ├── translations/ │ └── en.yaml └── rootfs/ └── run.sh file roles datei rolle repository.yaml markiert das repo als home-assistant-add-on-repository. teamspeak6/config.yaml add-on-metadaten, schema, ports, image, ha ui. teamspeak6/build.yaml build-quelle pro architektur, idealerweise offizielles multi-arch-image. teamspeak6/dockerfile wrapper um das ts6-server-image mit ha-startlogik. teamspeak6/rootfs/run.sh liest add-on-optionen, erzeugt config, startet server. translations/en.yaml labels und beschreibungen in der ha-config-ui. image switch guard # prüfen vor umstellung von community-image auf official image: [ ] /data/teamspeak6 backup vorhanden [ ] datenpfad im neuen image korrekt gemountet [ ] server startet mit gleicher sqlite db [ ] ports sind gleich [ ] query/admin-zugang funktioniert [ ] client kann joinen [ ] ts6 manager kann webquery erreichen">
+    <article id="project-structure" class="doc-section glass-card" data-search="project structure add-on folder file roles config yaml dockerfile run sh">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📁</span><div><p class="eyebrow">PROJECT.md</p><h2>Project Structure</h2></div></div>
         <a class="section-link" href="#project-structure">#project-structure</a>
       </div>
       <div class="doc-content">
 
-<h2>Recommended Repo Layout</h2>
+<h2>Add-on Folder</h2>
 <pre><code>teamspeak6/
-├── repository.yaml
+├── config.yaml
+├── Dockerfile
+├── apparmor.txt
+├── DOCS.md
 ├── README.md
-├── READMEeng.md
-├── READMEger.md
-└── teamspeak6/
-    ├── config.yaml
-    ├── build.yaml
-    ├── Dockerfile
-    ├── DOCS.md
-    ├── CHANGELOG.md
-    ├── icon.png
-    ├── logo.png
-    ├── translations/
-    │   └── en.yaml
-    └── rootfs/
-        └── run.sh</code></pre>
+├── CHANGELOG.md
+├── icon.png
+├── logo.png
+├── translations/
+│   └── en.yaml
+└── rootfs/
+    └── run.sh</code></pre>
 <h2>File Roles</h2>
 <table>
 <thead><tr><th>File</th><th>Role</th></tr></thead>
 <tbody>
-<tr><td><code>repository.yaml</code></td><td>Marks the repo as a Home Assistant add-on repository.</td></tr>
 <tr><td><code>teamspeak6/config.yaml</code></td><td>Add-on metadata, schema, ports, image, HA UI.</td></tr>
-<tr><td><code>teamspeak6/build.yaml</code></td><td>Build source per architecture, ideally the official multi-arch image.</td></tr>
-<tr><td><code>teamspeak6/Dockerfile</code></td><td>Wrapper around the TS6 server image with HA start logic.</td></tr>
-<tr><td><code>teamspeak6/rootfs/run.sh</code></td><td>Reads add-on options, generates config, starts the server.</td></tr>
+<tr><td><code>teamspeak6/Dockerfile</code></td><td>Wrapper around the official TS6 server image (pinned version, <code>TEAMSPEAK_VERSION</code>) with HA start logic.</td></tr>
+<tr><td><code>teamspeak6/rootfs/run.sh</code></td><td>Reads the add-on options, restores the data, starts the server and backs the database up every 5 minutes.</td></tr>
 <tr><td><code>translations/en.yaml</code></td><td>Labels and descriptions in the HA config UI.</td></tr>
 </tbody>
 </table>
-<h2>Image Switch Guard</h2>
-<pre><code># Check before switching from community image to official image:
-[ ] /data/teamspeak6 backup exists
-[ ] Data path correctly mounted in new image
-[ ] Server starts with same SQLite DB
-[ ] Ports are unchanged
-[ ] Query/admin access works
-[ ] Client can join
-[ ] TS6 Manager can reach WebQuery</code></pre>
+<p>There is no <code>build.yaml</code>: the build source is the multi-arch official image, selected in the Dockerfile.</p>
 
       </div>
     </article>
@@ -857,7 +816,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 </ul>
 <h2>Query Allowlist</h2>
 <p>When restricting query access, make sure the HA host and the TS6 Manager container remain reachable.</p>
-<pre><code>query_ip_allowlist.txt
+<pre><code>/data/teamspeak6/server/query_ip_allowlist.txt
 # Example
 127.0.0.1
 &lt;HA-IP&gt;
@@ -926,12 +885,12 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 [ ] ts6server.sqlitedb exists
 [ ] Query admin password saved
 [ ] Privilege/admin access in client works
-[ ] Current image tag noted
+[ ] Current add-on version noted
 [ ] Ports/network tab documented</code></pre>
 <h2>Update</h2>
 <ol>
 <li>Stop the add-on or run the HA update directly.</li>
-<li>Set the image to the new versioned tag, do not blindly force <code>latest</code>.</li>
+<li>The upstream version is pinned in the add-on (Dockerfile), a new one arrives as a normal add-on update. Do not switch images by hand.</li>
 <li>Start the add-on.</li>
 <li>Check the log for license, DB migration, port bindings, and query.</li>
 <li>Connect with a client.</li>
@@ -941,7 +900,6 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <ol>
 <li>Stop the add-on.</li>
 <li>Restore the HA backup.</li>
-<li>Optionally reset the image tag.</li>
 <li>Start the add-on.</li>
 <li>Verify client join, channel structure, permissions, and query.</li>
 </ol>
@@ -961,9 +919,9 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <table>
 <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
 <tbody>
-<tr><td>teamspeak6</td><td><code>v1.1.20</code></td><td>Version from README/badge.</td></tr>
-<tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta12.1</code></td><td>Current target from README and official upstream.</td></tr>
-<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta12.1</code></td><td>Versioned official container tag.</td></tr>
+<tr><td>teamspeak6</td><td><code>v1.1.23</code></td><td>Current add-on version (<code>config.yaml</code>).</td></tr>
+<tr><td>TeamSpeak 6 Server</td><td><code>6.0.0-beta13.1</code></td><td>Pinned in the Dockerfile.</td></tr>
+<tr><td>Docker Image</td><td><code>teamspeaksystems/teamspeak6-server:6.0.0-beta13.1</code></td><td>Versioned official container tag.</td></tr>
 </tbody>
 </table>
 <h2>v6.0.0-beta9 Highlights</h2>
@@ -976,6 +934,9 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 </ul>
 <h2>Recent Add-on Fixes</h2>
 <ul>
+<li><strong>v1.1.23:</strong> The database is backed up every 5 minutes, so a crash costs at most 5 minutes of changes. README and DOCS were rewritten to match the real options (only <code>license_accepted</code>, <code>query_admin_password</code>, <code>log_level</code>).</li>
+<li><strong>v1.1.22:</strong> Upstream bumped to <code>6.0.0-beta13.1</code>.</li>
+<li><strong>v1.1.21:</strong> Upstream bumped to <code>6.0.0-beta13</code>.</li>
 <li><strong>v1.1.20:</strong> Fixed a wrong CHANGELOG insert order left over from the Release Please automation.</li>
 <li><strong>v1.1.19:</strong> Cleaned up stale translation files, gated the smoke-test job, documented the Dockerfile <code>ARG</code>.</li>
 <li><strong>v1.1.18:</strong> Upstream bumped to <code>6.0.0-beta12.1</code>.</li>

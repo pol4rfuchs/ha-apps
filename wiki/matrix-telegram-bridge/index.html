@@ -518,6 +518,9 @@
       <div class="doc-content">
         <p><code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code> are generated automatically on first registration. <strong>Do not change them afterwards</strong> — otherwise Synapse loses its link to the appservice and all bridged rooms and users break.</p>
         <p>The bridge writes <code>registration.yaml</code> to <code>/share/telegram_bridge_registration.yaml</code>. Synapse reads it only when <code>telegram_bridge_enabled</code> is enabled (restart required).</p>
+        <h2 id="br-access"><a class="anchor" href="#br-access">#</a>Local and external access</h2>
+        <p><strong>Local (LAN):</strong> the bridge has no web interface and publishes no host port. The appservice port <code>29317</code> is reachable only inside Home Assistant's internal network, so the Matrix Synapse add-on can talk to the bridge (<code>appservice_address</code>). The link is protected by <code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code>; treat <code>/data</code> and <code>/share/telegram_bridge_registration.yaml</code> as secrets.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>forward nothing.</strong> The bridge connects outward to Telegram. Only Synapse has to be reachable from outside (see its documentation), never the bridge itself.</p>
       </div>
     </article>
 
@@ -566,7 +569,7 @@
           <a class="source-chip" href="https://docs.mau.fi/bridges/go/telegram/index.html"><span>📖</span><strong>Upstream docs</strong><small>docs.mau.fi</small></a>
           <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver add-on</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper around the upstream mautrix bridge.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper around the upstream mautrix bridge. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 
