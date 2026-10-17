@@ -1,10 +1,10 @@
 # CortenDesk als Home-Assistant-App: duenner Wrapper um das Upstream-Image.
-# Regeln: appbuildrules.md §0, §4, §16. Upstream: github.com/marcpope/cortendesk (AGPL-3.0-only)
+# Upstream: github.com/marcpope/cortendesk (AGPL-3.0-only)
 #
 # BUILD_FROM zeigt auf ein echtes Multi-Arch-Manifest (linux/amd64 + linux/arm64,
-# per Registry-API geprueft am 01.10.2026), daher kein ${BUILD_ARCH} im Namen noetig (§4/§16).
-# Index-Digest zur Kontrolle fuer 1.12.0:
-#   sha256:01a00b37f2473c7342471be111ace55f4bc26f0d16476c703dac6493e86fe9e2
+# geprueft am 17.10.2026), daher kein ${BUILD_ARCH} im Namen noetig.
+# Index-Digest von 1.12.0 am 17.10.2026 (Upstream-Tags sind nicht unveraenderlich):
+#   sha256:1c321ff17604d3506ff69686b752ad9c09d803581acd5a4bbf148d275aa3b0c0
 # Die Upstream-Version steht als eigenes ARG, damit 07-update-upstream-candidate sie patchen kann.
 
 ARG BUILD_ARCH

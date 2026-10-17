@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-# ENTWURF fuer die CortenDesk-App (appbuildrules §8).
+# ENTWURF fuer die CortenDesk-App.
 # Das Image laeuft NICHT unter s6, sondern supervisord (root) mit php-fpm, nginx,
 # hbbs, hbbr und dem Wrapper /run.sh -> die s6-Baseline aus dem Template entfaellt.
 #

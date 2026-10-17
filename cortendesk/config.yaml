@@ -46,8 +46,8 @@ schema:
   downloads_max_mb: "int(1,4096)?"
   log_level: "list(DEBUG|INFO|WARNING|ERROR)"
 
-# AppArmor (§8): apparmor.txt ist ein Entwurf im COMPLAIN-Modus (nur Logging, kein
-# Blockieren). Das Image laeuft nicht unter s6 (supervisord), die s6-Baseline entfaellt.
-# Nach dem Testlauf: Log auswerten, Luecken schliessen, "complain" aus den flags der
-# apparmor.txt entfernen. Laedt der Supervisor das Profil nicht, hier auf false stellen.
+# AppArmor ist aus: apparmor.txt ist ein ungetesteter Entwurf im COMPLAIN-Modus und wird
+# mit apparmor: false nicht geladen. Das Image laeuft nicht unter s6 (supervisord), die
+# s6-Baseline entfaellt. Nach einem Testlauf am Pi (apparmor: true, Log auswerten, Luecken
+# schliessen) "complain" aus den flags entfernen und hier auf true stellen.
 apparmor: false

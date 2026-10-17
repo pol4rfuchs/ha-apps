@@ -30,6 +30,7 @@ Spätere Änderungen der Option ändern das Passwort nicht, das geschieht in der
 
 Aktiviert den Browser-Client. Standard: aus. Die WebSocket-Ports 21118/21119 werden nicht
 auf den Host gemappt: Sie lauschen im Container auf allen Adressen und sind deshalb nur im internen Docker-Netz erreichbar.
+Sprachanrufe im Browser-Client funktionieren nur über HTTPS (oder `localhost`), also über einen Reverse-Proxy mit TLS.
 
 ### Option: `downloads_max_mb`
 
@@ -69,20 +70,33 @@ WebSocket-Ports `21118/21119` nie freigeben: `hbbs`/`hbbr` vertrauen dort ungepr
 sie nicht auf den Host gemappt. Andere Apps im internen Docker-Netz von Home Assistant können sie erreichen; mit
 `host_network: true` wären sie im ganzen LAN offen.
 
+## Datenschutz und ausgehende Verbindungen
+
+Die App ruft von sich aus nichts im Internet ab: Der Update-Check bei GitHub ist abgeschaltet
+(`CORTENDESK_UPDATE_CHECK=false`), die Weboberfläche lädt keine externen Skripte, Schriften oder Tracker (geprüft mit
+Upstream 1.12.0: Login-Seite und Dashboard, im Leerlauf keine Verbindung nach außen). Nur wenn du es in der Console
+einrichtest, verbindet sich CortenDesk mit externen Diensten (Apprise-Benachrichtigungen, SMTP, FTP/FTPS- oder
+S3-Backupkopien, OIDC-Anmeldung). Der Menüpunkt „Build Installers“ ist ein Link auf den Drittdienst `rdgen.crayoneater.org`
+und wird erst beim Klick geöffnet.
+
 ## Daten und Backup
 
 Alles liegt in `/data` (SQLite-Datenbank, Server-Schlüsselpaar, App-Key, Uploads) und ist im
 App-Backup enthalten. Backup-Modus ist `cold` (App wird kurz gestoppt, damit die SQLite-Dateien
 konsistent sind). **Das Schlüsselpaar nicht verlieren:** ohne `/data/rustdesk/id_ed25519` müssen alle Clients
-neu eingerichtet werden.
+neu eingerichtet werden. Ab Upstream 1.13.0 legt die Console zusätzlich eigene Backups unter `/data/backups` ab
+(täglich 03:30). Sie enthalten den App-Schlüssel und alle Geheimnisse, liegen damit auch im Home-Assistant-Backup und
+sind wie Passwörter zu behandeln.
 
-## Bekannte Einschränkungen (Version 0.0.x)
+## Bekannte Einschränkungen
 
-- **AppArmor nur im Complain-Modus:** Das Image läuft nicht unter s6, sondern `supervisord` (root)
-  mit `php-fpm`, `nginx`, `hbbs`, `hbbr`. Das mitgelieferte Profil ist ein Entwurf: Es protokolliert
-  nur und blockiert nichts. Nach einem Testlauf Log auswerten und `complain` aus den `flags`
-  der `apparmor.txt` entfernen (appbuildrules §8). Lädt der Supervisor das Profil nicht,
-  `apparmor: false` setzen.
+- **AppArmor ist aus (`apparmor: false`):** Das Image läuft nicht unter s6, sondern `supervisord` (root)
+  mit `php-fpm`, `nginx`, `hbbs`, `hbbr`. Das mitgelieferte Profil `apparmor.txt` ist ein ungetesteter Entwurf im
+  Complain-Modus (protokolliert nur, blockiert nichts) und wird mit `apparmor: false` nicht geladen. Für einen Test
+  am eigenen System in einer lokalen Kopie der App `apparmor: true` setzen, das Log auswerten und erst danach `complain`
+  aus den `flags` entfernen.
+- **Meldung beim Start:** `nginx` kann beim Start kurz `connect() failed … /api/server/policy` loggen, weil
+  `hbbs` die Console abfragt, bevor `php-fpm` bereit ist. Das ist harmlos und verschwindet nach wenigen Sekunden.
 - **Update-Check abgeschaltet:** Die App setzt `CORTENDESK_UPDATE_CHECK=false` (Upstream ab 1.11.0),
   die Console fragt GitHub nicht mehr ab und zeigt kein Update-Badge. Updates kommen über die App-Version.
 - **Datenbank-Pfad:** SQLite liegt in `/data/db/cortendesk.sqlite` (nicht `/data`), weil `/data`
