@@ -32,9 +32,15 @@ Kein automatischer Migrationspfad. Wechsel des `db_type` nach dem ersten Start f
 zu einer leeren Datenbank (alle Verknüpfungen/History gehen verloren) — vorher `login`-Status
 sauber trennen (`logout` im Bridge-Chat) und danach neu verknüpfen.
 
+## Lokaler und externer Zugriff
+
+**Lokal (LAN):** Die Bridge hat keine Weboberfläche und veröffentlicht keinen Host-Port. Der Appservice-Port `29318` ist nur im internen Netz von Home Assistant erreichbar, damit das Matrix-Synapse-Add-on die Bridge ansprechen kann (`appservice_address`). Die Kopplung ist durch `as_token`/`hs_token` in `/data/registration.yaml` geschützt; behandle `/data` und `/share/whatsapp_bridge_registration.yaml` wie ein Geheimnis.
+
+**Extern (Internet):** Empfehlung **nichts weiterleiten.** Die Bridge verbindet sich ausgehend zu WhatsApp; von außen muss nur Synapse erreichbar sein (siehe dessen Dokumentation), nie die Bridge selbst.
+
 ## Bekannte Einschränkungen
 
-- Ein Signal wird pro WhatsApp-Account benötigt (kein Multi-Account innerhalb einer
-  Bridge-Instanz vorgesehen).
+- Pro WhatsApp-Account wird eine eigene Bridge-Instanz benötigt (kein Multi-Account
+  innerhalb einer Bridge-Instanz vorgesehen).
 - Encryption (Megolm) muss auf beiden Seiten (Bridge-Option `encryption` + Matrix-Client)
   aktiviert sein, um verschlüsselte Portal-Räume zu bekommen.

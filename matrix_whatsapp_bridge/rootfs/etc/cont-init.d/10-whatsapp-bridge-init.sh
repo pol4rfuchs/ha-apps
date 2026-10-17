@@ -32,7 +32,7 @@ if [ "${DB_TYPE}" = "postgres" ]; then
     DB_URI="postgres://$(bashio::config 'postgres_username'):$(bashio::config 'postgres_password')@$(bashio::config 'postgres_host'):$(bashio::config 'postgres_port')/$(bashio::config 'postgres_database')?sslmode=disable"
     DB_TYPE_VAL="postgres"
 else
-    DB_URI="${DATA_DIR}/mautrix-whatsapp.db"
+    DB_URI="file:${DATA_DIR}/mautrix-whatsapp.db?_txlock=immediate"
     DB_TYPE_VAL="sqlite3-fk-wal"
 fi
 
@@ -61,6 +61,7 @@ yq -i "
   .database.uri = \"${DB_URI}\" |
   .encryption.allow = ${ENCRYPTION} |
   .encryption.default = ${ENCRYPTION} |
+  .logging.min_level = \"${LOG_LEVEL}\" |
   .bridge.permissions = {\"*\": \"relay\", \"${HOMESERVER_DOMAIN}\": \"user\"}
 " "${CONFIG_PATH}"
 
