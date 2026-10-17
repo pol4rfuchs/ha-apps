@@ -11,7 +11,7 @@ Wichtig: Der Web Vault braucht einen eigenen HTTPS-Ursprung (Ingress ist technis
 1. In Home Assistant **Settings → Apps → App Store** öffnen.
 2. Oben rechts im Menü **Repositories** wählen und `https://github.com/pol4rfuchs/ha-apps` hinzufügen.
 3. **Vaultwarden** in der Liste auswählen und **Install** klicken.
-4. Optionen setzen (mindestens `domain`, siehe [DOCS.md](DOCS.md)) und die App starten.
+4. Optionen setzen (mindestens `domain`; für das erste Konto `signups_allowed` kurz auf `true`, siehe [DOCS.md](DOCS.md)) und die App starten.
 
 Siehe [DOCS.md](DOCS.md) für Konfigurationsdetails.
 

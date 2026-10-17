@@ -17,8 +17,9 @@ Vaultwarden ist eine in Rust geschriebene, Bitwarden-kompatible Server-Implement
    docker run --rm -it ghcr.io/dani-garcia/vaultwarden:latest-alpine /vaultwarden hash
    ```
    Den ausgegebenen `$argon2id$...`-String als `admin_token` eintragen. Leer = Admin-Panel deaktiviert.
-3. App starten, im Web Vault Konten anlegen.
-4. Danach `signups_allowed` auf `false` stellen.
+3. Für das erste Konto `signups_allowed` auf `true` stellen (Standard ist `false`) und die App starten.
+4. Im Web Vault die Konten anlegen.
+5. Danach `signups_allowed` wieder auf `false` stellen.
 
 ## Konfiguration
 
@@ -62,9 +63,9 @@ Default: –
 
 ### `signups_allowed`
 
-Jeder mit Zugriff auf den Server darf sich registrieren. Nach dem Anlegen der eigenen Konten abschalten.
+Jeder mit Zugriff auf den Server darf sich registrieren. Standardmäßig aus; zum Anlegen der eigenen Konten kurz einschalten und danach wieder abschalten.
 
-Default: `true`
+Default: `false`
 
 ### `signups_verify`
 
@@ -152,9 +153,9 @@ Default: `internal`
 
 ### `disable_icon_download`
 
-Keine Favicon-Abrufe bei fremden Seiten. Bereits zwischengespeicherte Icons bleiben erhalten und laufen nicht ab.
+Keine Favicon-Abrufe bei fremden Seiten (Datenschutz: sonst wäre sichtbar, welche Seiten im Tresor stehen). Bereits zwischengespeicherte Icons bleiben erhalten und laufen nicht ab. Auf `false` stellen, wenn Seiten-Icons angezeigt werden sollen.
 
-Default: `false`
+Default: `true`
 
 ### `http_request_block_non_global_ips`
 

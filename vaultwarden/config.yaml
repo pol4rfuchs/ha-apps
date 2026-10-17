@@ -30,7 +30,7 @@ options:
   ssl: false
   certfile: "fullchain.pem"
   keyfile: "privkey.pem"
-  signups_allowed: true
+  signups_allowed: false
   signups_verify: false
   invitations_allowed: true
   email_change_allowed: true
@@ -41,7 +41,7 @@ options:
   enable_websocket: true
   ip_header: "X-Real-IP"
   icon_service: "internal"
-  disable_icon_download: false
+  disable_icon_download: true
   http_request_block_non_global_ips: true
   login_ratelimit_seconds: 60
   login_ratelimit_max_burst: 10

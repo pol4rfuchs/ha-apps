@@ -30,8 +30,9 @@ configuration:
   signups_allowed:
     name: Registrierung erlauben
     description: >-
-      Jeder mit Zugriff auf den Server darf sich registrieren. Nach dem
-      Anlegen der eigenen Konten abschalten.
+      Jeder mit Zugriff auf den Server darf sich registrieren. Standardmäßig
+      aus; zum Anlegen der eigenen Konten kurz einschalten, danach wieder
+      abschalten.
   signups_verify:
     name: E-Mail bei Registrierung prüfen
     description: >-
@@ -98,8 +99,10 @@ configuration:
   disable_icon_download:
     name: Icon-Download abschalten
     description: >-
-      Keine Favicon-Abrufe bei fremden Seiten. Bereits zwischengespeicherte
-      Icons bleiben erhalten und laufen nicht ab.
+      Keine Favicon-Abrufe bei fremden Seiten (standardmäßig an, damit nicht
+      sichtbar wird, welche Seiten im Tresor stehen). Bereits
+      zwischengespeicherte Icons bleiben erhalten und laufen nicht ab. Zum
+      Anzeigen von Seiten-Icons ausschalten.
   http_request_block_non_global_ips:
     name: Anfragen an lokale IPs blocken
     description: >-

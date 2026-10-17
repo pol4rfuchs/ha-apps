@@ -30,8 +30,8 @@ configuration:
   signups_allowed:
     name: Allow sign-ups
     description: >-
-      Allow anyone who can reach the server to register. Disable after
-      creating your accounts.
+      Allow anyone who can reach the server to register. Off by default;
+      switch it on briefly to create your accounts, then turn it off again.
   signups_verify:
     name: Verify e-mail on sign-up
     description: >-
@@ -98,8 +98,9 @@ configuration:
   disable_icon_download:
     name: Disable icon download
     description: >-
-      Never contact other sites for favicons. Icons already cached are kept
-      and served without expiry.
+      Never contact other sites for favicons (on by default, so the sites in
+      your vault are not revealed). Icons already cached are kept and served
+      without expiry. Turn off to show site icons.
   http_request_block_non_global_ips:
     name: Block requests to local IPs
     description: >-
