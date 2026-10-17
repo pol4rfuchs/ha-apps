@@ -438,7 +438,7 @@
           <div class="metric"><small>Add-on Slug</small><strong>ts6_manager</strong></div>
           <div class="metric"><small>Manager Web UI</small><strong>http://homeassistant.local:8066</strong></div>
           <div class="metric"><small>WebQuery API</small><strong>TS6 Server :10080</strong></div>
-          <div class="metric"><small>Generated</small><strong>2026-04-29</strong></div>
+          <div class="metric"><small>Generated</small><strong>2026-10-17</strong></div>
         </div>
       </div>
     </section>
@@ -549,6 +549,14 @@ TS6 Manager Data     → /data/ts6webui.db + /data/music + /data/secrets.env</co
         <h2 id="installation-open"><a class="anchor" href="#installation-open" aria-label="Permalink">#</a>Open Web UI</h2>
         <pre><code>http://homeassistant.local:8066</code></pre>
         <blockquote>If you changed the host port in the Home Assistant <strong>Network</strong> tab, use your configured host port instead of <code>8066</code>.</blockquote>
+        <h2 id="tm-options"><a class="anchor" href="#tm-options">#</a>Add-on Options</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>video_streaming</code></td><td><code>false</code></td><td>Enables the WebRTC media sidecar for streaming video into TeamSpeak channels. Off: the sidecar idles and needs hardly any RAM/CPU.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td>Log level of the backend (<code>trace</code>/<code>debug</code>/<code>info</code>/<code>notice</code>/<code>warning</code>/<code>error</code>/<code>fatal</code>). The backend logs through <code>console.*</code>, the levels are filtered there (<code>log</code>/<code>info</code> = info, <code>warn</code> = warning, <code>error</code> = error). nginx and the video sidecar are not affected.</td></tr>
+          </tbody>
+        </table>
       </div>
     </article>
 
@@ -845,7 +853,7 @@ TS6 Manager → private LAN/container route → TS6 WebQuery :10080</code></pre>
 <p>Each TS6 Manager instance connects to exactly one TeamSpeak 6 Server. Managing multiple servers requires multiple Manager instances.</p>
 
 <h2>SQLite Database Not Shared</h2>
-<p>The Manager's SQLite database (<code>/data/ts6manager/prisma.db</code>) is local to the container. It is not synced with the TeamSpeak 6 Server database. If you reinstall the Manager, connection profiles and settings are lost unless you have a backup.</p>
+<p>The Manager's SQLite database (<code>/data/ts6webui.db</code>) is local to the container. It is not synced with the TeamSpeak 6 Server database. If you reinstall the Manager, connection profiles and settings are lost unless you have a backup.</p>
 
 <h2>No armhf / armv7 / i386 Support</h2>
 <p>The add-on only supports <code>amd64</code> and <code>aarch64</code>. Home Assistant has dropped official support for 32-bit architectures. If you are running one of these, consider migrating to a supported platform.</p>
@@ -864,7 +872,7 @@ TS6 Manager → private LAN/container route → TS6 WebQuery :10080</code></pre>
 <h2>Disclaimer</h2>
 <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <a href="https://github.com/clusterzx/ts6-manager">clusterzx/ts6-manager</a>. It is not affiliated with or endorsed by TeamSpeak Systems, Inc. or the upstream project maintainer.</blockquote>
 <h2>Wrapper License</h2>
-<pre><code>MIT License</code></pre>
+<pre><code>Apache License 2.0</code></pre>
 <p>The upstream TS6 Manager project by clusterzx is licensed under its own terms. The TeamSpeak 6 Server itself is subject to TeamSpeak licensing terms.</p>
 <h2>Useful Links</h2>
 <div class="source-grid">

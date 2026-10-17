@@ -536,8 +536,7 @@ Data       → /data (database, cache)</code></pre>
           <tbody>
             <tr><td><code>ND_DATAFOLDER</code></td><td><code>/data</code></td><td>Database and cache location.</td></tr>
             <tr><td><code>ND_LOGLEVEL</code></td><td><code>info</code></td><td><code>error / warn / info / debug / trace</code></td></tr>
-            <tr><td><code>PUID</code></td><td><code>0</code></td><td>User ID Navidrome runs as. Match your music share's owner to avoid permission issues.</td></tr>
-            <tr><td><code>PGID</code></td><td><code>0</code></td><td>Group ID Navidrome runs as.</td></tr>
+            <tr><td><code>ND_EXTRA_MUSIC_FOLDERS</code></td><td>—</td><td>Comma-separated extra music folders (e.g. <code>/share/music2,/media/usb/music</code>). Each existing folder is linked into <code>ND_MUSICFOLDER</code> at start.</td></tr>
           </tbody>
         </table>
         <h2 id="config-ui"><a class="anchor" href="#config-ui">#</a>UI</h2>
@@ -603,12 +602,12 @@ Data       → /data (database, cache)</code></pre>
             <tr><td><code>ND_LISTENBRAINZ_ENABLED</code></td><td><code>false</code></td><td>ListenBrainz scrobbling.</td></tr>
           </tbody>
         </table>
-        <p><strong>Removed:</strong> Spotify integration (<code>ND_SPOTIFY_ID</code> / <code>ND_SPOTIFY_SECRET</code>) and the reverse-proxy SSO options (<code>ND_REVERSEPROXYUSERHEADER</code> / <code>ND_REVERSEPROXYWHITELIST</code>) are no longer exposed as add-on options.</p>
+        <p><strong>Removed:</strong> Spotify integration (<code>ND_SPOTIFY_ID</code> / <code>ND_SPOTIFY_SECRET</code>) and the reverse-proxy SSO options (<code>ND_REVERSEPROXYUSERHEADER</code> / <code>ND_REVERSEPROXYWHITELIST</code>) are no longer exposed as add-on options. Navidrome runs as root: there is no <code>PUID</code>/<code>PGID</code> option, and files Navidrome writes into your music folder belong to root.</p>
         <h2 id="config-jukebox"><a class="anchor" href="#config-jukebox">#</a>Jukebox</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio directly on the server's sound hardware. Requires <code>privileged: true</code> and ALSA device access.</td></tr>
+            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio on the server's sound hardware. Needs jukebox devices, which are not configurable through the add-on options.</td></tr>
           </tbody>
         </table>
         <h2 id="config-playlists"><a class="anchor" href="#config-playlists">#</a>Playlists</h2>
@@ -739,7 +738,7 @@ Data       → /data (database, cache)</code></pre>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant Add-ons</strong><small>Supervisor platform</small></a>
         </div>
         <h2 id="sources-license"><a class="anchor" href="#sources-license">#</a>License</h2>
-        <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <code>deluan/navidrome</code>. Navidrome is licensed under GPL-3.0. The add-on wrapper is MIT.</blockquote>
+        <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <code>deluan/navidrome</code>. Navidrome is licensed under GPL-3.0. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

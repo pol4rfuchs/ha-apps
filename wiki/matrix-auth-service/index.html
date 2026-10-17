@@ -406,7 +406,7 @@
 
     <div class="sidebar-footer">
       <strong style="color:var(--accent-3)">Quick reference</strong><br>
-      Version: <code>1.0.3</code><br>Ports: <code>8082</code>, <code>8083</code><br>DB: bundled PostgreSQL<br>Status: untested skeleton
+      Version: <code>1.0.6</code><br>Ports: <code>8082</code>, <code>8083</code><br>DB: bundled PostgreSQL<br>Status: experimental
     </div>
   </aside>
 
@@ -415,7 +415,7 @@
       <div class="hero-inner">
         <div class="hero-kicker"><span class="pulse"></span> MATRIX AUTHENTICATION SERVICE · OIDC/OAUTH2 · HOME ASSISTANT ADD-ON</div>
         <h2>Matrix Login, <span class="accent">Delegated</span>.</h2>
-        <p class="hero-copy">Wiki for the Matrix Auth Service add-on: OIDC/OAuth2 authentication for Synapse, required for Element X QR login and MFA. Currently an untested concept skeleton.</p>
+        <p class="hero-copy">Wiki for the Matrix Auth Service add-on: OIDC/OAuth2 authentication for Synapse, required for Element X QR login and MFA. Status: experimental.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Setup</a>
           <a class="btn secondary" href="#configuration">⚙️ Options</a>
@@ -424,9 +424,9 @@
 
         <div class="metric-grid">
           <div class="metric"><small>Add-on Slug</small><strong>matrix_auth_service</strong></div>
-          <div class="metric"><small>Version</small><strong>1.0.3</strong></div>
+          <div class="metric"><small>Version</small><strong>1.0.6</strong></div>
           <div class="metric"><small>Public Port</small><strong>8082/tcp</strong></div>
-          <div class="metric"><small>Status</small><strong>untested skeleton</strong></div>
+          <div class="metric"><small>Status</small><strong>experimental</strong></div>
         </div>
       </div>
     </section>
@@ -453,7 +453,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
       </div>
       <div class="doc-content">
         <p><strong>Matrix Authentication Service (MAS)</strong> by Element HQ delegates authentication of your Synapse homeserver via OIDC/OAuth2. It is the prerequisite for Element X QR-code login, MFA and further “Matrix 2.0” client features. This add-on runs it standalone next to <a href="../matrix-synapse/">matrix-synapse</a> with a bundled PostgreSQL.</p>
-        <blockquote><strong>Status: untested / concept skeleton.</strong> According to the add-on's own documentation, a first build and test run (PostgreSQL init, <code>mas-cli database migrate</code>, <code>mas-cli config sync</code>) is still pending. Do not rely on it in production yet.</blockquote>
+        <blockquote><strong>Status: experimental.</strong> The add-on is built and published (<code>stage: experimental</code>). A first real-world test run (PostgreSQL init, <code>mas-cli database migrate</code>, <code>mas-cli config sync</code>) is still an open item in the add-on documentation, and there is no AppArmor profile yet. Do not rely on it in production yet.</blockquote>
       </div>
     </article>
 
@@ -498,11 +498,11 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>mas_domain</code></td><td><code>account.deine-domain.eu.org</code></td><td>Public domain of the account UI (own subdomain, e.g. <code>account.example.org</code>).</td></tr>
-            <tr><td><code>synapse_server_name</code></td><td><code>deine-domain.eu.org</code></td><td>Server name of your Matrix homeserver.</td></tr>
+            <tr><td><code>mas_domain</code></td><td><code>account.example.org</code></td><td>Public domain of the account UI (own subdomain, e.g. <code>account.example.org</code>).</td></tr>
+            <tr><td><code>synapse_server_name</code></td><td><code>example.org</code></td><td>Server name of your Matrix homeserver.</td></tr>
             <tr><td><code>synapse_endpoint</code></td><td><code>http://homeassistant.local:8008</code></td><td>URL of the Synapse add-on's API.</td></tr>
             <tr><td><code>synapse_secret</code></td><td><em>(empty)</em></td><td>Shared secret with Synapse. Leave empty — generated on first start (log and <code>/data/mas/.synapse_secret</code>).</td></tr>
-            <tr><td><code>postgres_password</code></td><td><code>changeme_bitte_aendern</code></td><td>Password of the bundled PostgreSQL database. Change the default.</td></tr>
+            <tr><td><code>postgres_password</code></td><td>—</td><td>Password of the internal MAS database user. Leave empty to generate one (stored in <code>/data/mas/.pg_password</code>). A value set here is applied to the database on every start.</td></tr>
             <tr><td><code>admin_users</code></td><td><em>(empty)</em></td><td>Comma-separated list of admin usernames.</td></tr>
             <tr><td><code>password_registration_enabled</code></td><td><code>false</code></td><td>Allow password-based registration.</td></tr>
             <tr><td><code>password_login_enabled</code></td><td><code>true</code></td><td>Allow password login (fallback next to upstream OIDC).</td></tr>
@@ -528,7 +528,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
             <tr><td><code>8082/tcp</code></td><td>MAS public API and account UI — put it behind your reverse proxy for HTTPS (same pattern as Synapse).</td></tr>
             <tr><td><code>8083/tcp</code></td><td>MAS internal: health and metrics, not meant for the reverse proxy.</td></tr>
             </tbody>
-        </table><blockquote>Creating the reverse-proxy route for <code>mas_domain</code> (e.g. in Nginx Proxy Manager) is still an open item in the add-on documentation.</blockquote>
+        </table>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
         <p><strong>Local (LAN):</strong> the account UI runs on port <code>8082</code> (<code>http://&lt;ha-host&gt;:8082</code>). MAS uses <code>https://&lt;mas_domain&gt;/</code> as its public address (issuer), so the login flow only works through that HTTPS domain, not through the bare LAN IP. To use it locally, add a DNS rewrite for the domain to your local DNS server and put a reverse proxy with a certificate in front.</p>
         <p><strong>Reverse-proxy route (for example Nginx Proxy Manager):</strong> create a proxy host with domain = <code>mas_domain</code>, scheme <code>http</code>, forward host = your HA host, port <code>8082</code>. Request a certificate and enable "Force SSL". Port <code>8083</code> (health check only) does not belong in the proxy.</p>
@@ -554,8 +554,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
       <div class="doc-content">
         <ul>
           <li>First build and test run (PostgreSQL init, database migrate, config sync)</li>
-          <li><code>icon.png</code> / <code>logo.png</code> and <code>apparmor.txt</code> (AppArmor is currently <code>false</code>)</li>
-          <li>Reverse-proxy route for <code>mas_domain</code></li>
+          <li><code>apparmor.txt</code> is missing (AppArmor is currently <code>false</code>)</li>
           <li>Decide whether <code>password_login_enabled: true</code> is enough as a fallback or MAS should run with an upstream OIDC provider only</li>
         </ul>
       </div>
@@ -572,7 +571,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
           <a class="source-chip" href="https://github.com/element-hq/matrix-authentication-service"><span>🛡️</span><strong>MAS upstream</strong><small>element-hq/matrix-authentication-service</small></a>
           <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver add-on</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper around the upstream Element HQ container image.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper around the upstream Element HQ container image. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

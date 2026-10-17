@@ -440,12 +440,12 @@
         <h3>⚡ Minimum Run Path</h3>
         <p>Set up MariaDB first, configure DB options, start, wait ~1–2 min for auto-install.</p>
         <pre><code>Web UI: http://homeassistant.local:8280
-Data:   /data/nextcloud/{html,data}</code></pre>
+Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
       </div>
       <div class="quick-card glass-card">
-        <h3>⚠️ Change the Admin Password First</h3>
-        <p><code>admin_password</code> defaults to <code>changeme</code> and only applies on the very first install.</p>
-        <pre><code>Change it in add-on options BEFORE the first start.</code></pre>
+        <h3>⚠️ Set the Admin Password First</h3>
+        <p><code>admin_password</code> has no default: the add-on refuses to start while it is empty (or <code>changeme</code>). It only applies on the very first install.</p>
+        <pre><code>Set it in add-on options BEFORE the first start.</code></pre>
       </div>
     </section>
 
@@ -471,8 +471,8 @@ Data:   /data/nextcloud/{html,data}</code></pre>
         </table>
         <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
         <pre><code>Nextcloud Web UI :8280 → PHP/Apache → MariaDB (core-mariadb) or SQLite/Postgres
-/data/nextcloud/html/  → app code + config.php
-/data/nextcloud/data/  → user files (NEXTCLOUD_DATA_DIR)</code></pre>
+/data/nextcloud/config/ → config.php and further config files
+/data/nextcloud/data/   → user files (NEXTCLOUD_DATA_DIR)</code></pre>
       </div>
     </article>
 
@@ -493,7 +493,7 @@ Data:   /data/nextcloud/{html,data}</code></pre>
         <ol>
           <li>Search for <strong>Nextcloud</strong>, click <strong>Install</strong>.</li>
           <li>Configure database options to match your MariaDB setup (see <a href="#configuration">Configuration</a>).</li>
-          <li><strong>Change <code>admin_password</code> from the <code>changeme</code> default</strong> before starting.</li>
+          <li><strong>Set <code>admin_password</code></strong> before starting. There is no default and the first start fails while it is empty.</li>
         </ol>
         <h2 id="nc-step-3"><a class="anchor" href="#nc-step-3">#</a>Step 3 — Start</h2>
         <ol>
@@ -513,8 +513,8 @@ Data:   /data/nextcloud/{html,data}</code></pre>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>admin_user</code></td><td><code>admin</code></td><td>Initial admin username.</td></tr>
-            <tr><td><code>admin_password</code></td><td><code>changeme</code></td><td>Only applied on initial install — change before first start.</td></tr>
-            <tr><td><code>trusted_domains</code></td><td><em>(empty)</em></td><td>Extra hostnames Nextcloud will accept requests for.</td></tr>
+            <tr><td><code>admin_password</code></td><td><em>(empty)</em></td><td><strong>Required.</strong> The first start fails while it is empty. Only applied on initial install.</td></tr>
+            <tr><td><code>trusted_domains</code></td><td><code>homeassistant.local homeassistant</code></td><td>Hostnames Nextcloud will accept requests for (space-separated). Only applied on the first install; afterwards use <code>occ</code>.</td></tr>
             <tr><td><code>db_type</code></td><td><code>mysql</code></td><td>sqlite|mysql|pgsql</td></tr>
             <tr><td><code>db_host</code></td><td><code>core-mariadb</code></td><td>Database host (the HA MariaDB add-on's hostname by default).</td></tr>
             <tr><td><code>db_port</code></td><td><code>3306</code></td><td>Database port.</td></tr>
@@ -566,20 +566,27 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
       </div>
     </article>
 
-    <article id="persistence" class="doc-section glass-card" data-search="persistence data nextcloud html data folder config.php user files nextcloud data dir ha full backup restore together as a unit">
+    <article id="persistence" class="doc-section glass-card" data-search="persistence data nextcloud config custom apps themes data folder config.php user files nextcloud data dir version php ha full backup restore together as a unit">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Persistence</p><h2>Data Layout & Backup</h2></div></div>
         <a class="section-link" href="#persistence">#persistence</a>
       </div>
       <div class="doc-content">
         <pre><code>/data/nextcloud/
-├── html/       # Nextcloud app code + config.php
-└── data/       # User files (NEXTCLOUD_DATA_DIR)</code></pre>
+├── config/       # config.php and further config files
+├── custom_apps/  # apps installed from the Nextcloud app store
+├── themes/
+├── data/         # User files (NEXTCLOUD_DATA_DIR)
+└── version.php   # Version of the installed code (used for updates)</code></pre>
+        <p>The Nextcloud code itself is not stored there: it comes from the add-on image and is restored on every start.</p>
+        <h2 id="nc-versions"><a class="anchor" href="#nc-versions">#</a>Versions and updates</h2>
+        <p>The add-on version (for example <code>33.0.x</code>) is a release counter of this repository, <strong>not</strong> the Nextcloud version. The Nextcloud version is the one in the image (<code>NEXTCLOUD_TAG</code> build argument).</p>
+        <p>Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the add-on runs <code>occ upgrade</code> when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version. Take a backup before every major upgrade.</p>
         <blockquote>A Home Assistant full backup (includes add-on data by default) already covers this. If backing up manually, back up the entire <code>/data/nextcloud/</code> folder as a unit — <code>config.php</code> and the user data directory reference each other and should be restored together.</blockquote>
       </div>
     </article>
 
-    <article id="security" class="doc-section glass-card" data-search="security secrets admin password changeme initial install only db password matches mariadb postgres side password schema masked apparmor not yet enforced official vendor image profile paths not verified">
+    <article id="security" class="doc-section glass-card" data-search="security secrets admin password required initial install only db password matches mariadb postgres side password schema masked apparmor not yet enforced official vendor image profile paths not verified">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🔒</span><div><p class="eyebrow">Security</p><h2>Secrets & AppArmor Status</h2></div></div>
         <a class="section-link" href="#security">#security</a>
@@ -589,7 +596,7 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
         <table>
           <thead><tr><th>Option</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td><code>admin_password</code></td><td>Defaults to <code>changeme</code> — change before the very first start. Only applied during initial install; changing it afterwards in add-on options does <strong>not</strong> change the actual account password (use the Nextcloud UI or <code>occ user:resetpassword</code>).</td></tr>
+            <tr><td><code>admin_password</code></td><td>No default and required: the first start fails while it is empty. Only applied during initial install; changing it afterwards in add-on options does <strong>not</strong> change the actual account password (use the Nextcloud UI or <code>occ user:resetpassword</code>).</td></tr>
             <tr><td><code>db_password</code></td><td>Must match whatever is configured on the MariaDB/Postgres side.</td></tr>
           </tbody>
         </table>
@@ -633,7 +640,7 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
           <a class="source-chip" href="https://apps.nextcloud.com/"><span>🧩</span><strong>App Store</strong><small>apps.nextcloud.com</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Nextcloud is licensed under AGPL-3.0. Add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Nextcloud is licensed under AGPL-3.0. Add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

@@ -495,7 +495,7 @@ Optional SSH :22     → git clone/push
         </ol>
         <h2 id="fj-step-3"><a class="anchor" href="#fj-step-3">#</a>Step 3 — Start & First-Run Wizard</h2>
         <ol>
-          <li>Start the add-on and open the Web UI via the sidebar.</li>
+          <li>Start the add-on and open the Web UI with the <strong>Open Web UI</strong> button (or <code>http://&lt;ha-host&gt;:3000</code>). There is no sidebar panel, because Ingress is not used.</li>
           <li>On first visit, Forgejo's own setup wizard runs — create the admin account there (not in HA options).</li>
         </ol>
         <blockquote>Forgejo manages its own admin account and users internally, created via its setup wizard, not through HA add-on options.</blockquote>
@@ -518,7 +518,7 @@ Optional SSH :22     → git clone/push
             <tr><td><code>keyfile</code></td><td><code>privkey.pem</code></td><td>SSL key from <code>/ssl/</code>.</td></tr>
             <tr><td><code>ssh_enabled</code></td><td><code>false</code></td><td>Enable SSH git access.</td></tr>
             <tr><td><code>ssh_port</code></td><td><code>22</code></td><td>SSH port.</td></tr>
-            <tr><td><code>log_level</code></td><td><code>Info</code></td><td>Log verbosity (Trace…Fatal).</td></tr>
+            <tr><td><code>log_level</code></td><td><code>Info</code></td><td>Log verbosity: <code>Trace</code>, <code>Debug</code>, <code>Info</code>, <code>Warn</code>, <code>Error</code>, <code>Critical</code> or <code>Fatal</code>.</td></tr>
           </tbody>
         </table>
         <blockquote>The web UI is reached directly on <code>3000/tcp</code> (Ingress was removed in 16.0.17 because assets break behind it). Set <code>domain</code> to the hostname or IP you use, otherwise links and clone URLs point to <code>localhost</code>.</blockquote>
@@ -609,7 +609,7 @@ FORGEJO__packages__ENABLED=true</code></pre>
           <a class="source-chip" href="https://forgejo.org/docs/latest/admin/config-cheat-sheet/"><span>📖</span><strong>Config Cheat Sheet</strong><small>forgejo.org/docs</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Forgejo is licensed under MIT/GPL-2.0 (mixed, per upstream). Add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Forgejo is licensed under the GPL version 3.0 or any later version (versions before 9.0 were MIT). The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

@@ -404,7 +404,7 @@
   <div class="sidebar-footer">
     <strong style="color:var(--accent-2)">ntfy-manager</strong><br/>
     Repo: <a href="https://github.com/pol4rfuchs/ha-apps" target="_blank">pol4rfuchs/ha-apps</a><br/>
-    Image: <code style="font-size:.72rem">ghcr.io/pol4rfuchs/ntfy-manager</code><br/>
+    Image: <code style="font-size:.72rem">ghcr.io/pol4rfuchs/ntfy_manager</code><br/>
     Arch: aarch64 · amd64
   </div>
 </aside>
@@ -495,14 +495,14 @@
         <div class="step-num">2</div>
         <div class="step-body">
           <h4>Add-on installieren</h4>
-          <p>Im Store <strong>ntfy Manager</strong> suchen → Installieren. Das Image wird von GHCR gepullt (<code>ghcr.io/pol4rfuchs/ntfy-manager</code>).</p>
+          <p>Im Store <strong>ntfy Manager</strong> suchen → Installieren. Das Image wird von GHCR gepullt (<code>ghcr.io/pol4rfuchs/ntfy_manager</code>).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
           <h4>ntfy-Endpunkt konfigurieren</h4>
-          <p>Im Add-on die Options setzen — mindestens <code>ntfy_url</code> und optional <code>ntfy_token</code> für Auth-geschützte Instanzen.</p>
+          <p>Im Add-on die Options setzen — mindestens <code>ntfy_base_url</code>; bei Auth-geschützten Instanzen zusätzlich <code>ntfy_auth_type</code> mit <code>ntfy_username</code>/<code>ntfy_password</code> (basic) oder <code>ntfy_bearer_token</code> (bearer). Leer lassen funktioniert ebenfalls: dann meldest du dich im Panel an.</p>
         </div>
       </div>
       <div class="step">
@@ -619,8 +619,8 @@
     <div class="alert warn">
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
-        <strong>Docker-interne URL empfohlen</strong>
-        Für den Zugriff vom Add-on auf den ntfy-Server nutze die Docker-interne Adresse <code>http://a0d7b954-ntfy:80</code> statt der externen DuckDNS-URL — kein TLS-Overhead, kein NAT-Loopback.
+        <strong>Docker-interne URL (optional)</strong>
+        Laufen beide Add-ons auf demselben Supervisor, kann statt der externen URL die Docker-interne Adresse <code>http://a0d7b954-ntfy:80</code> genutzt werden — kein TLS-Overhead, kein NAT-Loopback. Der Standardwert <code>http://homeassistant.local:4280</code> funktioniert ebenfalls.
       </div>
     </div>
   </div>
@@ -716,7 +716,7 @@ auth-default-access: deny-all</pre>
       </div>
     </div>
 
-    <p>Der Live-Monitor öffnet einen <strong>Server-Sent Events</strong>-Stream direkt auf die ntfy-API. Mehrere Topics können gleichzeitig abonniert werden.</p>
+    <p>Der Live-Monitor öffnet einen <strong>Server-Sent Events</strong>-Stream auf die ntfy-API, der über das Backend dieses Add-ons weitergereicht wird. Mehrere Topics können gleichzeitig abonniert werden.</p>
 
     <div class="code-block">
       <div class="label">ntfy SSE endpoint (intern)</div>
@@ -742,8 +742,8 @@ Authorization: Bearer &lt;token&gt;</pre>
     <div class="alert info">
       <div class="alert-icon">💡</div>
       <div class="alert-body">
-        <strong>Browser-seitige Verbindung</strong>
-        Der SSE-Stream läuft direkt vom Browser zur ntfy-API — ntfy Manager ist nur das UI-Shell. Wenn ntfy hinter NPM mit Auth liegt, muss der Browser das Token kennen (wird aus Add-on-Config geladen).
+        <strong>Verbindung über das Add-on</strong>
+        Der SSE-Stream wird vom Backend des Add-ons an ntfy weitergereicht (<code>/sse</code>); die Zugangsdaten bleiben im verschlüsselten Cookie und gelangen nicht in den Browser. Das Add-on und ntfy müssen sich erreichen können, der Browser braucht nur Zugriff auf das Panel.
       </div>
     </div>
   </div>
@@ -764,13 +764,13 @@ Authorization: Bearer &lt;token&gt;</pre>
         <tbody>
           <tr>
             <td>"Cannot connect to ntfy"</td>
-            <td>Falsche <code>ntfy_url</code> oder ntfy-Add-on nicht gestartet</td>
+            <td>Falsche <code>ntfy_base_url</code> oder ntfy-Add-on nicht gestartet</td>
             <td>Docker-interne URL prüfen: <code>http://a0d7b954-ntfy:80</code>. Beide Add-ons müssen laufen.</td>
           </tr>
           <tr>
             <td>401 Unauthorized</td>
             <td>ntfy läuft mit Auth, Token fehlt oder falsch</td>
-            <td>Admin-Token in Add-on Options unter <code>ntfy_token</code> hinterlegen.</td>
+            <td><code>ntfy_auth_type</code> auf <code>bearer</code> stellen und das Token unter <code>ntfy_bearer_token</code> hinterlegen (oder basic mit Benutzer/Passwort), oder im Panel anmelden.</td>
           </tr>
           <tr>
             <td>ACL-Tab leer</td>

@@ -412,7 +412,7 @@
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>signing.key, PostgreSQL, backup</small></span></a>
       <a class="nav-item" href="#ha-integration" data-target="ha-integration"><span class="nav-icon">🏡</span><span><strong>HA Integration</strong><small>notify, automations</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Federation, admin, element</small></span></a>
-      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, Synapse, etkecc, LiveKit</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, Synapse, Ketesa, LiveKit</small></span></a>
     </nav>
 
     <div class="sidebar-footer">
@@ -451,7 +451,6 @@
         <h3>⚡ Minimum Config</h3>
         <p>Set server_name BEFORE first start — cannot be changed after.</p>
         <pre><code>server_name: "example.org"
-postgres_password: "strong_password"
 enable_registration: false</code></pre>
       </div>
       <div class="quick-card glass-card">
@@ -475,15 +474,15 @@ Synapse Admin (on-demand download)</code></pre>
         <table>
           <thead><tr><th>Component</th><th>Version</th><th>Purpose</th></tr></thead>
           <tbody>
-            <tr><td>Synapse</td><td>1.148.0</td><td>Matrix homeserver</td></tr>
+            <tr><td>Synapse</td><td>pip floor, Renovate-tracked</td><td>Matrix homeserver</td></tr>
             <tr><td>PostgreSQL 15</td><td>Debian pkg</td><td>Database</td></tr>
-            <tr><td>Element Web</td><td>v1.12.11</td><td>Web client</td></tr>
-            <tr><td>Element Call</td><td>latest</td><td>Voice / Video calls</td></tr>
-            <tr><td>LiveKit SFU</td><td>latest</td><td>WebRTC media server</td></tr>
-            <tr><td>Synapse Admin</td><td>v0.10.3-etke32</td><td>Admin UI</td></tr>
+            <tr><td>Element Web</td><td>latest (auto-fetched, version-tracked)</td><td>Web client</td></tr>
+            <tr><td>Element Call</td><td>latest (auto-fetched, version-tracked)</td><td>Voice / Video calls</td></tr>
+            <tr><td>LiveKit SFU</td><td>latest (auto-fetched, version-tracked)</td><td>WebRTC media server</td></tr>
+            <tr><td>Ketesa (formerly Synapse Admin)</td><td>latest (auto-fetched, version-tracked)</td><td>Admin UI</td></tr>
           </tbody>
         </table>
-        <blockquote>Synapse Admin uses the <a href="https://github.com/etkecc/synapse-admin">etkecc fork</a> — required for Synapse 1.14x compatibility.</blockquote>
+        <blockquote>The admin UI is <a href="https://github.com/etkecc/ketesa">Ketesa</a>, the etke.cc project formerly known as Synapse Admin (renamed in 2026). Element Web, Element Call, LiveKit and Ketesa are compared against upstream <code>latest</code> on every start and re-downloaded on a mismatch. Synapse itself is installed with <code>pip</code> at image build time, so a new Synapse release only arrives with a new add-on image.</blockquote>
         <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
         <pre><code>Browser           → Element Web    :7080 (via NPM)
 Browser           → Synapse Admin  :8090 (via NPM)
@@ -511,8 +510,8 @@ Element Call/VC   → LiveKit SFU    :7880 (via NPM, WebSocket)</code></pre>
         <p>Set at minimum before starting:</p>
         <pre><code>server_name: "example.org"
 element_web_url: "https://example.org"
-postgres_password: "strong_password_here"
 enable_registration: false</code></pre>
+        <p>The database password needs no setting: leave <code>postgres_password</code> empty and the add-on generates one (stored in <code>/data/matrix/.pg_password</code>).</p>
         <blockquote><strong>server_name cannot be changed after first start.</strong> It becomes your permanent Matrix ID (<code>@user:server_name</code>).</blockquote>
         <h2 id="matrix-step-3"><a class="anchor" href="#matrix-step-3">#</a>Step 3 — Start</h2>
         <p>First start takes 2–3 minutes. Element Web and Synapse Admin are downloaded at runtime.</p>
@@ -536,24 +535,42 @@ enable_registration: false</code></pre>
           <thead><tr><th>Option</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>server_name</code></td><td>Your Matrix domain. <strong>No trailing slash. Cannot change after first start.</strong></td></tr>
-            <tr><td><code>postgres_password</code></td><td>PostgreSQL password. Set before first start.</td></tr>
           </tbody>
         </table>
         <h2 id="config-general"><a class="anchor" href="#config-general">#</a>General</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>element_web_url</code></td><td>—</td><td>External HTTPS URL for Element Web.</td></tr>
+            <tr><td><code>element_web_url</code></td><td><code>https://example.org:7080</code></td><td>External HTTPS URL for Element Web.</td></tr>
+            <tr><td><code>postgres_password</code></td><td>—</td><td>Password of the internal database user. Leave empty: the add-on generates one and stores it in <code>/data/matrix/.pg_password</code>. If you set a value, it is applied to the database on every start.</td></tr>
             <tr><td><code>element_call_url</code></td><td>—</td><td>External HTTPS URL for Element Call.</td></tr>
             <tr><td><code>livekit_url</code></td><td>—</td><td>WebSocket URL for LiveKit SFU.</td></tr>
             <tr><td><code>livekit_jwt_url</code></td><td>—</td><td>HTTPS URL for LiveKit JWT bridge.</td></tr>
             <tr><td><code>ntfy_url</code></td><td>—</td><td>Optional external ntfy URL for UnifiedPush.</td></tr>
             <tr><td><code>enable_registration</code></td><td><code>false</code></td><td>Allow public registration.</td></tr>
-            <tr><td><code>registration_shared_secret</code></td><td>—</td><td>Shared secret for <code>register_new_matrix_user</code>-style admin registration. Leave empty to disable.</td></tr>
+            <tr><td><code>registration_shared_secret</code></td><td>—</td><td>Secret for admin-controlled user registration (<code>register_new_matrix_user</code>). Leave empty to auto-generate.</td></tr>
             <tr><td><code>enable_federation</code></td><td><code>true</code></td><td>Connect to the Matrix federation.</td></tr>
-            <tr><td><code>enable_synapse_admin</code></td><td><code>true</code></td><td>Enable the built-in Synapse Admin UI (see <a href="#synapse-admin">Synapse Admin</a>).</td></tr>
+            <tr><td><code>enable_synapse_admin</code></td><td><code>true</code></td><td>Start the admin UI (Ketesa) on port 8090 (see <a href="#synapse-admin">Admin UI</a>).</td></tr>
             <tr><td><code>enable_voice_calls</code></td><td><code>false</code></td><td>Enable Element Call / LiveKit voice &amp; video. Requires <code>livekit_secret</code>, <code>element_call_url</code>, <code>livekit_url</code> and <code>livekit_jwt_url</code>.</td></tr>
-            <tr><td><code>livekit_secret</code></td><td>—</td><td>Shared secret between Synapse and the LiveKit SFU.</td></tr>
+            <tr><td><code>livekit_secret</code></td><td>—</td><td>Shared secret between Synapse and the LiveKit SFU. Leave empty to auto-generate on first start (stored in <code>/data/matrix/.livekit_secret</code>).</td></tr>
+            <tr><td><code>livekit_turn_enabled</code></td><td><code>false</code></td><td>Off by default: calls use the direct SFU UDP ports (30000-30020), which is more reliable on normal home and mobile networks. Enable only on very restrictive networks that allow HTTPS/443 only (internal TURN server).</td></tr>
+            <tr><td><code>mas_enabled</code></td><td><code>false</code></td><td>Delegates login/registration entirely to the matrix-auth-service add-on (required for Element X QR-code login). Disables native Synapse auth.</td></tr>
+            <tr><td><code>mas_endpoint</code></td><td><code>http://homeassistant.local:8082</code></td><td>Internally reachable URL of the matrix-auth-service add-on.</td></tr>
+            <tr><td><code>mas_secret</code></td><td>—</td><td>Must exactly match the value generated/set in the matrix-auth-service add-on.</td></tr>
+            <tr><td><code>whatsapp_bridge_enabled</code></td><td><code>false</code></td><td>Registers the mautrix-whatsapp appservice with Synapse (the WhatsApp Bridge add-on must run and its registration file must be present in <code>/share</code>).</td></tr>
+            <tr><td><code>signal_bridge_enabled</code></td><td><code>false</code></td><td>Same for the mautrix-signal bridge.</td></tr>
+            <tr><td><code>telegram_bridge_enabled</code></td><td><code>false</code></td><td>Same for the mautrix-telegram bridge.</td></tr>
+            <tr><td><code>admin_ui_username</code></td><td><code>admin</code></td><td>Basic-auth username for the admin UI on port 8090.</td></tr>
+            <tr><td><code>admin_ui_password</code></td><td>—</td><td>Basic-auth password for the admin UI. Leave empty to auto-generate on first start (stored in <code>/data/matrix/.admin_ui_auth</code>, never logged).</td></tr>
+            <tr><td><code>media_retention_local_days</code></td><td><code>0</code></td><td>Auto-purge locally uploaded media older than this many days. 0 = keep forever.</td></tr>
+            <tr><td><code>media_retention_remote_days</code></td><td><code>30</code></td><td>Auto-purge cached remote (federated) media older than this many days. 0 = keep forever.</td></tr>
+            <tr><td><code>backup_enabled</code></td><td><code>true</code></td><td>Periodically dump the Synapse database with <code>pg_dump</code> to <code>/data/matrix/backups/</code> (consistent, unlike raw filesystem snapshots).</td></tr>
+            <tr><td><code>backup_interval_hours</code></td><td><code>24</code></td><td>How often the <code>pg_dump</code> job runs.</td></tr>
+            <tr><td><code>backup_retention_days</code></td><td><code>7</code></td><td>How many days of dumps to keep.</td></tr>
+            <tr><td><code>login_rate_limit_per_second</code></td><td><code>0.17</code></td><td>Sustained login attempts per second per address/account (Synapse <code>rc_login</code>).</td></tr>
+            <tr><td><code>login_rate_limit_burst</code></td><td><code>3</code></td><td>Burst allowance for login attempts.</td></tr>
+            <tr><td><code>registration_rate_limit_per_second</code></td><td><code>0.17</code></td><td>Sustained registration attempts per second (<code>rc_registration</code>), relevant only with <code>enable_registration</code>.</td></tr>
+            <tr><td><code>registration_rate_limit_burst</code></td><td><code>3</code></td><td>Burst allowance for registration attempts.</td></tr>
             <tr><td><code>max_upload_size_mb</code></td><td><code>50</code></td><td>Max media upload size in MB.</td></tr>
             <tr><td><code>log_level</code></td><td><code>WARNING</code></td><td><code>DEBUG / INFO / WARNING / ERROR</code></td></tr>
           </tbody>
@@ -561,7 +578,7 @@ enable_registration: false</code></pre>
       </div>
     </article>
 
-    <article id="ports" class="doc-section glass-card" data-search="ports 7080 8008 8090 8448 7880 8089 element web synapse admin federation livekit npm">
+    <article id="ports" class="doc-section glass-card" data-search="ports 7080 7081 8008 8090 8448 7880 8089 3478 5349 30000 element web ketesa admin federation livekit turn npm">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">Ports & Networking</p><h2>Port Reference</h2></div></div>
         <a class="section-link" href="#ports">#ports</a>
@@ -571,27 +588,32 @@ enable_registration: false</code></pre>
           <thead><tr><th>Port</th><th>Service</th><th>Access</th></tr></thead>
           <tbody>
             <tr><td><code>7080</code></td><td>Element Web</td><td>Via NPM → <code>element.your-domain</code></td></tr>
+            <tr><td><code>7081</code></td><td>Element Call (Voice/Video WebApp)</td><td>Via NPM → <code>element-call.your-domain</code></td></tr>
             <tr><td><code>8008</code></td><td>Synapse API</td><td>Via NPM → <code>matrix.your-domain</code></td></tr>
-            <tr><td><code>8090</code></td><td>Synapse Admin UI</td><td>Via NPM → <code>admin.your-domain</code></td></tr>
+            <tr><td><code>8090</code></td><td>Ketesa (Admin UI)</td><td>Via NPM → <code>admin.your-domain</code></td></tr>
             <tr><td><code>8448</code></td><td>Matrix Federation</td><td>Direct — port-forward required on router</td></tr>
             <tr><td><code>7880</code></td><td>LiveKit SFU</td><td>Via NPM (WebSocket required)</td></tr>
             <tr><td><code>8089</code></td><td>LiveKit JWT Bridge</td><td>Via NPM</td></tr>
+            <tr><td><code>3478/udp</code></td><td>TURN (media control)</td><td>Only with <code>livekit_turn_enabled: true</code> — direct, cannot go via NPM</td></tr>
+            <tr><td><code>5349/tcp</code></td><td>TURN TLS fallback</td><td>Only with <code>livekit_turn_enabled: true</code> — direct</td></tr>
+            <tr><td><code>30000-30020/udp</code></td><td>LiveKit media (direct SFU path, or TURN relay with <code>livekit_turn_enabled</code>)</td><td><strong>Direct — port-forward required, cannot go via NPM</strong></td></tr>
           </tbody>
         </table>
+        <blockquote>The media range is the most commonly missed step: without UDP 30000-30020 forwarded on your router, calls connect (signaling works over NPM) but carry no audio or video at all, even between two devices on the same LAN. UDP 3478 and TCP 5349 are only needed if you enable <code>livekit_turn_enabled</code>.</blockquote>
         <p>See <code>NPM_SETUP.md</code> in the add-on repo for the complete Nginx Proxy Manager configuration.</p>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
         <p><strong>Local (LAN):</strong> the services are reachable on the host ports listed above (Element Web <code>7080</code>, Synapse API <code>8008</code>, ...). Element needs a secure context (HTTPS) for end-to-end encryption, so plain <code>http://&lt;ha-host&gt;:7080</code> only works for a quick look. For real use put a reverse proxy with a certificate in front and point a local DNS rewrite at your HA host. A real <code>server_name</code> is required on the first start; placeholders such as <code>example.org</code> are refused.</p>
         <p><strong>External (internet):</strong> recommendation <strong>ok, with these rules:</strong></p>
         <ul>
           <li>Element Web, Synapse API and LiveKit: only through a reverse proxy with TLS (for example Nginx Proxy Manager).</li>
-          <li>Federation (<code>8448</code>) and the TURN ports are meant to be port-forwarded directly (see the port table). This is the exception for a federating Matrix server. Set <code>enable_federation: false</code> for a private server; it is <strong>on by default</strong>.</li>
+          <li>Federation (<code>8448</code>), the LiveKit media range (<code>30000-30020/udp</code>) and the TURN ports (if enabled) are meant to be port-forwarded directly (see the port table). This is the exception for a federating Matrix server. Set <code>enable_federation: false</code> for a private server; it is <strong>on by default</strong>.</li>
           <li>Ketesa (admin UI, <code>8090</code>): <strong>LAN or VPN only.</strong> It is protected by basic auth (a password is generated when <code>admin_ui_password</code> is empty) but should not be public.</li>
           <li>Registration is off by default (<code>enable_registration: false</code>). Keep it off.</li>
         </ul>
       </div>
     </article>
 
-    <article id="synapse-admin" class="doc-section glass-card" data-search="synapse admin ui login token homeserver url access list npm etkecc">
+    <article id="synapse-admin" class="doc-section glass-card" data-search="synapse admin ketesa ui login token homeserver url basic auth access list npm etkecc">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🔧</span><div><p class="eyebrow">Synapse Admin</p><h2>Admin UI</h2></div></div>
         <a class="section-link" href="#synapse-admin">#synapse-admin</a>
@@ -603,7 +625,7 @@ Local:    http://HA-IP:8090
 
 Homeserver URL: https://matrix.example.org
 Username:       admin</code></pre>
-        <blockquote>NPM Access List for <code>admin.*</code> must be set to <strong>Publicly Accessible</strong> — the auth comes from the Synapse Admin login itself, not NPM.</blockquote>
+        <blockquote>The admin UI (Ketesa) is protected by basic auth on port 8090 (<code>admin_ui_username</code> / <code>admin_ui_password</code>) and then asks for the Matrix admin login. If you put it behind NPM, set the NPM Access List for <code>admin.*</code> to <strong>Publicly Accessible</strong>, otherwise two logins collide.</blockquote>
         <h2 id="admin-token"><a class="anchor" href="#admin-token">#</a>Get Admin Token Manually</h2>
         <pre><code>curl -s -X POST http://HA-IP:8008/_matrix/client/v3/login \
   -H "Content-Type: application/json" \
@@ -647,13 +669,17 @@ Username:       admin</code></pre>
 │   ├── homeserver.yaml   # Synapse config
 │   ├── signing.key       # ⚠️ BACKUP — loss = loss of federation identity
 │   └── media_store/      # Uploaded media
+├── backups/              # pg_dump database backups (backup_enabled)
 ├── element-web/          # Element Web (persistent)
-├── synapse-admin/        # Synapse Admin (persistent)
-└── .webapps_downloaded   # Skip re-download marker</code></pre>
+├── synapse-admin/        # Ketesa / Admin UI (persistent, folder name kept for compat)
+├── .element-web_version  # Installed Element Web version
+├── .ketesa_version       # Installed Ketesa version
+└── .element-call_version # Installed Element Call version (if voice enabled)</code></pre>
         <blockquote><strong>signing.key is critical.</strong> Keep it in a secure offline backup. Loss means your server loses its Matrix federation identity permanently.</blockquote>
         <h2 id="persist-redownload"><a class="anchor" href="#persist-redownload">#</a>Force Web App Re-download</h2>
-        <pre><code>docker exec addon_local_matrix_server rm /data/matrix/.webapps_downloaded
-# Then restart the add-on</code></pre>
+        <p>Element Web, Ketesa and Element Call compare their installed version against upstream <code>latest</code> on every start. To force a re-download, delete the matching version file and restart the add-on:</p>
+        <pre><code>docker exec addon_local_matrix_server rm /data/matrix/.element-web_version
+# (or .ketesa_version / .element-call_version), then restart the add-on</code></pre>
       </div>
     </article>
 
@@ -686,9 +712,11 @@ notify:
           <tbody>
             <tr><td><code>Server name has invalid format</code></td><td>Trailing slash in <code>server_name</code>.</td><td>Remove the trailing slash.</td></tr>
             <tr><td>Admin Panel "Something went wrong"</td><td>Stale browser cache.</td><td>F12 → Application → Clear Site Data.</td></tr>
-            <tr><td>Admin Panel 401</td><td>NPM Access List active.</td><td>Set Access List to "Publicly Accessible".</td></tr>
+            <tr><td>Admin Panel 401</td><td>NPM Access List active, or wrong basic-auth credentials.</td><td>Set Access List to "Publicly Accessible"; check <code>admin_ui_username</code> / <code>admin_ui_password</code> (generated password is in <code>/data/matrix/.admin_ui_auth</code>).</td></tr>
             <tr><td>Element Web wrong server</td><td>Wrong config.json loaded.</td><td>Clear browser cache.</td></tr>
-            <tr><td>Web apps 0 files</td><td>Extraction failed on startup.</td><td>Delete <code>.webapps_downloaded</code> marker and restart.</td></tr>
+            <tr><td>Element Web / Ketesa / Element Call not loading</td><td>Download or extraction failed on startup.</td><td>Delete the matching <code>.{app}_version</code> file in <code>/data/matrix/</code> and restart.</td></tr>
+            <tr><td>Call connects but no audio/video</td><td>UDP range 30000-30020 not forwarded.</td><td>Forward it on the router (direct, not via NPM); with <code>livekit_turn_enabled</code> also UDP 3478 / TCP 5349.</td></tr>
+            <tr><td>Login stuck loading via <code>http://&lt;LAN-IP&gt;:7080</code></td><td>Plain HTTP has no secure context, browsers disable WebCrypto.</td><td>Use the HTTPS domain instead, even from the LAN.</td></tr>
             <tr><td>Synapse token invalid</td><td>Add-on reinstalled, DB empty.</td><td>Re-create admin user.</td></tr>
             <tr><td>Federation broken</td><td>Port 8448 not forwarded.</td><td>Router: 8448 → HA-IP:8448.</td></tr>
           </tbody>
@@ -705,7 +733,7 @@ Total:        ~450-650 MB   ~3-5% CPU</code></pre>
       </div>
     </article>
 
-    <article id="sources" class="doc-section glass-card" data-search="sources github element synapse matrix upstream license agpl etkecc livekit">
+    <article id="sources" class="doc-section glass-card" data-search="sources github element synapse matrix upstream license agpl ketesa etkecc livekit">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links & License</h2></div></div>
         <a class="section-link" href="#sources">#sources</a>
@@ -714,11 +742,11 @@ Total:        ~450-650 MB   ~3-5% CPU</code></pre>
         <div class="source-grid">
           <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/element-hq/synapse"><span>🔷</span><strong>Synapse (Element)</strong><small>element-hq/synapse — AGPL-3.0</small></a>
-          <a class="source-chip" href="https://github.com/etkecc/synapse-admin"><span>🛠️</span><strong>Synapse Admin (etkecc)</strong><small>Required fork for Synapse 1.14x</small></a>
+          <a class="source-chip" href="https://github.com/etkecc/ketesa"><span>🛠️</span><strong>Ketesa (etkecc)</strong><small>Admin UI, formerly Synapse Admin</small></a>
           <a class="source-chip" href="https://livekit.io/"><span>📹</span><strong>LiveKit</strong><small>WebRTC SFU for Element Call</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained HA add-on. Synapse is AGPL-3.0. The add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained HA add-on. Synapse is AGPL-3.0. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

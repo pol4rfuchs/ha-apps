@@ -826,7 +826,7 @@
 <a class="nav-item" href="#cli-reference" data-target="cli-reference"><span class="nav-icon">⌨️</span><span><strong>CLI Reference</strong><small>Container access, users, tokens, ACL</small></span></a>
 <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Known symptoms and fixes</small></span></a>
 <a class="nav-item" href="#known-limitations" data-target="known-limitations"><span class="nav-icon">⚠️</span><span><strong>Known Limitations</strong><small>Ingress, CLI, architecture</small></span></a>
-<a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer & License</strong><small>Unofficial wrapper, MIT license</small></span></a>
+<a class="nav-item" href="#disclaimer-license" data-target="disclaimer-license"><span class="nav-icon">📜</span><span><strong>Disclaimer & License</strong><small>Unofficial wrapper, Apache-2.0 license</small></span></a>
     </nav>
 
     <div class="sidebar-footer">
@@ -855,7 +855,7 @@
           <div class="metric"><small>ntfy Server</small><strong>http://homeassistant.local:4280</strong></div>
           <div class="metric"><small>Admin Console</small><strong>ntfy_manager add-on</strong></div>
           <div class="metric"><small>Auth DB</small><strong>/data/ntfy/user.db</strong></div>
-          <div class="metric"><small>Generated</small><strong>2026-04-27</strong></div>
+          <div class="metric"><small>Generated</small><strong>2026-10-17</strong></div>
         </div>
       </div>
     </section>
@@ -890,7 +890,7 @@ admin_password: your-secure-password</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p>Self-hosted push notification service for Home Assistant, based on <a href="https://github.com/binwiederhier/ntfy">ntfy v2.29.0</a>.</p>
+        <p>Self-hosted push notification service for Home Assistant, based on <a href="https://github.com/binwiederhier/ntfy">ntfy v2.31.1</a>.</p>
 <hr />
 <h2 id="home--pages"><a class="anchor" href="#home--pages" aria-label="Permalink">#</a>Pages</h2>
 <table>
@@ -1026,7 +1026,7 @@ Starting ntfy → http://homeassistant.local:4280
 <hr />
 <h2 id="installation--updating"><a class="anchor" href="#installation--updating" aria-label="Permalink">#</a>Updating</h2>
 <p>When a new version of the add-on is available, HA will show an update notification in the add-on page. Click <strong>Update</strong> to install it.</p>
-<p>The Forgejo Actions workflow automatically tracks new ntfy releases and opens a pull request when a new version is available.</p>
+<p>Renovate tracks new ntfy releases and opens a pull request in the repository. The add-on update then appears in Home Assistant once that pull request is merged and released.</p>
 
       </div>
     </article>
@@ -1370,6 +1370,7 @@ Starting ntfy → http://homeassistant.local:4280
 <hr />
 <h2 id="home-assistant-integration--option-b-rest-command-manual"><a class="anchor" href="#home-assistant-integration--option-b-rest-command-manual" aria-label="Permalink">#</a>Option B — rest_command (Manual)</h2>
 <h3 id="home-assistant-integration--step-1-create-an-access-token"><a class="anchor" href="#home-assistant-integration--step-1-create-an-access-token" aria-label="Permalink">#</a>Step 1: Create an Access Token</h3>
+<p>On the first start the add-on already creates a token for the admin user. The log shows only its beginning (<code>tk_ab12cd34…</code>). The full token is stored in <code>/data/ntfy/ha_token.txt</code>, and a readable copy is placed on every start in the add-on config folder <code>/addon_configs/&lt;slug&gt;_ntfy/ha_token.txt</code> (open it via Samba, the SSH add-on or the File editor). If you prefer your own token, create one as follows:</p>
 <ol>
 <li>Open <code>http://homeassistant.local:4280</code></li>
 <li>Log in → <strong>Account → Access Tokens → Create token</strong></li>
@@ -1750,11 +1751,7 @@ behind_proxy: true
 </ol>
 <h2 id="backup-and-restore--manual-backup-advanced"><a class="anchor" href="#backup-and-restore--manual-backup-advanced" aria-label="Permalink">#</a>Manual Backup (Advanced)</h2>
 <p>If you want to back up just the ntfy data manually:</p>
-<pre><code class="language-bash"># From HA SSH add-on
-cp -r /data/addon_configs/*/ntfy/ /backup/ntfy-manual-backup/
-# or via the addon data path
-</code></pre>
-<p>The exact path depends on your HA installation. Check the add-on log for the data directory path.</p>
+<p>The add-on data directory <code>/data/ntfy/</code> lives inside the add-on and is not reachable from the SSH add-on. Use a Home Assistant backup (partial backup of this add-on, then download it) to copy the data. Only the token copy <code>ha_token.txt</code> is also available in <code>/addon_configs/&lt;slug&gt;_ntfy/</code>.</p>
 <h2 id="backup-and-restore--notes"><a class="anchor" href="#backup-and-restore--notes" aria-label="Permalink">#</a>Notes</h2>
 <ul>
 <li>The <code>user.db</code> contains <strong>bcrypt-hashed</strong> passwords — they cannot be recovered, but they restore correctly to a new installation</li>
@@ -2143,7 +2140,7 @@ ntfy access '*' HAOS deny
 <h2>Disclaimer</h2>
 <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <a href="https://github.com/binwiederhier/ntfy">binwiederhier/ntfy</a>. It is not affiliated with or endorsed by the ntfy project maintainer.</blockquote>
 <h2>Wrapper License</h2>
-<pre><code>MIT License</code></pre>
+<pre><code>Apache License 2.0</code></pre>
 <p>The ntfy server itself is dual-licensed under Apache 2.0 and GPLv2 by its upstream author.</p>
 <h2>Useful Links</h2>
 <div class="source-grid">

@@ -398,28 +398,28 @@
 
     <div class="search-box">
       <span>⌕</span>
-      <input id="searchInput" type="search" placeholder="Search Bluetooth, MQTT, box64, WebGUI..." autocomplete="off" />
+      <input id="searchInput" type="search" placeholder="Search Bluetooth, MQTT, WebGUI..." autocomplete="off" />
     </div>
 
     <div class="nav-group-title">Navigation</div>
     <nav class="nav" id="navList">
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Home</strong><small>Overview, architecture</small></span></a>
-      <a class="nav-item" href="#architecture" data-target="architecture"><span class="nav-icon">🧱</span><span><strong>Architecture</strong><small>WebGUI, MQTT, box64</small></span></a>
+      <a class="nav-item" href="#architecture" data-target="architecture"><span class="nav-icon">🧱</span><span><strong>Architecture</strong><small>WebGUI, MQTT, native engine</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Installation</strong><small>Add repository, install, start</small></span></a>
       <a class="nav-item" href="#mqtt" data-target="mqtt"><span class="nav-icon">📡</span><span><strong>MQTT & HA Entities</strong><small>Topics, discovery, automations</small></span></a>
       <a class="nav-item" href="#devices" data-target="devices"><span class="nav-icon">🔵</span><span><strong>Device Support</strong><small>Bluetooth, USB, Lovense</small></span></a>
-      <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports</strong><small>12345, 12346</small></span></a>
-      <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data, patterns, backup</small></span></a>
-      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>BT, box64, MQTT, WebGUI</small></span></a>
-      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, intiface-engine, box64</small></span></a>
+      <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports</strong><small>8199, 12345</small></span></a>
+      <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data, backup</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>BT, MQTT, WebGUI</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, intiface-engine</small></span></a>
     </nav>
 
     <div class="sidebar-footer">
       <strong style="color:var(--accent-3)">Quick reference</strong><br>
-      WebGUI: <code>:12346</code><br>
+      WebGUI: <code>:8199</code><br>
       Engine: <code>:12345</code><br>
-      MQTT: <code>intiface/devices/...</code><br>
-      ARM: via box64
+      MQTT: <code>buttplug/...</code><br>
+      ARM: native build
     </div>
   </aside>
 
@@ -437,9 +437,9 @@
 
         <div class="metric-grid">
           <div class="metric"><small>Add-on Slug</small><strong>intiface_central</strong></div>
-          <div class="metric"><small>WebGUI</small><strong>http://homeassistant.local:12346</strong></div>
+          <div class="metric"><small>WebGUI</small><strong>http://homeassistant.local:8199</strong></div>
           <div class="metric"><small>Engine Port</small><strong>:12345 (WebSocket)</strong></div>
-          <div class="metric"><small>ARM Support</small><strong>via box64</strong></div>
+          <div class="metric"><small>ARM Support</small><strong>native (aarch64)</strong></div>
         </div>
       </div>
     </section>
@@ -448,7 +448,7 @@
       <div class="quick-card glass-card">
         <h3>⚡ Minimum Run Path</h3>
         <p>Install, optionally configure MQTT, start, open WebGUI, pair device.</p>
-        <pre><code>WebGUI: http://homeassistant.local:12346
+        <pre><code>WebGUI: http://homeassistant.local:8199
 Engine: ws://homeassistant.local:12345</code></pre>
       </div>
       <div class="quick-card glass-card">
@@ -456,18 +456,18 @@ Engine: ws://homeassistant.local:12345</code></pre>
         <p>Bluetooth LE and USB/HID are passed through from the host kernel.</p>
         <pre><code>BLE:  host kernel passthrough
 USB:  host kernel passthrough
-ARM:  intiface-engine via box64</code></pre>
+ARM:  intiface-engine built natively</code></pre>
       </div>
     </section>
 
-    <article id="home" class="doc-section glass-card" data-search="home overview intiface central buttplug home assistant addon webgui mqtt bluetooth ble usb hid port 12345 12346">
+    <article id="home" class="doc-section glass-card" data-search="home overview intiface central buttplug home assistant addon webgui mqtt bluetooth ble usb hid port 12345 8199">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
         <p><strong>Intiface Central</strong> is a device control server for Buttplug-compatible devices (vibrators, e-stim, toys). This add-on runs it with a browser WebGUI, MQTT bridge and Home Assistant MQTT Discovery — no VNC, no X11.</p>
-        <blockquote>On aarch64 (Raspberry Pi 4/5), the x64 intiface-engine binary runs via box64 emulation.</blockquote>
+        <blockquote>The engine is compiled from source for the target architecture, so Raspberry Pi (aarch64) and x86 (amd64) both run natively, without emulation. Status: <strong>experimental and frozen</strong>. The app has no login and is meant for your LAN or a VPN only.</blockquote>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
@@ -476,24 +476,24 @@ ARM:  intiface-engine via box64</code></pre>
             <tr><td><a href="#architecture">Architecture</a></td><td>Component map, MQTT bridge, WebGUI.</td></tr>
             <tr><td><a href="#mqtt">MQTT & HA Entities</a></td><td>Topics, auto-discovery, HA integration.</td></tr>
             <tr><td><a href="#devices">Device Support</a></td><td>Bluetooth LE, USB/HID, Lovense.</td></tr>
-            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Bluetooth, box64, WebGUI issues.</td></tr>
+            <tr><td><a href="#troubleshooting">Troubleshooting</a></td><td>Bluetooth, MQTT, WebGUI issues.</td></tr>
           </tbody>
         </table>
         <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
-        <pre><code>Browser        → WebGUI :12346
+        <pre><code>Browser        → WebGUI :8199
 HA Automation  → MQTT → mqtt-bridge → Node.js → intiface-engine :12345
 Bluetooth/USB  → Host kernel → intiface-engine</code></pre>
       </div>
     </article>
 
-    <article id="architecture" class="doc-section glass-card" data-search="architecture webgui mqtt bridge node.js intiface-engine bluetooth usb hid box64 arm aarch64">
+    <article id="architecture" class="doc-section glass-card" data-search="architecture webgui mqtt bridge node.js intiface-engine bluetooth usb hid native arm aarch64">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🧱</span><div><p class="eyebrow">Architecture</p><h2>How It Works</h2></div></div>
         <a class="section-link" href="#architecture">#architecture</a>
       </div>
       <div class="doc-content">
         <pre><code>┌──────────────┐      ┌───────────────────────────────────┐
-│ Browser      │─────▶│ WebGUI /api/* + SSE  :12346       │
+│ Browser      │─────▶│ WebGUI /api/* + SSE  :8199        │
 └──────────────┘      └───────────────┬───────────────────┘
                                       │ Node.js
 ┌──────────────┐      ┌───────────────▼───────────────────┐
@@ -503,15 +503,15 @@ Bluetooth/USB  → Host kernel → intiface-engine</code></pre>
                                       │
                       ┌───────────────▼───────────────────┐
                       │ intiface-engine :12345             │
-                      │ (x64 on amd64 | box64 on aarch64) │
+                      │ (built natively for amd64/aarch64) │
                       └───────────────┬───────────────────┘
                                       │
                       ┌───────────────▼───────────────────┐
                       │ Bluetooth LE + USB/HID             │
                       │ via host kernel passthrough        │
                       └───────────────────────────────────┘</code></pre>
-        <h2 id="arch-box64"><a class="anchor" href="#arch-box64">#</a>box64 on Raspberry Pi</h2>
-        <p>The intiface-engine binary is x64-only. On aarch64 hosts, it runs via <a href="https://github.com/ptitSeb/box64">box64</a> x86_64 emulation. Bluetooth and USB run natively through the host kernel — no performance penalty for device communication.</p>
+        <h2 id="arch-native"><a class="anchor" href="#arch-native">#</a>Native build on Raspberry Pi</h2>
+        <p>The engine is built with <code>cargo install</code> for the target architecture during the image build, so no emulation is involved on aarch64. Bluetooth runs through the host (D-Bus), USB/HID through the host kernel.</p>
       </div>
     </article>
 
@@ -532,7 +532,7 @@ Bluetooth/USB  → Host kernel → intiface-engine</code></pre>
         <h2 id="inti-step-2"><a class="anchor" href="#inti-step-2">#</a>Step 2 — Install</h2>
         <ol>
           <li>Search for <strong>Intiface Central</strong>.</li>
-          <li>Click <strong>Install</strong> and wait — the add-on builds locally (no pre-built image).</li>
+          <li>Click <strong>Install</strong> and wait for the image download.</li>
         </ol>
         <h2 id="inti-step-3"><a class="anchor" href="#inti-step-3">#</a>Step 3 — Configure MQTT (Optional)</h2>
         <p>If you want MQTT integration, configure in the Configuration tab:</p>
@@ -547,7 +547,7 @@ ha_discovery_prefix: "homeassistant"</code></pre>
         <h2 id="inti-step-4"><a class="anchor" href="#inti-step-4">#</a>Step 4 — Start</h2>
         <ol>
           <li>Click <strong>Start</strong>.</li>
-          <li>Click <strong>Open Web UI</strong> — WebGUI opens at port <code>12346</code>.</li>
+          <li>Click <strong>Open Web UI</strong> — WebGUI opens at port <code>8199</code>.</li>
         </ol>
       </div>
     </article>
@@ -559,21 +559,31 @@ ha_discovery_prefix: "homeassistant"</code></pre>
       </div>
       <div class="doc-content">
         <h2 id="mqtt-topics"><a class="anchor" href="#mqtt-topics">#</a>MQTT Topics</h2>
-        <p>Each device and motor is published as an MQTT topic:</p>
-        <pre><code>intiface/devices/&lt;device_id&gt;/motor/&lt;motor_index&gt;/vibrate</code></pre>
-        <p>Publish a value between <code>0.0</code> and <code>1.0</code> to control vibration intensity.</p>
+        <p>With <code>mqtt_host</code> set, devices are available under the configured prefix (<code>mqtt_topic_prefix</code>, default <code>buttplug</code>):</p>
+        <table>
+          <thead><tr><th>Topic</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>buttplug/&lt;idx&gt;/motor/&lt;m&gt;/set</code></td><td>Set vibration intensity (<code>0.0</code>–<code>1.0</code>)</td></tr>
+            <tr><td><code>buttplug/&lt;idx&gt;/motor/&lt;m&gt;/state</code></td><td>Current state</td></tr>
+            <tr><td><code>buttplug/&lt;idx&gt;/stop</code></td><td>Stop the device</td></tr>
+            <tr><td><code>buttplug/&lt;idx&gt;/vibrate</code></td><td>JSON array of motor intensities</td></tr>
+            <tr><td><code>buttplug/&lt;idx&gt;/availability</code></td><td><code>online</code> / <code>offline</code></td></tr>
+            <tr><td><code>buttplug/scan/start</code>, <code>buttplug/scan/stop</code></td><td>Start / stop scanning</td></tr>
+            <tr><td><code>buttplug/stop_all</code></td><td>Stop all devices</td></tr>
+          </tbody>
+        </table>
         <pre><code># Example: set device 0, motor 0 to 50% intensity
-mosquitto_pub -t "intiface/devices/0/motor/0/vibrate" -m "0.5"</code></pre>
+mosquitto_pub -t "buttplug/0/motor/0/set" -m "0.5"</code></pre>
         <h2 id="mqtt-ha"><a class="anchor" href="#mqtt-ha">#</a>Home Assistant MQTT Discovery</h2>
-        <p>When <code>ha_discovery: true</code>, entities appear in HA automatically after the add-on starts and detects devices.</p>
+        <p>When <code>ha_discovery: true</code>, Home Assistant creates a number entity per motor (slider 0.0–1.0), a stop button and a connection sensor automatically after the add-on starts and detects devices.</p>
         <pre><code># Example HA automation
 action:
   - action: mqtt.publish
     data:
-      topic: "intiface/devices/0/motor/0/vibrate"
+      topic: "buttplug/0/motor/0/set"
       payload: "0.8"</code></pre>
         <h2 id="mqtt-pattern"><a class="anchor" href="#mqtt-pattern">#</a>Pattern Editor</h2>
-        <p>The WebGUI includes a pattern editor for creating, saving and playing vibration patterns. Patterns can be triggered via the WebGUI or MQTT.</p>
+        <p>The WebGUI includes a pattern editor for creating, saving and playing vibration patterns (presets: Pulse, Escalating, Wave, Heartbeat, Random, Staccato). Patterns are stored in your browser (localStorage), not on the server.</p>
       </div>
     </article>
 
@@ -593,12 +603,12 @@ action:
           </tbody>
         </table>
         <h2 id="devices-host"><a class="anchor" href="#devices-host">#</a>Host Access</h2>
-        <p>Bluetooth and USB are accessed directly through the host kernel. The add-on requires the <code>privileged</code> flag for device access. This is configured automatically by the add-on.</p>
+        <p>Bluetooth and USB are accessed directly through the host kernel. The add-on runs with <code>host_network</code>, <code>host_dbus</code>, <code>udev</code> and <code>full_access</code> for this; Home Assistant configures that automatically.</p>
         <blockquote>On Raspberry Pi, ensure Bluetooth is enabled in the HA OS settings and that the host Bluetooth service is not blocking the adapter.</blockquote>
       </div>
     </article>
 
-    <article id="ports" class="doc-section glass-card" data-search="ports 12345 12346 webgui intiface engine websocket networking">
+    <article id="ports" class="doc-section glass-card" data-search="ports 12345 8199 webgui intiface engine websocket networking">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">Ports</p><h2>Port Reference</h2></div></div>
         <a class="section-link" href="#ports">#ports</a>
@@ -608,7 +618,7 @@ action:
           <thead><tr><th>Port</th><th>Protocol</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><code>12345/tcp</code></td><td>WebSocket</td><td>Intiface Engine — for external clients (games, apps).</td></tr>
-            <tr><td><code>12346/tcp</code></td><td>HTTP</td><td>WebGUI — browser control interface.</td></tr>
+            <tr><td><code>8199/tcp</code></td><td>HTTP</td><td>WebGUI — browser control interface.</td></tr>
           </tbody>
         </table>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
@@ -617,19 +627,19 @@ action:
       </div>
     </article>
 
-    <article id="persistence" class="doc-section glass-card" data-search="persistence data patterns backup restore intiface">
+    <article id="persistence" class="doc-section glass-card" data-search="persistence data backup restore intiface">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Persistence</p><h2>Data & Backup</h2></div></div>
         <a class="section-link" href="#persistence">#persistence</a>
       </div>
       <div class="doc-content">
         <pre><code>/data/
-└── patterns/    # Saved vibration patterns</code></pre>
-        <p>HA backups include the add-on <code>/data</code> directory automatically.</p>
+└── home/    # intiface-engine data</code></pre>
+        <p>HA backups include the add-on <code>/data</code> directory automatically. Vibration patterns are saved in your browser (localStorage), not on the server.</p>
       </div>
     </article>
 
-    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting webgui port 12346 bluetooth device not found box64 error mqtt entities engine binary">
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting webgui port 8199 bluetooth device not found serial mqtt entities log level">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms & Fixes</h2></div></div>
         <a class="section-link" href="#troubleshooting">#troubleshooting</a>
@@ -638,17 +648,17 @@ action:
         <table>
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
-            <tr><td>Web UI not opening</td><td>Port not mapped.</td><td>Check port <code>12346</code> in the Network tab.</td></tr>
+            <tr><td>Web UI not opening</td><td>Port not mapped.</td><td>Check port <code>8199</code> in the Network tab.</td></tr>
             <tr><td>Device not found</td><td>Bluetooth not enabled or blocked.</td><td>Ensure BT is enabled on HA host; restart add-on.</td></tr>
-            <tr><td>box64 error on ARM</td><td>Wrong engine version or incompatibility.</td><td>Check <code>ENGINE_VERSION</code> in Dockerfile against latest releases.</td></tr>
-            <tr><td>MQTT entities not appearing</td><td>No device connected or wrong broker.</td><td>Verify broker hostname and that MQTT integration is configured in HA.</td></tr>
-            <tr><td>Engine binary download fails</td><td>GitHub rate limit or wrong URL.</td><td>Check <a href="https://github.com/intiface/intiface-engine/releases">releases page</a> and update <code>ENGINE_VERSION</code>.</td></tr>
+            <tr><td>Engine does not start with <code>use_serial: true</code></td><td>Older add-on versions passed an argument the engine rejects.</td><td>Update the add-on to a version that passes <code>--use-serial</code>.</td></tr>
+            <tr><td>MQTT entities not appearing</td><td>No device connected or wrong broker.</td><td>Verify broker hostname, that the MQTT integration is configured in HA, and that <code>ha_discovery</code> is <code>true</code>.</td></tr>
+            <tr><td>Need more detail in the log</td><td>Default level is <code>info</code>.</td><td>Set <code>log_level: debug</code> and restart.</td></tr>
           </tbody>
         </table>
       </div>
     </article>
 
-    <article id="sources" class="doc-section glass-card" data-search="sources github intiface engine buttplug upstream license box64">
+    <article id="sources" class="doc-section glass-card" data-search="sources github intiface engine buttplug upstream license">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links & License</h2></div></div>
         <a class="section-link" href="#sources">#sources</a>
@@ -658,9 +668,8 @@ action:
           <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/intiface/intiface-engine"><span>🎮</span><strong>intiface-engine</strong><small>Official engine binary</small></a>
           <a class="source-chip" href="https://github.com/buttplugio/buttplug"><span>🔌</span><strong>Buttplug.io</strong><small>Device protocol library</small></a>
-          <a class="source-chip" href="https://github.com/ptitSeb/box64"><span>📦</span><strong>box64</strong><small>x86_64 emulation on ARM</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained add-on wrapper. intiface-engine is BSD-3-Clause. The add-on wrapper is MIT.</blockquote>
+        <blockquote>Unofficial, community-maintained add-on wrapper. intiface-engine is BSD-3-Clause. The add-on wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

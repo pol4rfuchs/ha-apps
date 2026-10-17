@@ -407,7 +407,7 @@
 
     <div class="sidebar-footer">
       <strong style="color:var(--accent-3)">Quick reference</strong><br>
-      Version: <code>0.7.6</code><br>UI: Ingress only<br>Mode: <code>read_only: true</code><br>DB: SQLite (WAL)
+      Version: <code>0.7.7</code><br>UI: Ingress only<br>Mode: <code>read_only: true</code><br>DB: SQLite (WAL)
     </div>
   </aside>
 
@@ -425,7 +425,7 @@
 
         <div class="metric-grid">
           <div class="metric"><small>Add-on Slug</small><strong>unifi_os_control_center</strong></div>
-          <div class="metric"><small>Version</small><strong>0.7.6</strong></div>
+          <div class="metric"><small>Version</small><strong>0.7.7</strong></div>
           <div class="metric"><small>Access</small><strong>Home Assistant Ingress only</strong></div>
           <div class="metric"><small>Status</small><strong>experimental</strong></div>
         </div>
@@ -463,7 +463,7 @@ read_only: true</code></pre>
           <li>Read-only firewall policies, zones, diagnostics, analysis and local snapshots (Zone-Based Firewall only)</li>
           <li>Persistent SQLite (WAL) telemetry and alert history with retention and row limits</li>
           <li>Optional ntfy notifications; explicit device offline/recovery monitoring with grace polling</li>
-          <li><code>aarch64</code> and <code>amd64</code>, AppArmor profile, s6-overlay lifecycle</li>
+          <li><code>aarch64</code> and <code>amd64</code>, s6-overlay lifecycle; an AppArmor profile is shipped but not enforced (<code>apparmor: false</code>)</li>
         </ul>
         <blockquote>Firewall mutations stay behind explicit safety gates and are disabled by default. No undocumented legacy firewall endpoint is used.</blockquote>
       </div>
