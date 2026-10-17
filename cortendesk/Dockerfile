@@ -3,12 +3,12 @@
 #
 # BUILD_FROM zeigt auf ein echtes Multi-Arch-Manifest (linux/amd64 + linux/arm64,
 # geprueft am 17.10.2026), daher kein ${BUILD_ARCH} im Namen noetig.
-# Index-Digest von 1.12.0 am 17.10.2026 (Upstream-Tags sind nicht unveraenderlich):
-#   sha256:1c321ff17604d3506ff69686b752ad9c09d803581acd5a4bbf148d275aa3b0c0
+# Index-Digest von 1.14.0 am 17.10.2026 (Upstream-Tags sind nicht unveraenderlich):
+#   sha256:3305ea4bca8814e71f6c0dcf49df449cf44f82be4023a0c98e15fdc2ef919545
 # Die Upstream-Version steht als eigenes ARG, damit 07-update-upstream-candidate sie patchen kann.
 
 ARG BUILD_ARCH
-ARG CORTENDESK_VERSION=1.12.0
+ARG CORTENDESK_VERSION=1.14.0
 ARG BUILD_FROM=ghcr.io/marcpope/cortendesk:${CORTENDESK_VERSION}
 FROM ${BUILD_FROM}
 

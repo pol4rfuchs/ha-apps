@@ -74,7 +74,7 @@ sie nicht auf den Host gemappt. Andere Apps im internen Docker-Netz von Home Ass
 
 Die App ruft von sich aus nichts im Internet ab: Der Update-Check bei GitHub ist abgeschaltet
 (`CORTENDESK_UPDATE_CHECK=false`), die Weboberfläche lädt keine externen Skripte, Schriften oder Tracker (geprüft mit
-Upstream 1.12.0: Login-Seite und Dashboard, im Leerlauf keine Verbindung nach außen). Nur wenn du es in der Console
+Upstream 1.14.0: Login-Seite und Dashboard, im Leerlauf keine Verbindung nach außen). Nur wenn du es in der Console
 einrichtest, verbindet sich CortenDesk mit externen Diensten (Apprise-Benachrichtigungen, SMTP, FTP/FTPS- oder
 S3-Backupkopien, OIDC-Anmeldung). Der Menüpunkt „Build Installers“ ist ein Link auf den Drittdienst `rdgen.crayoneater.org`
 und wird erst beim Klick geöffnet.

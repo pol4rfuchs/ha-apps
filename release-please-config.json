@@ -100,7 +100,8 @@
       "release-type": "simple",
       "component": "cortendesk",
       "include-component-in-tag": true,
-      "tag-separator": "-"
+      "tag-separator": "-",
+      "prerelease": true
     }
   }
 }
