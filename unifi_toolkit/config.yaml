@@ -1,6 +1,6 @@
 ---
 name: "UniFi Toolkit"
-version: "0.1.0"
+version: "0.2.0"
 slug: "unifi_toolkit"
 description: "UniFi dashboard with Wi-Fi Stalker, Threat Watch, Network Pulse and House Arrest"
 url: "https://github.com/pol4rfuchs/ha-apps"
