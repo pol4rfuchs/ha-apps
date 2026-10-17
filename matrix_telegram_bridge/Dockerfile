@@ -8,7 +8,7 @@
 # WhatsApp/Signal (die kommen mit 1.23/1 aus).
 ARG TELEGRAM_VERSION=v0.2609.0
 ARG BUILD_ARCH
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
 # ---- Builder Stage (Go source build, SHA/Tag-pinned) ----
 FROM golang:1.26-alpine3.24 AS builder
@@ -40,7 +40,7 @@ LABEL \
   io.hass.arch="${BUILD_ARCH}" \
   org.opencontainers.image.title="Telegram Bridge (mautrix) HA Add-on" \
   org.opencontainers.image.version="${BUILD_VERSION}" \
-  org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.0" \
+  org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.7" \
   org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
   org.opencontainers.image.description="mautrix-telegram ${TELEGRAM_VERSION} als Application-Service Bridge für Matrix Synapse"
 
