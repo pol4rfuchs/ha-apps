@@ -85,7 +85,8 @@
       "release-type": "simple",
       "component": "unifi_toolkit",
       "include-component-in-tag": true,
-      "tag-separator": "-"
+      "tag-separator": "-",
+      "prerelease": true
     },
     "unifi_os_control_center": {
       "release-type": "simple",
