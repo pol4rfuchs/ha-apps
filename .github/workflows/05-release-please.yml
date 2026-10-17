@@ -30,6 +30,74 @@ jobs:
           manifest-file: .release-please-manifest.json
           target-branch: main
 
+  # After a Release Please merge the tag <component>-v<version> must exist.
+  # Without it there is no GitHub release and no image build, and the next
+  # release PR repeats old commits (this is how a missing
+  # "autorelease: pending" label showed up). The check compares the manifest
+  # of the pushed commit with its parent, so it does not depend on what the
+  # release-please action reports.
+  verify-release-tags:
+    name: Verify release tags exist
+    needs: release-please
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Every released version has its tag
+        shell: bash
+        env:
+          REMOTE: origin
+        run: |
+          set -euo pipefail
+          subject="$(git log -1 --format=%s HEAD)"
+          if ! [[ "${subject}" =~ ^chore(\(.*\))?:\ release\  ]]; then
+            echo "HEAD is not a release commit (${subject}), nothing to verify."
+            exit 0
+          fi
+          if ! git rev-parse --verify -q HEAD~1 >/dev/null; then
+            echo "HEAD has no parent, nothing to compare."
+            exit 0
+          fi
+          pairs="$(python3 - <<'PY'
+          import json
+          import subprocess
+
+          def manifest(rev):
+              out = subprocess.run(
+                  ["git", "show", f"{rev}:.release-please-manifest.json"],
+                  capture_output=True, text=True, check=True,
+              ).stdout
+              return json.loads(out)
+
+          old, new = manifest("HEAD~1"), manifest("HEAD")
+          for component, version in sorted(new.items()):
+              if old.get(component) != version:
+                  print(f"{component}\t{version}")
+          PY
+          )"
+          if [[ -z "${pairs}" ]]; then
+            echo "Release commit without a manifest change, nothing to verify."
+            exit 0
+          fi
+          missing=0
+          while IFS=$'\t' read -r component version; do
+            tag="${component}-v${version}"
+            if [[ -n "$(git ls-remote --tags "${REMOTE}" "refs/tags/${tag}")" ]]; then
+              echo "OK      ${tag}"
+            else
+              echo "::error title=Release tag missing::${tag} was released by this commit but the tag does not exist. No release and no image will be built; check the 'Run Release Please' step."
+              missing=1
+            fi
+          done <<< "${pairs}"
+          exit "${missing}"
+
   # We deliberately do NOT use release-please's built-in `extra-files`
   # (type: yaml + jsonpath) to bump config.yaml's `version:` field anymore.
   # Verified against the actual release-please source (generic-yaml.js): that
@@ -108,7 +176,17 @@ jobs:
           # catch drift introduced (or fixed) by the version sync itself.
           # [skip ci] would suppress every workflow for this push, not just
           # the heavy build/lint ones.
-            git push origin main
+            # Retry: main may have moved between checkout and push (another
+            # merge); rebase the sync commit on top and push again.
+            for attempt in 1 2 3; do
+              if git push origin main; then
+                exit 0
+              fi
+              echo "Push rejected (attempt ${attempt}/3), rebasing onto origin/main ..."
+              git pull --rebase origin main
+            done
+            echo "::error::Could not push the version sync commit after 3 attempts."
+            exit 1
           else
             echo "No drift detected, nothing to commit."
           fi
