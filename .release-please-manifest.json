@@ -13,5 +13,5 @@
   "ts6_manager": "1.1.8",
   "matrix_auth_service": "1.0.6",
   "unifi_os_control_center": "0.7.6",
-  "vaultwarden": "0.1.0"
+  "vaultwarden": "0.2.0"
 }
