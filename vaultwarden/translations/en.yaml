@@ -13,7 +13,7 @@ configuration:
     name: Enable HTTPS in the app
     description: >-
       Serve HTTPS directly from the app using the certificate and key from
-      /ssl. Not needed behind a reverse proxy. RSA keys only.
+      /ssl. Not needed behind a reverse proxy.
   certfile:
     name: Certificate file
     description: >-

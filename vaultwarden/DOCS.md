@@ -7,7 +7,7 @@ Vaultwarden ist eine in Rust geschriebene, Bitwarden-kompatible Server-Implement
 - **HTTPS ist Pflicht.** Der Web Vault und alle Bitwarden-Clients funktionieren nur über HTTPS mit passender `domain`.
 - **Kein Ingress.** Der Web Vault lässt sich nicht unter einem Unterpfad betreiben; die App ist über Port `7277` direkt erreichbar.
 - Empfohlen: Reverse Proxy (z. B. Nginx Proxy Manager) vor der App, der HTTPS terminiert und die Domain (z. B. `vault.example.com`) auf `http://<HA-Host>:7277` weiterleitet. **WebSocket-Support im Proxy aktivieren.**
-- Alternativ: `ssl: true` – die App liefert HTTPS selbst aus `/ssl` aus (nur RSA-Zertifikate, von Upstream nicht empfohlen).
+- Alternativ: `ssl: true` – die App liefert HTTPS selbst aus `/ssl` aus (von Upstream nicht empfohlen).
 
 ## Erststart
 
@@ -38,7 +38,7 @@ Default: –
 
 ### `ssl`
 
-HTTPS direkt aus der App ausliefern (Zertifikat und Key aus /ssl). Hinter einem Reverse Proxy nicht nötig. Nur RSA-Schlüssel.
+HTTPS direkt aus der App ausliefern (Zertifikat und Key aus /ssl). Hinter einem Reverse Proxy nicht nötig.
 
 Default: `false`
 
@@ -416,7 +416,7 @@ Mit `ip_header` (Standard `X-Real-IP`) liest Vaultwarden die Client-IP aus dem H
 
 **Lokal (LAN):** Der Web Vault braucht einen sicheren Kontext (HTTPS). Über `http://<HA-Host>:7277` funktionieren Registrierung und Login im Browser nicht. Zwei Wege:
 
-- **`ssl: true`:** Zertifikat und Schlüssel (RSA) liegen in `/ssl`, der Zugriff läuft über `https://<HA-Host>:7277`. Bei einem selbstsignierten Zertifikat die Browser-Warnung bestätigen.
+- **`ssl: true`:** Zertifikat und Schlüssel liegen in `/ssl`, der Zugriff läuft über `https://<HA-Host>:7277`. Bei einem selbstsignierten Zertifikat die Browser-Warnung bestätigen.
 - **Reverse Proxy mit lokalem DNS-Rewrite:** Eine Domain wie `vault.example.com` zeigt im lokalen DNS auf den HA-Host. Der Proxy (z. B. Nginx Proxy Manager) terminiert HTTPS mit einem gültigen Zertifikat und leitet auf `http://<HA-Host>:7277` weiter, WebSocket-Support aktiv. `domain` auf `https://vault.example.com` setzen.
 
 **Extern (Internet):** Empfehlung **ok, aber nur über den Reverse Proxy mit TLS.** Den App-Port `7277` nie direkt per Port-Forward freigeben. Dazu:

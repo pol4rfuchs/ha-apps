@@ -1,5 +1,6 @@
 # Upstream-Version separat, damit der Update-Workflow (07-update-upstream-candidate) sie erkennt
 ARG VAULTWARDEN_VERSION=1.37.4
+ARG BUILD_ARCH
 # Offizielles Multi-Arch-Manifest (aarch64 + amd64), daher kein ${BUILD_ARCH} im Tag nötig (§16)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.8
 
@@ -7,13 +8,14 @@ FROM ghcr.io/dani-garcia/vaultwarden:${VAULTWARDEN_VERSION}-alpine AS vaultwarde
 
 FROM ${BUILD_FROM}
 
-# BUILD_VERSION kommt aus build-app.yaml (= version aus config.yaml)
+# BUILD_ARCH und BUILD_VERSION kommen aus build-app.yaml (Version = version aus config.yaml)
+ARG BUILD_ARCH
 ARG BUILD_VERSION
 
 LABEL \
   io.hass.name="Vaultwarden" \
   io.hass.description="Bitwarden-kompatibler Passwortmanager-Server" \
-  io.hass.arch="aarch64|amd64" \
+  io.hass.arch="${BUILD_ARCH}" \
   io.hass.type="app" \
   io.hass.version="${BUILD_VERSION}" \
   org.opencontainers.image.title="Vaultwarden" \

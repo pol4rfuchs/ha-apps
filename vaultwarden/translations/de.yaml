@@ -13,7 +13,7 @@ configuration:
     name: HTTPS in der App aktivieren
     description: >-
       HTTPS direkt aus der App ausliefern (Zertifikat und Key aus /ssl).
-      Hinter einem Reverse Proxy nicht nötig. Nur RSA-Schlüssel.
+      Hinter einem Reverse Proxy nicht nötig.
   certfile:
     name: Zertifikatsdatei
     description: >-

@@ -180,7 +180,7 @@ if bashio::config.true 'ssl'; then
   chmod 600 "${TLS_DIR}/cert.pem" "${TLS_DIR}/key.pem"
   chown -R vaultwarden:vaultwarden "${TLS_DIR}"
   export ROCKET_TLS="{certs=\"${TLS_DIR}/cert.pem\",key=\"${TLS_DIR}/key.pem\"}"
-  bashio::log.info "HTTPS in der App aktiv (nur RSA-Schlüssel unterstützt)."
+  bashio::log.info "HTTPS in der App aktiv."
 fi
 
 # ------------------------------------------------------------------- Icons
