@@ -8,7 +8,6 @@ bashio::log.info "Starting Unbound DNS resolver ($(bashio::app.version))..."
 CUSTOM_CONFIG_PATH="/config/unbound.conf"
 BLOCKLISTS_FILE="/data/blocklists.json"
 BLOCKLIST_CONF="/etc/unbound/blocklist.conf"
-WHITELIST_FILE="/data/whitelist.json"
 LOCAL_RECORDS_FILE="/data/local_records.json"
 LOCAL_RECORDS_CONF="/etc/unbound/local_records.conf"
 
@@ -38,78 +37,16 @@ apply_blocklists() {
         return
     fi
 
-    local tmpfile
-    tmpfile=$(mktemp /tmp/unbound-blocklist.XXXXXX)
-
-    for i in $(seq 0 $((count - 1))); do
-        local url
-        url=$(jq -r ".[$i]" "${BLOCKLISTS_FILE}")
-        bashio::log.info "  Downloading blocklist: ${url}"
-
-        if curl \
-            --fail \
-            --location \
-            --show-error \
-            --silent \
-            --connect-timeout 10 \
-            --max-time 30 \
-            --max-filesize 5242880 \
-            --max-redirs 3 \
-            "${url}" 2>/dev/null | awk '
-            BEGIN {
-                skip["localhost"]=1; skip["localhost.localdomain"]=1
-                skip["local"]=1; skip["broadcasthost"]=1
-                skip["ip6-localhost"]=1; skip["ip6-loopback"]=1
-                skip["ip6-localnet"]=1; skip["ip6-mcastprefix"]=1
-                skip["ip6-allnodes"]=1; skip["ip6-allrouters"]=1
-                skip["ip6-allhosts"]=1
-            }
-            {
-                # Strip comments and carriage returns
-                sub(/#.*/, ""); gsub(/\r/, "")
-                if (NF < 2) next
-                ip = $1; domain = tolower($2)
-                if (ip != "0.0.0.0" && ip != "127.0.0.1") next
-                if (domain in skip) next
-                if (domain == "") next
-                printf "local-zone: \"%s.\" always_refuse\n", domain
-            }
-        ' >> "${tmpfile}"; then
-            :
-        else
-            bashio::log.warning "  Failed to download: ${url}"
-        fi
-    done
-
-    # Sort and deduplicate
-    sort -u "${tmpfile}" > "${BLOCKLIST_CONF}"
-    rm -f "${tmpfile}"
-
-    # Subtract whitelisted domains
-    if [ -f "${WHITELIST_FILE}" ]; then
-        local wl_count
-        wl_count=$(jq '. | length' "${WHITELIST_FILE}")
-        if [ "${wl_count}" != "0" ]; then
-            local wl_tmpfile
-            wl_tmpfile=$(mktemp /tmp/unbound-whitelist.XXXXXX)
-            # Build a file of patterns to exclude (domain lines from whitelist)
-            jq -r '.[]' "${WHITELIST_FILE}" | while IFS= read -r wl_domain; do
-                # Match the exact local-zone line for this domain
-                echo "local-zone: \"${wl_domain}.\" always_refuse"
-            done > "${wl_tmpfile}"
-
-            if [ -s "${wl_tmpfile}" ]; then
-                grep -v -F -f "${wl_tmpfile}" "${BLOCKLIST_CONF}" > "${BLOCKLIST_CONF}.tmp" || true
-                mv "${BLOCKLIST_CONF}.tmp" "${BLOCKLIST_CONF}"
-                bashio::log.info "  Whitelist applied: removed $(wc -l < "${wl_tmpfile}") domain pattern(s)"
-            fi
-            rm -f "${wl_tmpfile}"
-        fi
-    fi
-
+    # The web UI code downloads, parses (hosts format and plain domain lines), subtracts the
+    # whitelist and writes ${BLOCKLIST_CONF}, so a restart gives the same result as a manual
+    # refresh. It prints the number of blocked domains; download problems go to stderr.
     local blocked
-    blocked=$(wc -l < "${BLOCKLIST_CONF}")
-    bashio::log.info "Blocklists applied: ${blocked} domains blocked"
+    if blocked=$(python3 /web/app.py --write-blocklist | tail -n 1) && [[ "${blocked}" =~ ^[0-9]+$ ]]; then
+        bashio::log.info "Blocklists applied: ${blocked} domains blocked"
+    else
+        bashio::log.warning "  Could not process the blocklists, starting without them"
+        : > "${BLOCKLIST_CONF}"
+    fi
 }
 
 # Initialize local records file if it doesn't exist
@@ -287,8 +224,11 @@ WEBUI_PID=$!
 # image's legacy-services wrapper judges "crashed vs. stopped cleanly" by
 # that exit code alone, regardless of what the log actually says. Result:
 # a perfectly healthy stop gets shown as add-on status "Error".
-unbound -d -c /etc/unbound/unbound.conf &
-UNBOUND_PID=$!
+start_unbound() {
+    unbound -d -c /etc/unbound/unbound.conf &
+    UNBOUND_PID=$!
+}
+start_unbound
 
 shutdown() {
     bashio::log.info "Stop signal received, shutting down Unbound..."
@@ -301,18 +241,43 @@ shutdown() {
 }
 trap shutdown TERM INT
 
-# set -e would otherwise kill the script the instant `wait` reports
-# unbound's real (possibly signal-derived) exit status; disable it for
-# this single wait so a normal stop can reach the trap/exit-0 path above,
-# and a genuine unexpected crash (unbound exits on its own, no signal
-# involved) still surfaces below with its real exit code.
-set +e
-wait "${UNBOUND_PID}"
-UNBOUND_EXIT=$?
-set -e
+# A DNS resolver that dies must come back by itself: without this the whole add-on
+# exits and stays down (state "Error") until someone starts it again, because the
+# Supervisor only restarts add-ons when its Watchdog switch is on. After an
+# unexpected exit Unbound is started again. If it keeps dying (more than
+# MAX_RESTARTS times within RESTART_WINDOW seconds) the add-on gives up and exits
+# with Unbound's exit code, so a broken configuration does not loop forever.
+MAX_RESTARTS=5
+RESTART_WINDOW=300
+restarts=0
+window_start=$(date +%s)
 
-if [ "${UNBOUND_EXIT}" -ne 0 ]; then
+# set -e would otherwise kill the script the instant `wait` reports
+# unbound's real (possibly signal-derived) exit status; disable it around
+# the wait so a normal stop can reach the trap/exit-0 path above, and a
+# genuine unexpected crash (unbound exits on its own, no signal involved)
+# is handled below with its real exit code.
+while true; do
+    set +e
+    wait "${UNBOUND_PID}"
+    UNBOUND_EXIT=$?
+    set -e
+
     bashio::log.error "Unbound exited unexpectedly (code ${UNBOUND_EXIT})."
-fi
-kill -TERM "${WEBUI_PID}" 2>/dev/null || true
-exit "${UNBOUND_EXIT}"
+
+    now=$(date +%s)
+    if [ $((now - window_start)) -gt "${RESTART_WINDOW}" ]; then
+        window_start=${now}
+        restarts=0
+    fi
+    restarts=$((restarts + 1))
+    if [ "${restarts}" -gt "${MAX_RESTARTS}" ]; then
+        bashio::log.fatal "Unbound keeps exiting (more than ${MAX_RESTARTS} restarts in ${RESTART_WINDOW} s), giving up."
+        kill -TERM "${WEBUI_PID}" 2>/dev/null || true
+        exit "${UNBOUND_EXIT}"
+    fi
+
+    bashio::log.warning "Restarting Unbound in 2 s (restart ${restarts} of ${MAX_RESTARTS})..."
+    sleep 2
+    start_unbound
+done
