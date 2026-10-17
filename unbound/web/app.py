@@ -566,8 +566,13 @@ def api_blocklists_remove(idx):
     return jsonify({"status": "removed", "url": removed})
 
 
-def _do_blocklist_refresh():
-    """Core blocklist refresh logic. Returns dict with results."""
+def write_blocklist_conf():
+    """Download all blocklists, subtract the whitelist and write BLOCKLIST_CONF.
+
+    Returns (number of blocked domains, list of per-URL errors). The web UI refresh and
+    run.sh (at every add-on start, through --write-blocklist) both use this, so a list
+    is parsed the same way in both places (hosts format and plain domain lines).
+    """
     blocklists = load_blocklists()
     whitelist = {str(d).strip().lower().rstrip(".") for d in load_whitelist()}
     status = load_blocklist_status()
@@ -607,11 +612,18 @@ def _do_blocklist_refresh():
         for domain in sorted(all_domains):
             f.write(f'local-zone: "{domain}." always_refuse\n')
 
+    return len(all_domains), errors
+
+
+def _do_blocklist_refresh():
+    """Core blocklist refresh logic. Returns dict with results."""
+    domains_blocked, errors = write_blocklist_conf()
+
     reload_payload, status_code = apply_reload_pipeline("refresh_blocklists", retries=1)
 
     payload = {
         "status": "refreshed",
-        "domains_blocked": len(all_domains),
+        "domains_blocked": domains_blocked,
         "errors": errors,
     }
     result = merge_reload_result(payload, reload_payload)
@@ -970,6 +982,18 @@ def _blocklist_auto_refresh():
 
 
 if __name__ == "__main__":
+    import sys
+
+    if "--write-blocklist" in sys.argv:
+        # Called by run.sh before Unbound starts: rebuild blocklist.conf from the saved URLs.
+        # stdout carries only the domain count, problems go to stderr.
+        logging.basicConfig(level=logging.WARNING)
+        count, errors = write_blocklist_conf()
+        for err in errors:
+            print(f"Failed to download {err['url']}: {err['error']}", file=sys.stderr)
+        print(count)
+        sys.exit(0)
+
     from waitress import serve
 
     logging.basicConfig(level=logging.INFO)

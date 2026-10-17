@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.26.1-ha3-pol4r1] - 2026-10-17
+
+- Fix: blocklists in plain domain-per-line format were dropped on every add-on start. `run.sh` only understood the hosts format (`0.0.0.0 domain`), the web UI refresh both, so after a restart such lists blocked nothing until a manual refresh or the 24-hour auto-refresh. The start now uses the same code as the web UI refresh (one parser, same whitelist handling).
+- Fix: if `unbound` crashed, the whole add-on exited and stayed down (state "Error") unless the Supervisor's Watchdog switch was on. `run.sh` now starts Unbound again after an unexpected exit (up to 5 restarts within 5 minutes, then it exits with Unbound's exit code so a broken configuration does not loop forever).
+
 ## [1.26.1-ha2-pol4r1] - 2026-10-11
 
 - Security: the web UI now rejects every request that does not come from the Home Assistant Ingress gateway (`172.30.32.2`) or loopback. The UI has no login of its own, so before this other containers on the add-on network could reach it directly.
