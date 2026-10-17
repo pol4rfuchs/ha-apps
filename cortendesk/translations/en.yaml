@@ -37,7 +37,7 @@ configuration:
     name: Client download upload limit (MB)
     description: >-
       Maximum size of client installers uploaded under System > Client
-      Downloads. Leave empty for the upstream default (512 MB).
+      Downloads. Default: 512 MB (same as upstream).
   log_level:
     name: Log Level
     description: >-

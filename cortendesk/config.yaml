@@ -30,11 +30,17 @@ ports:
   21118/tcp: null
   21119/tcp: null
 
-# app_url und admin_password haben keinen Default: die App startet erst, wenn
-# beide gesetzt sind.
+# app_url und admin_password sind absichtlich leer (kein Default-Passwort): solange
+# eine der beiden Optionen leer ist, beendet sich die App mit einer Meldung im Log.
+# id_server und relay_server leer = Host aus app_url. downloads_max_mb 512 = Upstream-Standard.
 options:
+  app_url: ""
   admin_user: "admin"
+  admin_password: ""
   native_webclient: false
+  id_server: ""
+  relay_server: ""
+  downloads_max_mb: 512
   log_level: "INFO"
 schema:
   app_url: "str"
@@ -43,7 +49,7 @@ schema:
   native_webclient: "bool"
   id_server: "str?"
   relay_server: "str?"
-  downloads_max_mb: "int(1,4096)?"
+  downloads_max_mb: "int(1,4096)"
   log_level: "list(DEBUG|INFO|WARNING|ERROR)"
 
 # AppArmor ist aus: apparmor.txt ist ein ungetesteter Entwurf im COMPLAIN-Modus und wird

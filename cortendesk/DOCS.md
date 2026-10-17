@@ -34,7 +34,7 @@ Sprachanrufe im Browser-Client funktionieren nur über HTTPS (oder `localhost`),
 
 ### Option: `downloads_max_mb`
 
-Upload-Limit für Client-Installer unter System → Client Downloads. Leer = Upstream-Standard (512 MB).
+Upload-Limit für Client-Installer unter System → Client Downloads. Standard: 512 MB (wie Upstream).
 
 ### Option: `log_level`
 
@@ -61,7 +61,7 @@ In den RustDesk-Clients: ID-Server = `<host>`, Relay-Server = `<host>`, API-Serv
 
 **Lokal (LAN):** Die Console läuft direkt auf Port `21114` (`http://<ha-host>:21114`), nicht über Ingress. Sie hat eine eigene
 Anmeldung (Administrator aus `admin_user` und `admin_password`); die App startet erst, wenn `app_url` und `admin_password`
-gesetzt sind. RustDesk-Clients im LAN sprechen direkt mit ID-Server (`21115/21116`) und Relay (`21117`).
+gesetzt sind (sonst beendet sich die App mit einer Meldung im Log). RustDesk-Clients im LAN sprechen direkt mit ID-Server (`21115/21116`) und Relay (`21117`).
 
 **Extern (Internet):** Empfehlung **eingeschränkt ok.** Für Clients von außen genügt die Freigabe von `21115–21117/TCP` und
 `21116/UDP` am Router (siehe Ports); ID-Server und Relay sind dafür gedacht, die Clients prüfen den Server-Schlüssel. Die

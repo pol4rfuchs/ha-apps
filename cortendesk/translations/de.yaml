@@ -37,7 +37,7 @@ configuration:
     name: Upload-Limit Client-Downloads (MB)
     description: >-
       Maximale Größe von Client-Installern, die unter System > Client Downloads
-      hochgeladen werden. Leer lassen für den Upstream-Standard (512 MB).
+      hochgeladen werden. Standard: 512 MB (wie Upstream).
   log_level:
     name: Log-Level
     description: >-
