@@ -1,0 +1,59 @@
+---
+name: "CortenDesk"
+version: "0.1.0"
+slug: "cortendesk"
+description: "RustDesk console with embedded ID server and relay (CortenDesk, all-in-one)"
+url: "https://github.com/pol4rfuchs/ha-apps"
+arch:
+  - aarch64
+  - amd64
+image: "ghcr.io/pol4rfuchs/cortendesk"
+stage: experimental
+init: false
+# SQLite + hbbs-Datenbank liegen in /data: cold = App wird fuers Backup kurz
+# gestoppt, damit keine halb geschriebene DB im Backup landet.
+backup: cold
+webui: "http://[HOST]:[PORT:8080]"
+watchdog: "tcp://[HOST]:[PORT:8080]"
+
+# Ports: gegen die Port-Tabelle geprueft (21114-21117 frei, 17.10.2026).
+# Bridge-Modus mit Port-Mapping. 21118/21119 (WebSocket-Bridge hbbs/hbbr)
+# bleiben bewusst unmapped (null): sie lauschen im Container auf allen Adressen, sind
+# aber nicht auf den Host veroeffentlicht (nur im internen Docker-Netz erreichbar, getestet 17.10.2026).
+# hbbs/hbbr vertrauen dort ungeprueften X-Forwarded-For-Headern, daher nie mappen.
+ports:
+  8080/tcp: 21114
+  21115/tcp: 21115
+  21116/tcp: 21116
+  21116/udp: 21116
+  21117/tcp: 21117
+  21118/tcp: null
+  21119/tcp: null
+
+# app_url und admin_password sind absichtlich leer (kein Default-Passwort): solange
+# eine der beiden Optionen leer ist, beendet sich die App mit einer Meldung im Log.
+# id_server und relay_server leer = Host aus app_url. downloads_max_mb 512 = Upstream-Standard.
+options:
+  app_url: ""
+  admin_user: "admin"
+  admin_password: ""
+  native_webclient: false
+  id_server: ""
+  relay_server: ""
+  downloads_max_mb: 512
+  log_level: "INFO"
+schema:
+  app_url: "str"
+  admin_user: "str"
+  admin_password: "password"
+  native_webclient: "bool"
+  id_server: "str?"
+  relay_server: "str?"
+  downloads_max_mb: "int(1,4096)"
+  log_level: "list(DEBUG|INFO|WARNING|ERROR)"
+
+# AppArmor ist aus: apparmor.txt ist ein ungetesteter Entwurf im COMPLAIN-Modus und wird
+# mit apparmor: false nicht geladen. Das Image laeuft nicht unter s6 (supervisord), die
+# s6-Baseline entfaellt. Nach einem Testlauf am Pi (apparmor: true, Log auswerten, Luecken
+# schliessen) "complain" aus den flags entfernen und hier auf true stellen.
+apparmor: false

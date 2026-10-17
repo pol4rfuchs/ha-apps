@@ -110,6 +110,12 @@
       "semanticCommitScope": "vaultwarden"
     },
     {
+      "matchFileNames": [
+        "cortendesk/**"
+      ],
+      "semanticCommitScope": "cortendesk"
+    },
+    {
       "matchManagers": [
         "github-actions"
       ],
@@ -183,6 +189,7 @@
         "matrix_synapse/**",
         "matrix_auth_service/**",
         "vaultwarden/**",
+        "cortendesk/**",
         "restic_backup/**"
       ],
       "automerge": false

@@ -1,0 +1,18 @@
+CortenDesk (Home Assistant app)
+===============================
+
+This app is a thin wrapper around unmodified upstream images:
+
+  CortenDesk Console  (AGPL-3.0)  https://github.com/marcpope/cortendesk
+  CortenDesk Server   (AGPL-3.0)  https://github.com/marcpope/cortendesk-server
+                      (fork of rustdesk-server, AGPL-3.0)
+
+The upstream image ghcr.io/marcpope/cortendesk is used as the base layer.
+Its license text and NOTICE remain in the image at /app/LICENSE and /app/NOTICE.
+The wrapper adds only: run.sh (maps Home Assistant options to environment
+variables), the Home Assistant app metadata (config.yaml, translations,
+apparmor.txt) and documentation. No upstream code is modified.
+
+The wrapper files are licensed under AGPL-3.0 (see LICENSE).
+Corresponding source of the upstream version used: see the version in the
+Dockerfile (ARG CORTENDESK_VERSION), tag vX.Y.Z in marcpope/cortendesk.
