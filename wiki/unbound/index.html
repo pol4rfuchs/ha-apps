@@ -401,7 +401,7 @@
       <a class="nav-item" href="#custom-config" data-target="custom-config"><span class="nav-icon">🧩</span><span><strong>Custom Config</strong><small>Overlay files, full unbound.conf</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data/config.json, backup</small></span></a>
       <a class="nav-item" href="#hardening" data-target="hardening"><span class="nav-icon">🔒</span><span><strong>Hardening</strong><small>Source build, CVEs, AppArmor</small></span></a>
-      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.26.1-ha2-pol4r1</small></span></a>
+      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.26.1-ha3-pol4r1</small></span></a>
       <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>No resolution, DNSSEC, port conflicts</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
@@ -448,7 +448,7 @@ DNS:    5053/tcp + 5053/udp (mapped from container 53)</code></pre>
         <h3>🛡️ Source-Built Hardening</h3>
         <p>Built from upstream source instead of Alpine's package. Since 1.25.1 this fixed 11 CVEs compared with Alpine's 3.24 package (1.24.2), including CVE-2026-33278 (RCE).</p>
         <pre><code>unbound version: 1.26.1
-add-on version:  1.26.1-ha2-pol4r1</code></pre>
+add-on version:  1.26.1-ha3-pol4r1</code></pre>
       </div>
     </section>
 
@@ -603,6 +603,8 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
             <tr><td>Versioning</td><td>Decoupled from Release Please — manual scheme <code>&lt;upstream&gt;-haNN-pol4rN</code>.</td></tr>
             <tr><td>Base image</td><td><code>hassio-addons/base:21.0.7</code>.</td></tr>
             <tr><td>Web UI access</td><td>The web UI has no login of its own, so the app rejects every request that does not come from the Home Assistant Ingress gateway (<code>172.30.32.2</code>) or loopback. Before this, other containers on the Supervisor network could reach it.</td></tr>
+            <tr><td>Blocklists after a restart</td><td>The start now builds the blocklist with the same code as the web UI refresh, so plain domain lists (not only the hosts format) stay active after a restart.</td></tr>
+            <tr><td>Crash recovery</td><td>If <code>unbound</code> exits unexpectedly it is started again (up to 5 times within 5 minutes); before, the whole add-on stayed down until it was started by hand.</td></tr>
             <tr><td>unbound-control keys</td><td>No longer baked into the image (they would be identical for everyone). They are generated on the first start and kept in <code>/data/unbound-control</code>.</td></tr>
             <tr><td>Query-log permissions</td><td>Corrected file ownership so the web UI can read/write logs under the drop-privileges user.</td></tr>
             <tr><td>AppArmor</td><td>Profile tightened; <code>harden-algo</code> / <code>harden-below-nxdomain</code> enabled.</td></tr>
@@ -619,7 +621,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
     </article>
 
-    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.26.1-ha2-pol4r1 unbound 1.26.1">
+    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.26.1-ha3-pol4r1 unbound 1.26.1">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
         <a class="section-link" href="#changelog">#changelog</a>
@@ -628,7 +630,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
         <table>
           <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td>unbound</td><td><code>1.26.1-ha2-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
+            <tr><td>unbound</td><td><code>1.26.1-ha3-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
             <tr><td>Unbound (upstream)</td><td><code>1.26.1</code></td><td>Source-built, not the Alpine package.</td></tr>
           </tbody>
         </table>
