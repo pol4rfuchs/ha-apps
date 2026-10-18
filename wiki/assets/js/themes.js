@@ -40,9 +40,15 @@
   const fill = (box) => {
     box.setAttribute('role', 'group');
     box.setAttribute('aria-label', 'Design wählen');
-    box.innerHTML = THEMES.map(([id, label]) =>
-      '<button type="button" data-theme-btn="' + id + '" aria-pressed="false">' + label + '</button>'
-    ).join('');
+    box.textContent = '';
+    THEMES.forEach(([id, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('data-theme-btn', id);
+      b.setAttribute('aria-pressed', 'false');
+      b.textContent = label;
+      box.appendChild(b);
+    });
     box.addEventListener('click', (e) => {
       const b = e.target.closest('[data-theme-btn]');
       if (b) apply(b.dataset.themeBtn, true);
@@ -77,13 +83,22 @@
       const nav = document.createElement('nav');
       nav.className = 'side-nav';
       nav.setAttribute('aria-label', 'Add-ons');
-      nav.innerHTML = Array.from(groups).map((g) => {
-        const links = Array.from(g.querySelectorAll('[data-search-card]')).map((c) =>
-          '<a data-side-link href="' + c.getAttribute('href') + '" style="--a:' + (c.style.getPropertyValue('--a') || '#34d399') + '"><i></i>' +
-          c.querySelector('h3').textContent + '</a>'
-        ).join('');
-        return '<div class="side-title">' + g.dataset.catGroup + '</div>' + links;
-      }).join('');
+      // Built with DOM APIs (textContent / setAttribute), never innerHTML, so page text can't be re-parsed as markup.
+      groups.forEach((g) => {
+        const title = document.createElement('div');
+        title.className = 'side-title';
+        title.textContent = g.dataset.catGroup;
+        nav.appendChild(title);
+        g.querySelectorAll('[data-search-card]').forEach((c) => {
+          const a = document.createElement('a');
+          a.setAttribute('data-side-link', '');
+          a.setAttribute('href', c.getAttribute('href'));
+          a.style.setProperty('--a', c.style.getPropertyValue('--a') || '#34d399');
+          a.appendChild(document.createElement('i'));
+          a.appendChild(document.createTextNode(c.querySelector('h3').textContent));
+          nav.appendChild(a);
+        });
+      });
       topbar.after(nav);
     }
 
