@@ -1,1 +1,0 @@
-{"version":"0.0.1","configurations":[{"name":"wiki-variants","runtimeExecutable":"python","runtimeArgs":["-m","http.server","8765","--directory","wiki/_design-variants"],"port":8765},{"name":"wiki","runtimeExecutable":"python","runtimeArgs":["-m","http.server","8766","--directory","wiki"],"port":8766}]}
