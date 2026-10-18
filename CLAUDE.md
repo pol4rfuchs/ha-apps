@@ -41,6 +41,8 @@ und das Image schon lokal vorhanden ist. Sonst meldet er „übersprungen“, da
 - Bei allem, was sich seit dem Trainingsstand geändert haben kann (Base-Image-Tags, Supervisor, Actions-Verhalten):
   vorher recherchieren, nicht aus der Snapshot-Tabelle in §16 abschreiben.
 - AppArmor-Profile nicht nebenbei ändern.
+- Kein pauschales Suchen-und-Ersetzen „addon → app“: Ordner, Dateinamen, Slugs, Image-Namen, `map:`-Werte wie `addon_config`
+  und Workflow-Namen bleiben unverändert (Katalog §17).
 - Keine Verweise auf `codeberg.org` oder `.forgejo` in neuen Zeilen (Forgejo mit `https://forgejo.org` verlinken;
   Ausnahme nur mit dem Marker `forge-check:allow`).
 - Keine Schlüssel oder Passwörter ins Repo. Passwort-Optionen: Schema `password`, kein Default.

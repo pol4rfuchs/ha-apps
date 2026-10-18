@@ -11,6 +11,7 @@ paths:
 
 Vor Änderungen an diesen Dateien den Skill `ha-apps-buildrules` heranziehen; gilt `appbuildrules.md`, wenn sich etwas widerspricht.
 
+- Architekturen: nur `aarch64` und `amd64`. Nie `armhf`, `armv7` oder `i386`, weder in `config.yaml` noch im Dockerfile (Katalog §1).
 - `Dockerfile`: `ARG BUILD_FROM` enthält `${BUILD_ARCH}` (außer bei offiziellem Multi-Arch-Tag). `ARG BUILD_ARCH` und
   `BUILD_VERSION` nach `FROM` erneut deklarieren. Label `io.hass.type="app"`. Upstream-Binary mit Smoke-Test (`RUN x --version`).
   Keine Schlüssel zur Build-Zeit erzeugen. `chmod +x` für s6-Skripte (`run`, `finish`) nicht vergessen.
