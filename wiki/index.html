@@ -7,15 +7,18 @@
   <meta name="description" content="Sauberer Wiki-Hub für ntfy, TeamSpeak 6, TS6 Manager, Forgejo, Unbound, Restic Backup, Nextcloud und HWiNFO Thermal Guard mit stabilen Ordner-URLs.">
   <meta name="theme-color" content="#03110c">
   <link rel="stylesheet" href="./assets/css/site.css">
+  <link rel="stylesheet" href="./assets/css/themes.css">
+  <script src="./assets/js/themes.js"></script>
   <script src="./assets/js/site.js" defer></script>
 </head>
-<body>
+<body class="hub">
   <div class="shell">
     <header class="topbar">
       <a class="brand" href="./index.html" aria-label="Zur Startseite">
         <span class="brand-mark">PF</span>
         <span>Pol4rFuchs Pages</span>
       </a>
+      <div class="theme-switch" data-theme-switch></div>
       <nav class="nav" aria-label="Hauptnavigation">
         <a href="./index.html">Portal</a>
 <a href="./" aria-current="page">HA App Wikis</a>
@@ -33,7 +36,7 @@
           </div>
         </div>
         <aside class="status-panel" aria-label="Status">
-          <div class="status-row"><span class="status-label">URL</span><span class="status-value">./</span></div><div class="status-row"><span class="status-label">Assets</span><span class="status-value">./assets/</span></div><div class="status-row"><span class="status-label">Docs</span><span class="status-value">20 apps</span></div><div class="status-row"><span class="status-label">Mode</span><span class="status-value">static</span></div>
+          <div class="status-row"><span class="status-label">URL</span><span class="status-value">./</span></div><div class="status-row"><span class="status-label">Assets</span><span class="status-value">./assets/</span></div><div class="status-row"><span class="status-label">Docs</span><span class="status-value">19 apps</span></div><div class="status-row"><span class="status-label">Mode</span><span class="status-value">static</span></div>
         </aside>
       </section>
 
@@ -42,30 +45,60 @@
   <div class="section-head">
     <div>
       <h2 id="wiki-title">Home Assistant Add-on Wikis</h2>
-      <p>Jedes Add-on hat seinen eigenen Ordner mit einer vollständigen <code>index.html</code> Wiki-Seite — Sidebar-Navigation, Volltextsuche, Copy-Buttons und mobile-ready.</p>
+      <p>Jedes Add-on hat seinen eigenen Ordner mit einer vollständigen <code>index.html</code> Wiki-Seite — Sidebar-Navigation, Volltextsuche, Copy-Buttons und mobile-ready. Oben in der Leiste kannst du das Design wählen: Bento (Standard) oder Docs – die Wahl gilt auch auf allen Add-on-Wikis.</p>
     </div>
   </div>
   <input class="search-box" type="search" placeholder="Suchen: ntfy, TeamSpeak, TS6 Manager …" data-site-search aria-label="Wiki Seiten suchen">
+  <div class="catalog">
+  <div class="cat-group" data-cat-group="Messaging">
+  <h3 class="cat-title">Messaging</h3>
   <div class="docs-grid">
-    <a class="card" data-search-card href="./ntfy/"><div class="meta"><span class="badge">ntfy</span><span class="badge">HA Add-on</span></div><h3>ntfy</h3><p>Self-hosted push notifications. HTTP API, UnifiedPush, iOS push via ntfy.sh relay. The admin console is the separate ntfy-manager add-on.</p><span class="card-link">./ntfy/ →</span></a>
-    <a class="card" data-search-card href="./ntfy-manager/"><div class="meta"><span class="badge">ntfy</span><span class="badge">Admin UI</span></div><h3>ntfy-manager</h3><p>Web-based ntfy admin console. Topic Reservations, Message Browser, ACL, SSE live-monitor, Token Management.</p><span class="card-link">./ntfy-manager/ →</span></a>
-    <a class="card" data-search-card href="./teamspeak6/"><div class="meta"><span class="badge">TS6</span><span class="badge">Server</span></div><h3>teamspeak6</h3><p>TeamSpeak 6 voice server add-on. Persistence, update behavior, admin token, backup notes.</p><span class="card-link">./teamspeak6/ →</span></a>
-    <a class="card" data-search-card href="./ts6-manager/"><div class="meta"><span class="badge">TS6</span><span class="badge">Manager</span></div><h3>ts6-manager</h3><p>Web-based TS6 management UI. WebQuery API, music bots, bot flows, persistence and security.</p><span class="card-link">./ts6-manager/ →</span></a>
-    <a class="card" data-search-card href="./matrix-synapse/"><div class="meta"><span class="badge">Matrix</span><span class="badge">Synapse</span></div><h3>matrix-synapse</h3><p>Full Matrix stack: Synapse + Element Web + Element Call + LiveKit + Ketesa (admin UI) + PostgreSQL.</p><span class="card-link">./matrix-synapse/ →</span></a>
-    <a class="card" data-search-card href="./navidrome/"><div class="meta"><span class="badge">Music</span><span class="badge">Subsonic</span></div><h3>navidrome</h3><p>Self-hosted music server. Subsonic/Airsonic API compatible — DSub, Symfonium, Feishin and more.</p><span class="card-link">./navidrome/ →</span></a>
-    <a class="card" data-search-card href="./nginx-proxy-manager/"><div class="meta"><span class="badge">NPM</span><span class="badge">Reverse Proxy</span></div><h3>nginx-proxy-manager</h3><p>Nginx Proxy Manager with SSL automation, DNS-01, DuckDNS wildcards and MariaDB support.</p><span class="card-link">./nginx-proxy-manager/ →</span></a>
-    <a class="card" data-search-card href="./searxng/"><div class="meta"><span class="badge">Search</span><span class="badge">Privacy</span></div><h3>searxng</h3><p>Privacy-respecting metasearch engine. No tracking, no profiles. JSON API for HA automations.</p><span class="card-link">./searxng/ →</span></a>
-    <a class="card" data-search-card href="./intiface-central/"><div class="meta"><span class="badge">Intiface</span><span class="badge">Buttplug</span></div><h3>intiface-central</h3><p>Buttplug/Intiface Central with browser WebGUI, MQTT bridge and HA entity auto-discovery.</p><span class="card-link">./intiface-central/ →</span></a>
-    <a class="card" data-search-card href="./forgejo/"><div class="meta"><span class="badge">Forgejo</span><span class="badge">Git</span></div><h3>forgejo</h3><p>Self-hosted Git platform — the free GitHub alternative. Repos, Issues, PRs, CI/CD Actions, package registry, optional SSH.</p><span class="card-link">./forgejo/ →</span></a>
-    <a class="card" data-search-card href="./unbound/"><div class="meta"><span class="badge">Unbound</span><span class="badge">DNS</span></div><h3>unbound</h3><p>Hardened recursive DNS resolver with built-in web UI — blocklists, local records, cache, DNSSEC. Source-built, 11 CVEs fixed.</p><span class="card-link">./unbound/ →</span></a>
-    <a class="card" data-search-card href="./restic-backup/"><div class="meta"><span class="badge">Restic</span><span class="badge">Backup</span></div><h3>restic-backup</h3><p>Scheduled encrypted restic backups of HA config/media/addon data with ntfy alerting on success or failure.</p><span class="card-link">./restic-backup/ →</span></a>
-    <a class="card" data-search-card href="./nextcloud/"><div class="meta"><span class="badge">Nextcloud</span><span class="badge">Cloud</span></div><h3>nextcloud</h3><p>Full Nextcloud instance on the official image — unrestricted app store access, MariaDB-backed.</p><span class="card-link">./nextcloud/ →</span></a>
-    <a class="card" data-search-card href="./unifi-os-control-center/"><div class="meta"><span class="badge">UniFi</span><span class="badge">Monitoring</span></div><h3>unifi-os-control-center</h3><p>Experimental local-first UniFi OS monitoring — Ingress-only, read-only firewall analysis, persistent alerts, optional ntfy.</p><span class="card-link">./unifi-os-control-center/ →</span></a>
-    <a class="card" data-search-card href="./matrix-auth-service/"><div class="meta"><span class="badge">Matrix</span><span class="badge">MAS</span></div><h3>matrix-auth-service</h3><p>Matrix Authentication Service (OIDC/OAuth2) for Synapse — Element X QR login and MFA. Experimental.</p><span class="card-link">./matrix-auth-service/ →</span></a>
-    <a class="card" data-search-card href="./matrix-signal-bridge/"><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-signal-bridge</h3><p>mautrix-signal application-service bridge for Synapse, isolated add-on, linked-device login.</p><span class="card-link">./matrix-signal-bridge/ →</span></a>
-    <a class="card" data-search-card href="./matrix-telegram-bridge/"><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-telegram-bridge</h3><p>mautrix-telegram application-service bridge for Synapse, phone-number login, needs a my.telegram.org API ID.</p><span class="card-link">./matrix-telegram-bridge/ →</span></a>
-    <a class="card" data-search-card href="./matrix-whatsapp-bridge/"><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-whatsapp-bridge</h3><p>mautrix-whatsapp application-service bridge for Synapse, isolated add-on, QR login.</p><span class="card-link">./matrix-whatsapp-bridge/ →</span></a>
-    <a class="card" data-search-card href="./hwinfo-thermalguard/"><div class="meta"><span class="badge">HWiNFO</span><span class="badge">Thermal Guard</span></div><h3>hwinfo-thermalguard</h3><p>Windows Gaming-PC Thermal Guard Wiki — HWiNFO, RemoteHWInfo, Watchdog, ntfy Push.</p><span class="card-link">./hwinfo-thermalguard/ →</span></a>
+    <a class="card" data-search-card data-size="big" style="--a:#34d399" href="./ntfy/"><span class="card-icon" aria-hidden="true">🔔</span><div class="meta"><span class="badge">ntfy</span><span class="badge">HA Add-on</span></div><h3>ntfy</h3><p>Self-hosted push notifications. HTTP API, UnifiedPush, iOS push via ntfy.sh relay. The admin console is the separate ntfy-manager add-on.</p><span class="card-link">./ntfy/ →</span></a>
+    <a class="card" data-search-card style="--a:#f59e0b" href="./ntfy-manager/"><span class="card-icon" aria-hidden="true">🛎️</span><div class="meta"><span class="badge">ntfy</span><span class="badge">Admin UI</span></div><h3>ntfy-manager</h3><p>Web-based ntfy admin console. Topic Reservations, Message Browser, ACL, SSE live-monitor, Token Management.</p><span class="card-link">./ntfy-manager/ →</span></a>
+  </div>
+  </div>
+  <div class="cat-group" data-cat-group="Voice">
+  <h3 class="cat-title">Voice</h3>
+  <div class="docs-grid">
+    <a class="card" data-search-card style="--a:#a3e635" href="./teamspeak6/"><span class="card-icon" aria-hidden="true">🎧</span><div class="meta"><span class="badge">TS6</span><span class="badge">Server</span></div><h3>teamspeak6</h3><p>TeamSpeak 6 voice server add-on. Persistence, update behavior, admin token, backup notes.</p><span class="card-link">./teamspeak6/ →</span></a>
+    <a class="card" data-search-card style="--a:#facc15" href="./ts6-manager/"><span class="card-icon" aria-hidden="true">🎚️</span><div class="meta"><span class="badge">TS6</span><span class="badge">Manager</span></div><h3>ts6-manager</h3><p>Web-based TS6 management UI. WebQuery API, music bots, bot flows, persistence and security.</p><span class="card-link">./ts6-manager/ →</span></a>
+  </div>
+  </div>
+  <div class="cat-group" data-cat-group="Matrix">
+  <h3 class="cat-title">Matrix</h3>
+  <div class="docs-grid">
+    <a class="card" data-search-card data-size="big" style="--a:#8b5cf6" href="./matrix-synapse/"><span class="card-icon" aria-hidden="true">🧬</span><div class="meta"><span class="badge">Matrix</span><span class="badge">Synapse</span></div><h3>matrix-synapse</h3><p>Full Matrix stack: Synapse + Element Web + Element Call + LiveKit + Ketesa (admin UI) + PostgreSQL.</p><span class="card-link">./matrix-synapse/ →</span></a>
+    <a class="card" data-search-card style="--a:#a78bfa" href="./matrix-auth-service/"><span class="card-icon" aria-hidden="true">🔑</span><div class="meta"><span class="badge">Matrix</span><span class="badge">MAS</span></div><h3>matrix-auth-service</h3><p>Matrix Authentication Service (OIDC/OAuth2) for Synapse — Element X QR login and MFA. Experimental.</p><span class="card-link">./matrix-auth-service/ →</span></a>
+    <a class="card" data-search-card style="--a:#3b82f6" href="./matrix-signal-bridge/"><span class="card-icon" aria-hidden="true">🌉</span><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-signal-bridge</h3><p>mautrix-signal application-service bridge for Synapse, isolated add-on, linked-device login.</p><span class="card-link">./matrix-signal-bridge/ →</span></a>
+    <a class="card" data-search-card style="--a:#14b8a6" href="./matrix-telegram-bridge/"><span class="card-icon" aria-hidden="true">✈️</span><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-telegram-bridge</h3><p>mautrix-telegram application-service bridge for Synapse, phone-number login, needs a my.telegram.org API ID.</p><span class="card-link">./matrix-telegram-bridge/ →</span></a>
+    <a class="card" data-search-card style="--a:#22c55e" href="./matrix-whatsapp-bridge/"><span class="card-icon" aria-hidden="true">💬</span><div class="meta"><span class="badge">Matrix</span><span class="badge">Bridge</span></div><h3>matrix-whatsapp-bridge</h3><p>mautrix-whatsapp application-service bridge for Synapse, isolated add-on, QR login.</p><span class="card-link">./matrix-whatsapp-bridge/ →</span></a>
+  </div>
+  </div>
+  <div class="cat-group" data-cat-group="Media">
+  <h3 class="cat-title">Media</h3>
+  <div class="docs-grid">
+    <a class="card" data-search-card style="--a:#f97316" href="./navidrome/"><span class="card-icon" aria-hidden="true">🎵</span><div class="meta"><span class="badge">Music</span><span class="badge">Subsonic</span></div><h3>navidrome</h3><p>Self-hosted music server. Subsonic/Airsonic API compatible — DSub, Symfonium, Feishin and more.</p><span class="card-link">./navidrome/ →</span></a>
+    <a class="card" data-search-card style="--a:#ec4899" href="./intiface-central/"><span class="card-icon" aria-hidden="true">🕹️</span><div class="meta"><span class="badge">Intiface</span><span class="badge">Buttplug</span></div><h3>intiface-central</h3><p>Buttplug/Intiface Central with browser WebGUI, MQTT bridge and HA entity auto-discovery.</p><span class="card-link">./intiface-central/ →</span></a>
+  </div>
+  </div>
+  <div class="cat-group" data-cat-group="Network">
+  <h3 class="cat-title">Network</h3>
+  <div class="docs-grid">
+    <a class="card" data-search-card data-size="big" style="--a:#06b6d4" href="./nginx-proxy-manager/"><span class="card-icon" aria-hidden="true">🔀</span><div class="meta"><span class="badge">NPM</span><span class="badge">Reverse Proxy</span></div><h3>nginx-proxy-manager</h3><p>Nginx Proxy Manager with SSL automation, DNS-01, DuckDNS wildcards and MariaDB support.</p><span class="card-link">./nginx-proxy-manager/ →</span></a>
+    <a class="card" data-search-card style="--a:#6366f1" href="./searxng/"><span class="card-icon" aria-hidden="true">🔎</span><div class="meta"><span class="badge">Search</span><span class="badge">Privacy</span></div><h3>searxng</h3><p>Privacy-respecting metasearch engine. No tracking, no profiles. JSON API for HA automations.</p><span class="card-link">./searxng/ →</span></a>
+    <a class="card" data-search-card style="--a:#2dd4bf" href="./unbound/"><span class="card-icon" aria-hidden="true">🛡️</span><div class="meta"><span class="badge">Unbound</span><span class="badge">DNS</span></div><h3>unbound</h3><p>Hardened recursive DNS resolver with built-in web UI — blocklists, local records, cache, DNSSEC. Source-built, 11 CVEs fixed.</p><span class="card-link">./unbound/ →</span></a>
+    <a class="card" data-search-card data-size="wide" style="--a:#0ea5e9" href="./unifi-os-control-center/"><span class="card-icon" aria-hidden="true">📡</span><div class="meta"><span class="badge">UniFi</span><span class="badge">Monitoring</span></div><h3>unifi-os-control-center</h3><p>Experimental local-first UniFi OS monitoring — Ingress-only, read-only firewall analysis, persistent alerts, optional ntfy.</p><span class="card-link">./unifi-os-control-center/ →</span></a>
+  </div>
+  </div>
+  <div class="cat-group" data-cat-group="Cloud &amp; Dev">
+  <h3 class="cat-title">Cloud &amp; Dev</h3>
+  <div class="docs-grid">
+    <a class="card" data-search-card data-size="big" style="--a:#f97316" href="./forgejo/"><span class="card-icon" aria-hidden="true">🦊</span><div class="meta"><span class="badge">Forgejo</span><span class="badge">Git</span></div><h3>forgejo</h3><p>Self-hosted Git platform — the free GitHub alternative. Repos, Issues, PRs, CI/CD Actions, package registry, optional SSH.</p><span class="card-link">./forgejo/ →</span></a>
+    <a class="card" data-search-card data-size="wide" style="--a:#e11d48" href="./restic-backup/"><span class="card-icon" aria-hidden="true">💾</span><div class="meta"><span class="badge">Restic</span><span class="badge">Backup</span></div><h3>restic-backup</h3><p>Scheduled encrypted restic backups of HA config/media/addon data with ntfy alerting on success or failure.</p><span class="card-link">./restic-backup/ →</span></a>
+    <a class="card" data-search-card data-size="wide" style="--a:#0082c9" href="./nextcloud/"><span class="card-icon" aria-hidden="true">☁️</span><div class="meta"><span class="badge">Nextcloud</span><span class="badge">Cloud</span></div><h3>nextcloud</h3><p>Full Nextcloud instance on the official image — unrestricted app store access, MariaDB-backed.</p><span class="card-link">./nextcloud/ →</span></a>
+    <a class="card" data-search-card style="--a:#ef4444" href="./hwinfo-thermalguard/"><span class="card-icon" aria-hidden="true">🌡️</span><div class="meta"><span class="badge">HWiNFO</span><span class="badge">Thermal Guard</span></div><h3>hwinfo-thermalguard</h3><p>Windows Gaming-PC Thermal Guard Wiki — HWiNFO, RemoteHWInfo, Watchdog, ntfy Push.</p><span class="card-link">./hwinfo-thermalguard/ →</span></a>
+  </div>
+  </div>
   </div>
 </section>
 
@@ -98,7 +131,7 @@
 
     <footer class="footer">
       <span>© <span data-year></span> Pol4rFuchs · GitHub Pages Hub</span>
-      <span>Static · Relative Links · ntfy green glass look · Not affiliated with mentioned companies.</span>
+      <span>Static · Relative Links · 2 wählbare Designs (Bento · Docs) · Not affiliated with mentioned companies.</span>
     </footer>
   </div>
 </body>
