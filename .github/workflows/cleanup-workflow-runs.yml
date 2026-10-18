@@ -35,6 +35,8 @@ jobs:
           keep_minimum_runs: ${{ github.event.inputs.keep_minimum_runs || '10' }}
           delete_workflow_by_state_pattern: ALL
           delete_run_by_conclusion_pattern: ALL
-          check_pullrequest_exist: true
-          check_branch_existence: true
+          # Beide Checks AUS: sonst bleiben alle Runs auf main (Branch existiert immer)
+          # und alle Runs von Renovate-/Release-Please-PRs dauerhaft erhalten.
+          check_pullrequest_exist: false
+          check_branch_existence: false
           dry_run: ${{ github.event.inputs.dry_run || 'false' }}
