@@ -1,0 +1,25 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V3 · Terminal Scanline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0d0f12;--p:#14171c;--b:#262b33;--t:#d7dde5;--m:#7d8794;--cy:#22d3ee;--or:#fb923c;--gr:#4ade80;--mono:"JetBrains Mono",monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px/1.7 var(--mono);padding:24px}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+.win{max-width:1000px;margin:0 auto;border:1px solid var(--b);border-radius:12px;background:var(--p);overflow:hidden;box-shadow:0 30px 80px #000a}
+.bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#1a1e25;border-bottom:1px solid var(--b)}.dot{width:12px;height:12px;border-radius:50%}.bar span.t{margin-left:10px;color:var(--m);font-size:.8rem}
+.body{padding:22px 26px}.pr{color:var(--gr)}.cy{color:var(--cy)}.or{color:var(--or)}.mu{color:var(--m)}
+pre{margin:0;color:var(--cy);font-size:.7rem;line-height:1.2;overflow:auto}
+input{background:transparent;border:0;border-bottom:1px dashed var(--b);color:var(--t);font:inherit;width:40%;outline:0;padding:2px 6px}
+.row{display:grid;grid-template-columns:30px 230px 1fr auto;gap:12px;align-items:baseline;padding:5px 10px;border-radius:6px;text-decoration:none;color:inherit;border-left:2px solid transparent}
+.row:hover{background:#1c2128;border-left-color:var(--a)}.row .n{color:var(--a);font-weight:600}.row .d{color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row .tg{color:var(--m);font-size:.75rem}
+.cat{margin:18px 0 4px;color:var(--or)}
+@media(max-width:700px){.row{grid-template-columns:24px 1fr}.row .d,.row .tg{display:none}}
+.cur{display:inline-block;width:8px;height:1em;background:var(--gr);vertical-align:middle;animation:b 1s steps(1) infinite}@keyframes b{50%{opacity:0}}
+</style></head><body><div class="win"><div class="bar"><i class="dot" style="background:#ff5f56"></i><i class="dot" style="background:#ffbd2e"></i><i class="dot" style="background:#27c93f"></i><span class="t">fox@homelab: ~/ha-apps/wiki</span></div>
+<div class="body"><h1 style="margin:0 0 10px;font-size:1.6rem;color:var(--cy)">▌HA ADD-ON WIKIS<span class="mu" style="font-size:.8rem"> v19</span></h1>
+<p><span class="pr">fox@homelab</span>:<span class="cy">~/wiki</span>$ ls <span class="or">--addons</span> | grep <input id="q" placeholder="filter…"><span class="cur"></span></p>
+<p class="mu"># 19 add-ons · static · jede Wiki mit eigener Akzentfarbe</p><div id="out"></div>
+<p class="mu" style="margin-top:22px">$ <span class="cur"></span></p></div></div>
+<script src="apps.js"></script><script>
+const q=document.getElementById('q'),out=document.getElementById('out');
+function r(){const v=q.value.toLowerCase();out.innerHTML=CATS.map(c=>{const l=APPS.filter(a=>a.c==c&&(a.n+a.d).toLowerCase().includes(v));return l.length?'<div class="cat">drwxr-xr-x  '+c.toLowerCase()+'/</div>'+l.map(a=>'<a class="row" style="--a:'+a.a+'" href="#"><span>'+a.i+'</span><span class="n">'+a.n+'/</span><span class="d">'+a.d+'</span><span class="tg">'+a.t.join(' · ')+'</span></a>').join(''):''}).join('')}
+q.oninput=r;r();</script></body></html>
