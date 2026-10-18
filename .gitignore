@@ -21,3 +21,7 @@ options.json
 Thumbs.db
 .idea/
 .vscode/
+
+# Claude Code (personal, per machine)
+.claude/settings.local.json
+CLAUDE.local.md
