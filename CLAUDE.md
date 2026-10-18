@@ -43,8 +43,9 @@ und das Image schon lokal vorhanden ist. Sonst meldet er „übersprungen“, da
 - AppArmor-Profile nicht nebenbei ändern.
 - Kein pauschales Suchen-und-Ersetzen „addon → app“: Ordner, Dateinamen, Slugs, Image-Namen, `map:`-Werte wie `addon_config`
   und Workflow-Namen bleiben unverändert (Katalog §17).
-- Keine Verweise auf `codeberg.org` oder `.forgejo` in neuen Zeilen (Forgejo mit `https://forgejo.org` verlinken;
-  Ausnahme nur mit dem Marker `forge-check:allow`).
+- Keine Verweise auf die frühere Forge (Codeberg-Domains, Forgejo-Punktordner) in neuen Zeilen; Forgejo mit
+  `https://forgejo.org` verlinken. Ausnahme nur mit dem Marker `forge-check:allow`. Workflow 00 prüft das im ganzen Repo,
+  deshalb diese Zeichenketten auch hier nicht ausschreiben.
 - Keine Schlüssel oder Passwörter ins Repo. Passwort-Optionen: Schema `password`, kein Default.
 
 ## Struktur, die man nicht aus dem Code ableitet

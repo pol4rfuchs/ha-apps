@@ -22,7 +22,7 @@ Prüfpunkte (jeder nur mit Datei und Zeile belegen):
 - `CHANGELOG.md` und `version:` nicht von Hand geändert (Ausnahme: Katalog §7, rein interne Dependency-Änderung).
 - Optionen in `config.yaml` wirken wirklich bis in die Anwendung; Translations sind synchron; Passwörter mit Schema `password` ohne Default.
 - Port ist repo-weit eindeutig (Tabelle im Skill `ha-apps-buildrules`).
-- Keine neuen Verweise auf `codeberg.org` oder `.forgejo` ohne Marker.
+- Keine neuen Verweise auf die frühere Forge (Codeberg-Domains, Forgejo-Punktordner) ohne Marker `forge-check:allow`; Workflow 00 prüft das.
 - AppArmor-Profile nur geändert, wenn das ausdrücklich Auftrag war.
 - Befunde, die nur aus dem Lesen von Code stammen, sind Verdacht, bis sie getestet sind. Nenne sie so.
 

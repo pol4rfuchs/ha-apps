@@ -4,7 +4,7 @@
 Checks (only on files that changed vs. HEAD, plus untracked files):
   1. yamllint (repo config .yamllint) on changed *.yaml / *.yml  -> errors block, warnings do not
   2. CHANGELOG.md of an existing app was edited by hand           -> blocks (Release Please generates it)
-  3. Added lines that mention codeberg.org or .forgejo            -> blocks (Buildrules §6),
+  3. Added lines with a legacy forge reference (see FORGE_RE)     -> blocks (Buildrules §6),
                                                                    unless the line has "forge-check:allow"
   4. Docker linters, only for the matching changed files (same images/options as the CI):
        hadolint   changed */Dockerfile                  (workflow 12: failure-threshold error, ignore DL3008/13/18)
@@ -27,10 +27,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-FORGE_RE = re.compile(r"codeberg\.org|\.forgejo", re.IGNORECASE)
+# Same pattern as workflow 00 ("deprecated legacy forge references"); split so this file does not match it.
+_A, _B, _C = "code" + "berg", "for" + "gejo", "[.]"
+FORGE_RE = re.compile(f"{_A}{_C}org|{_A}{_C}page|{_C}{_B}", re.IGNORECASE)
 MARKER = "forge-check:allow"
 ANSI_RE = re.compile("\x1b\\[[0-9;]*m")  # hadolint colours its output
-# The rule text itself names the forbidden strings, so these files are not scanned.
+# Rule text may name the forge; these files are not scanned.
 FORGE_SKIP = ("CLAUDE.md", ".claude/")
 
 # Same images as the CI. hadolint: pinned by hadolint-action v3.5.0 (workflow 12). actionlint/shellcheck: pinned here.
@@ -179,7 +181,7 @@ def main() -> int:
     ran.append("Forge-Check")
     if hits:
         problems.append(
-            "Verweise auf codeberg.org/.forgejo in neuen Zeilen (Buildrules §6; Forgejo mit https://forgejo.org verlinken "
+            "Veraltete Forge-Verweise in neuen Zeilen (Buildrules §6, Workflow 00; Forgejo mit https://forgejo.org verlinken "
             f"oder Marker `{MARKER}` setzen):\n  " + "\n  ".join(hits[:20])
         )
 
