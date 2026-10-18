@@ -33,6 +33,7 @@ body:
         - teamspeak6
         - ts6_manager
         - unbound
+        - unifi_toolkit
         - unifi_os_control_center
         - vaultwarden
         - cortendesk

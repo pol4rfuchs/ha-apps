@@ -1,0 +1,13 @@
+---
+configuration:
+  log_level:
+    name: Protokollstufe
+    description: Detailgrad des App-Protokolls. Für die Fehlersuche DEBUG verwenden.
+  stalker_refresh_interval:
+    name: Wi-Fi-Stalker-Intervall
+    description: Wie oft Wi-Fi Stalker den Controller abfragt, in Sekunden.
+  webhook_allow_private_ips:
+    name: Private Webhook-Ziele erlauben
+    description: >-
+      Erlaubt Webhooks an LAN-Adressen (Home Assistant, ntfy, n8n).
+      Cloud-Metadaten und Link-Local-Adressen bleiben gesperrt.

@@ -99,6 +99,12 @@
     },
     {
       "matchFileNames": [
+        "unifi_toolkit/**"
+      ],
+      "semanticCommitScope": "unifi_toolkit"
+    },
+    {
+      "matchFileNames": [
         "unifi_os_control_center/**"
       ],
       "semanticCommitScope": "unifi_os_control_center"

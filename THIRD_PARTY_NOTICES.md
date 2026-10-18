@@ -31,6 +31,7 @@ remain under their respective upstream licenses.
 | Matrix WhatsApp Bridge | mautrix-whatsapp | https://github.com/mautrix/whatsapp | AGPL-3.0 |
 | Matrix Signal Bridge | mautrix-signal | https://github.com/mautrix/signal | AGPL-3.0 |
 | Matrix Telegram Bridge | mautrix-telegram | https://github.com/mautrix/telegram | AGPL-3.0 |
+| UniFi Toolkit | UniFi Toolkit (Crosstalk Solutions), bundled Alpine.js and Chart.js | https://github.com/Crosstalk-Solutions/unifi-toolkit, https://github.com/alpinejs/alpine, https://github.com/chartjs/Chart.js | MIT |
 | UniFi OS Control Center | Original application of this repository | https://github.com/pol4rfuchs/ha-apps | Apache-2.0 (its third-party libraries keep their own licenses) |
 | Vaultwarden | Vaultwarden | https://github.com/dani-garcia/vaultwarden | AGPL-3.0 |
 | CortenDesk | CortenDesk (console) and CortenDesk Server (rustdesk-server fork) | https://github.com/marcpope/cortendesk, https://github.com/marcpope/cortendesk-server | AGPL-3.0 |
