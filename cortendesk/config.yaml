@@ -1,6 +1,6 @@
 ---
 name: "CortenDesk"
-version: "0.2.0"
+version: "0.2.1"
 slug: "cortendesk"
 description: "RustDesk console with embedded ID server and relay (CortenDesk, all-in-one)"
 url: "https://github.com/pol4rfuchs/ha-apps"
