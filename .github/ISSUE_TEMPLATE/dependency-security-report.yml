@@ -36,6 +36,7 @@ body:
         - unifi_toolkit
         - unifi_os_control_center
         - vaultwarden
+        - cortendesk
         - Repo-weit / Tooling (nicht app-spezifisch)
     validations:
       required: true

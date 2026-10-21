@@ -1,0 +1,53 @@
+---
+configuration:
+  app_url:
+    name: Public URL (APP_URL)
+    description: >-
+      Address your RustDesk clients use to reach this app, including scheme and
+      console port, e.g. http://rd.example.com:21114. The host part is announced
+      to clients as ID server (21116) and relay (21117), so it must be reachable
+      from outside. Do not use localhost.
+  admin_user:
+    name: Admin username
+    description: >-
+      Username of the first console administrator. Only used on the very first
+      start, when no user exists yet.
+  admin_password:
+    name: Admin password
+    description: >-
+      Password of the first console administrator. Only used on the very first
+      start; change it later inside the console.
+  native_webclient:
+    name: Web client
+    description: >-
+      Enable the built-in browser client. It uses the internal WebSocket bridge
+      to hbbs/hbbr (not exposed on the host). Off by default.
+  id_server:
+    name: ID server (optional)
+    description: >-
+      ID server address as host:port (e.g. rd.example.com:21116) if it should
+      differ from app_url. Empty = host from app_url with port 21116.
+  relay_server:
+    name: Relay (optional)
+    description: >-
+      Relay address as host:port (e.g. rd.example.com:21117). hbbs hands this
+      address to clients for relayed sessions, so every client must be able to
+      reach it. Empty = host from app_url with port 21117.
+  downloads_max_mb:
+    name: Client download upload limit (MB)
+    description: >-
+      Maximum size of client installers uploaded under System > Client
+      Downloads. Default: 512 MB (same as upstream).
+  log_level:
+    name: Log Level
+    description: >-
+      Controls the verbosity of logging output for the console and the
+      ID/relay server. Set to DEBUG for troubleshooting.
+network:
+  8080/tcp: Console (web interface and client API)
+  21115/tcp: hbbs NAT type test
+  21116/tcp: hbbs ID server (TCP)
+  21116/udp: hbbs ID server (UDP, registration and heartbeat)
+  21117/tcp: hbbr relay
+  21118/tcp: hbbs WebSocket (internal only, not mapped)
+  21119/tcp: hbbr WebSocket (internal only, not mapped)

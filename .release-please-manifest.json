@@ -14,5 +14,6 @@
   "matrix_auth_service": "1.0.6",
   "unifi_toolkit": "0.2.0",
   "unifi_os_control_center": "0.7.9",
-  "vaultwarden": "0.2.0"
+  "vaultwarden": "0.2.0",
+  "cortendesk": "0.1.0"
 }

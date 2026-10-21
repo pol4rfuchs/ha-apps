@@ -48,6 +48,7 @@ jobs:
           - unifi_toolkit
           - unifi_os_control_center
           - vaultwarden
+          - cortendesk
     steps:
       - name: Delete old untagged versions
         continue-on-error: true
