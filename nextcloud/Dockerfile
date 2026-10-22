@@ -23,6 +23,15 @@ LABEL \
     io.hass.url="https://github.com/pol4rfuchs/ha-apps/tree/main/nextcloud" \
     maintainer="pol4rfuchs"
 
+# ── PHP security floor ────────────────────────────────────────────────────────
+# CVE-2026-109618 / CVE-2026-109619 (RCE, fixed in PHP 8.2.35, 8.3.36, 8.4.27,
+# 8.5.12): fail the build if the base image still ships an older PHP.
+RUN php -r '$min = ["8.2" => "8.2.35", "8.3" => "8.3.36", "8.4" => "8.4.27", "8.5" => "8.5.12"]; \
+    $line = PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION; \
+    if (!isset($min[$line]) || version_compare(PHP_VERSION, $min[$line], "<")) { \
+        fwrite(STDERR, "PHP " . PHP_VERSION . " is not a patched release\n"); exit(1); \
+    }'
+
 # ── System packages ───────────────────────────────────────────────────────────
 # - jq     : read /data/options.json in ha-init.sh
 # - ffmpeg : Nextcloud preview generation (optional but common)
