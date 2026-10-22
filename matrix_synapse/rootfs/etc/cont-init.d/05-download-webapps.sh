@@ -148,4 +148,42 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     fi
 fi
 
+# ── Bento-Theme (zweite Optik neben dem Original) ─────────────────────────
+# Die Dateien liegen im Image und werden bei JEDEM Start nach den Downloads eingespielt:
+# ein Webapp-Update ersetzt index.html und leert das Verzeichnis, <link> und CSS wären sonst
+# weg. Idempotent. Element Web: das CSS ist inaktiv, bis in den Einstellungen "Bento Light"
+# oder "Bento Dark" gewählt wird (Themes stehen in der config.json). Element Call hat keine
+# Theme-Auswahl, dort entscheidet die Option element_call_theme.
+THEMES_DIR="/usr/share/matrix-themes"
+
+# bento_link <webroot> <css-datei> <href> <an|aus>
+bento_link() {
+    local root="$1" css="$2" href="$3" mode="$4"
+    local index="${root}/index.html"
+    local tag="<link rel=\"stylesheet\" href=\"${href}\">"
+    [ -f "${index}" ] || return 0
+    if [ "${mode}" = "an" ] && [ -f "${THEMES_DIR}/${css}" ]; then
+        cp -f "${THEMES_DIR}/${css}" "${root}/${css}"
+        if ! grep -qF "${tag}" "${index}"; then
+            sed -i "s|</head>|${tag}</head>|" "${index}"
+        fi
+        bashio::log.info "🎨 Bento-Stylesheet aktiv: ${root##*/}/${css}"
+    else
+        if grep -qF "${tag}" "${index}"; then
+            sed -i "s|${tag}||" "${index}"
+        fi
+        rm -f "${root}/${css}"
+    fi
+    return 0
+}
+
+bento_link /data/matrix/element-web bento.css "bento.css" an
+
+EC_THEME="$(bashio::config 'element_call_theme')"
+if [ "${EC_THEME}" = "bento" ]; then
+    bento_link /data/matrix/element-call bento-ec.css "/bento-ec.css" an
+else
+    bento_link /data/matrix/element-call bento-ec.css "/bento-ec.css" aus
+fi
+
 exit 0

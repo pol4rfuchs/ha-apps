@@ -70,6 +70,15 @@ Element Web, Ketesa, and Element Call each compare their installed version again
 
 ---
 
+## Themes
+
+Two optional **Bento** looks (calm background, rounded tile cards, Matrix-green accent) sit next to the original:
+
+- **Element Web:** *Bento Light* and *Bento Dark* are always listed under Settings → Appearance. Nothing changes until a user picks one; the default stays the original. The shapes (tiles, radii) come from `bento.css`, which only applies while a Bento theme is active.
+- **Element Call:** has no theme picker. Set `element_call_theme: bento` to switch the web app; `original` (default) keeps the upstream look. Applied at the next start.
+
+The files live in the image (`/usr/share/matrix-themes`) and are re-applied after every start, so Element Web / Element Call updates do not remove them. The shapes rely on Element's internal class names; after a big Element update the colors stay, single radii may need a touch-up.
+
 ## Troubleshooting
 
 | Problem | Fix |

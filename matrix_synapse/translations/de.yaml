@@ -42,6 +42,13 @@ configuration:
   element_call_url:
     name: Element Call URL
     description: "Externe HTTPS-URL für die Element-Call-Web-App."
+  element_call_theme:
+    name: Element-Call-Optik
+    description: >-
+      original behält die Upstream-Optik. bento stellt die Element-Call-Web-App auf die
+      Bento-Optik um (ruhiger Hintergrund, Kachel-Karten, passende Farben). In Element
+      Web sind die Bento-Themes immer unter Einstellungen → Erscheinungsbild wählbar,
+      unabhängig von dieser Option. Wirkt beim nächsten Start des Add-ons.
   livekit_url:
     name: LiveKit URL
     description: "Externe WSS-URL für den LiveKit SFU (z.B. wss://livekit.deine-domain.tld)."

@@ -112,6 +112,7 @@ options:
   livekit_turn_enabled: false
   livekit_secret: ''
   element_call_url: https://call.example.org
+  element_call_theme: original
   livekit_url: wss://livekit.example.org
   livekit_jwt_url: https://livekit-jwt.example.org
   admin_ui_username: admin
@@ -146,6 +147,7 @@ schema:
   livekit_turn_enabled: bool
   livekit_secret: password
   element_call_url: str
+  element_call_theme: list(original|bento)
   livekit_url: str
   livekit_jwt_url: str
   admin_ui_username: str

@@ -680,6 +680,13 @@ else
     }"
 fi
 
+# Bento-Themes als zusätzliche Auswahl neben Hell/Dunkel (Einstellungen → Erscheinungsbild).
+# Standard bleibt default_theme. Fehlt die Datei oder ist sie kaputt, gibt es einfach keine
+# zusätzlichen Themes — Element Web startet trotzdem.
+BENTO_THEMES_FILE="/usr/share/matrix-themes/element-web-themes.json"
+BENTO_THEMES="$(jq -c . "${BENTO_THEMES_FILE}" 2>/dev/null)" || BENTO_THEMES="[]"
+[ -n "${BENTO_THEMES}" ] || BENTO_THEMES="[]"
+
 # Externe config.json
 cat > /data/matrix/element-web/config.json << EOF
 {
@@ -691,6 +698,9 @@ cat > /data/matrix/element-web/config.json << EOF
     },
     "brand": "Matrix",
     "default_theme": "dark",
+    "setting_defaults": {
+        "custom_themes": ${BENTO_THEMES}
+    },
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
 }
@@ -707,6 +717,9 @@ cat > /data/matrix/element-web/config.${LOCAL_IP}.json << EOF
     },
     "brand": "Matrix",
     "default_theme": "dark",
+    "setting_defaults": {
+        "custom_themes": ${BENTO_THEMES}
+    },
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
 }
@@ -723,6 +736,9 @@ cat > /data/matrix/element-web/config.${ELEMENT_DOMAIN}.json << EOF
     },
     "brand": "Matrix",
     "default_theme": "dark",
+    "setting_defaults": {
+        "custom_themes": ${BENTO_THEMES}
+    },
     "showLabsSettings": true,
     "default_federate": ${FEDERATE_FLAG}${VOICE_CONFIG}
 }
