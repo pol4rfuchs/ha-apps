@@ -25,3 +25,6 @@ Thumbs.db
 # Claude Code (personal, per machine)
 .claude/settings.local.json
 CLAUDE.local.md
+
+# Offener Backlog (nur lokal, nicht im Repo)
+OFFENE_PUNKTE.md

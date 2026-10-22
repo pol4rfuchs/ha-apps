@@ -6,7 +6,7 @@ die einzeln gebaut, versioniert und released wird. Remote: `pol4rfuchs/ha-apps`.
 Verbindlicher Regelkatalog: Skill `ha-apps-buildrules` (`references/appbuildrules.md`, Port-Tabelle in
 `references/port-table.md`). Bei Arbeit an Dockerfile, `config.yaml`, `apparmor.txt`, Translations oder
 Workflows den Skill nutzen. Aufbau eines App-Ordners und CI-Regeln: `CONTRIBUTING.md`.
-Offener Backlog: `OFFENE_PUNKTE.md`.
+Offener Backlog: liegt lokal beim Maintainer, nicht im Repo (`OFFENE_PUNKTE.md` steht in `.gitignore`).
 
 Aufbau: `<app>/` je App (Ordner mit `config.yaml`), `.github/workflows/` (nummeriert), `scripts/` (`check_apparmor.py`,
 `sync_version_badges.py`, `validate_wiki.py`), `wiki/` (Wiki-Seiten), `docs/`, Manifeste im Wurzelverzeichnis.

@@ -7,7 +7,7 @@ Per add-on:
   * missing     apparmor: true  +  no apparmor.txt (hard fail, repo rule)
   * s6 baseline rule-based check of the s6-overlay minimum (Buildrules §8);
                 hard fail only for apparmor: true, otherwise reported only
-                so the backlog (OFFENE_PUNKTE §3) stays visible.
+                so the backlog stays visible.
 
 Add-ons with apparmor: false and no profile are only listed in the summary.
 HA treats a missing `apparmor` key as enabled, so that counts as true.
