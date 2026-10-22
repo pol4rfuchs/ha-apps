@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.24](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.23...nextcloud-v33.0.24) (2026-10-22)
+
+
+### Bug Fixes
+
+* **nextcloud:** rebuild on PHP 8.5.12 and fail the build on unpatched PHP ([#629](https://github.com/pol4rfuchs/ha-apps/issues/629)) ([cb2ba15](https://github.com/pol4rfuchs/ha-apps/commit/cb2ba15fbeb4c9e6e4b1157b1d750f24c0561abe))
+
 ## [33.0.23](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.22...nextcloud-v33.0.23) (2026-10-17)
 
 
