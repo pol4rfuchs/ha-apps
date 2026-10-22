@@ -40,8 +40,31 @@ while [ ! -f "${LK_CONFIG}" ] || [ ! -f "${SYNAPSE_CONFIG}" ]; do
     fi
 done
 
+# LiveKit prüft die Config strikt: ein unbekanntes Feld beendet den Start sofort
+# mit exit 1 ("field <name> not found"). livekit-server wird bei jedem Start auf
+# "latest" aktualisiert; kennt eine Version skip_external_ip_validation nicht
+# (mehr), läuft Voice ohne die Option weiter, statt komplett auszufallen.
+# Probestart: Eine gültige Config läuft bis zum Timeout (124), eine abgelehnte
+# endet sofort. Nur wenn genau dieses Feld bemängelt wird, fliegt seine Zeile raus.
+livekit_config_fallback() {
+    local cfg="$1" out="" rc=0
+    grep -q '^  skip_external_ip_validation:' "${cfg}" || return 0
+    out="$(timeout 2 livekit-server --config "${cfg}" 2>&1)" || rc=$?
+    if [ "${rc}" -ne 124 ]; then
+        case "${out}" in
+            *skip_external_ip_validation*)
+                sed -i '/^  skip_external_ip_validation:/d' "${cfg}"
+                bashio::log.warning "LiveKit kennt skip_external_ip_validation nicht — starte ohne die Option (Hairpin-NAT-Router können die öffentliche IP dann verwerfen)"
+                ;;
+        esac
+    fi
+    return 0
+}
+
 # Zusätzlich kurz warten bis cont-init komplett durch ist
 sleep 3
+
+livekit_config_fallback "${LK_CONFIG}"
 
 bashio::log.info "🚀 Starte LiveKit SFU auf Port 7880 (TURN UDP 3478)..."
 exec livekit-server --config "${LK_CONFIG}" 2>&1

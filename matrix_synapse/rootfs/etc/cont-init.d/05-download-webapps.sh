@@ -109,14 +109,18 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     if [ "${EC_INSTALLED}" != "${EC_LATEST}" ]; then
         bashio::log.info "📥 Lade Element Call ${EC_LATEST} (installiert: ${EC_INSTALLED:-keine})..."
 
-        # Asset URL ermitteln (tarball oder zip)
+        # Asset URL ermitteln. Upstream veröffentlicht neben element-call-<ver>.tar.gz
+        # auch element-call-embedded-<ver>.tar.gz (anderer Build): nur die Version
+        # direkt nach "element-call-" zulassen, nicht auf die Reihenfolge der API verlassen.
+        EC_ASSET_FILTER='.assets[] | select(.name | test("^element-call-v?[0-9][0-9.]*\\.tar\\.gz$")) | .browser_download_url'
         EC_URL=$(curl -sf \
             "https://api.github.com/repos/element-hq/element-call/releases/latest" \
-            | jq -r '.assets[] | select(.name | test("element-call.*\\.tar\\.gz")) | .browser_download_url' \
+            | jq -r "${EC_ASSET_FILTER}" \
             | head -1)
 
         if [ -z "${EC_URL}" ]; then
-            EC_URL="https://github.com/element-hq/element-call/releases/download/${EC_LATEST}/element-call-${EC_LATEST}.tar.gz"
+            # Der Release-Tag hat ein "v" (v0.26.1), der Dateiname nicht (0.26.1)
+            EC_URL="https://github.com/element-hq/element-call/releases/download/${EC_LATEST}/element-call-${EC_LATEST#v}.tar.gz"
         fi
 
         if wget -q "${EC_URL}" -O /tmp/element-call.tar.gz 2>/dev/null; then

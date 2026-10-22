@@ -80,6 +80,7 @@ Element Web, Ketesa, and Element Call each compare their installed version again
 | Element Web / Ketesa / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
 | Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (direct, not via NPM); with `livekit_turn_enabled` also UDP 3478 / TCP 5349 |
 | Login stuck loading via `http://<LAN-IP>:7080` | Plain HTTP has no secure context — browsers disable WebCrypto. Use the HTTPS domain instead, even from the LAN |
+| Calls fail for IPv4-only clients behind a router without NAT hairpin | LiveKit runs with `skip_external_ip_validation: true`: it uses the public IPv4 found via STUN without the self-ping that such routers never answer. If your LiveKit version does not know this option, the add-on logs a warning and starts without it |
 
 ## Local and external access
 

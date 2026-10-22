@@ -559,6 +559,12 @@ rtc:
   port_range_end: 30020
   tcp_port: 7881
   use_external_ip: true
+  # Die per STUN gefundene öffentliche IPv4 wird ohne Selbst-Ping übernommen.
+  # Router ohne NAT-Hairpin beantworten den Validierungs-Ping nie: LiveKit
+  # verwirft dann die IP ("could not validate external IP", ~5 s Verzögerung)
+  # und fällt auf "no external IPs found, using node IP" zurück, statt die
+  # Zuordnung lokale IP → öffentliche IP zu setzen. Getestet mit LiveKit 1.13.10.
+  skip_external_ip_validation: true
 
 # API-Keys: Key=devkey, Secret=aus Addon-Config
 keys:
