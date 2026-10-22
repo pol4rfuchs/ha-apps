@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.26.2-ha1-pol4r1] - 2026-10-22
+
+- Bump Unbound to 1.26.2 (automated by Renovate PR #631, checksum-verified against NLnetLabs' published sha256).
+- TODO(fox): review upstream changelog for CVE/behavior notes and replace this line with the real summary before merging.
+
+
 ## [1.26.1-ha3-pol4r1] - 2026-10-17
 
 - Fix: blocklists in plain domain-per-line format were dropped on every add-on start. `run.sh` only understood the hosts format (`0.0.0.0 domain`), the web UI refresh both, so after a restart such lists blocked nothing until a manual refresh or the 24-hour auto-refresh. The start now uses the same code as the web UI refresh (one parser, same whitelist handling).
