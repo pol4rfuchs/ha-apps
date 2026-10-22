@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Bento Light",
+    "is_dark": false,
+    "colors": {
+      "accent-color": "#0DBD8B",
+      "primary-color": "#0DBD8B",
+      "warning-color": "#c81e3c",
+      "sidebar-color": "#f6f4ef",
+      "roomlist-background-color": "#ffffff",
+      "roomlist-text-color": "#16181d",
+      "roomlist-text-secondary-color": "#5d6470",
+      "roomlist-highlights-color": "#f1eee7",
+      "roomlist-separator-color": "#e4e0d6",
+      "timeline-background-color": "#ffffff",
+      "timeline-text-color": "#16181d",
+      "timeline-text-secondary-color": "#5d6470",
+      "timeline-highlights-color": "#f1eee7",
+      "username-colors": [
+        "#0DBD8B",
+        "#4C8DF6",
+        "#E5A00D",
+        "#D6457A",
+        "#8B5CF6",
+        "#12A8B8",
+        "#E2603C",
+        "#6C8A1E"
+      ],
+      "avatar-background-colors": [
+        "#0DBD8B",
+        "#4C8DF6",
+        "#E5A00D",
+        "#D6457A",
+        "#8B5CF6",
+        "#12A8B8",
+        "#E2603C",
+        "#6C8A1E"
+      ]
+    },
+    "compound": {
+      "--cpd-color-bg-canvas-default": "#ffffff",
+      "--cpd-color-bg-canvas-disabled": "#f1eee7",
+      "--cpd-color-bg-subtle-primary": "#f1eee7",
+      "--cpd-color-bg-subtle-secondary": "#f6f4ef",
+      "--cpd-color-bg-action-primary-rest": "#0DBD8B",
+      "--cpd-color-bg-action-primary-hovered": "#0a7d5c",
+      "--cpd-color-bg-accent-rest": "#0DBD8B",
+      "--cpd-color-text-primary": "#16181d",
+      "--cpd-color-text-secondary": "#5d6470",
+      "--cpd-color-text-action-accent": "#0a7d5c",
+      "--cpd-color-text-on-solid-primary": "#ffffff",
+      "--cpd-color-icon-primary": "#16181d",
+      "--cpd-color-icon-secondary": "#5d6470",
+      "--cpd-color-icon-accent-primary": "#0a7d5c",
+      "--cpd-color-icon-accent-tertiary": "#0DBD8B",
+      "--cpd-color-border-interactive-primary": "#e4e0d6",
+      "--cpd-color-border-interactive-secondary": "#e4e0d6",
+      "--cpd-color-border-disabled": "#e4e0d6",
+      "--cpd-color-border-focused": "#0DBD8B"
+    }
+  },
+  {
+    "name": "Bento Dark",
+    "is_dark": true,
+    "colors": {
+      "accent-color": "#0DBD8B",
+      "primary-color": "#0DBD8B",
+      "warning-color": "#ff6675",
+      "sidebar-color": "#0b0d10",
+      "roomlist-background-color": "#14171c",
+      "roomlist-text-color": "#eef1f5",
+      "roomlist-text-secondary-color": "#9aa3b0",
+      "roomlist-highlights-color": "#1a1e25",
+      "roomlist-separator-color": "#242a32",
+      "timeline-background-color": "#14171c",
+      "timeline-text-color": "#eef1f5",
+      "timeline-text-secondary-color": "#9aa3b0",
+      "timeline-highlights-color": "#1a1e25",
+      "username-colors": [
+        "#0DBD8B",
+        "#4C8DF6",
+        "#E5A00D",
+        "#D6457A",
+        "#8B5CF6",
+        "#12A8B8",
+        "#E2603C",
+        "#6C8A1E"
+      ],
+      "avatar-background-colors": [
+        "#0DBD8B",
+        "#4C8DF6",
+        "#E5A00D",
+        "#D6457A",
+        "#8B5CF6",
+        "#12A8B8",
+        "#E2603C",
+        "#6C8A1E"
+      ]
+    },
+    "compound": {
+      "--cpd-color-bg-canvas-default": "#14171c",
+      "--cpd-color-bg-canvas-disabled": "#1a1e25",
+      "--cpd-color-bg-subtle-primary": "#1a1e25",
+      "--cpd-color-bg-subtle-secondary": "#0b0d10",
+      "--cpd-color-bg-action-primary-rest": "#0DBD8B",
+      "--cpd-color-bg-action-primary-hovered": "#4be3b8",
+      "--cpd-color-bg-accent-rest": "#0DBD8B",
+      "--cpd-color-text-primary": "#eef1f5",
+      "--cpd-color-text-secondary": "#9aa3b0",
+      "--cpd-color-text-action-accent": "#4be3b8",
+      "--cpd-color-text-on-solid-primary": "#06251d",
+      "--cpd-color-icon-primary": "#eef1f5",
+      "--cpd-color-icon-secondary": "#9aa3b0",
+      "--cpd-color-icon-accent-primary": "#4be3b8",
+      "--cpd-color-icon-accent-tertiary": "#0DBD8B",
+      "--cpd-color-border-interactive-primary": "#242a32",
+      "--cpd-color-border-interactive-secondary": "#242a32",
+      "--cpd-color-border-disabled": "#242a32",
+      "--cpd-color-border-focused": "#0DBD8B"
+    }
+  }
+]

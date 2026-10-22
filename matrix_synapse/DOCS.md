@@ -70,6 +70,15 @@ Element Web, Ketesa, and Element Call each compare their installed version again
 
 ---
 
+## Themes
+
+Two optional **Bento** looks (calm background, rounded tile cards, Matrix-green accent) sit next to the original:
+
+- **Element Web:** *Bento Light* and *Bento Dark* are always listed under Settings → Appearance. Nothing changes until a user picks one; the default stays the original. The shapes (tiles, radii) come from `bento.css`, which only applies while a Bento theme is active.
+- **Element Call:** has no theme picker. Set `element_call_theme: bento` to switch the web app; `original` (default) keeps the upstream look. Applied at the next start.
+
+The files live in the image (`/usr/share/matrix-themes`) and are re-applied after every start, so Element Web / Element Call updates do not remove them. The shapes rely on Element's internal class names; after a big Element update the colors stay, single radii may need a touch-up.
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -80,6 +89,7 @@ Element Web, Ketesa, and Element Call each compare their installed version again
 | Element Web / Ketesa / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
 | Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (direct, not via NPM); with `livekit_turn_enabled` also UDP 3478 / TCP 5349 |
 | Login stuck loading via `http://<LAN-IP>:7080` | Plain HTTP has no secure context — browsers disable WebCrypto. Use the HTTPS domain instead, even from the LAN |
+| Calls fail for IPv4-only clients behind a router without NAT hairpin | LiveKit runs with `skip_external_ip_validation: true`: it uses the public IPv4 found via STUN without the self-ping that such routers never answer. If your LiveKit version does not know this option, the add-on logs a warning and starts without it |
 
 ## Local and external access
 

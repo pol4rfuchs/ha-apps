@@ -24,22 +24,22 @@ done
 
 ln -sf "${LK_JWT_BIN}" /usr/local/bin/lk-jwt-service
 
-# Warten bis Secret verfügbar
-WAIT=0
-while [ ! -f "${LK_SECRET_FILE}" ]; do
-    if [ $WAIT -eq 0 ]; then
-        bashio::log.info "lk-jwt: Warte auf LiveKit Secret..."
-    fi
-    sleep 1
-    WAIT=$((WAIT + 1))
-    if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: LiveKit Secret nicht gefunden!"
-        exec sleep infinity
-    fi
-done
-
+# Die Datei schreibt 10-matrix-init.sh nur, wenn die Option leer ist (Auto-Generierung).
+# Ist livekit_secret gesetzt, gibt es sie nie — dann nicht darauf warten.
 LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
 if [ -z "${LIVEKIT_SECRET}" ]; then
+    WAIT=0
+    while [ ! -f "${LK_SECRET_FILE}" ]; do
+        if [ $WAIT -eq 0 ]; then
+            bashio::log.info "lk-jwt: Warte auf LiveKit Secret..."
+        fi
+        sleep 1
+        WAIT=$((WAIT + 1))
+        if [ $WAIT -gt 120 ]; then
+            bashio::log.error "Timeout: LiveKit Secret nicht gefunden!"
+            exec sleep infinity
+        fi
+    done
     LIVEKIT_SECRET=$(cat "${LK_SECRET_FILE}")
 fi
 

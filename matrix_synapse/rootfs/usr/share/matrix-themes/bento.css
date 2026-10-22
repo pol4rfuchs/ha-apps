@@ -1,0 +1,62 @@
+/*
+  Bento — Formen für Element Web. Greift NUR, wenn eines der Themes "Bento Light" / "Bento Dark"
+  aktiv ist: deren Theme-Definition --cpd-color-border-focused auf #0DBD8B setzt (siehe custom_themes). Element übernimmt nur --cpd-* Tokens, daher dient dieser Wert als Kennzeichen.
+  Farben kommen aus den Compound-Tokens des Themes, hier stehen nur Rundungen, Abstände, Schatten.
+  Bewusst konservativ: nur stabile Haupt-Container (Space-Leiste, Raumliste, Raum, Composer).
+  Relative Pfade, keine externen Abhängigkeiten.
+*/
+@container style(--cpd-color-border-focused: #0DBD8B) {
+  .mx_MatrixChat_wrapper {
+    --bento-gap: 12px;
+    --bento-radius: 24px;
+    --bento-radius-s: 14px;
+    --bento-shadow: 0 10px 30px rgb(0 0 0 / 0.09);
+  }
+
+  /* App-Hintergrund = Zwischenraum zwischen den Kacheln */
+  .mx_MatrixChat_wrapper, .mx_MatrixChat {
+    background: var(--cpd-color-bg-subtle-secondary);
+  }
+
+  /* Hauptflächen als schwebende Kacheln */
+  .mx_SpacePanel,
+  .mx_RoomListPanel,
+  .mx_RoomView {
+    box-sizing: border-box;
+    margin-block: var(--bento-gap);
+    height: calc(100% - 2 * var(--bento-gap));
+    border: 1px solid var(--cpd-color-border-interactive-secondary);
+    border-radius: var(--bento-radius);
+    background: var(--cpd-color-bg-canvas-default);
+    box-shadow: var(--bento-shadow);
+    overflow: hidden;
+  }
+  .mx_SpacePanel { margin-inline-start: var(--bento-gap); }
+  .mx_RoomListPanel { margin-inline-start: var(--bento-gap); }
+  .mx_RoomView { margin-inline: var(--bento-gap); }
+
+  .mx_RoomHeader {
+    border-radius: var(--bento-radius) var(--bento-radius) 0 0;
+  }
+
+  /* Raumliste: runde Einträge */
+  [class*="mx_RoomListItem"] {
+    border-radius: var(--bento-radius-s);
+  }
+
+  /* Nachrichten: weiche Hover-Kachel */
+  .mx_EventTile {
+    border-radius: var(--bento-radius-s);
+  }
+
+  /* Composer als eigene Kachel */
+  .mx_MessageComposer {
+    box-sizing: border-box;
+    margin: 0 var(--bento-gap) var(--bento-gap);
+    width: calc(100% - 2 * var(--bento-gap));
+    border: 1px solid var(--cpd-color-border-interactive-secondary);
+    border-radius: 20px;
+    background: var(--cpd-color-bg-subtle-primary);
+  }
+}
+

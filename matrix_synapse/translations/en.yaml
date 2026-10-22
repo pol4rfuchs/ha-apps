@@ -42,6 +42,13 @@ configuration:
   element_call_url:
     name: Element Call URL
     description: "External HTTPS URL for the Element Call web app."
+  element_call_theme:
+    name: Element Call look
+    description: >-
+      original keeps the upstream look. bento switches the Element Call web app to the
+      Bento look (calm background, tile cards, matching colors). In Element Web the
+      Bento themes are always available under Settings → Appearance, independent of
+      this option. Applied at the next add-on start.
   livekit_url:
     name: LiveKit URL
     description: "External WSS URL for the LiveKit SFU (e.g. wss://livekit.deine-domain.tld)."

@@ -109,14 +109,18 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     if [ "${EC_INSTALLED}" != "${EC_LATEST}" ]; then
         bashio::log.info "📥 Lade Element Call ${EC_LATEST} (installiert: ${EC_INSTALLED:-keine})..."
 
-        # Asset URL ermitteln (tarball oder zip)
+        # Asset URL ermitteln. Upstream veröffentlicht neben element-call-<ver>.tar.gz
+        # auch element-call-embedded-<ver>.tar.gz (anderer Build): nur die Version
+        # direkt nach "element-call-" zulassen, nicht auf die Reihenfolge der API verlassen.
+        EC_ASSET_FILTER='.assets[] | select(.name | test("^element-call-v?[0-9][0-9.]*\\.tar\\.gz$")) | .browser_download_url'
         EC_URL=$(curl -sf \
             "https://api.github.com/repos/element-hq/element-call/releases/latest" \
-            | jq -r '.assets[] | select(.name | test("element-call.*\\.tar\\.gz")) | .browser_download_url' \
+            | jq -r "${EC_ASSET_FILTER}" \
             | head -1)
 
         if [ -z "${EC_URL}" ]; then
-            EC_URL="https://github.com/element-hq/element-call/releases/download/${EC_LATEST}/element-call-${EC_LATEST}.tar.gz"
+            # Der Release-Tag hat ein "v" (v0.26.1), der Dateiname nicht (0.26.1)
+            EC_URL="https://github.com/element-hq/element-call/releases/download/${EC_LATEST}/element-call-${EC_LATEST#v}.tar.gz"
         fi
 
         if wget -q "${EC_URL}" -O /tmp/element-call.tar.gz 2>/dev/null; then
@@ -142,6 +146,44 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     else
         bashio::log.info "✅ Element Call bereits aktuell (${EC_INSTALLED})"
     fi
+fi
+
+# ── Bento-Theme (zweite Optik neben dem Original) ─────────────────────────
+# Die Dateien liegen im Image und werden bei JEDEM Start nach den Downloads eingespielt:
+# ein Webapp-Update ersetzt index.html und leert das Verzeichnis, <link> und CSS wären sonst
+# weg. Idempotent. Element Web: das CSS ist inaktiv, bis in den Einstellungen "Bento Light"
+# oder "Bento Dark" gewählt wird (Themes stehen in der config.json). Element Call hat keine
+# Theme-Auswahl, dort entscheidet die Option element_call_theme.
+THEMES_DIR="/usr/share/matrix-themes"
+
+# bento_link <webroot> <css-datei> <href> <an|aus>
+bento_link() {
+    local root="$1" css="$2" href="$3" mode="$4"
+    local index="${root}/index.html"
+    local tag="<link rel=\"stylesheet\" href=\"${href}\">"
+    [ -f "${index}" ] || return 0
+    if [ "${mode}" = "an" ] && [ -f "${THEMES_DIR}/${css}" ]; then
+        cp -f "${THEMES_DIR}/${css}" "${root}/${css}"
+        if ! grep -qF "${tag}" "${index}"; then
+            sed -i "s|</head>|${tag}</head>|" "${index}"
+        fi
+        bashio::log.info "🎨 Bento-Stylesheet aktiv: ${root##*/}/${css}"
+    else
+        if grep -qF "${tag}" "${index}"; then
+            sed -i "s|${tag}||" "${index}"
+        fi
+        rm -f "${root}/${css}"
+    fi
+    return 0
+}
+
+bento_link /data/matrix/element-web bento.css "bento.css" an
+
+EC_THEME="$(bashio::config 'element_call_theme')"
+if [ "${EC_THEME}" = "bento" ]; then
+    bento_link /data/matrix/element-call bento-ec.css "/bento-ec.css" an
+else
+    bento_link /data/matrix/element-call bento-ec.css "/bento-ec.css" aus
 fi
 
 exit 0

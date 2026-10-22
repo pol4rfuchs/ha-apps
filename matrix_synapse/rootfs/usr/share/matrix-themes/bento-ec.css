@@ -1,0 +1,68 @@
+/*
+  Bento — Element Call. Wird nur geladen, wenn der Add-on-Schalter für das Bento-Theme an ist
+  (Standard: aus = Original). Element Call hat keine Theme-Auswahl und nutzt gehashte CSS-Module-
+  Klassen; deshalb setzt dieses Stylesheet die Compound-Tokens beider eingebauten Themes
+  (cpd-theme-light / cpd-theme-dark) und nur wenige robuste Selektoren (body, #root, header,
+  main, form). Relative Pfade, keine externen Abhängigkeiten.
+*/
+body.cpd-theme-light {
+  --cpd-color-bg-canvas-default: #ffffff;
+  --cpd-color-bg-canvas-disabled: #f1eee7;
+  --cpd-color-bg-subtle-primary: #f1eee7;
+  --cpd-color-bg-subtle-secondary: #f6f4ef;
+  --cpd-color-bg-action-primary-rest: #16181d;
+  --cpd-color-bg-accent-rest: #0DBD8B;
+  --cpd-color-text-primary: #16181d;
+  --cpd-color-text-secondary: #5d6470;
+  --cpd-color-text-action-accent: #0a7d5c;
+  --cpd-color-icon-primary: #16181d;
+  --cpd-color-icon-secondary: #5d6470;
+  --cpd-color-icon-accent-primary: #0a7d5c;
+  --cpd-color-border-interactive-primary: #c9c3b4;
+  --cpd-color-border-interactive-secondary: #e4e0d6;
+  --cpd-color-border-disabled: #e4e0d6;
+  --cpd-color-border-focused: #0DBD8B;
+  --bento-shadow: 0 10px 30px rgb(0 0 0 / 0.09);
+}
+
+body.cpd-theme-dark {
+  --cpd-color-bg-canvas-default: #14171c;
+  --cpd-color-bg-canvas-disabled: #1a1e25;
+  --cpd-color-bg-subtle-primary: #1a1e25;
+  --cpd-color-bg-subtle-secondary: #0b0d10;
+  --cpd-color-bg-action-primary-rest: #eef1f5;
+  --cpd-color-bg-accent-rest: #0DBD8B;
+  --cpd-color-text-primary: #eef1f5;
+  --cpd-color-text-secondary: #9aa3b0;
+  --cpd-color-text-action-accent: #4be3b8;
+  --cpd-color-icon-primary: #eef1f5;
+  --cpd-color-icon-secondary: #9aa3b0;
+  --cpd-color-icon-accent-primary: #4be3b8;
+  --cpd-color-border-interactive-primary: #3a434f;
+  --cpd-color-border-interactive-secondary: #242a32;
+  --cpd-color-border-disabled: #242a32;
+  --cpd-color-border-focused: #0DBD8B;
+  --bento-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+}
+
+/* Kein Farbverlauf: ruhiger Grund, die Kacheln tragen das Design.
+   Element Call setzt den Verlauf über data-Attribute am Wurzelelement. */
+body.cpd-theme-light,
+body.cpd-theme-dark,
+[data-element-call-root] {
+  background: var(--cpd-color-bg-subtle-secondary);
+}
+[data-element-call-root][data-background="gradient"][data-platform]::before {
+  background-image: none;
+}
+
+/* Startseite: Formular als Kachel */
+body.cpd-theme-light main form,
+body.cpd-theme-dark main form {
+  box-sizing: border-box;
+  padding: 28px;
+  border: 1px solid var(--cpd-color-border-interactive-secondary);
+  border-radius: 28px;
+  background: var(--cpd-color-bg-canvas-default);
+  box-shadow: var(--bento-shadow);
+}
