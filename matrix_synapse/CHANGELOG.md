@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.8.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.10...matrix_synapse-v1.8.0) (2026-10-22)
+
+
+### Features
+
+* **matrix_synapse:** optional Bento theme, LiveKit self-ping fix, lk-jwt-service start fix ([#637](https://github.com/pol4rfuchs/ha-apps/issues/637)) ([a6eb48e](https://github.com/pol4rfuchs/ha-apps/commit/a6eb48ea43f4f1d455e7d8b96db05bbf9aff466d))
+
 ## [1.7.10](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.9...matrix_synapse-v1.7.10) (2026-10-17)
 
 
