@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vaultwarden · Wiki</title>
+<style>
+  :root {
+    --accent: #10b981;
+    --accent-2: #34d399;
+    --accent-3: #d1fae5;
+    --bg-deep: #02101a;
+    --bg-navy: #031722;
+    --panel: rgba(3, 23, 34, .72);
+    --panel-2: rgba(3, 23, 34, .48);
+    --panel-3: rgba(2, 16, 26, .78);
+    --border: rgba(224, 242, 254, .18);
+    --border-strong: rgba(224, 242, 254, .40);
+    --text: #f0f9ff;
+    --muted: #9cc7e0;
+    --dim: #5f93b0;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(14, 165, 233,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(56, 189, 248,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(14, 165, 233,.14), transparent 34rem),
+      linear-gradient(135deg, #02101a 0%, #031722 44%, #04202e 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(153,246,228,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(153,246,228,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22, 3, 15, .90), rgba(31, 5, 21, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(20,184,166,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(20,184,166,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(153,246,228,.98), rgba(45,212,191,.68) 46%, rgba(102,10,44,.86));
+    color: #1c0212;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(45,212,191,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(45,212,191,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(20,184,166,.14);
+    box-shadow: 0 10px 32px rgba(20,184,166,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45,212,191,.13);
+    border: 1px solid rgba(153,246,228,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(20,184,166,.25), rgba(45,212,191,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(153,246,228,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(20, 2, 13, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(20,184,166,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(153,246,228,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(153,246,228,0); } 100% { box-shadow: 0 0 0 0 rgba(153,246,228,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(153,246,228,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #ffe0e8; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(20,184,166,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(20,184,166,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(58, 11, 34, .62), rgba(21, 4, 14, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(153,246,228,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(45,212,191,.14);
+    border: 1px solid rgba(153,246,228,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #fff0f2; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #fff8f8; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #ffe0ea; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #fbd0dd; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(153,246,228,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(153,246,228,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(20,184,166,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #ffe0e0; background: rgba(45,212,191,.11); border: 1px solid rgba(153,246,228,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(153,246,228,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { background: none; border: none; padding: 0; color: #fdd8e0; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,.35); color: var(--muted); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; }
+  .copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin: 1rem 0; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #1c0212; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #1c0212; background: var(--accent-3); box-shadow: 0 16px 50px rgba(20,184,166,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/addon-themes.css">
+<script src="../assets/js/themes.js"></script>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🔐</div>
+      <div>
+        <h1>Vaultwarden</h1>
+        <p>PASSWORD MANAGER SERVER WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search domain, admin token, smtp, sso, backup..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What it does</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Install &amp; First Start</strong><small>Repository, admin token, first account</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Options</strong><small>All options with defaults, grouped</small></span></a>
+      <a class="nav-item" href="#proxy" data-target="proxy"><span class="nav-icon">🔀</span><span><strong>Reverse Proxy &amp; HTTPS</strong><small>Secure context, client IP, LAN access</small></span></a>
+      <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔒</span><span><strong>Security &amp; Privacy</strong><small>External services, admin panel, hardening</small></span></a>
+      <a class="nav-item" href="#data" data-target="data"><span class="nav-icon">💾</span><span><strong>Data &amp; Backup</strong><small>SQLite, restore, excluded paths</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>Known symptoms and fixes</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Links &amp; License</strong><small>Repository and upstream</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Version: <code>0.2.0</code><br>Port: <code>7277</code> (HTTPS required)<br>Backup: <code>cold</code><br>DB: SQLite
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> VAULTWARDEN · BITWARDEN-COMPATIBLE · HOME ASSISTANT APP</div>
+        <h2>Your vault, <span class="accent">your server</span>.</h2>
+        <p class="hero-copy">Operations wiki for the experimental Vaultwarden app: first start, admin token, reverse proxy and HTTPS, SMTP, SSO, rate limits, backup and the known pitfalls.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#configuration">⚙️ Options</a>
+          <a class="btn secondary" href="#proxy">🔀 HTTPS &amp; Proxy</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>App Slug</small><strong>vaultwarden</strong></div>
+          <div class="metric"><small>Version</small><strong>0.2.0</strong></div>
+          <div class="metric"><small>Port</small><strong>7277 (no Ingress)</strong></div>
+          <div class="metric"><small>Status</small><strong>experimental</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>HTTPS domain, admin token, then sign-ups only for the first account.</p>
+        <pre><code>domain: "https://vault.example.com"
+admin_token: "$argon2id$..."
+signups_allowed: true   # off again afterwards</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>⚠️ HTTPS Is Mandatory</h3>
+        <p>Plain http://&lt;ha-host&gt;:7277 does not work for the web vault.</p>
+        <pre><code>Reverse proxy + WebSocket support, or ssl: true</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview vaultwarden bitwarden password manager organizations sends emergency access 2fa sso push smtp experimental">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Vaultwarden</strong> is a Bitwarden-compatible server written in Rust. This <strong>experimental</strong> Home Assistant app wraps the official upstream image (<code>ghcr.io/dani-garcia/vaultwarden</code>, Alpine variant) and exposes the upstream features: organizations, Sends, emergency access, two-factor login (TOTP, WebAuthn, Duo, YubiKey), SSO (OpenID Connect), mobile push and SMTP.</p>
+        <h2 id="home-facts"><a class="anchor" href="#home-facts">#</a>Good to know</h2>
+        <ul>
+          <li><strong>HTTPS is mandatory.</strong> The web vault and all Bitwarden clients only work over HTTPS with a matching <code>domain</code>.</li>
+          <li><strong>No Ingress.</strong> The web vault cannot run under a sub-path, so the app listens directly on port <code>7277</code>.</li>
+          <li>SQLite only; all data below <code>/data/vaultwarden</code>, cold backup.</li>
+          <li>After initialisation the app runs as unprivileged user <code>vaultwarden</code> under an AppArmor profile; secrets are passed through <code>*_FILE</code> from a tmpfs, not as environment variables.</li>
+        </ul>
+        <blockquote>Unofficial community app, not affiliated with the Vaultwarden or Bitwarden projects.</blockquote>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation install first start domain admin token argon2id signups_allowed first account hash reverse proxy nginx proxy manager websocket">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install &amp; First Start</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="inst-req"><a class="anchor" href="#inst-req">#</a>Requirements</h2>
+        <ul>
+          <li>A reverse proxy in front of the app (e.g. Nginx Proxy Manager) that terminates HTTPS and forwards your domain (e.g. <code>vault.example.com</code>) to <code>http://&lt;ha-host&gt;:7277</code>. <strong>Enable WebSocket support in the proxy.</strong></li>
+          <li>Alternative: <code>ssl: true</code>, the app then serves HTTPS itself from <code>/ssl</code> (not recommended by upstream).</li>
+        </ul>
+        <h2 id="inst-steps"><a class="anchor" href="#inst-steps">#</a>Steps</h2>
+        <ol>
+          <li>Open <strong>Settings → Apps → App Store</strong>, add the repository <code>https://github.com/pol4rfuchs/ha-apps</code>, install <strong>Vaultwarden</strong>.</li>
+          <li>Set <code>domain</code> to the public HTTPS URL, e.g. <code>https://vault.example.com</code>.</li>
+          <li>Generate an admin token (Argon2id hash; plain text is rejected) and paste the <code>$argon2id$…</code> string into <code>admin_token</code>. Empty = admin panel disabled:
+<pre><code>docker run --rm -it ghcr.io/dani-garcia/vaultwarden:latest-alpine /vaultwarden hash</code></pre></li>
+          <li>Set <code>signups_allowed: true</code> for the first account (default is <code>false</code>) and start the app.</li>
+          <li>Create your accounts in the web vault, then set <code>signups_allowed</code> back to <code>false</code>.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level domain ssl certfile keyfile admin_token signups invitations org_creation email_change emergency_access sends password_hints trash websocket icon rate limit">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <p>All settings are app options. Empty optional fields (<code>0</code> for number fields) are not passed to Vaultwarden, so the upstream default applies.</p>
+        <h2 id="cfg-core"><a class="anchor" href="#cfg-core">#</a>Core &amp; TLS</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>. Use <code>debug</code> only for troubleshooting.</td></tr>
+            <tr><td><code>domain</code></td><td><em>(empty)</em></td><td>Public HTTPS URL clients use (<code>DOMAIN</code>). Needed for mail links, attachments, WebAuthn and SSO.</td></tr>
+            <tr><td><code>ssl</code></td><td><code>false</code></td><td>Serve HTTPS directly from the app (certificate and key from <code>/ssl</code>). Not needed behind a reverse proxy.</td></tr>
+            <tr><td><code>certfile</code></td><td><code>fullchain.pem</code></td><td>Certificate file name in <code>/ssl</code> (only with <code>ssl: true</code>).</td></tr>
+            <tr><td><code>keyfile</code></td><td><code>privkey.pem</code></td><td>Key file name in <code>/ssl</code> (only with <code>ssl: true</code>).</td></tr>
+            <tr><td><code>admin_token</code></td><td><em>(empty)</em></td><td>Argon2id PHC hash of the admin password. Empty = admin panel off. Plain text is rejected.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-users"><a class="anchor" href="#cfg-users">#</a>Registration &amp; features</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>signups_allowed</code></td><td><code>false</code></td><td>Anyone with access to the server may register. Switch on briefly to create your own accounts, then off again.</td></tr>
+            <tr><td><code>signups_verify</code></td><td><code>false</code></td><td>Require e-mail verification for new accounts (needs SMTP).</td></tr>
+            <tr><td><code>signups_domains_whitelist</code></td><td><em>(empty)</em></td><td>Comma-separated e-mail domains that may register although sign-ups are off.</td></tr>
+            <tr><td><code>invitations_allowed</code></td><td><code>true</code></td><td>Organization admins may invite users, even with sign-ups off.</td></tr>
+            <tr><td><code>org_creation_users</code></td><td><em>(empty)</em></td><td>Empty or <code>all</code> = everyone, <code>none</code> = nobody, or a comma-separated list of e-mail addresses.</td></tr>
+            <tr><td><code>email_change_allowed</code></td><td><code>true</code></td><td>Users may change their e-mail address.</td></tr>
+            <tr><td><code>emergency_access_allowed</code></td><td><code>true</code></td><td>Users may set up emergency access.</td></tr>
+            <tr><td><code>sends_allowed</code></td><td><code>true</code></td><td>Users may create Sends.</td></tr>
+            <tr><td><code>password_hints_allowed</code></td><td><code>true</code></td><td>Users may set and request password hints.</td></tr>
+            <tr><td><code>show_password_hint</code></td><td><code>false</code></td><td>Show the hint on the page when no SMTP is set up. Not recommended for reachable instances.</td></tr>
+            <tr><td><code>trash_auto_delete_days</code></td><td><code>0</code></td><td>Permanently delete trashed items after this many days. <code>0</code> = never.</td></tr>
+            <tr><td><code>enable_websocket</code></td><td><code>true</code></td><td>Live-sync notifications for web, desktop and browser clients.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-proxy"><a class="anchor" href="#cfg-proxy">#</a>Reverse proxy &amp; network</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>ip_header</code></td><td><code>X-Real-IP</code></td><td>Header your proxy uses to pass the client IP: <code>X-Real-IP</code>, <code>X-Forwarded-For</code> or <code>none</code> (connection address). Used for rate limits.</td></tr>
+            <tr><td><code>ip_header_trusted_proxies</code></td><td><em>(empty)</em></td><td>IPs or CIDR ranges the header is accepted from. Empty = <code>local</code> (all non-public addresses, the Vaultwarden default).</td></tr>
+            <tr><td><code>icon_service</code></td><td><code>internal</code></td><td><code>internal</code> fetches favicons directly from the sites, <code>bitwarden</code> redirects clients to Bitwarden's icon service.</td></tr>
+            <tr><td><code>disable_icon_download</code></td><td><code>true</code></td><td>No favicon requests to third-party sites (otherwise visible which sites are in your vault). Cached icons stay. Set <code>false</code> to show site icons.</td></tr>
+            <tr><td><code>http_request_block_non_global_ips</code></td><td><code>true</code></td><td>Refuse outbound requests (icons, webhooks) to non-public addresses.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-rate"><a class="anchor" href="#cfg-rate">#</a>Rate limits</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>login_ratelimit_seconds</code></td><td><code>60</code></td><td>Average seconds between login requests per IP.</td></tr>
+            <tr><td><code>login_ratelimit_max_burst</code></td><td><code>10</code></td><td>Allowed burst of login and 2FA requests (at least 2).</td></tr>
+            <tr><td><code>admin_ratelimit_seconds</code></td><td><code>300</code></td><td>Average seconds between admin login requests per IP.</td></tr>
+            <tr><td><code>admin_ratelimit_max_burst</code></td><td><code>3</code></td><td>Allowed burst of admin login requests.</td></tr>
+            <tr><td><code>unauthenticated_ratelimit_seconds</code></td><td><code>60</code></td><td>Average seconds between requests to endpoints without login (hints, recovery mails, Sends) per IP.</td></tr>
+            <tr><td><code>unauthenticated_ratelimit_max_burst</code></td><td><code>50</code></td><td>Shared burst budget for endpoints without login.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-smtp"><a class="anchor" href="#cfg-smtp">#</a>SMTP</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>smtp_host</code></td><td><em>(empty)</em></td><td>SMTP server for invitations, verification and 2FA codes.</td></tr>
+            <tr><td><code>smtp_port</code></td><td><code>0</code></td><td><code>0</code> = default of the chosen mode (587, 465 or 25).</td></tr>
+            <tr><td><code>smtp_security</code></td><td><code>starttls</code></td><td><code>starttls</code> (587), <code>force_tls</code> (implicit TLS, 465) or <code>off</code> (25).</td></tr>
+            <tr><td><code>smtp_from</code></td><td><em>(empty)</em></td><td>Sender address; required together with the SMTP host.</td></tr>
+            <tr><td><code>smtp_from_name</code></td><td><em>(empty)</em></td><td>Sender display name. Empty = Vaultwarden.</td></tr>
+            <tr><td><code>smtp_username</code></td><td><em>(empty)</em></td><td>Leave empty for servers without authentication.</td></tr>
+            <tr><td><code>smtp_password</code></td><td><em>(empty)</em></td><td>Required as soon as a user name is set. Protected password field.</td></tr>
+            <tr><td><code>smtp_auth_mechanism</code></td><td><em>(empty)</em></td><td>Comma-separated: <code>Plain</code>, <code>Login</code>, <code>Xoauth2</code>. Empty = automatic.</td></tr>
+            <tr><td><code>smtp_accept_invalid_certs</code></td><td><code>false</code></td><td><strong>Dangerous:</strong> allows man-in-the-middle. Last resort only.</td></tr>
+            <tr><td><code>smtp_accept_invalid_hostnames</code></td><td><code>false</code></td><td><strong>Dangerous:</strong> allows man-in-the-middle. Last resort only.</td></tr>
+            <tr><td><code>smtp_debug</code></td><td><code>false</code></td><td>Very verbose SMTP logging, can contain credentials. Troubleshooting only.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-push"><a class="anchor" href="#cfg-push">#</a>Mobile push</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>push_enabled</code></td><td><code>false</code></td><td>Mobile push through the Bitwarden relay (external service). Needs installation ID and key from bitwarden.com/host.</td></tr>
+            <tr><td><code>push_region</code></td><td><code>us</code></td><td><code>us</code> or <code>eu</code>: the region the push keys were issued for.</td></tr>
+            <tr><td><code>push_installation_id</code></td><td><em>(empty)</em></td><td>Installation ID from bitwarden.com/host.</td></tr>
+            <tr><td><code>push_installation_key</code></td><td><em>(empty)</em></td><td>Installation key from bitwarden.com/host. Protected password field.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-sso"><a class="anchor" href="#cfg-sso">#</a>SSO (OpenID Connect)</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>sso_enabled</code></td><td><code>false</code></td><td>Allow login through an OpenID Connect identity provider.</td></tr>
+            <tr><td><code>sso_only</code></td><td><code>false</code></td><td>Disable login with e-mail and master password.</td></tr>
+            <tr><td><code>sso_signups_allowed</code></td><td><code>true</code></td><td>The SSO flow may create accounts. Turn off for public providers.</td></tr>
+            <tr><td><code>sso_signups_match_email</code></td><td><code>true</code></td><td>Link an SSO sign-up to an existing account with the same e-mail.</td></tr>
+            <tr><td><code>sso_allow_unknown_email_verification</code></td><td><code>false</code></td><td>Together with e-mail matching this risks account takeover.</td></tr>
+            <tr><td><code>sso_authority</code></td><td><em>(empty)</em></td><td>Base URL of the OIDC server, without <code>/.well-known/…</code>, exactly as the provider documents it.</td></tr>
+            <tr><td><code>sso_client_id</code></td><td><em>(empty)</em></td><td>Client ID registered at the identity provider.</td></tr>
+            <tr><td><code>sso_client_secret</code></td><td><em>(empty)</em></td><td>Client secret registered at the identity provider. Protected password field.</td></tr>
+            <tr><td><code>sso_scopes</code></td><td><em>(empty)</em></td><td>Additional space-separated scopes. Empty = <code>email profile</code>.</td></tr>
+            <tr><td><code>sso_pkce</code></td><td><code>true</code></td><td>Use PKCE for the authorization-code flow.</td></tr>
+            <tr><td><code>sso_authorize_extra_params</code></td><td><em>(empty)</em></td><td>Additional URL parameters, e.g. to obtain refresh tokens.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-2fa"><a class="anchor" href="#cfg-2fa">#</a>Two-factor, breach check &amp; extras</h2>
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>yubico_client_id</code></td><td><em>(empty)</em></td><td>Client ID for YubiKey OTP.</td></tr>
+            <tr><td><code>yubico_secret_key</code></td><td><em>(empty)</em></td><td>Secret key for YubiKey OTP. Protected password field.</td></tr>
+            <tr><td><code>duo_ikey</code></td><td><em>(empty)</em></td><td>Global Duo integration key (also needs secret key and API host).</td></tr>
+            <tr><td><code>duo_skey</code></td><td><em>(empty)</em></td><td>Global Duo secret key. Protected password field.</td></tr>
+            <tr><td><code>duo_host</code></td><td><em>(empty)</em></td><td>Duo API host name.</td></tr>
+            <tr><td><code>hibp_api_key</code></td><td><em>(empty)</em></td><td>Enables leak checks at haveibeenpwned.com (external service). Protected password field.</td></tr>
+            <tr><td><code>experimental_client_feature_flags</code></td><td><em>(empty)</em></td><td>Comma-separated flags. Flags removed in Vaultwarden 1.37.4 are dropped automatically.</td></tr>
+            <tr><td><code>extra_env</code></td><td><code>[]</code></td><td>Further Vaultwarden settings as a list of <code>name</code>/<code>value</code> (e.g. <code>ORG_EVENTS_ENABLED</code>). Protected names (<code>DATA_FOLDER</code>, <code>DATABASE_URL</code>, <code>WEB_VAULT_FOLDER</code>, <code>WEB_VAULT_ENABLED</code>, <code>ENV_FILE</code>, <code>ROCKET_*</code>, <code>RSA_KEY_FILENAME</code>) are rejected. Values are plain text in the app configuration, so <strong>no secrets here</strong>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="proxy" class="doc-section glass-card" data-search="reverse proxy https secure context lan dns rewrite nginx proxy manager websocket ip header trusted proxies local external internet port forward admin panel">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔀</span><div><p class="eyebrow">Access</p><h2>Reverse Proxy, HTTPS &amp; Access</h2></div></div>
+        <a class="section-link" href="#proxy">#proxy</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="px-lan"><a class="anchor" href="#px-lan">#</a>Local (LAN)</h2>
+        <p>The web vault needs a secure context. Over plain <code>http://&lt;ha-host&gt;:7277</code> registration and login in the browser do not work. Two ways:</p>
+        <ul>
+          <li><strong><code>ssl: true</code>:</strong> certificate and key live in <code>/ssl</code>, access is <code>https://&lt;ha-host&gt;:7277</code>. With a self-signed certificate confirm the browser warning.</li>
+          <li><strong>Reverse proxy with a local DNS rewrite:</strong> a domain such as <code>vault.example.com</code> points to the HA host in your local DNS. The proxy terminates HTTPS with a valid certificate and forwards to <code>http://&lt;ha-host&gt;:7277</code> with WebSocket support on. Set <code>domain</code> to <code>https://vault.example.com</code>.</li>
+        </ul>
+        <h2 id="px-ext"><a class="anchor" href="#px-ext">#</a>External (internet)</h2>
+        <p><strong>OK, but only through the reverse proxy with TLS.</strong> Never port-forward the app port <code>7277</code> directly. In addition:</p>
+        <ul>
+          <li>Turn <code>signups_allowed</code> off as soon as the accounts exist.</li>
+          <li>Do not expose the admin panel (<code>/admin</code>) publicly: leave <code>admin_token</code> empty if you do not need it, or restrict <code>/admin</code> in the proxy to LAN or VPN.</li>
+          <li>Enable two-factor login for every account.</li>
+        </ul>
+        <h2 id="px-ip"><a class="anchor" href="#px-ip">#</a>Client IP behind a proxy</h2>
+        <p>With <code>ip_header</code> (default <code>X-Real-IP</code>) Vaultwarden reads the client IP from your proxy's header; it is used for rate limits. By default the header is accepted from every non-public address (<code>local</code>). If the proxy has a public address or you want to narrow it down, enter the proxy IPs or CIDR ranges in <code>ip_header_trusted_proxies</code>. Without a proxy set <code>ip_header: none</code>.</p>
+      </div>
+    </article>
+
+    <article id="security" class="doc-section glass-card" data-search="security privacy external services push relay icon service bitwarden hibp admin panel config.json override apparmor extra_env removed feature flags">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔒</span><div><p class="eyebrow">Security</p><h2>Security &amp; Privacy</h2></div></div>
+        <a class="section-link" href="#security">#security</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="sec-ext"><a class="anchor" href="#sec-ext">#</a>External services</h2>
+        <ul>
+          <li><code>push_enabled</code>: push runs through the Bitwarden relay (external service, device metadata goes there). <code>push_region</code> must match the region of your keys.</li>
+          <li><code>icon_service: bitwarden</code> redirects clients to Bitwarden; <code>internal</code> fetches favicons directly from the sites. <code>disable_icon_download</code> switches every fetch off.</li>
+          <li><code>hibp_api_key</code> turns on leak checks at haveibeenpwned.com.</li>
+        </ul>
+        <h2 id="sec-admin"><a class="anchor" href="#sec-admin">#</a>Admin panel overrides app options</h2>
+        <p>If you save settings in the admin panel (<code>/admin</code>), Vaultwarden writes a <code>config.json</code> into the data folder. Its values take <strong>precedence</strong> over the app options. At start the app warns in the log when a <code>config.json</code> exists. Recommendation: keep configuration in the app options and use the admin panel only for administration.</p>
+        <h2 id="sec-hard"><a class="anchor" href="#sec-hard">#</a>Hardening</h2>
+        <ul>
+          <li>The app runs as unprivileged user <code>vaultwarden</code> after initialisation and is confined by an AppArmor profile.</li>
+          <li>Secrets (admin token, SMTP password, push key, SSO secret, Yubico, Duo, HIBP) are read via <code>*_FILE</code> from a tmpfs, not passed as environment variables.</li>
+          <li>Enable <code>smtp_accept_invalid_certs</code>, <code>smtp_accept_invalid_hostnames</code> and <code>sso_allow_unknown_email_verification</code> only in an emergency.</li>
+          <li>Values in <code>extra_env</code> are visible in plain text in the app configuration — use the password fields for secrets.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="data" class="doc-section glass-card" data-search="data backup restore cold sqlite rsa key attachments sends config.json icon cache excluded">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">Data</p><h2>Data, Backup &amp; Restore</h2></div></div>
+        <a class="section-link" href="#data">#data</a>
+      </div>
+      <div class="doc-content">
+        <p>All data (SQLite database, RSA keys, attachments, Sends, <code>config.json</code>) lives under <code>/data/vaultwarden</code>. The app uses SQLite exclusively.</p>
+        <ul>
+          <li><code>backup: cold</code>: the app is stopped briefly for a Home Assistant backup so the database is consistent.</li>
+          <li>The icon cache and temp files are excluded from the backup.</li>
+          <li>Restore: restore the backup in Home Assistant and start the app.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting login registration http secure context admin config.json feature flags removed websocket sync no icons">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms &amp; Fixes</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Registration or login fails in the browser over <code>http://&lt;ha-host&gt;:7277</code></td><td>The web vault needs a secure context (HTTPS).</td><td>Use a reverse proxy with TLS or <code>ssl: true</code>; set <code>domain</code> to the HTTPS URL.</td></tr>
+            <tr><td>Changes to an option have no effect</td><td>A <code>config.json</code> written by the admin panel overrides app options.</td><td>Check the log warning at start; remove the setting in the admin panel or delete <code>config.json</code>.</td></tr>
+            <tr><td>Saving in the admin panel fails</td><td>Feature flags removed in Vaultwarden 1.37.4 are still listed.</td><td>The app filters them at start and logs a warning; restart the app.</td></tr>
+            <tr><td>App stops right after start with a message about missing push or SSO values</td><td><code>push_enabled</code> needs <code>push_installation_id</code> and <code>push_installation_key</code>; <code>sso_enabled</code> needs <code>sso_authority</code>, <code>sso_client_id</code> and <code>sso_client_secret</code>.</td><td>Fill in the required fields or switch the feature off; the reason is in the log.</td></tr>
+            <tr><td>Clients do not sync live</td><td>WebSocket not forwarded by the reverse proxy.</td><td>Enable WebSocket support in the proxy; keep <code>enable_websocket: true</code>.</td></tr>
+            <tr><td>No site icons shown</td><td><code>disable_icon_download</code> is on (default).</td><td>Set it to <code>false</code> if you accept the privacy trade-off.</td></tr>
+            <tr><td>Rate limits hit the wrong client</td><td>Proxy IP not in the trusted list, or wrong <code>ip_header</code>.</td><td>Fix <code>ip_header</code> / <code>ip_header_trusted_proxies</code>; without a proxy use <code>none</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github license changelog documentation upstream vaultwarden wiki">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links &amp; License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/vaultwarden"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/vaultwarden/DOCS.md"><span>📖</span><strong>DOCS.md</strong><small>Full documentation</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/vaultwarden/CHANGELOG.md"><span>📝</span><strong>Changelog</strong><small>Release history</small></a>
+          <a class="source-chip" href="https://github.com/dani-garcia/vaultwarden"><span>🔐</span><strong>Upstream</strong><small>dani-garcia/vaultwarden</small></a>
+          <a class="source-chip" href="https://github.com/dani-garcia/vaultwarden/wiki"><span>📚</span><strong>Vaultwarden Wiki</strong><small>Upstream documentation</small></a>
+        </div>
+        <blockquote>Unofficial, community-maintained and not affiliated with the Vaultwarden or Bitwarden projects. Experimental — back up your vault and test restores before you rely on it.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+      </div>
+      <div>Vaultwarden · Password Manager Server Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
