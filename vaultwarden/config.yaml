@@ -18,6 +18,7 @@ webui: "[PROTO:ssl]://[HOST]:[PORT:7277]"
 watchdog: "[PROTO:ssl]://[HOST]:[PORT:7277]/alive"
 map:
   - type: ssl
+    read_only: true
 tmpfs: true
 timeout: 30
 backup: cold
