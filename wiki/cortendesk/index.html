@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CortenDesk · Wiki</title>
+<style>
+  :root {
+    --accent: #f43f5e;
+    --accent-2: #fb7185;
+    --accent-3: #ffe4e6;
+    --bg-deep: #02101a;
+    --bg-navy: #031722;
+    --panel: rgba(3, 23, 34, .72);
+    --panel-2: rgba(3, 23, 34, .48);
+    --panel-3: rgba(2, 16, 26, .78);
+    --border: rgba(224, 242, 254, .18);
+    --border-strong: rgba(224, 242, 254, .40);
+    --text: #f0f9ff;
+    --muted: #9cc7e0;
+    --dim: #5f93b0;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(14, 165, 233,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(56, 189, 248,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(14, 165, 233,.14), transparent 34rem),
+      linear-gradient(135deg, #02101a 0%, #031722 44%, #04202e 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(153,246,228,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(153,246,228,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22, 3, 15, .90), rgba(31, 5, 21, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(20,184,166,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(20,184,166,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(153,246,228,.98), rgba(45,212,191,.68) 46%, rgba(102,10,44,.86));
+    color: #1c0212;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(45,212,191,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(45,212,191,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(20,184,166,.14);
+    box-shadow: 0 10px 32px rgba(20,184,166,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45,212,191,.13);
+    border: 1px solid rgba(153,246,228,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(20,184,166,.25), rgba(45,212,191,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(153,246,228,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(20, 2, 13, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(20,184,166,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(153,246,228,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(153,246,228,0); } 100% { box-shadow: 0 0 0 0 rgba(153,246,228,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(153,246,228,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #ffe0e8; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(20,184,166,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(20,184,166,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(58, 11, 34, .62), rgba(21, 4, 14, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(153,246,228,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(45,212,191,.14);
+    border: 1px solid rgba(153,246,228,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #fff0f2; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #fff8f8; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #ffe0ea; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #fbd0dd; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(153,246,228,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(153,246,228,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(20,184,166,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #ffe0e0; background: rgba(45,212,191,.11); border: 1px solid rgba(153,246,228,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(153,246,228,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { background: none; border: none; padding: 0; color: #fdd8e0; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,.35); color: var(--muted); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; }
+  .copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin: 1rem 0; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #1c0212; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #1c0212; background: var(--accent-3); box-shadow: 0 16px 50px rgba(20,184,166,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/addon-themes.css">
+<script src="../assets/js/themes.js"></script>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🖥️</div>
+      <div>
+        <h1>CortenDesk</h1>
+        <p>RUSTDESK CONSOLE + SERVER WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search app_url, relay, ports, backup, troubleshooting..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What it does</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Install the App</strong><small>Repository, required options, first start</small></span></a>
+      <a class="nav-item" href="#clients" data-target="clients"><span class="nav-icon">🖥️</span><span><strong>RustDesk Clients</strong><small>ID server, relay, API server, key</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>App Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🔌</span><span><strong>Ports</strong><small>What to forward and what not</small></span></a>
+      <a class="nav-item" href="#access" data-target="access"><span class="nav-icon">🌐</span><span><strong>Local &amp; External</strong><small>LAN, internet, reverse proxy</small></span></a>
+      <a class="nav-item" href="#privacy" data-target="privacy"><span class="nav-icon">🔒</span><span><strong>Privacy &amp; Data</strong><small>Outbound connections, backup, key pair</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Known Symptoms &amp; Fixes</strong><small>Start, relay, P2P, log messages</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Links &amp; License</strong><small>Repository and upstream</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Version: <code>0.2.1</code><br>UI: port <code>21114</code><br>Backup: <code>cold</code><br>DB: SQLite
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> CORTENDESK · RUSTDESK · HOME ASSISTANT APP</div>
+        <h2>Remote desktop, <span class="accent">self-hosted</span>.</h2>
+        <p class="hero-copy">Operations wiki for the experimental CortenDesk app: RustDesk console, ID server and relay in one container — with ports, client setup, backup and the known limits.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#clients">🖥️ Connect Clients</a>
+          <a class="btn secondary" href="#ports">🔌 Ports</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>App Slug</small><strong>cortendesk</strong></div>
+          <div class="metric"><small>Version</small><strong>0.2.1</strong></div>
+          <div class="metric"><small>Console</small><strong>http://&lt;ha-host&gt;:21114</strong></div>
+          <div class="metric"><small>Status</small><strong>experimental</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>Two required options, no default password.</p>
+        <pre><code>app_url: "http://rd.example.com:21114"
+admin_password: "choose-a-strong-password"</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>⚠️ Router Forwarding</h3>
+        <p>Only these ports. Never the console, never 21118/21119.</p>
+        <pre><code>21115-21117/tcp
+21116/udp</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview cortendesk rustdesk console id server relay hbbs hbbr experimental">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>CortenDesk</strong> is an <strong>experimental</strong> Home Assistant app that bundles a RustDesk management console (devices, users, address books, groups) with the RustDesk ID server (<code>hbbs</code>) and relay (<code>hbbr</code>) in one container. It is a thin wrapper around the upstream image <code>ghcr.io/marcpope/cortendesk</code>.</p>
+        <h2 id="home-scope"><a class="anchor" href="#home-scope">#</a>Current Scope</h2>
+        <ul>
+          <li>Console with its own login (not behind Home Assistant Ingress), reachable on port <code>21114</code></li>
+          <li>Embedded ID server and relay (CortenDesk server fork, based on rustdesk-server 1.1.16 plus a fix for signed-in clients from 1.4.1)</li>
+          <li>Optional built-in browser client (<code>native_webclient</code>)</li>
+          <li>SQLite database and server key pair persisted in <code>/data</code>, cold backup</li>
+          <li><code>aarch64</code> and <code>amd64</code>; the AppArmor profile is an untested draft and is not loaded (<code>apparmor: false</code>)</li>
+        </ul>
+        <blockquote>Unofficial community app: it is neither supported nor endorsed by the upstream author. Report packaging problems (wrapper, options, Home Assistant integration) in <code>pol4rfuchs/ha-apps</code>, problems in CortenDesk itself upstream.</blockquote>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation install repository app_url admin_password first start log refuses to start">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <ol>
+          <li>Open <strong>Settings → Apps → App Store</strong> and add the repository:</li>
+        </ol>
+        <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
+        <ol start="2">
+          <li>Reload the store, open <strong>CortenDesk</strong>, click <strong>Install</strong>.</li>
+          <li>Set <code>app_url</code> and <code>admin_password</code> in the configuration. Both are empty by default on purpose: there is no default password.</li>
+          <li>Start the app and open the console at <code>http://&lt;ha-host&gt;:21114</code>. Sign in as <code>admin_user</code> with <code>admin_password</code>.</li>
+        </ol>
+        <blockquote>As long as <code>app_url</code> or <code>admin_password</code> is empty, the app stops right after the start and writes the reason to the log.</blockquote>
+      </div>
+    </article>
+
+    <article id="clients" class="doc-section glass-card" data-search="clients rustdesk id server relay api server key public key id_ed25519 network settings">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🖥️</span><div><p class="eyebrow">Clients</p><h2>Connect RustDesk Clients</h2></div></div>
+        <a class="section-link" href="#clients">#clients</a>
+      </div>
+      <div class="doc-content">
+        <p>In the network settings of every RustDesk client enter:</p>
+        <table>
+          <thead><tr><th>Client field</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>ID server</td><td><code>&lt;host&gt;</code> (port <code>21116</code>)</td></tr>
+            <tr><td>Relay server</td><td><code>&lt;host&gt;</code> (port <code>21117</code>)</td></tr>
+            <tr><td>API server</td><td>the value of <code>app_url</code></td></tr>
+            <tr><td>Key</td><td>Public key from the log (<code>key …</code> in the line <code>server …</code>) or from the console</td></tr>
+          </tbody>
+        </table>
+        <h2 id="clients-split"><a class="anchor" href="#clients-split">#</a>LAN and internet with the same instance</h2>
+        <p><code>hbbs</code> announces <strong>one</strong> relay address to <strong>all</strong> clients. If that address is a LAN IP, relayed sessions from outside hang. Use a hostname that resolves internally and externally (split DNS) and set it as <code>app_url</code> or in <code>id_server</code> / <code>relay_server</code>.</p>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options app_url admin_user admin_password native_webclient id_server relay_server downloads_max_mb log_level">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>app_url</code></td><td><em>(empty, required)</em></td><td>Public address as your clients reach it, including scheme and console port, e.g. <code>http://rd.example.com:21114</code>. The host part is announced to clients as ID server (<code>:21116</code>) and relay (<code>:21117</code>). Do not use <code>localhost</code>.</td></tr>
+            <tr><td><code>admin_user</code></td><td><code>admin</code></td><td>First administrator. <strong>Only used on the very first start</strong>, while no user exists.</td></tr>
+            <tr><td><code>admin_password</code></td><td><em>(empty, required)</em></td><td>Password of the first administrator, protected <code>password</code> field. Later changes of the option do not change the password; do that in the console.</td></tr>
+            <tr><td><code>native_webclient</code></td><td><code>false</code></td><td>Enable the browser client. It uses the WebSocket bridge to hbbs/hbbr, which is not published on the host.</td></tr>
+            <tr><td><code>id_server</code></td><td><em>(empty)</em></td><td>ID server as <code>host:port</code>. Empty = host from <code>app_url</code> with port 21116.</td></tr>
+            <tr><td><code>relay_server</code></td><td><em>(empty)</em></td><td>Relay as <code>host:port</code>. Empty = host from <code>app_url</code> with port 21117.</td></tr>
+            <tr><td><code>downloads_max_mb</code></td><td><code>512</code></td><td>Upload limit for client installers under System → Client Downloads (1–4096 MB). 512 is the upstream default.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>INFO</code></td><td><code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code> or <code>ERROR</code>. One setting for the console and the ID/relay server.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-min"><a class="anchor" href="#cfg-min">#</a>Minimal configuration</h2>
+        <pre><code>app_url: "http://rd.example.com:21114"
+admin_user: "admin"
+admin_password: "choose-a-strong-password"</code></pre>
+      </div>
+    </article>
+
+    <article id="ports" class="doc-section glass-card" data-search="ports 21114 21115 21116 21117 21118 21119 forward router websocket x-forwarded-for udp">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔌</span><div><p class="eyebrow">Network</p><h2>Ports</h2></div></div>
+        <a class="section-link" href="#ports">#ports</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Port</th><th>Purpose</th><th>Published</th></tr></thead>
+          <tbody>
+            <tr><td><code>21114/tcp</code></td><td>Console (container port 8080)</td><td>yes</td></tr>
+            <tr><td><code>21115/tcp</code></td><td>hbbs NAT type test</td><td>yes</td></tr>
+            <tr><td><code>21116/tcp</code> + <code>21116/udp</code></td><td>hbbs ID server</td><td>yes</td></tr>
+            <tr><td><code>21117/tcp</code></td><td>hbbr relay</td><td>yes</td></tr>
+            <tr><td><code>21118/tcp</code>, <code>21119/tcp</code></td><td>WebSocket bridge hbbs / hbbr</td><td><strong>no</strong>, internal only</td></tr>
+          </tbody>
+        </table>
+        <blockquote>Never map <code>21118</code>/<code>21119</code>. <code>hbbs</code> and <code>hbbr</code> trust unchecked <code>X-Forwarded-For</code> headers there. They listen on all addresses inside the container, so they are reachable from other apps in the internal Docker network of Home Assistant. With <code>host_network: true</code> they would be open to the whole LAN.</blockquote>
+      </div>
+    </article>
+
+    <article id="access" class="doc-section glass-card" data-search="access local external internet lan reverse proxy tls vpn forward router console">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">Access</p><h2>Local and External Access</h2></div></div>
+        <a class="section-link" href="#access">#access</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Local (LAN):</strong> the console runs directly on port <code>21114</code> (<code>http://&lt;ha-host&gt;:21114</code>), not through Ingress. It has its own login. RustDesk clients in the LAN talk directly to the ID server (<code>21115/21116</code>) and the relay (<code>21117</code>).</p>
+        <p><strong>External (internet):</strong> <strong>restricted, OK.</strong> For clients outside it is enough to forward <code>21115–21117/TCP</code> and <code>21116/UDP</code> on the router; the clients verify the server key. Do <strong>not</strong> expose the console (<code>21114</code>) directly: put it behind a reverse proxy with TLS or reach it over VPN. Never forward <code>21118/21119</code>.</p>
+        <p>The browser client needs HTTPS (or <code>localhost</code>) for voice calls, so use a TLS reverse proxy for it.</p>
+      </div>
+    </article>
+
+    <article id="privacy" class="doc-section glass-card" data-search="privacy security outbound update check backup cold data sqlite key pair id_ed25519 backups apprise smtp oidc">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔒</span><div><p class="eyebrow">Security</p><h2>Privacy, Data &amp; Backup</h2></div></div>
+        <a class="section-link" href="#privacy">#privacy</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="priv-out"><a class="anchor" href="#priv-out">#</a>Outbound connections</h2>
+        <p>The app calls nothing on the internet by itself: the GitHub update check is switched off (<code>CORTENDESK_UPDATE_CHECK=false</code>) and the web UI loads no external scripts, fonts or trackers. Only when you configure it in the console, CortenDesk talks to external services (Apprise notifications, SMTP, FTP/FTPS or S3 backup copies, OIDC sign-in). The menu entry “Build Installers” is a plain link to a third-party service and opens only when you click it.</p>
+        <h2 id="priv-data"><a class="anchor" href="#priv-data">#</a>Data and backup</h2>
+        <ul>
+          <li>Everything lives in <code>/data</code> (SQLite database in <code>/data/db/cortendesk.sqlite</code>, server key pair, app key, uploads) and is part of Home Assistant backups.</li>
+          <li><code>backup: cold</code>: the app is stopped briefly so the SQLite files are consistent.</li>
+          <li><strong>Do not lose the key pair.</strong> Without <code>/data/rustdesk/id_ed25519</code> every client has to be set up again.</li>
+          <li>Since upstream 1.13.0 the console also writes its own backups to <code>/data/backups</code> (daily 03:30). They contain the app key and all secrets and end up in the Home Assistant backup too, so treat them like passwords.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting limitations apparmor nginx connect failed api server policy relay hang p2p 172.30 host_network sqlite mariadb">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms &amp; Limitations</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>App stops right after start</td><td><code>app_url</code> or <code>admin_password</code> is empty.</td><td>Set both options; the reason is in the log.</td></tr>
+            <tr><td>Relayed sessions from outside hang</td><td>The relay address handed out by <code>hbbs</code> is a LAN IP.</td><td>Use a hostname that resolves internally and externally, or set <code>relay_server</code>.</td></tr>
+            <tr><td>Log shows addresses from <code>172.30.x.x</code>, P2P fails</td><td>In bridge mode with mapped ports <code>hbbs</code> may not see the real client IP (UDP is untested).</td><td>Everything then runs over the relay. As a last resort switch to <code>host_network: true</code> (console then listens on fixed port 8080, 21118/21119 become reachable in the LAN).</td></tr>
+            <tr><td><code>connect() failed … /api/server/policy</code> in the nginx log at start</td><td><code>hbbs</code> asks the console before <code>php-fpm</code> is ready.</td><td>Harmless, disappears after a few seconds.</td></tr>
+            <tr><td>Changed <code>admin_password</code> has no effect</td><td>The option only applies on the very first start.</td><td>Change the password in the console.</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li><strong>AppArmor is off</strong> (<code>apparmor: false</code>). The image runs <code>supervisord</code> as root with <code>php-fpm</code>, <code>nginx</code>, <code>hbbs</code> and <code>hbbr</code>; the shipped profile is an untested draft in complain mode and is not loaded.</li>
+          <li><strong>SQLite only.</strong> Enough for a small number of devices; a MariaDB connection is not implemented.</li>
+          <li>Updates arrive through the app version, not through the console.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github license changelog documentation upstream agpl">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links &amp; License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/cortendesk"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/cortendesk/DOCS.md"><span>📖</span><strong>DOCS.md</strong><small>Full documentation</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/cortendesk/CHANGELOG.md"><span>📝</span><strong>Changelog</strong><small>Release history</small></a>
+          <a class="source-chip" href="https://github.com/marcpope/cortendesk"><span>🖥️</span><strong>Upstream console</strong><small>marcpope/cortendesk</small></a>
+          <a class="source-chip" href="https://github.com/marcpope/cortendesk-server"><span>🧩</span><strong>Upstream server fork</strong><small>marcpope/cortendesk-server</small></a>
+        </div>
+        <blockquote>The wrapper files of this app are AGPL-3.0, like the upstream projects. Unofficial, community-maintained and not affiliated with the CortenDesk or RustDesk authors.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+      </div>
+      <div>CortenDesk · RustDesk Console &amp; Server Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
