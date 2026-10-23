@@ -32,3 +32,9 @@ schema:
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
 apparmor: false
+# Supervisor matches each pattern with PurePath.match against the absolute
+# data path (/data/apps/data/<slug>/...), anchored from the right. The
+# "*_teamspeak6" part pins the match to the add-on data root, so folders
+# named teamspeak6/logs inside server/files/ are not excluded.
+backup_exclude:
+  - "*_teamspeak6/teamspeak6/logs/*.log"

@@ -38,4 +38,4 @@ The ports are fixed in the add-on. If a host port is already in use, change the 
 
 ## Backup
 
-The add-on stores all data in `/data/teamspeak6`, which is included in Home Assistant backups. The running server works on a copy inside the container; the add-on writes it back to `/data/teamspeak6/server` every 5 minutes and when it stops cleanly, so a crash or power loss costs at most the last 5 minutes.
+The add-on stores all data in `/data/teamspeak6`, which is included in Home Assistant backups. The running server works on a copy inside the container; the add-on writes it back to `/data/teamspeak6/server` every 5 minutes and when it stops cleanly, so a crash or power loss costs at most the last 5 minutes. The server logs in `/data/teamspeak6/logs` are left out of backups; they are cleared on every start anyway.

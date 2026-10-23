@@ -99,11 +99,11 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0
 │   ├── query_ip_allowlist.txt
 │   ├── query_ip_denylist.txt
 │   └── files/
-├── logs/               ← server logs (cleared on every start)
+├── logs/               ← server logs (cleared on every start, not in backups)
 └── .token_was_shown    ← marker: the token was already printed
 ```
 
-TeamSpeak works on a copy in `/var/tsserver` inside the container. The add-on restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the add-on is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes. The Home Assistant backup contains `/data`.
+TeamSpeak works on a copy in `/var/tsserver` inside the container. The add-on restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the add-on is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes. The Home Assistant backup contains `/data` except the log files in `logs/`.
 
 ---
 
