@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.16](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.15...ntfy_manager-v0.2.16) (2026-10-24)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** update body-parser to 2.4.0 (CVE-2026-111181) ([#651](https://github.com/pol4rfuchs/ha-apps/issues/651)) ([79ebadd](https://github.com/pol4rfuchs/ha-apps/commit/79ebadd1098363dec62c903f27eea5ad77aa82bb))
+
 ## [0.2.15](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.14...ntfy_manager-v0.2.15) (2026-10-16)
 
 
