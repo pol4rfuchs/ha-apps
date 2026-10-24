@@ -21,7 +21,7 @@ os.chdir(WIKI_DIR)
 # ── 1. Every wiki folder must have a non-stub index.html ──────────
 print("=== Folder check ===")
 for d in sorted(glob.glob("*/")):
-    if d == "assets/":
+    if d.replace("\\", "/") == "assets/":
         continue
     path = os.path.join(d.rstrip("/"), "index.html")
     if not os.path.exists(path):
