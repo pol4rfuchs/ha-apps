@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.5...intiface_central-v1.0.6) (2026-10-24)
+
+
+### Bug Fixes
+
+* **intiface_central:** update body-parser to 2.4.0 (CVE-2026-111181) ([#650](https://github.com/pol4rfuchs/ha-apps/issues/650)) ([e8932e4](https://github.com/pol4rfuchs/ha-apps/commit/e8932e438ff992f7a10d8e0e253821b381cd4c13))
+
 ## [1.0.5](https://github.com/pol4rfuchs/ha-apps/compare/intiface_central-v1.0.4...intiface_central-v1.0.5) (2026-10-16)
 
 
