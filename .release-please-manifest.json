@@ -1,6 +1,6 @@
 {
   "forgejo": "16.0.20",
-  "intiface_central": "1.0.5",
+  "intiface_central": "1.0.6",
   "matrix_synapse": "1.8.0",
   "nginx_proxy_manager": "2.1.7",
   "navidrome": "2.1.11",
