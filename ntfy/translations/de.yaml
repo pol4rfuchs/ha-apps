@@ -66,3 +66,6 @@ configuration:
   admin_password:
     name: Admin-Passwort
     description: "Passwort für das erste Admin-Konto."
+
+network:
+  "4280/tcp": ntfy Weboberfläche und API
