@@ -66,3 +66,6 @@ configuration:
   admin_password:
     name: Admin Password
     description: "Password for the first admin account."
+
+network:
+  "4280/tcp": ntfy Web UI & API
