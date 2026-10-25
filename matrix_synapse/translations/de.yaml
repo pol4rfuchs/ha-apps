@@ -85,6 +85,9 @@ configuration:
   media_retention_remote_days:
     name: Medien-Aufbewahrung — Remote (Tage)
     description: "Löscht zwischengespeicherte Remote-(Federation-)Medien automatisch, die älter als diese Anzahl Tage sind. 0 = deaktiviert (dauerhaft behalten). 30 ist ein sinnvoller Standardwert."
+  cache_max_memory_mb:
+    name: Cache-Speichergrenze (MB)
+    description: "Obergrenze für die Caches von Synapse im Arbeitsspeicher. Darüber verwirft Synapse Cache-Einträge, statt weiter zu wachsen. 512 passt für einen Heimserver; für viele Nutzer oder große föderierte Räume erhöhen."
   backup_enabled:
     name: Automatische PostgreSQL-Backups aktivieren
     description: "Sichert die Synapse-Datenbank regelmäßig via pg_dump nach /data/matrix/backups/ (konsistent, im Gegensatz zu rohen Dateisystem-Snapshots)."

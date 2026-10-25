@@ -29,6 +29,14 @@ for i in $(seq 1 60); do
     sleep 1
 done
 
+# jemalloc als Allocator nur für Synapse (wie das offizielle Synapse-Image):
+# weniger Fragmentierung, und Voraussetzung für caches.cache_autotuning.
+if [ -e /usr/local/lib/libjemalloc.so.2 ]; then
+    export LD_PRELOAD=/usr/local/lib/libjemalloc.so.2
+else
+    bashio::log.warning "jemalloc nicht gefunden – Synapse läuft mit dem Standard-Allocator, die Cache-Obergrenze greift dann nicht."
+fi
+
 bashio::log.info "Starte Synapse Homeserver..."
 exec /opt/synapse/bin/python -m synapse.app.homeserver \
     --config-path "${SYNAPSE_CONFIG}" \

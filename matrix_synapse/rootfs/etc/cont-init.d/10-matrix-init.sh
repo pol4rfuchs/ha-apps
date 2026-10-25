@@ -24,6 +24,7 @@ ADMIN_UI_USER=$(bashio::config 'admin_ui_username')
 ADMIN_UI_PASSWORD=$(bashio::config 'admin_ui_password')
 MEDIA_RETENTION_LOCAL=$(bashio::config 'media_retention_local_days')
 MEDIA_RETENTION_REMOTE=$(bashio::config 'media_retention_remote_days')
+CACHE_MAX_MB=$(bashio::config 'cache_max_memory_mb')
 LOGIN_RATE_PS=$(bashio::config 'login_rate_limit_per_second')
 LOGIN_RATE_BURST=$(bashio::config 'login_rate_limit_burst')
 REG_RATE_PS=$(bashio::config 'registration_rate_limit_per_second')
@@ -315,6 +316,14 @@ database:
 
 media_store_path: "${SYNAPSE_DATA}/media_store"
 max_upload_size: "${MAX_UPLOAD}M"
+
+# Cache-Obergrenze: ohne sie wachsen die Caches mit der Zeit immer weiter.
+# cache_autotuning braucht jemalloc (wird in synapse/run per LD_PRELOAD geladen).
+caches:
+  cache_autotuning:
+    max_cache_memory_usage: ${CACHE_MAX_MB}M
+    target_cache_memory_usage: $((CACHE_MAX_MB * 3 / 4))M
+    min_cache_ttl: 5m
 no_tls: true
 
 ${NATIVE_REGISTRATION_BLOCK}

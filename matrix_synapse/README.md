@@ -96,6 +96,7 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | `admin_ui_password` | — | Basic-Auth password for the Ketesa (Admin UI). Leave empty to auto-generate on first start (stored in /data/matrix/.admin_ui_auth, never logged). |
 | `media_retention_local_days` | `0` | Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever). |
 | `media_retention_remote_days` | `30` | Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default. |
+| `cache_max_memory_mb` | `512` | Upper limit for Synapse's in-memory caches (MB). Above it Synapse evicts cache entries instead of growing. Raise it for many users or large federated rooms. |
 | `backup_enabled` | `true` | Periodically dump the Synapse database via pg_dump to /data/matrix/backups/ (consistent, unlike raw filesystem snapshots). |
 | `backup_interval_hours` | `24` | How often to run the pg_dump backup job. |
 | `backup_retention_days` | `7` | How many days of backups to keep before rotating out old dumps. |

@@ -119,6 +119,7 @@ options:
   admin_ui_password: ''
   media_retention_local_days: 0
   media_retention_remote_days: 30
+  cache_max_memory_mb: 512
   backup_enabled: true
   backup_interval_hours: 24
   backup_retention_days: 7
@@ -154,6 +155,7 @@ schema:
   admin_ui_password: password
   media_retention_local_days: int(0,3650)
   media_retention_remote_days: int(0,3650)
+  cache_max_memory_mb: int(128,16384)
   backup_enabled: bool
   backup_interval_hours: int(1,168)
   backup_retention_days: int(1,90)

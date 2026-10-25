@@ -15,24 +15,36 @@ LABEL \
     org.opencontainers.image.title="Matrix Server (ESS CE)" \
     org.opencontainers.image.version="${BUILD_VERSION}"
 
-# ── System Pakete ───────────────────────────────────────────────────────────
+# ── System Pakete + Synapse via pip ─────────────────────────────────────────
+# Ein RUN, damit Compiler, -dev-Pakete und pip-Cache nach dem Build wieder aus
+# dem Image verschwinden (in einer späteren Schicht gelöscht, blieben sie im
+# Image und belegten weiter Speicher). Die Laufzeit-Bibliotheken werden vor
+# dem Aufräumen als "manuell" markiert, damit autoremove sie nicht mitnimmt.
+# libjemalloc2: Allocator für Synapse (siehe synapse/run), von der Synapse-Doku
+# empfohlen; mit glibc-malloc fragmentiert Python stark und der RAM wächst.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pip python3-venv python3-dev \
-    libffi-dev libssl-dev libjpeg-dev libwebp-dev \
-    libxml2-dev libxslt1-dev libpq-dev \
+    python3 python3-pip python3-venv \
+    libffi8 libssl3 libjpeg62-turbo libwebp7 libwebpmux3 libwebpdemux2 \
+    libxml2 libxslt1.1 libpq5 \
+    libjemalloc2 \
     postgresql-15 postgresql-client-15 \
     curl wget ca-certificates jq gettext-base \
     gosu \
-    gcc g++ make \
-    && rm -rf /var/lib/apt/lists/*
-
-# ── Synapse via pip ─────────────────────────────────────────────────────────
-RUN python3 -m venv /opt/synapse && \
-    /opt/synapse/bin/pip install --upgrade pip wheel && \
-    /opt/synapse/bin/pip install \
+    python3-dev libffi-dev libssl-dev libjpeg-dev libwebp-dev \
+    libxml2-dev libxslt1-dev libpq-dev gcc g++ make \
+    && python3 -m venv /opt/synapse \
+    && /opt/synapse/bin/pip install --no-cache-dir --upgrade pip wheel \
+    && /opt/synapse/bin/pip install --no-cache-dir \
         "matrix-synapse[all]>=1.163.0" \
         "psycopg2-binary" \
-        "pyOpenSSL>=24.0.0"
+        "pyOpenSSL>=24.0.0" \
+    && apt-get purge -y python3-dev libffi-dev libssl-dev libjpeg-dev libwebp-dev \
+        libxml2-dev libxslt1-dev libpq-dev gcc g++ make \
+    && apt-get autoremove -y --purge \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s "$(find /usr/lib -name libjemalloc.so.2 | head -n 1)" /usr/local/lib/libjemalloc.so.2 \
+    && test -e /usr/local/lib/libjemalloc.so.2 \
+    && /opt/synapse/bin/python -c "import synapse, psycopg2, lxml, PIL; print('synapse', synapse.__version__)"
 
 # LiveKit + lk-jwt-service werden zur LAUFZEIT geladen (nicht im Build)
 # Grund: GitHub ist im HA Build-Netzwerk geblockt
