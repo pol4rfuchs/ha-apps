@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.8.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.0...matrix_synapse-v1.8.1) (2026-10-25)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** harden the Ketesa admin UI auth server ([#670](https://github.com/pol4rfuchs/ha-apps/issues/670)) ([528f27c](https://github.com/pol4rfuchs/ha-apps/commit/528f27c56da182ef6fa7d6084a961e45138e21c8))
+
 ## [1.8.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.7.10...matrix_synapse-v1.8.0) (2026-10-22)
 
 
