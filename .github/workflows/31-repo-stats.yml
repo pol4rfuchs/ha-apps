@@ -1,6 +1,7 @@
 ---
 # Daily repo stats for the README badges: visitors (GitHub traffic API) and GHCR package downloads.
 # The numbers live on the orphan branch `stats`, never on main, so the main ruleset is not involved.
+# The tag `stats-backup` follows the latest stats commit; if the branch is deleted, the next run restores it from there.
 name: 31 Repo Stats
 
 # yamllint disable-line rule:truthy
@@ -39,8 +40,16 @@ jobs:
           git_auth=(-c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}")
           remote="https://github.com/${REPO}.git"
 
+          backup_tag="stats-backup"
+
           if git "${git_auth[@]}" ls-remote --exit-code --heads "${remote}" stats >/dev/null 2>&1; then
             git "${git_auth[@]}" clone --depth 1 --branch stats "${remote}" stats-data
+          elif git "${git_auth[@]}" ls-remote --exit-code --tags "${remote}" "refs/tags/${backup_tag}" >/dev/null 2>&1; then
+            # The branch is gone but the backup tag still holds the last state: continue from there
+            # instead of starting over (GitHub only keeps 14 days of traffic, state.json has the history).
+            echo "::warning::Branch stats is missing, restoring it from tag ${backup_tag}"
+            git "${git_auth[@]}" -c advice.detachedHead=false clone -q --depth 1 --branch "${backup_tag}" "${remote}" stats-data
+            git -C stats-data checkout -q -b stats
           else
             git init -q -b stats stats-data
             git -C stats-data remote add origin "${remote}"
@@ -54,9 +63,27 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "No changes"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "chore(stats): update repo stats"
+          fi
+          # No-op when nothing changed; recreates the branch after a restore from the tag.
+          git "${git_auth[@]}" push origin stats
+
+          # Backup tag on the latest stats commit, so the data survives a deleted branch.
+          # Only moved forward: if stats was reset or replaced, the tag keeps the old state.
+          head="$(git rev-parse HEAD)"
+          tagged="$(git "${git_auth[@]}" ls-remote --tags "${remote}" "refs/tags/${backup_tag}" | cut -f1)"
+          if [ "${tagged}" = "${head}" ]; then
+            echo "Tag ${backup_tag} is up to date"
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -q -m "chore(stats): update repo stats"
-          git "${git_auth[@]}" push origin stats
+          if [ -n "${tagged}" ]; then
+            status="$(gh api "repos/${REPO}/compare/${tagged}...${head}" --jq .status)"
+            if [ "${status}" != "ahead" ]; then
+              echo "::warning::stats (${head}) does not descend from tag ${backup_tag} (${tagged}, compare: ${status}); tag left unchanged"
+              exit 0
+            fi
+          fi
+          git "${git_auth[@]}" push origin "+${head}:refs/tags/${backup_tag}"
