@@ -2117,8 +2117,13 @@
         fetchLocalRecords();
         fetchStubZones();
 
-        // Auto-refresh stats every 10 seconds
-        setInterval(fetchStats, 10000);
+        // Auto-refresh stats every 10 seconds, but only while the page is visible:
+        // each refresh runs unbound-control, and an HA panel left open in a
+        // background tab would otherwise poll forever.
+        setInterval(function() { if (!document.hidden) fetchStats(); }, 10000);
+        document.addEventListener("visibilitychange", function() {
+            if (!document.hidden) fetchStats();
+        });
     
         // ── Event listeners (replaces all inline onclick for CSP compatibility) ─
 

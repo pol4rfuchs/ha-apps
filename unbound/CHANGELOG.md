@@ -9,6 +9,7 @@
 - Change: blocked domains now resolve to `0.0.0.0` / `::` (`always_null`, like Pi-hole's default) instead of REFUSED, which made some clients retry their next DNS server and bypass the block.
 - Change: if a blocklist download fails, the last successful copy stays in use instead of dropping the list until the next refresh.
 - Web UI: "reload failed" is no longer shown as a success, a warning appears before saving an empty access-control list, placeholders for local records and stub zones show the expected syntax (`.home.arpa` instead of mDNS `.local`, IP for PTR, `IP@port`), and HTML escaping covers quotes.
+- Web UI: the dashboard stops refreshing the statistics while its tab is hidden (each refresh runs `unbound-control`), and refreshes once when it becomes visible again.
 
 ## [1.26.2-ha1-pol4r1] - 2026-10-22
 
