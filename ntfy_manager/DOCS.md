@@ -5,7 +5,7 @@
 1. Install add-on, leave defaults.
 2. If you already have an admin user on your ntfy add-on, fill `ntfy_username` and `ntfy_password` here.
 3. Start.
-4. Open the sidebar panel → you're in.
+4. Open the sidebar panel → you're in. (The configured credentials are used through the sidebar/Ingress only; the optional direct port `8099` always shows the login screen.)
 
 If you don't fill credentials, you'll see a login screen — type any ntfy user there.
 
@@ -29,13 +29,13 @@ If both add-ons run on the same Supervisor, the Docker-internal hostname `http:/
 List of topics shown by default in the Message Browser and the SSE Monitor. The user can override these in the panel; changes persist in the browser's localStorage.
 
 ### allow_login_override
-If `true`, users can log in with different credentials via the panel UI. Set to `false` for kiosk-mode setups where only the configured account should be used.
+If `true`, users can log in with different credentials via the panel UI. Set to `false` for kiosk-mode setups where only the configured account should be used. With `false` the panel is only usable through the sidebar (Ingress), because the direct port `8099` never uses the configured credentials and its login is then disabled.
 
 ## How auth works
 
 The panel never asks Home Assistant who you are. It uses ntfy for that.
 
-When you log in (or when defaults from this add-on's config are picked up), the backend builds an `Authorization` header (`Basic …` or `Bearer …`), validates it against `GET /v1/account`, and if ntfy says it's good, encrypts those credentials into an httpOnly cookie. The cookie lives 12 hours.
+When you log in (or, through the sidebar/Ingress only, when defaults from this add-on's config are picked up), the backend builds an `Authorization` header (`Basic …` or `Bearer …`), validates it against `GET /v1/account`, and if ntfy says it's good, encrypts those credentials into an httpOnly cookie. The cookie lives 12 hours.
 
 Every API call you make from the panel hits this add-on's Express backend, which decrypts the cookie, attaches the header, and forwards to ntfy.
 
@@ -106,6 +106,6 @@ You're using a ntfy server too old to support reservations. Reservations are a p
 
 ## Local and external access
 
-**Local (LAN):** open the panel from the Home Assistant sidebar (Ingress, protected by your HA login) or, optionally, directly on `http://<ha-host>:8099`. The direct port is optional; clear it in the add-on's Network tab if you only want Ingress. Either way the panel asks for an ntfy login, and the session cookie is encrypted.
+**Local (LAN):** open the panel from the Home Assistant sidebar (Ingress, protected by your HA login) or, optionally, directly on `http://<ha-host>:8099`. The direct port is optional; clear it in the add-on's Network tab if you only want Ingress. The credentials from the add-on configuration are only used for requests coming through Ingress; on the direct port the panel always asks for an ntfy login. The session cookie is encrypted.
 
 **External (internet):** recommendation **not recommended, VPN only.** The panel manages ntfy users, tokens and ACLs. If you must publish it, use a reverse proxy with TLS plus an additional access layer. The session cookie is not flagged `Secure` (the panel assumes plain HTTP behind Ingress).
