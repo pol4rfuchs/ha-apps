@@ -8,9 +8,9 @@ variables (set by the s6 run script from /data/matrix/.admin_ui_auth,
 written by 10-matrix-init.sh) — never hardcoded, never logged here.
 """
 import base64
+import hmac
 import http.server
 import os
-import socketserver
 import sys
 
 USERNAME = os.environ.get("ADMIN_UI_USER", "")
@@ -21,7 +21,7 @@ if not USERNAME or not PASSWORD:
     print("admin-ui-auth-server: ADMIN_UI_USER/ADMIN_UI_PASSWORD not set, refusing to start", file=sys.stderr)
     sys.exit(1)
 
-EXPECTED = base64.b64encode(f"{USERNAME}:{PASSWORD}".encode()).decode()
+EXPECTED = base64.b64encode(f"{USERNAME}:{PASSWORD}".encode())
 
 
 class AuthHandler(http.server.SimpleHTTPRequestHandler):
@@ -29,7 +29,8 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
         auth = self.headers.get("Authorization", "")
         if not auth.startswith("Basic "):
             return False
-        return auth.split(" ", 1)[1].strip() == EXPECTED
+        # Constant-time comparison, so response timing does not leak the credentials
+        return hmac.compare_digest(auth.split(" ", 1)[1].strip().encode(), EXPECTED)
 
     def do_GET(self):
         if not self._authed():
@@ -56,6 +57,7 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("0.0.0.0", PORT), AuthHandler) as httpd:
+    # Threaded: a single slow or stalled client must not block the whole UI
+    with http.server.ThreadingHTTPServer(("0.0.0.0", PORT), AuthHandler) as httpd:
         print(f"admin-ui-auth-server: serving on :{PORT} with Basic-Auth")
         httpd.serve_forever()
