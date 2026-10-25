@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.12](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.11...navidrome-v2.1.12) (2026-10-25)
+
+
+### Bug Fixes
+
+* **navidrome:** add the standard log_level option ([#671](https://github.com/pol4rfuchs/ha-apps/issues/671)) ([71f8a4c](https://github.com/pol4rfuchs/ha-apps/commit/71f8a4ccca1df9299b50cc99a63d8a8a6d296c0c))
+
 ## [2.1.11](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.10...navidrome-v2.1.11) (2026-10-16)
 
 
