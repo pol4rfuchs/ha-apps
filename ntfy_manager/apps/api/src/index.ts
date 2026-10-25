@@ -16,6 +16,10 @@ import { audit, logger } from "./services/logger.js";
 const app = express();
 
 app.disable("x-powered-by");
+// nginx on loopback is the only proxy: take req.ip from the X-Forwarded-For
+// entry it appends, so the login rate limit counts per client instead of
+// treating every request as 127.0.0.1.
+app.set("trust proxy", "loopback");
 app.use(
   helmet({
     // CodeQL #234 (js/insecure-helmet-configuration): explicit CSP instead
