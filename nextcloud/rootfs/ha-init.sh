@@ -172,5 +172,19 @@ EOF
 # Uncomment if you add a redis option to config.yaml:
 # export REDIS_HOST=/var/run/redis/redis.sock
 
+# ── Background jobs (cron) ────────────────────────────────────────────────────
+# Without cron Nextcloud runs background jobs in "AJAX" mode, i.e. only while
+# someone has the web UI open: trash and version expiry, preview cleanup and
+# file scans then rarely or never run and the storage keeps growing. The
+# official image ships the www-data crontab (cron.php every 5 minutes) but only
+# starts crond in a separate container (/cron.sh). Start it here in the
+# background; the before-starting hook switches Nextcloud to cron mode.
+# -l 9: no log line per job run, errors and job output still show.
+if busybox crond -l 9 -L /dev/stdout; then
+    log "Background jobs: crond started (cron.php every 5 minutes)"
+else
+    log "WARNING: could not start crond, background jobs fall back to page loads"
+fi
+
 log "Handing off to official Nextcloud entrypoint…"
 exec /entrypoint.sh "$@"
