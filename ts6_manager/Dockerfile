@@ -67,11 +67,11 @@ WORKDIR /src/packages/backend
 RUN DATABASE_URL="file:/tmp/ts6webui-template.db" npx prisma db push --skip-generate
 
 # ─────────────────────────────────────────────
-# Stage 2: Go build (WebRTC media sidecar), golang:1.25-bookworm
-# go.mod pins `go 1.25.0` — keep this base image's Go minor version in sync
+# Stage 2: Go build (WebRTC media sidecar), golang:1.27-bookworm
+# go.mod pins `go 1.27.3` — keep this base image's Go minor version in sync
 # with packages/sidecar/go.mod on every upstream sync.
 # ─────────────────────────────────────────────
-FROM golang:1.25-bookworm AS sidecar-builder
+FROM golang:1.27-bookworm AS sidecar-builder
 
 WORKDIR /src
 COPY --from=builder /src/packages/sidecar/go.mod /src/packages/sidecar/go.sum ./
