@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.15](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.14...ntfy-v1.2.15) (2026-10-25)
+
+
+### Bug Fixes
+
+* **ntfy:** add network port description to translations ([#661](https://github.com/pol4rfuchs/ha-apps/issues/661)) ([498eab3](https://github.com/pol4rfuchs/ha-apps/commit/498eab34ec68fab2be5383e0ec817496a431778d))
+
 ## [1.2.14](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.13...ntfy-v1.2.14) (2026-10-23)
 
 
