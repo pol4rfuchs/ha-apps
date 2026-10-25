@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.17](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.16...ntfy_manager-v0.2.17) (2026-10-25)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** use configured credentials only through Ingress ([#669](https://github.com/pol4rfuchs/ha-apps/issues/669)) ([e7ced57](https://github.com/pol4rfuchs/ha-apps/commit/e7ced577c7631aa1f528f6c8bacdcafb48a9ae55))
+
 ## [0.2.16](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.15...ntfy_manager-v0.2.16) (2026-10-24)
 
 
