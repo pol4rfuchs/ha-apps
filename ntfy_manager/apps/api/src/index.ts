@@ -16,6 +16,10 @@ import { audit, logger } from "./services/logger.js";
 const app = express();
 
 app.disable("x-powered-by");
+// nginx on loopback is the only proxy: take req.ip from the X-Forwarded-For
+// entry it appends, so the login rate limit counts per client instead of
+// treating every request as 127.0.0.1.
+app.set("trust proxy", "loopback");
 app.use(
   helmet({
     // CodeQL #234 (js/insecure-helmet-configuration): explicit CSP instead
@@ -67,7 +71,9 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   if (!res.headersSent) res.status(500).json({ error: "internal_error" });
 });
 
-app.listen(env.API_PORT, () => {
+// Loopback only: nginx is the sole entry point and sets X-Real-IP, which the
+// auth middleware relies on to tell Ingress from direct port access.
+app.listen(env.API_PORT, "127.0.0.1", () => {
   audit("INFO", "runtime", `API started on port ${env.API_PORT}`);
   logger.info(`API listening on ${env.API_PORT} (ntfy at ${env.NTFY_BASE_URL})`);
 });
