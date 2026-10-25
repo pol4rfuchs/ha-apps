@@ -5,8 +5,10 @@ Standalone module — importable from app.py and runnable as CLI:
     python3 /web/config_gen.py --generate
 """
 
+import ipaddress
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -186,6 +188,36 @@ CONFIG_SCHEMA = {
         "default": False,
     },
 }
+
+
+_ZONE_NAME_RE = re.compile(
+    r"^(?=.{1,253}$)(?!-)[a-z0-9_-]{1,63}(?<!-)(\.(?!-)[a-z0-9_-]{1,63}(?<!-))*$"
+)
+
+
+def normalize_stub_zone(name, addr):
+    """Validate a stub zone and return (name, addr) in the form written to unbound.conf.
+
+    name: a DNS zone such as "home.lan" or "178.168.192.in-addr.arpa".
+    addr: an IPv4/IPv6 address, optionally with "@port" (unbound syntax, not ":port").
+    Raises ValueError with a message meant for the user.
+    """
+    name = str(name).strip().lower().rstrip(".")
+    if not _ZONE_NAME_RE.match(name):
+        raise ValueError("invalid zone name")
+    addr = str(addr).strip()
+    ip_part, sep, port_part = addr.partition("@")
+    try:
+        ip = ipaddress.ip_address(ip_part)
+    except ValueError:
+        if ip_part.count(":") == 1 and not sep:
+            raise ValueError("invalid address: use IP@port (e.g. 192.168.1.1@53), not IP:port") from None
+        raise ValueError("invalid address: expected an IP address, optionally with @port") from None
+    if sep:
+        if not port_part.isdigit() or not 1 <= int(port_part) <= 65535:
+            raise ValueError("invalid port: expected 1-65535 after @")
+        return name, f"{ip}@{int(port_part)}"
+    return name, str(ip)
 
 
 def _defaults():
@@ -455,11 +487,17 @@ def generate_unbound_conf(config, include_overlays=True):
             with open(STUB_ZONES_FILE, "r") as f:
                 stub_zones = json.load(f)
             for sz in stub_zones:
-                if sz.get("name") and sz.get("addr"):
-                    lines.append("")
-                    lines.append("stub-zone:")
-                    lines.append(f'    name: "{sz["name"]}"')
-                    lines.append(f"    stub-addr: {sz['addr']}")
+                # Entries saved before input validation existed may be invalid;
+                # skip them instead of producing a config that never starts.
+                try:
+                    name, addr = normalize_stub_zone(sz.get("name", ""), sz.get("addr", ""))
+                except (ValueError, AttributeError) as e:
+                    print(f"Skipping invalid stub zone {sz!r}: {e}", file=sys.stderr)
+                    continue
+                lines.append("")
+                lines.append("stub-zone:")
+                lines.append(f'    name: "{name}"')
+                lines.append(f"    stub-addr: {addr}")
         except (json.JSONDecodeError, OSError):
             pass
 
@@ -599,14 +637,14 @@ def apply_config(new_config):
         msg = f"Config saved but reload failed: {reload_msg}"
         if restart_required:
             msg += " (addon restart required for thread count change)"
-        return {"ok": True, "message": msg, "restart_required": restart_required}
+        return {"ok": True, "reload_ok": False, "message": msg, "restart_required": restart_required}
 
     msg = "Configuration applied successfully."
     if restart_required:
         msg = "Configuration saved. Addon restart required for thread count change to take effect."
     if overlay_dropped:
         msg += " Overlay was disabled — see banner for details."
-    return {"ok": True, "message": msg, "restart_required": restart_required}
+    return {"ok": True, "reload_ok": True, "message": msg, "restart_required": restart_required}
 
 
 if __name__ == "__main__":

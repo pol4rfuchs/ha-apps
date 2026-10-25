@@ -712,6 +712,7 @@
     <div class="tab-content" id="tab-blocklists">
         <div class="section">
             <h2>Blocklists</h2>
+            <p class="text-muted" style="margin-bottom:12px">Supported formats: hosts files (<code>0.0.0.0 domain</code>), one domain per line, and Adblock/AdGuard domain rules (<code>||domain^</code>). Blocked domains and their subdomains resolve to 0.0.0.0 / ::. If a download fails, the last successful copy stays in use.</p>
             <div id="blocklist-status" class="status-msg"></div>
             <div class="add-form">
                 <input type="text" id="new-url" placeholder="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts">
@@ -769,7 +770,7 @@
             <p class="text-muted" style="margin-bottom:12px">Custom hostname-to-IP mappings. Changes take effect immediately.</p>
             <div id="local-records-status" class="status-msg"></div>
             <div class="add-form">
-                <input type="text" id="new-record-hostname" placeholder="myserver.local">
+                <input type="text" id="new-record-hostname" placeholder="nas.home.arpa">
                 <select id="new-record-type" style="max-width:110px">
                     <option value="A">A</option>
                     <option value="AAAA">AAAA</option>
@@ -806,7 +807,7 @@
             <div id="stub-zones-status" class="status-msg"></div>
             <div class="add-form">
                 <input type="text" id="new-stub-zone-name" placeholder="home.lan">
-                <input type="text" id="new-stub-zone-addr" placeholder="192.168.1.1" style="max-width:200px">
+                <input type="text" id="new-stub-zone-addr" placeholder="192.168.1.1 or 192.168.1.1@5353" style="max-width:240px">
                 <button class="btn-primary" id="add-stub-zone-btn">Add</button>
             </div>
             <table>
@@ -1284,9 +1285,12 @@
         }
 
         function escapeHtml(text) {
-            var d = document.createElement("div");
-            d.textContent = text;
-            return d.innerHTML;
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
         }
 
         function formatTime(ts) {
@@ -1724,6 +1728,7 @@
                     fetchStubZones();
                 } else {
                     showReloadStatus("stub-zones-status", data, data.error || "Failed to add");
+                    fetchStubZones();
                 }
             } catch (e) {
                 showSectionStatus("stub-zones-status", "Failed: " + e.message, "error");
@@ -2016,6 +2021,10 @@
 
         async function saveSettings() {
             var config = collectSettings();
+            if (Array.isArray(config.access_control) && config.access_control.length === 0 &&
+                !confirm("Access control is empty: Unbound will refuse queries from every client except the add-on itself. Save anyway?")) {
+                return;
+            }
             showToast("Saving and applying...", "success");
             try {
                 var res = await fetch(apiUrl("/api/config"), {
@@ -2024,7 +2033,7 @@
                     body: JSON.stringify(config)
                 });
                 var data = await res.json();
-                if (data.ok) {
+                if (data.ok && data.reload_ok !== false) {
                     showToast(data.message || "Settings applied.", "success");
                 } else {
                     showToast(data.message || "Failed to apply", "error");
@@ -2125,6 +2134,18 @@
         _bind('refresh-blocklists-btn', function() { refreshBlocklists(); });
         _bind('add-whitelist-btn',      function() { addWhitelist(); });
         _bind('add-local-record-btn',   function() { addLocalRecord(); });
+        var RECORD_PLACEHOLDERS = {
+            A:     ["nas.home.arpa", "192.168.1.100"],
+            AAAA:  ["nas.home.arpa", "fd00::100"],
+            CNAME: ["media.home.arpa", "nas.home.arpa"],
+            PTR:   ["192.168.1.100", "nas.home.arpa"]
+        };
+        var recordType = document.getElementById('new-record-type');
+        if (recordType) recordType.addEventListener('change', function() {
+            var ph = RECORD_PLACEHOLDERS[recordType.value] || RECORD_PLACEHOLDERS.A;
+            document.getElementById('new-record-hostname').placeholder = ph[0];
+            document.getElementById('new-record-value').placeholder = ph[1];
+        });
         _bind('add-stub-zone-btn',      function() { addStubZone(); });
         _bind('clear-query-log-btn',    function() { clearQueryLog(); });
         _bind('add-acl-btn',            function() { addListItem('acl'); });

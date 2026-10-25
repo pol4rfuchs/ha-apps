@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.26.2-ha2-pol4r1] - 2026-10-25
+
+- Fix: a stub zone with an invalid address (for example `192.168.1.1:53` instead of `192.168.1.1@53`) was saved even though the web UI reported an error. From then on every settings change failed, and the next add-on start aborted, so DNS stayed down. Stub zones are now validated, a zone rejected by `unbound-checkconf` is removed again, and invalid entries saved by older versions are skipped at start.
+- Fix: Adblock/AdGuard blocklists (`||domain^`, the main format of OISD and Hagezi) produced 0 domains without an error. Domain rules are now read; exceptions (`@@`) and rules with modifiers are skipped.
+- Fix: with "log queries" and "log replies" both on, the query log and the top domains counted every query twice.
+- Fix: whitelisting a subdomain of a blocked domain (e.g. `keep.example.com` while `example.com` is listed) had no effect. Whitelist entries are now validated as domains.
+- Change: blocked domains now resolve to `0.0.0.0` / `::` (`always_null`, like Pi-hole's default) instead of REFUSED, which made some clients retry their next DNS server and bypass the block.
+- Change: if a blocklist download fails, the last successful copy stays in use instead of dropping the list until the next refresh.
+- Web UI: "reload failed" is no longer shown as a success, a warning appears before saving an empty access-control list, placeholders for local records and stub zones show the expected syntax (`.home.arpa` instead of mDNS `.local`, IP for PTR, `IP@port`), and HTML escaping covers quotes.
+
 ## [1.26.2-ha1-pol4r1] - 2026-10-22
 
 - Bump Unbound to 1.26.2 (automated by Renovate PR #631, checksum-verified against NLnetLabs' published sha256).
