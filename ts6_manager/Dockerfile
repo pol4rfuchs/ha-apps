@@ -6,7 +6,7 @@ ARG BUILD_ARCH=unknown
 ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REPO=https://github.com/pol4rfuchs/ts6-manager.git
 ARG TS6_MANAGER_BRANCH=main
-ARG TS6_MANAGER_REF=dd26e57954feca794fcceac0fb982243897d9114
+ARG TS6_MANAGER_REF=f248dd19a2f9d064ac5eb85376d8a98bcbdd639d
 # Must live in the GLOBAL arg scope (before the first FROM), not re-declared
 # right before Stage 3's FROM. An ARG declared between two FROM lines is only
 # a stage-local declaration for the stage that follows it; BuildKit has shown
@@ -67,11 +67,11 @@ WORKDIR /src/packages/backend
 RUN DATABASE_URL="file:/tmp/ts6webui-template.db" npx prisma db push --skip-generate
 
 # ─────────────────────────────────────────────
-# Stage 2: Go build (WebRTC media sidecar), golang:1.25-bookworm
-# go.mod pins `go 1.25.0` — keep this base image's Go minor version in sync
+# Stage 2: Go build (WebRTC media sidecar), golang:1.27-bookworm
+# go.mod pins `go 1.27.3` — keep this base image's Go minor version in sync
 # with packages/sidecar/go.mod on every upstream sync.
 # ─────────────────────────────────────────────
-FROM golang:1.25-bookworm AS sidecar-builder
+FROM golang:1.27-bookworm AS sidecar-builder
 
 WORKDIR /src
 COPY --from=builder /src/packages/sidecar/go.mod /src/packages/sidecar/go.sum ./

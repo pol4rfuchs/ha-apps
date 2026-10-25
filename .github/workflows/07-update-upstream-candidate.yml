@@ -44,7 +44,7 @@ jobs:
         include:
           - addon: ts6_manager
             mode: github_branch_ref
-            upstream_repo: clusterzx/ts6-manager
+            upstream_repo: pol4rfuchs/ts6-manager
             upstream_branch: main
             arg_name: TS6_MANAGER_REF
             tag_prefix: ts6-manager
