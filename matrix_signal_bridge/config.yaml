@@ -13,8 +13,6 @@ apparmor: true
 ingress: false
 stage: "experimental"
 map:
-  - type: addon_config
-    read_only: false
   - type: share
     read_only: false
 options:
