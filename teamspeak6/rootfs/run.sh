@@ -96,25 +96,35 @@ sync_from_runtime() {
 # SQLite's online backup API gives a consistent copy of the running database
 # (no WAL involved); the other files (SSH host key, allow/deny lists, file
 # transfer data) are copied as they are.
+#
+# To spare the SD card / SSD, only changes are written: the database is backed
+# up only when it (or its WAL) changed since the last run, and the other files
+# are copied only when they are newer than the stored copy (cp -u).
 TS_SYNC_INTERVAL="${TS_SYNC_INTERVAL:-300}"
 periodic_sync() {
+    local last_db_state="" db_state item
     while sleep "${TS_SYNC_INTERVAL}"; do
         [ -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ] || continue
-        if sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
-            ".backup '${TS_SERVER_STORE}/tsserver.sqlitedb.tmp'" 2>/dev/null \
-            && mv -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp" "${TS_SERVER_STORE}/tsserver.sqlitedb"; then
-            local item
-            for item in "${TS_RUNTIME_DIR}"/*; do
-                case "${item}" in
-                    *.sqlitedb*) continue ;;
-                esac
-                [ -e "${item}" ] && cp -a "${item}" "${TS_SERVER_STORE}/" 2>/dev/null
-            done
-            echo "[INFO] Periodic backup to persistent store done."
-        else
-            rm -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp"
-            echo "[WARN] Periodic backup failed — /data may be outdated."
+        db_state="$(stat -c '%Y %s' "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
+            "${TS_RUNTIME_DIR}/tsserver.sqlitedb-wal" 2>/dev/null || true)"
+        if [ "${db_state}" != "${last_db_state}" ]; then
+            if sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
+                ".backup '${TS_SERVER_STORE}/tsserver.sqlitedb.tmp'" 2>/dev/null \
+                && mv -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp" "${TS_SERVER_STORE}/tsserver.sqlitedb"; then
+                last_db_state="${db_state}"
+                echo "[INFO] Periodic backup: database saved to persistent store."
+            else
+                rm -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp"
+                echo "[WARN] Periodic backup failed — /data may be outdated."
+                continue
+            fi
         fi
+        for item in "${TS_RUNTIME_DIR}"/*; do
+            case "${item}" in
+                *.sqlitedb*) continue ;;
+            esac
+            [ -e "${item}" ] && { cp -au "${item}" "${TS_SERVER_STORE}/" 2>/dev/null || true; }
+        done
     done
 }
 
