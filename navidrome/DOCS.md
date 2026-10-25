@@ -39,7 +39,7 @@ Key options:
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
 | `ND_DATAFOLDER` | `/data` | Database and cache location. **Must stay under `/data`** (always persistent) or under `/config/addons_config/navidrome` *only if* `addon_config` is in the add-on's `map` config — any other path is wiped on restart. |
 | `ND_SCANNER_SCHEDULE` | `@every 24h` | Auto-scan interval. `0` disables. |
-| `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
+| `log_level` | `info` | `trace / debug / info / warning / error`. Sets Navidrome's `ND_LOGLEVEL` (`warning` → `warn`) and the add-on's own log output. Replaces the former `ND_LOGLEVEL` option. |
 | `ND_EXTRA_MUSIC_FOLDERS` | — | Comma-separated extra music folders (e.g. `/share/music2,/media/usb/music`). Each existing folder is linked into `ND_MUSICFOLDER` at start. |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware (requires sound device). |
 
