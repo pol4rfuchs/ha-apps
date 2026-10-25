@@ -295,9 +295,13 @@ All data is stored in `/data/ntfy/` and included in HA backups automatically:
 
 ## Local and external access
 
-**Local (LAN):** open `http://<ha-host>:4280`. The web UI and API require a login for everything by default (`auth_default_access: deny-all`). There is no Ingress, so Home Assistant's own authentication does not apply.
+**Local (LAN):** open `http://<ha-host>:4280`. The web UI and API require a login for everything by default (`auth_default_access: deny-all`). There is no Ingress, so Home Assistant's own authentication does not apply. The app has no `ssl` option; HTTPS is only possible through a reverse proxy.
 
-**External (internet):** only through a reverse proxy with TLS (see *Reverse Proxy* above), which ntfy needs anyway for iOS push and UnifiedPush (`base_url` must be an HTTPS address). Before you expose it, set `enable_signup: false` — with the default `true`, anyone who can reach the port can create an account — and keep `auth_default_access` on `deny-all`. A VPN is the safer choice if only your own devices publish and subscribe. Do not forward port `4280` itself to the internet.
+**External (internet):** recommendation **ok, but only through a reverse proxy with TLS** (for example Nginx Proxy Manager, see *Reverse Proxy* above). iOS push and UnifiedPush need `base_url` set to a publicly reachable address, which should be an HTTPS address. Before you expose it, set `enable_signup: false` (with the default `true`, anyone who can reach the port can create an account) and keep `auth_default_access` on `deny-all`. A VPN is the safer choice if only your own devices publish and subscribe. Do not forward port `4280` itself to the internet.
+
+**Data leaving your network:** `upstream_base_url` is empty by default. Only if you set it to `https://ntfy.sh` for iOS push (see *iOS Push Notifications*) does the app send push requests there (opt-in).
+
+**Public endpoint:** the UnifiedPush gateway path `/_matrix/push/v1/notify` is deliberately reachable without a login (see *UnifiedPush* above). If you publish the app, this path is public too.
 
 ---
 
