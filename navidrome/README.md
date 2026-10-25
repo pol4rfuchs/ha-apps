@@ -68,7 +68,7 @@ All options map 1:1 to [Navidrome environment variables](https://www.navidrome.o
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
 | `ND_DATAFOLDER` | `/data` | Database and cache location. |
 | `ND_SCANNER_SCHEDULE` | `@every 24h` | Cron or duration. `0` = disabled. |
-| `ND_LOGLEVEL` | `info` | `error / warn / info / debug / trace` |
+| `log_level` | `info` | `trace / debug / info / warning / error`. Sets Navidrome's `ND_LOGLEVEL` (`warning` → `warn`) and the add-on's own log output. Replaces the former `ND_LOGLEVEL` option. |
 | `ND_ENABLEDOWNLOADS` | `true` | Allow downloading tracks from the UI. |
 | `ND_EXTRA_MUSIC_FOLDERS` | — | Comma-separated extra music folders; each is linked into `ND_MUSICFOLDER`. |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware. Needs jukebox devices, which are not configurable here. |
