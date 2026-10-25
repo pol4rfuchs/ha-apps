@@ -9,6 +9,10 @@ set -e
 JSONSOURCE="/data/options.json"
 ENVFILE="/run/navidrome.env"
 
+# --- Log-Level (gilt für die App-Logs und für Navidrome) ---
+LOG_LEVEL="$(bashio::config 'log_level')"
+bashio::log.level "${LOG_LEVEL}"
+
 bashio::log.info "Loading Navidrome configuration..."
 
 # --- Pflichtfelder ---
@@ -94,6 +98,11 @@ _env_write ND_MUSICFOLDER "${ND_MUSICFOLDER}"
 _env_write ND_DATAFOLDER  "${ND_DATAFOLDER}"
 _env_write ND_ADDRESS     "0.0.0.0"
 _env_write ND_PORT        "4533"
+# Navidrome kennt "warn" statt "warning"
+case "${LOG_LEVEL}" in
+  warning) _env_write ND_LOGLEVEL "warn" ;;
+  *)       _env_write ND_LOGLEVEL "${LOG_LEVEL}" ;;
+esac
 
 # --- Alle ND_* aus options.json exportieren ---
 bashio::log.info "Exportiere Navidrome-Variablen:"
@@ -105,6 +114,7 @@ for KEY in "${ALL_KEYS[@]}"; do
   [[ "${KEY}" == "ND_MUSICFOLDER" ]]           && continue
   [[ "${KEY}" == "ND_DATAFOLDER" ]]            && continue
   [[ "${KEY}" == "ND_EXTRA_MUSIC_FOLDERS" ]]   && continue
+  [[ "${KEY}" == "ND_LOGLEVEL" ]]              && continue  # kommt aus log_level
 
   # jq: boolean false → "false", null → "", leer → ""
   VALUE="$(jq -r --arg k "${KEY}" '

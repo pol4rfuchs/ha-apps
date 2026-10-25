@@ -16,9 +16,9 @@ configuration:
     description: >-
       Location for the database and cache.
       Default: /config/addons_config/navidrome
-  ND_LOGLEVEL:
+  log_level:
     name: Log level
-    description: "Log verbosity: error, warn, info, debug, trace."
+    description: "Log verbosity of Navidrome and the add-on: trace, debug, info, warning, error."
 
   ND_ENABLESTARRATING:
     name: Enable Star Ratings

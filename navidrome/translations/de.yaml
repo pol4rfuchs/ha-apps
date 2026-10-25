@@ -16,9 +16,9 @@ configuration:
     description: >-
       Speicherort für Datenbank und Cache.
       Standard: /config/addons_config/navidrome
-  ND_LOGLEVEL:
-    name: Log level
-    description: "Detailgrad der Logs: error, warn, info, debug, trace."
+  log_level:
+    name: Log-Level
+    description: "Detailgrad der Logs von Navidrome und der App: trace, debug, info, warning, error."
 
   ND_ENABLESTARRATING:
     name: Sternebewertungen aktivieren

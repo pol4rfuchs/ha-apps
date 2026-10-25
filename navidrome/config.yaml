@@ -36,7 +36,7 @@ options:
   ND_MUSICFOLDER: /media/music
   ND_DATAFOLDER: /data
   ND_EXTRA_MUSIC_FOLDERS: ''
-  ND_LOGLEVEL: info
+  log_level: info
   ND_ENABLESTARRATING: true
   ND_ENABLEFAVOURITES: true
   ND_ENABLEDOWNLOADS: true
@@ -66,7 +66,7 @@ schema:
   ND_MUSICFOLDER: str
   ND_DATAFOLDER: str
   ND_EXTRA_MUSIC_FOLDERS: str?
-  ND_LOGLEVEL: list(error|warn|info|debug|trace)
+  log_level: list(trace|debug|info|warning|error)
   ND_ENABLESTARRATING: bool
   ND_ENABLEFAVOURITES: bool
   ND_ENABLEDOWNLOADS: bool
