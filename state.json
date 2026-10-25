@@ -1,0 +1,83 @@
+{
+  "views": {
+    "2026-10-11": {
+      "count": 4,
+      "uniques": 1
+    },
+    "2026-10-12": {
+      "count": 1,
+      "uniques": 1
+    },
+    "2026-10-13": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-14": {
+      "count": 1,
+      "uniques": 1
+    },
+    "2026-10-15": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-16": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-17": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-18": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-19": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-20": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-21": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-22": {
+      "count": 0,
+      "uniques": 0
+    },
+    "2026-10-23": {
+      "count": 1,
+      "uniques": 1
+    },
+    "2026-10-24": {
+      "count": 0,
+      "uniques": 0
+    }
+  },
+  "downloads": {
+    "cortendesk": 28,
+    "forgejo": 213,
+    "intiface_central": 73,
+    "matrix_auth_service": 104,
+    "matrix_signal_bridge": 117,
+    "matrix_synapse": 556,
+    "matrix_telegram_bridge": 122,
+    "matrix_whatsapp_bridge": 144,
+    "navidrome": 198,
+    "nextcloud": 217,
+    "nginx_proxy_manager": 35,
+    "ntfy": 568,
+    "ntfy_manager": 142,
+    "restic_backup": 56,
+    "searxng": 1234,
+    "teamspeak6": 382,
+    "ts6_manager": 244,
+    "unbound": 262,
+    "unifi_os_control_center": 127,
+    "unifi_toolkit": 25,
+    "vaultwarden": 17
+  }
+}
