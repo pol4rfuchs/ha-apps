@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.24](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.23...teamspeak6-v1.1.24) (2026-10-25)
+
+
+### Bug Fixes
+
+* **teamspeak6:** write only changes in the periodic backup ([#677](https://github.com/pol4rfuchs/ha-apps/issues/677)) ([f6d796f](https://github.com/pol4rfuchs/ha-apps/commit/f6d796fc68b80adb5866bb164e8f759dfe026ff0))
+
 ## [1.1.23](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.22...teamspeak6-v1.1.23) (2026-10-16)
 
 
