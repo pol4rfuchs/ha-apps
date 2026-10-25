@@ -10,6 +10,12 @@
 
 Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`aarch64` + `amd64`).
 
+![Visitors](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpol4rfuchs%2Fha-apps%2Fstats%2Fvisitors.json&style=for-the-badge&logo=github&logoColor=white)
+![Page views](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpol4rfuchs%2Fha-apps%2Fstats%2Fviews.json&style=for-the-badge&logo=github&logoColor=white)
+![Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpol4rfuchs%2Fha-apps%2Fstats%2Fdownloads.json&style=for-the-badge&logo=docker&logoColor=white)
+
+> Repository totals over all apps, updated daily. *Visitors* is the sum of the daily unique visitors (GitHub keeps only 14 days, so the history is accumulated from the first run on). *Downloads* is the sum of the GHCR package downloads.
+
 ## Apps
 
 > Production-oriented Home Assistant app catalog.
