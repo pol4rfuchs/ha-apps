@@ -524,8 +524,8 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
         <table>
           <thead><tr><th>Feature</th><th>Detail</th></tr></thead>
           <tbody>
-            <tr><td>Blocklists</td><td>Add/remove blocklist URLs, one-click refresh &amp; apply, automatic daily refresh.</td></tr>
-            <tr><td>Whitelist</td><td>Exclude specific domains from active blocklists.</td></tr>
+            <tr><td>Blocklists</td><td>Add/remove blocklist URLs, one-click refresh &amp; apply, automatic daily refresh. Formats: hosts files, one domain per line, Adblock/AdGuard domain rules (<code>||domain^</code>). Blocked domains and their subdomains resolve to <code>0.0.0.0</code> / <code>::</code>; if a download fails, the last good copy stays in use.</td></tr>
+            <tr><td>Whitelist</td><td>Exclude specific domains from active blocklists, including subdomains of a blocked domain.</td></tr>
             <tr><td>Local DNS Records</td><td>Custom hostname → IP mappings, applied instantly.</td></tr>
             <tr><td>Cache Controls</td><td>Flush a single domain or the entire cache.</td></tr>
             <tr><td>Query Log</td><td>Recent-queries viewer, top-domains chart, filter by domain/client.</td></tr>

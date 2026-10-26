@@ -2,7 +2,7 @@
 name: "Unbound"
 description: "Hardened recursive DNS resolver with built-in web UI"
 url: "https://github.com/pol4rfuchs/ha-apps"
-version: "1.26.2-ha1-pol4r1"
+version: "1.26.2-ha2-pol4r1"
 slug: "unbound"
 image: "ghcr.io/pol4rfuchs/unbound"
 stage: experimental
@@ -21,6 +21,8 @@ ports_description:
   53/udp: DNS UDP queries
 map:
   - addon_config:rw
+backup_exclude:
+  - "**/blocklist_cache"
 options:
   log_level: info
 schema:

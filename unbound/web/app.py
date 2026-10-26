@@ -1,5 +1,6 @@
 """Unbound DNS resolver web UI for Home Assistant ingress."""
 
+import hashlib
 import importlib.util
 import ipaddress
 import json
@@ -47,6 +48,8 @@ def ingress_peer_guard():
 
 BLOCKLISTS_FILE = "/data/blocklists.json"
 BLOCKLIST_STATUS_FILE = "/data/blocklist_status.json"
+# Last successful download per blocklist URL, used when a refresh fails.
+BLOCKLIST_CACHE_DIR = "/data/blocklist_cache"
 BLOCKLIST_CONF = "/etc/unbound/blocklist.conf"
 WHITELIST_FILE = "/data/whitelist.json"
 LOCAL_RECORDS_FILE = "/data/local_records.json"
@@ -87,6 +90,9 @@ DOMAIN_RE = re.compile(
 )
 ALLOWED_LOCAL_RECORD_TYPES = {"A", "AAAA", "CNAME", "PTR"}
 BLOCKLIST_MAX_BYTES = 5 * 1024 * 1024
+# Blocked names get 0.0.0.0 / :: (like Pi-hole's default NULL mode). REFUSED
+# made some clients retry the next DNS server, bypassing the block.
+BLOCK_ACTION = "always_null"
 BLOCKLIST_TIMEOUT_SECONDS = 30
 
 
@@ -147,10 +153,25 @@ def fetch_blocklist(url):
 
 
 def parse_blocklist_line(line):
-    """Parse supported blocklist formats into a normalized domain or None."""
+    """Parse supported blocklist formats into a normalized domain or None.
+
+    Supported: hosts format ("0.0.0.0 domain"), plain domain lines and the
+    domain-only subset of the Adblock/AdGuard syntax ("||domain^"). Adblock
+    exceptions ("@@"), rules with modifiers ("$...") and cosmetic/path rules
+    cannot be expressed as a DNS block and are skipped.
+    """
     line = line.strip()
-    if not line or line.startswith("#"):
+    if not line or line.startswith(("#", "!", "[")):
         return None
+    if line.startswith("||"):
+        rule = line[2:]
+        if not rule.endswith("^") or "$" in rule:
+            return None
+        candidate = rule[:-1]
+        domain = candidate.strip().lower().rstrip(".")
+        if domain in _BLOCKLIST_SKIP_DOMAINS or not is_valid_domain(domain):
+            return None
+        return domain
     if "#" in line:
         line = line.split("#", 1)[0].strip()
     parts = line.split()
@@ -300,8 +321,14 @@ def write_local_records_conf(records):
 
 
 def parse_query_log(text):
-    """Parse unbound query log text into structured dicts."""
-    entries = []
+    """Parse unbound query log text into structured dicts.
+
+    With log-queries and log-replies both on, unbound writes two lines per
+    query; reply lines carry rcode/time/size after the class. Count each query
+    once: use the query lines when there are any, the reply lines otherwise.
+    """
+    queries = []
+    replies = []
     for line in text.split("\n"):
         m = _LOG_QUERY_RE.search(line)
         if not m:
@@ -311,14 +338,18 @@ def parse_query_log(text):
             ipaddress.ip_address(client)
         except ValueError:
             continue
-        entries.append({
+        entry = {
             "timestamp": int(m.group(1)),
             "client": client,
             "domain": m.group(3).rstrip("."),
             "type": m.group(4),
             "class": m.group(5),
-        })
-    return entries
+        }
+        if line[m.end():].strip():
+            replies.append(entry)
+        else:
+            queries.append(entry)
+    return queries if queries else replies
 
 
 # --- Helpers ---
@@ -342,7 +373,7 @@ def run_unbound_control(cmd, retries=0):
                 return result.stdout, True
             last_err = (result.stderr.strip() + "\n" + result.stdout.strip()).strip()
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-            last_err = str(e)
+            last_err = config_gen.subprocess_error("unbound-control", e)
         if attempt < retries:
             time.sleep(0.5)
     return last_err or "Unknown error", False
@@ -360,7 +391,7 @@ def validate_unbound_config(path=UNBOUND_CONF):
             timeout=10,
         )
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return False, str(e)
+        return False, config_gen.subprocess_error("unbound-checkconf", e)
 
     output = (result.stdout.strip() + "\n" + result.stderr.strip()).strip()
     if result.returncode != 0:
@@ -455,7 +486,7 @@ def api_stats():
     blocked_count = 0
     if os.path.exists(BLOCKLIST_CONF):
         with open(BLOCKLIST_CONF, "r") as f:
-            blocked_count = sum(1 for line in f if line.startswith("local-zone:"))
+            blocked_count = sum(1 for line in f if line.rstrip().endswith(" " + BLOCK_ACTION))
 
     uptime = float(stats.get("time.up", 0))
     queries_per_sec = round(total_queries / uptime, 1) if uptime > 0 else 0
@@ -558,12 +589,52 @@ def api_blocklists_remove(idx):
     removed = blocklists.pop(idx)
     save_blocklists(blocklists)
 
-    # Clean up status for removed URL
+    # Clean up status and cached copy for removed URL
     status = load_blocklist_status()
     status.pop(removed, None)
     save_blocklist_status(status)
+    _remove_blocklist_cache(removed)
 
     return jsonify({"status": "removed", "url": removed})
+
+
+def _blocklist_cache_path(url):
+    return os.path.join(BLOCKLIST_CACHE_DIR, hashlib.sha256(url.encode()).hexdigest() + ".txt")
+
+
+def _save_blocklist_cache(url, text):
+    """Keep the last good download; best effort, a failure only loses the fallback."""
+    try:
+        os.makedirs(BLOCKLIST_CACHE_DIR, exist_ok=True)
+        tmp = _blocklist_cache_path(url) + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.replace(tmp, _blocklist_cache_path(url))
+    except OSError:
+        _logger.warning("Could not cache blocklist %s", url)
+
+
+def _load_blocklist_cache(url):
+    """Return (text, mtime) of the cached copy, or (None, None)."""
+    path = _blocklist_cache_path(url)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read(), os.path.getmtime(path)
+    except OSError:
+        return None, None
+
+
+def _remove_blocklist_cache(url):
+    try:
+        os.unlink(_blocklist_cache_path(url))
+    except OSError:
+        pass
+
+
+def _blocked_ancestor(domain, blocked):
+    """True if a parent zone of domain is in blocked (blocking covers subdomains)."""
+    labels = domain.split(".")
+    return any(".".join(labels[i:]) in blocked for i in range(1, len(labels)))
 
 
 def write_blocklist_conf():
@@ -584,13 +655,22 @@ def write_blocklist_conf():
         url_domains = set()
         text, error = fetch_blocklist(url)
         if error:
+            # Keep blocking with the last good copy instead of dropping the list
+            # until the next successful refresh.
+            cached, cached_at = _load_blocklist_cache(url)
+            if cached is not None:
+                error = f"{error} (using cached copy from {time.strftime('%Y-%m-%d %H:%M', time.localtime(cached_at))})"
             errors.append({"url": url, "error": error})
-            status[url] = {
-                "domains": 0,
-                "last_refresh": time.time(),
-                "error": error,
-            }
-            continue
+            if cached is None:
+                status[url] = {
+                    "domains": 0,
+                    "last_refresh": time.time(),
+                    "error": error,
+                }
+                continue
+            text = cached
+        else:
+            _save_blocklist_cache(url, text)
 
         for line in text.split("\n"):
             domain = parse_blocklist_line(line)
@@ -601,7 +681,7 @@ def write_blocklist_conf():
         status[url] = {
             "domains": len(url_domains),
             "last_refresh": time.time(),
-            "error": None,
+            "error": error,
         }
 
     save_blocklist_status(status)
@@ -610,7 +690,13 @@ def write_blocklist_conf():
 
     with open(BLOCKLIST_CONF, "w", encoding="utf-8") as f:
         for domain in sorted(all_domains):
-            f.write(f'local-zone: "{domain}." always_refuse\n')
+            f.write(f'local-zone: "{domain}." {BLOCK_ACTION}\n')
+        # A blocked zone covers all its subdomains, so removing the exact name
+        # is not enough when a parent is listed: a more specific transparent
+        # zone lets the whitelisted name resolve normally again.
+        for domain in sorted(whitelist):
+            if is_valid_domain(domain) and _blocked_ancestor(domain, all_domains):
+                f.write(f'local-zone: "{domain}." transparent\n')
 
     return len(all_domains), errors
 
@@ -654,9 +740,11 @@ def api_whitelist_add():
     if not data or "domain" not in data:
         return jsonify({"error": "Missing 'domain' field"}), 400
 
-    domain = data["domain"].strip().lower()
+    domain = str(data["domain"]).strip().lower().rstrip(".")
     if not domain:
         return jsonify({"error": "Domain cannot be empty"}), 400
+    if not is_valid_domain(domain):
+        return jsonify({"error": "Invalid domain format"}), 400
 
     whitelist = load_whitelist()
     if domain in whitelist:
@@ -753,23 +841,29 @@ def api_stub_zones_add():
     if not data or "name" not in data or "addr" not in data:
         return jsonify({"error": "Missing 'name' and/or 'addr' field"}), 400
 
-    name = data["name"].strip().lower()
-    addr = data["addr"].strip()
-    if not name or not addr:
-        return jsonify({"error": "Name and address cannot be empty"}), 400
+    name, addr, error = config_gen.check_stub_zone(data["name"], data["addr"])
+    if error:
+        return jsonify({"error": error}), 400
 
     zones = load_stub_zones()
 
     for z in zones:
-        if z["name"] == name:
+        if str(z.get("name", "")).strip().lower().rstrip(".") == name:
             return jsonify({"error": "Stub zone already exists"}), 409
 
+    previous = list(zones)
     zones.append({"name": name, "addr": addr})
     save_stub_zones(zones)
 
     # Regenerate config and reload via centralized validation pipeline.
     config_gen.write_unbound_conf()
     reload_payload, status_code = apply_reload_pipeline("add_stub_zone", retries=1)
+    if not reload_payload["check_ok"]:
+        # Rejected by unbound-checkconf: drop the zone again, otherwise every later
+        # settings change fails and the next start aborts on the saved entry.
+        save_stub_zones(previous)
+        config_gen.write_unbound_conf()
+        return jsonify(merge_reload_result({"error": "Stub zone rejected by unbound-checkconf"}, reload_payload)), 400
     payload = {"status": "added", "name": name, "addr": addr}
     return jsonify(merge_reload_result(payload, reload_payload)), 201 if reload_payload["ok"] else status_code
 

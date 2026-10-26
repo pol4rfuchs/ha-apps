@@ -9,6 +9,7 @@ All runtime configuration lives in `/data/config.json`, managed exclusively
 through the add-on's web UI. This includes:
 
 - Blocklists, whitelist entries, local DNS records
+- The last successful download of each blocklist (`/data/blocklist_cache/`, used when a refresh fails; excluded from backups because it is downloaded again)
 - Server settings (network, performance, cache, security tabs)
 - Query log data
 

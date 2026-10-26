@@ -41,8 +41,8 @@
 - Dark mode
 
 ### DNS Management
-- **Blocklists**: Add/remove blocklist URLs, one-click refresh & apply, automatic daily refresh
-- **Whitelist**: Exclude domains from blocklists
+- **Blocklists**: Add/remove blocklist URLs, one-click refresh & apply, automatic daily refresh. Formats: hosts files, one domain per line, Adblock/AdGuard domain rules (`||domain^`). Blocked domains and their subdomains resolve to `0.0.0.0` / `::`; if a download fails, the last good copy stays in use
+- **Whitelist**: Exclude domains from blocklists, including subdomains of a blocked domain
 - **Local DNS Records**: Custom hostname-to-IP mappings with instant apply
 - **Cache Controls**: Flush individual domains or entire cache
 - **Query Log**: Recent queries viewer, top domains chart, filter by domain/client
