@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.8.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.2...matrix_synapse-v1.8.3) (2026-10-26)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** keep installed web apps and binaries when the GitHub API fails ([#685](https://github.com/pol4rfuchs/ha-apps/issues/685)) ([c7a919b](https://github.com/pol4rfuchs/ha-apps/commit/c7a919b3c5a801cbbbcf0c17cfcc131d885e963b))
+
 ## [1.8.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.1...matrix_synapse-v1.8.2) (2026-10-26)
 
 
