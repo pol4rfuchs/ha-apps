@@ -20,6 +20,7 @@ POST-Wirkung. Unbekannte Pfade antworten {"result": "ok", "data": {}}.
 
 import argparse
 import json
+import os
 import re
 import secrets
 import sys
@@ -133,7 +134,20 @@ def cmd_serve(args) -> None:
         def log_message(self, fmt, *a) -> None:
             sys.stderr.write(f"supervisor-mock: {self.command} {self.path}\n")
 
-    ThreadingHTTPServer((args.bind, args.port), Handler).serve_forever()
+    server = ThreadingHTTPServer((args.bind, args.port), Handler)
+    if args.daemon:
+        # Port ist gebunden, bevor der Elternprozess zurückkehrt. Der Kindprozess
+        # löst sich vom Terminal und schreibt nur ins Log, damit der CI-Schritt
+        # nicht auf seine offenen stdout/stderr wartet.
+        if os.fork():
+            return
+        os.setsid()
+        log = os.open(args.log, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644)
+        null = os.open(os.devnull, os.O_RDONLY)
+        os.dup2(null, 0)
+        os.dup2(log, 1)
+        os.dup2(log, 2)
+    server.serve_forever()
 
 
 def main() -> None:
@@ -149,6 +163,8 @@ def main() -> None:
     s.add_argument("--version", default="0.0.0")
     s.add_argument("--bind", default="0.0.0.0")
     s.add_argument("--port", type=int, default=80)
+    s.add_argument("--daemon", action="store_true", help="im Hintergrund laufen")
+    s.add_argument("--log", default="supervisor-mock.log", help="Log im --daemon-Modus")
     s.set_defaults(func=cmd_serve)
     args = p.parse_args()
     args.func(args)

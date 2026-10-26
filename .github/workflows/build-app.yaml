@@ -288,8 +288,10 @@ jobs:
             mkdir -p smoke-data/music
           fi
           chmod -R a+rwX smoke-data
-          sudo -b python3 scripts/smoke_supervisor.py serve smoke-data/options.json \
-            --app "${APP}" --version "${VERSION}" </dev/null >supervisor-mock.log 2>&1
+          # Port 80 needs root. --daemon binds the port, then detaches with its
+          # output in supervisor-mock.log, so the step does not wait on it.
+          sudo python3 scripts/smoke_supervisor.py serve smoke-data/options.json \
+            --app "${APP}" --version "${VERSION}" --daemon --log supervisor-mock.log
           for _ in $(seq 1 20); do
             curl -sf http://127.0.0.1/addons/self/info >/dev/null && break
             sleep 0.5
