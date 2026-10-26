@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [1.8.2](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.1...matrix_synapse-v1.8.2) (2026-10-26)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** jemalloc, cache memory limit and a slimmer image ([#680](https://github.com/pol4rfuchs/ha-apps/issues/680)) ([d31eef5](https://github.com/pol4rfuchs/ha-apps/commit/d31eef558b11bbe2e4392b49c7d24397c6f39714))
+
 ## [1.8.1](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.0...matrix_synapse-v1.8.1) (2026-10-25)
 
 
