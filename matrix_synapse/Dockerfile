@@ -20,6 +20,8 @@ LABEL \
 # dem Image verschwinden (in einer späteren Schicht gelöscht, blieben sie im
 # Image und belegten weiter Speicher). Die Laufzeit-Bibliotheken werden vor
 # dem Aufräumen als "manuell" markiert, damit autoremove sie nicht mitnimmt.
+# Am Ende prüft Synapse seine eigenen Abhängigkeiten (Kern, postgres,
+# url-preview); psycopg2 wird importiert, weil es gegen libpq5 gelinkt ist.
 # libjemalloc2: Allocator für Synapse (siehe synapse/run), von der Synapse-Doku
 # empfohlen; mit glibc-malloc fragmentiert Python stark und der RAM wächst.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,7 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s "$(find /usr/lib -name libjemalloc.so.2 | head -n 1)" /usr/local/lib/libjemalloc.so.2 \
     && test -e /usr/local/lib/libjemalloc.so.2 \
-    && /opt/synapse/bin/python -c "import synapse, psycopg2, lxml, PIL; print('synapse', synapse.__version__)"
+    && /opt/synapse/bin/python -c "import psycopg2, PIL, synapse; from synapse.util.check_dependencies import check_requirements as c; c(); c('postgres'); c('url-preview'); print('synapse', synapse.__version__, 'dependencies OK')"
 
 # LiveKit + lk-jwt-service werden zur LAUFZEIT geladen (nicht im Build)
 # Grund: GitHub ist im HA Build-Netzwerk geblockt
