@@ -57,6 +57,12 @@ via the official image's `docker-entrypoint-hooks.d` mechanism:
   **every** start, so changing the option later takes effect on the next
   restart
 
+## Background jobs and resources
+
+Background jobs (trash and version expiry, preview cleanup, file scans) run through cron every 5 minutes; the add-on starts cron itself and sets Nextcloud to the "Cron" mode on every start. Nextcloud's admin overview should therefore show "Cron" with a recent last run.
+
+Apache is sized for a home server: 2 processes at start, at most 30 at the same time. That keeps memory bounded on small hosts; 30 parallel requests are enough for a household including sync clients.
+
 ## Shell / occ Access
 
 For anything not exposed in the HA options UI, use the add-on's own shell
