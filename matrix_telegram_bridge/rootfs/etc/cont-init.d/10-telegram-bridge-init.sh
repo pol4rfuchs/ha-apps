@@ -102,15 +102,22 @@ if [ ! -f "${REG_PATH}" ]; then
         bashio::log.error "registration.yaml konnte nicht erzeugt werden (Config prüfen, siehe Ausgabe oben)."
         exit 1
     fi
-    cp "${REG_PATH}" "${SHARE_REG_PATH}"
-    bashio::log.warning "registration.yaml nach ${SHARE_REG_PATH} kopiert!"
-    bashio::log.warning "→ Im Matrix-Synapse-Add-on 'telegram_bridge_enabled' aktivieren und Synapse neu starten."
+    if cp "${REG_PATH}" "${SHARE_REG_PATH}"; then
+        bashio::log.warning "registration.yaml nach ${SHARE_REG_PATH} kopiert!"
+        bashio::log.warning "→ Im Matrix-Synapse-Add-on 'telegram_bridge_enabled' aktivieren und Synapse neu starten."
+    else
+        bashio::log.error "registration.yaml konnte NICHT nach ${SHARE_REG_PATH} kopiert werden (siehe cp-Fehler oben)."
+        bashio::log.error "→ Synapse findet die Bridge so nicht. Ist /share eingebunden und beschreibbar? Beim nächsten Start wird erneut kopiert."
+    fi
 else
     # Falls /share leer ist (z.B. nach Restore, wo /data erhalten blieb,
     # /share aber nicht Teil des Backups war) erneut hinkopieren.
     if [ ! -f "${SHARE_REG_PATH}" ]; then
-        cp "${REG_PATH}" "${SHARE_REG_PATH}"
-        bashio::log.info "registration.yaml erneut nach /share kopiert (war dort nicht vorhanden)."
+        if cp "${REG_PATH}" "${SHARE_REG_PATH}"; then
+            bashio::log.info "registration.yaml erneut nach /share kopiert (war dort nicht vorhanden)."
+        else
+            bashio::log.error "registration.yaml konnte NICHT nach ${SHARE_REG_PATH} kopiert werden (siehe cp-Fehler oben). Ist /share eingebunden und beschreibbar?"
+        fi
     fi
 fi
 
