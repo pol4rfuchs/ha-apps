@@ -266,67 +266,89 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: docker pull "${IMAGE}:${VERSION}"
 
-      # Most add-ons read /data/options.json via bashio::config at startup and
-      # exit immediately when it's missing (not a code bug, just no Supervisor
-      # around). Mounting a fixture built from the add-on's own `options:`
-      # defaults gets them past that point for free. ts6_manager additionally
-      # sources /data/secrets.env directly (no bashio involved there).
-      - name: Build /data fixture from config.yaml defaults
+      # bashio::config does not read /data/options.json, it asks the Supervisor
+      # API (http://supervisor/addons/self/options/config). Without a stand-in
+      # almost every app died with "Could not resolve host: supervisor" and the
+      # test only ever saw that. scripts/smoke_supervisor.py builds the options
+      # from config.yaml (required fields filled, passwords random, a few
+      # per-app overrides) and serves them on port 80 of the runner; the
+      # container reaches it as "supervisor" via host-gateway. options.json is
+      # still mounted for apps that read it directly (teamspeak6).
+      - name: Build /data fixture and start Supervisor stand-in
         shell: bash
         env:
           APP: ${{ inputs.app }}
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           set -euo pipefail
-          mkdir -p smoke-data
           pip install --quiet --disable-pip-version-check pyyaml
-          python3 - <<'PY'
-          import json, os, yaml
-          app = os.environ["APP"]
-          cfg = yaml.safe_load(open(f"{app}/config.yaml", encoding="utf-8")) or {}
-          options = cfg.get("options", {}) or {}
-          with open("smoke-data/options.json", "w", encoding="utf-8") as f:
-              json.dump(options, f)
-          print(f"Wrote smoke-data/options.json with keys: {sorted(options.keys())}")
-          PY
+          python3 scripts/smoke_supervisor.py fixture "${APP}" smoke-data
           if [[ "${APP}" == "ts6_manager" ]]; then
             touch smoke-data/secrets.env
             mkdir -p smoke-data/music
           fi
           chmod -R a+rwX smoke-data
+          # Port 80 needs root. --daemon binds the port, then detaches with its
+          # output in supervisor-mock.log, so the step does not wait on it.
+          sudo python3 scripts/smoke_supervisor.py serve smoke-data/options.json \
+            --app "${APP}" --version "${VERSION}" --daemon --log supervisor-mock.log
+          for _ in $(seq 1 20); do
+            curl -sf http://127.0.0.1/addons/self/info >/dev/null && break
+            sleep 0.5
+          done
+          curl -sf http://127.0.0.1/addons/self/options/config >/dev/null
+          echo "Supervisor stand-in is up."
 
       - name: Start container and classify result
         shell: bash
         env:
           IMAGE: ${{ needs.prepare.outputs.image }}
           VERSION: ${{ needs.prepare.outputs.version }}
-          WAIT_SECONDS: "15"
+          WAIT_SECONDS: "30"
         run: |
           set -uo pipefail
-          cid="$(docker run -d -v "$(pwd)/smoke-data:/data" "${IMAGE}:${VERSION}")"
+          cid="$(docker run -d \
+            --add-host supervisor:host-gateway \
+            -e SUPERVISOR_TOKEN=smoke \
+            -v "$(pwd)/smoke-data:/data" \
+            "${IMAGE}:${VERSION}")"
           echo "Started container ${cid}, waiting ${WAIT_SECONDS}s ..."
           sleep "${WAIT_SECONDS}"
 
           status="$(docker inspect -f '{{.State.Status}}' "${cid}")"
+          exit_code="$(docker inspect -f '{{.State.ExitCode}}' "${cid}")"
+          restarts="$(docker inspect -f '{{.RestartCount}}' "${cid}")"
           logs="$(docker logs "${cid}" 2>&1)"
-          echo "Container status after wait: ${status}"
+          echo "Container status after wait: ${status} (exit code ${exit_code}, restarts ${restarts})"
           echo "${logs}"
+          echo "── Supervisor stand-in requests ──"
+          sort supervisor-mock.log 2>/dev/null | uniq -c || true
           docker rm -f "${cid}" >/dev/null 2>&1 || true
 
-          if [[ "${status}" == "running" ]]; then
-            echo "Container stayed up for ${WAIT_SECONDS}s — smoke test passed."
-            exit 0
-          fi
-
-          # Exited. Distinguish a real bug from an expected clean exit (e.g.
-          # still missing a Supervisor REST call we don't fake, like ingress
-          # URL lookup) by grepping for known crash signatures.
+          # A crash signature fails the test even while the container is still
+          # "running": s6 keeps the container alive while a service crash-loops,
+          # which used to count as a pass.
           crash_pattern='Traceback \(most recent call last\)|Segmentation fault|exec format error|Cannot find module|EADDRINUSE|panic:|FATAL ERROR|[Uu]nhandled ([Pp]romise )?[Rr]ejection|core dumped|Error: connect ECONNREFUSED'
           if echo "${logs}" | grep -E -q "${crash_pattern}"; then
-            echo "::error::Container crashed with a real error signature (status=${status}) — this looks like an actual bug, not just a missing Supervisor environment. Check the log above."
+            echo "::error::Crash signature in the log (status=${status}) — check the log above."
             exit 1
           fi
 
-          echo "::notice::Container exited (status=${status}) without a crash signature — likely still missing a Supervisor REST dependency we don't fake (e.g. ingress URL lookup), not necessarily a bug. Spot-check the log above if unsure."
+          # bashio::exit.nok / log.fatal: the app refused to start. With the
+          # stand-in and filled options this is usually a real problem, but it
+          # can also be a dependency the test does not provide (MQTT, MariaDB).
+          if echo "${logs}" | grep -E -q '\] FATAL: |Could not resolve host: supervisor'; then
+            echo "::warning::App reported a fatal startup error (status=${status}) — check the log above."
+          fi
+
+          if [[ "${status}" == "running" ]]; then
+            echo "Container stayed up for ${WAIT_SECONDS}s without a crash signature — smoke test passed."
+            exit 0
+          fi
+
+          echo "::notice::Container exited (status=${status}, exit code ${exit_code}) without a crash" \
+            "signature — likely a dependency the test does not provide (ingress, MQTT, database)." \
+            "Spot-check the log above."
           exit 0
 
   # ── 5. Promote :latest only after the smoke test had a chance to run ────────
