@@ -116,7 +116,21 @@ def cmd_serve(args) -> None:
             "arch": "amd64",
             "hostname": "smoke",
         },
-        "/network/info": {"interfaces": [], "docker": {"address": "172.30.32.0/23"}},
+        # Ein primäres Interface wie auf echter Hardware: matrix_synapse leitet
+        # daraus die LAN-IP ab (10-matrix-init.sh), sonst landet es im Fallback.
+        "/network/info": {
+            "interfaces": [
+                {
+                    "interface": "eth0",
+                    "type": "ethernet",
+                    "enabled": True,
+                    "connected": True,
+                    "primary": True,
+                    "ipv4": {"method": "auto", "address": ["192.168.1.10/24"]},
+                }
+            ],
+            "docker": {"address": "172.30.32.0/23"},
+        },
     }
 
     class Handler(BaseHTTPRequestHandler):
