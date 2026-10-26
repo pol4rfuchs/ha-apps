@@ -31,12 +31,7 @@ mkdir -p "${DATA_DIR}"
 
 # ── DB-URI je nach gewähltem Backend zusammenbauen ────────────────────────
 if [ "${DB_TYPE}" = "postgres" ]; then
-    # Benutzer, Passwort und DB-Name URL-kodieren: Zeichen wie @ : / ? # % im
-    # Passwort zerlegen sonst die URI (Host/DB falsch, Passwort abgeschnitten).
-    PG_USER=$(jq -rn --arg v "$(bashio::config 'postgres_username')" '$v|@uri')
-    PG_PASS=$(jq -rn --arg v "$(bashio::config 'postgres_password')" '$v|@uri')
-    PG_DB=$(jq -rn --arg v "$(bashio::config 'postgres_database')" '$v|@uri')
-    DB_URI="postgres://${PG_USER}:${PG_PASS}@$(bashio::config 'postgres_host'):$(bashio::config 'postgres_port')/${PG_DB}?sslmode=disable"
+    DB_URI="postgres://$(bashio::config 'postgres_username'):$(bashio::config 'postgres_password')@$(bashio::config 'postgres_host'):$(bashio::config 'postgres_port')/$(bashio::config 'postgres_database')?sslmode=disable"
     DB_TYPE_VAL="postgres"
 else
     DB_URI="file:${DATA_DIR}/mautrix-telegram.db?_txlock=immediate"
@@ -57,40 +52,22 @@ if [ ! -f "${CONFIG_PATH}" ]; then
 fi
 
 bashio::log.info "Schreibe Options in config.yaml..."
-# Werte per Umgebung + strenv() übergeben statt in den Ausdruck zu interpolieren:
-# ein " oder \ in Passwort/Hash/Domain machte den yq-Ausdruck sonst ungültig und
-# die Config blieb unbemerkt auf dem alten Stand.
-YQ_HOMESERVER_ADDRESS="${HOMESERVER_ADDRESS}" \
-YQ_HOMESERVER_DOMAIN="${HOMESERVER_DOMAIN}" \
-YQ_APPSERVICE_ADDRESS="${APPSERVICE_ADDRESS}" \
-YQ_APPSERVICE_ID="${APPSERVICE_ID}" \
-YQ_DB_TYPE_VAL="${DB_TYPE_VAL}" \
-YQ_DB_URI="${DB_URI}" \
-YQ_TELEGRAM_API_HASH="${TELEGRAM_API_HASH}" \
-YQ_LOG_LEVEL="${LOG_LEVEL}" \
-YQ_ENCRYPTION="${ENCRYPTION}" \
-YQ_TELEGRAM_API_ID="${TELEGRAM_API_ID:-0}" \
-yq -i '
-  .homeserver.address = strenv(YQ_HOMESERVER_ADDRESS) |
-  .homeserver.domain = strenv(YQ_HOMESERVER_DOMAIN) |
-  .appservice.address = strenv(YQ_APPSERVICE_ADDRESS) |
-  .appservice.hostname = "0.0.0.0" |
+yq -i "
+  .homeserver.address = \"${HOMESERVER_ADDRESS}\" |
+  .homeserver.domain = \"${HOMESERVER_DOMAIN}\" |
+  .appservice.address = \"${APPSERVICE_ADDRESS}\" |
+  .appservice.hostname = \"0.0.0.0\" |
   .appservice.port = 29317 |
-  .appservice.id = strenv(YQ_APPSERVICE_ID) |
-  .database.type = strenv(YQ_DB_TYPE_VAL) |
-  .database.uri = strenv(YQ_DB_URI) |
-  .network.api_id = env(YQ_TELEGRAM_API_ID) |
-  .network.api_hash = strenv(YQ_TELEGRAM_API_HASH) |
-  .encryption.allow = env(YQ_ENCRYPTION) |
-  .encryption.default = env(YQ_ENCRYPTION) |
-  .logging.min_level = strenv(YQ_LOG_LEVEL) |
-  .bridge.permissions = {"*": "relay", strenv(YQ_HOMESERVER_DOMAIN): "user"}
-' "${CONFIG_PATH}"
-YQ_RC=$?
-if [ "${YQ_RC}" -ne 0 ]; then
-    bashio::log.error "config.yaml konnte nicht aktualisiert werden (yq rc=${YQ_RC}), Abbruch."
-    exit 1
-fi
+  .appservice.id = \"${APPSERVICE_ID}\" |
+  .database.type = \"${DB_TYPE_VAL}\" |
+  .database.uri = \"${DB_URI}\" |
+  .network.api_id = ${TELEGRAM_API_ID:-0} |
+  .network.api_hash = \"${TELEGRAM_API_HASH}\" |
+  .encryption.allow = ${ENCRYPTION} |
+  .encryption.default = ${ENCRYPTION} |
+  .logging.min_level = \"${LOG_LEVEL}\" |
+  .bridge.permissions = {\"*\": \"relay\", \"${HOMESERVER_DOMAIN}\": \"user\"}
+" "${CONFIG_PATH}"
 
 # ── Appservice-Registrierung (nur beim allerersten Start, danach stabil) ──
 # WICHTIG: registration.yaml enthält as_token/hs_token — wird NICHT neu
