@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2610.0-ha3-pol4r1] - Klare Fehlermeldung beim Kopieren der registration.yaml
+
+- Scheitert das Kopieren der registration.yaml nach `/share`, steht jetzt ein Fehler im Log.
+  Vorher meldete das Add-on trotzdem „kopiert!“, und Synapse fand die Bridge nicht.
+
 ## [0.2610.0-ha2-pol4r1] - Postgres-Passwort und Config-Fehler
 
 - Postgres: Benutzer, Passwort und DB-Name werden in der DB-URI URL-kodiert.
