@@ -195,29 +195,55 @@ _ZONE_NAME_RE = re.compile(
 )
 
 
-def normalize_stub_zone(name, addr):
-    """Validate a stub zone and return (name, addr) in the form written to unbound.conf.
+def _parse_ip(value):
+    try:
+        return ipaddress.ip_address(value)
+    except ValueError:
+        return None
+
+
+def check_stub_zone(name, addr):
+    """Validate a stub zone without raising.
 
     name: a DNS zone such as "home.lan" or "178.168.192.in-addr.arpa".
     addr: an IPv4/IPv6 address, optionally with "@port" (unbound syntax, not ":port").
-    Raises ValueError with a message meant for the user.
+    Returns (name, addr, None) in the form written to unbound.conf, or
+    (None, None, message) with a fixed message meant for the user.
     """
     name = str(name).strip().lower().rstrip(".")
     if not _ZONE_NAME_RE.match(name):
-        raise ValueError("invalid zone name")
+        return None, None, "invalid zone name"
     addr = str(addr).strip()
     ip_part, sep, port_part = addr.partition("@")
-    try:
-        ip = ipaddress.ip_address(ip_part)
-    except ValueError:
+    ip = _parse_ip(ip_part)
+    if ip is None:
         if ip_part.count(":") == 1 and not sep:
-            raise ValueError("invalid address: use IP@port (e.g. 192.168.1.1@53), not IP:port") from None
-        raise ValueError("invalid address: expected an IP address, optionally with @port") from None
+            return None, None, "invalid address: use IP@port (e.g. 192.168.1.1@53), not IP:port"
+        return None, None, "invalid address: expected an IP address, optionally with @port"
     if sep:
         if not port_part.isdigit() or not 1 <= int(port_part) <= 65535:
-            raise ValueError("invalid port: expected 1-65535 after @")
-        return name, f"{ip}@{int(port_part)}"
-    return name, str(ip)
+            return None, None, "invalid port: expected 1-65535 after @"
+        return name, f"{ip}@{int(port_part)}", None
+    return name, str(ip), None
+
+
+def normalize_stub_zone(name, addr):
+    """Like check_stub_zone, but returns (name, addr) and raises ValueError."""
+    name, addr, error = check_stub_zone(name, addr)
+    if error:
+        raise ValueError(error)
+    return name, addr
+
+
+def subprocess_error(cmd, exc):
+    """Fixed, user-facing text for a failed subprocess call.
+
+    Exception text is only logged, never returned to API clients.
+    """
+    print(f"{cmd}: {exc!r}", file=sys.stderr)
+    if isinstance(exc, subprocess.TimeoutExpired):
+        return f"{cmd} timed out"
+    return f"{cmd} could not be run"
 
 
 def _defaults():
@@ -529,7 +555,7 @@ def check_conf():
         output = (result.stdout + result.stderr).strip()
         return result.returncode == 0, output
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return False, str(e)
+        return False, subprocess_error("unbound-checkconf", e)
 
 
 def write_and_validate(config):
@@ -586,7 +612,7 @@ def _reload_unbound():
             if result.returncode == 0:
                 return True, last_output
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-            last_output = str(e)
+            last_output = subprocess_error("unbound-control", e)
         if attempt == 0:
             time.sleep(0.5)
     return False, last_output

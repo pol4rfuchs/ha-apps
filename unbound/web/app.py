@@ -373,7 +373,7 @@ def run_unbound_control(cmd, retries=0):
                 return result.stdout, True
             last_err = (result.stderr.strip() + "\n" + result.stdout.strip()).strip()
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-            last_err = str(e)
+            last_err = config_gen.subprocess_error("unbound-control", e)
         if attempt < retries:
             time.sleep(0.5)
     return last_err or "Unknown error", False
@@ -391,7 +391,7 @@ def validate_unbound_config(path=UNBOUND_CONF):
             timeout=10,
         )
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
-        return False, str(e)
+        return False, config_gen.subprocess_error("unbound-checkconf", e)
 
     output = (result.stdout.strip() + "\n" + result.stderr.strip()).strip()
     if result.returncode != 0:
@@ -841,10 +841,9 @@ def api_stub_zones_add():
     if not data or "name" not in data or "addr" not in data:
         return jsonify({"error": "Missing 'name' and/or 'addr' field"}), 400
 
-    try:
-        name, addr = config_gen.normalize_stub_zone(data["name"], data["addr"])
-    except ValueError as exc:
-        return jsonify({"error": str(exc)}), 400
+    name, addr, error = config_gen.check_stub_zone(data["name"], data["addr"])
+    if error:
+        return jsonify({"error": error}), 400
 
     zones = load_stub_zones()
 
