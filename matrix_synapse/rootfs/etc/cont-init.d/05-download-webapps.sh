@@ -20,13 +20,31 @@ ADMIN_VERSION_FILE="/data/matrix/.ketesa_version"
 EC_VERSION_FILE="/data/matrix/.element-call_version"
 mkdir -p /data/matrix
 
+# pick_version <api-tag> <installiert> <fallback> <name>
+# Gibt die Zielversion aus. Ist die GitHub-API nicht erreichbar (z. B. Rate-Limit
+# von 60 Abfragen/Stunde ohne Anmeldung), bleibt die installierte Version stehen.
+# Der feste Fallback gilt nur, wenn noch nichts installiert ist: sonst würde ein
+# API-Ausfall bei jedem Start auf diese alte Version zurückstufen.
+pick_version() {
+    local api="$1" installed="$2" fallback="$3" name="$4"
+    if [ -n "${api}" ] && [ "${api}" != "null" ]; then
+        echo "${api}"
+    elif [ -n "${installed}" ]; then
+        bashio::log.warning "⚠️  ${name}: GitHub-API nicht erreichbar — installierte Version ${installed} bleibt" >&2
+        echo "${installed}"
+    else
+        bashio::log.warning "⚠️  ${name}: GitHub-API nicht erreichbar — installiere Fallback ${fallback}" >&2
+        echo "${fallback}"
+    fi
+}
+
 # ── Element Web ───────────────────────────────────────────────────────────
 bashio::log.info "🔍 Prüfe Element Web Version..."
 EW_LATEST=$(curl -sf \
     "https://api.github.com/repos/element-hq/element-web/releases/latest" \
     | jq -r .tag_name 2>/dev/null)
-[ -z "${EW_LATEST}" ] || [ "${EW_LATEST}" = "null" ] && EW_LATEST="v1.11.85"
 EW_INSTALLED=$(cat "${EW_VERSION_FILE}" 2>/dev/null || echo "")
+EW_LATEST=$(pick_version "${EW_LATEST}" "${EW_INSTALLED}" "v1.11.85" "Element Web")
 
 if [ "${EW_INSTALLED}" != "${EW_LATEST}" ]; then
     bashio::log.info "📥 Lade Element Web ${EW_LATEST} (installiert: ${EW_INSTALLED:-keine})..."
@@ -59,8 +77,8 @@ if [ "${ENABLE_ADMIN}" = "true" ]; then
     ADMIN_LATEST=$(curl -sf \
         "https://api.github.com/repos/etkecc/ketesa/releases/latest" \
         | jq -r .tag_name 2>/dev/null)
-    [ -z "${ADMIN_LATEST}" ] || [ "${ADMIN_LATEST}" = "null" ] && ADMIN_LATEST="v1.5.1"
     ADMIN_INSTALLED=$(cat "${ADMIN_VERSION_FILE}" 2>/dev/null || echo "")
+    ADMIN_LATEST=$(pick_version "${ADMIN_LATEST}" "${ADMIN_INSTALLED}" "v1.5.1" "Ketesa")
 
     if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
         bashio::log.info "📥 Lade Ketesa ${ADMIN_LATEST} (installiert: ${ADMIN_INSTALLED:-keine})..."
@@ -103,8 +121,8 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     EC_LATEST=$(curl -sf \
         "https://api.github.com/repos/element-hq/element-call/releases/latest" \
         | jq -r .tag_name 2>/dev/null)
-    [ -z "${EC_LATEST}" ] || [ "${EC_LATEST}" = "null" ] && EC_LATEST="v0.7.0"
     EC_INSTALLED=$(cat "${EC_VERSION_FILE}" 2>/dev/null || echo "")
+    EC_LATEST=$(pick_version "${EC_LATEST}" "${EC_INSTALLED}" "v0.7.0" "Element Call")
 
     if [ "${EC_INSTALLED}" != "${EC_LATEST}" ]; then
         bashio::log.info "📥 Lade Element Call ${EC_LATEST} (installiert: ${EC_INSTALLED:-keine})..."

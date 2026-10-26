@@ -6,7 +6,7 @@
 # alte Python-Codebase vollständig ersetzt. Laut go.mod ist Go 1.26+ Pflicht
 # (seit v0.2609.0) - daher hier ein neuerer Go-Builder als bei
 # WhatsApp/Signal (die kommen mit 1.23/1 aus).
-ARG TELEGRAM_VERSION=v0.2609.0
+ARG TELEGRAM_VERSION=v0.2610.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 

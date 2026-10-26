@@ -23,6 +23,24 @@ LK_VERSION_FILE="/data/matrix/.livekit-server_version"
 LKJWT_VERSION_FILE="/data/matrix/.lk-jwt-service_version"
 mkdir -p "${BIN_DIR}"
 
+# pick_version <api-tag> <installiert> <fallback> <name>
+# Gibt die Zielversion aus. Ist die GitHub-API nicht erreichbar (z. B. Rate-Limit
+# von 60 Abfragen/Stunde ohne Anmeldung), bleibt die installierte Version stehen.
+# Der feste Fallback gilt nur, wenn noch nichts installiert ist: sonst würde ein
+# API-Ausfall bei jedem Start auf diese alte Version zurückstufen.
+pick_version() {
+    local api="$1" installed="$2" fallback="$3" name="$4"
+    if [ -n "${api}" ] && [ "${api}" != "null" ]; then
+        echo "${api}"
+    elif [ -n "${installed}" ]; then
+        bashio::log.warning "⚠️  ${name}: GitHub-API nicht erreichbar — installierte Version ${installed} bleibt" >&2
+        echo "${installed}"
+    else
+        bashio::log.warning "⚠️  ${name}: GitHub-API nicht erreichbar — installiere Fallback ${fallback}" >&2
+        echo "${fallback}"
+    fi
+}
+
 if [ "$(uname -m)" = "aarch64" ]; then
     LK_ARCH="arm64"
 else
@@ -34,8 +52,8 @@ bashio::log.info "🔍 Prüfe Voice-Binaries (${LK_ARCH})..."
 LK_LATEST=$(curl -sf --max-time 10 \
     "https://api.github.com/repos/livekit/livekit/releases/latest" \
     | jq -r '.tag_name // empty' 2>/dev/null)
-[ -z "${LK_LATEST}" ] && LK_LATEST="v1.8.2"
 LK_INSTALLED=$(cat "${LK_VERSION_FILE}" 2>/dev/null || echo "")
+LK_LATEST=$(pick_version "${LK_LATEST}" "${LK_INSTALLED}" "v1.8.2" "LiveKit Server")
 
 if [ "${LK_INSTALLED}" = "${LK_LATEST}" ] && [ -x "${BIN_DIR}/livekit-server" ]; then
     bashio::log.info "✅ LiveKit Server bereits aktuell (${LK_INSTALLED})"
@@ -67,8 +85,8 @@ fi
 LKJWT_API_RESP=$(curl -sf --max-time 10 \
     "https://api.github.com/repos/element-hq/lk-jwt-service/releases/latest" 2>/dev/null)
 LKJWT_LATEST=$(echo "${LKJWT_API_RESP}" | jq -r '.tag_name // empty' 2>/dev/null)
-[ -z "${LKJWT_LATEST}" ] && LKJWT_LATEST="v0.1.0"
 LKJWT_INSTALLED=$(cat "${LKJWT_VERSION_FILE}" 2>/dev/null || echo "")
+LKJWT_LATEST=$(pick_version "${LKJWT_LATEST}" "${LKJWT_INSTALLED}" "v0.1.0" "lk-jwt-service")
 
 if [ "${LKJWT_INSTALLED}" = "${LKJWT_LATEST}" ] && [ -x "${BIN_DIR}/lk-jwt-service" ]; then
     bashio::log.info "✅ lk-jwt-service bereits aktuell (${LKJWT_INSTALLED})"

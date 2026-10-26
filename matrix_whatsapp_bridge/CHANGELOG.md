@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2609.0-ha2-pol4r1] - Postgres-Passwort und Config-Fehler
+
+- Postgres: Benutzer, Passwort und DB-Name werden in der DB-URI URL-kodiert.
+  Passwörter mit `@ : / ? # %` zerlegten die URI (falscher Host, Passwort abgeschnitten).
+- Optionswerte gehen per Umgebung (`strenv()`) an yq statt in den Ausdruck. Ein `"` im
+  Passwort machte den Ausdruck ungültig, und die Bridge lief still mit der alten Config weiter.
+- Schlägt das Schreiben der config.yaml fehl, bricht der Start jetzt mit einer Fehlermeldung ab.
+
 ## [26.7.0-ha1-pol4r1] - Initial Release
 
 - Erstveröffentlichung: mautrix-whatsapp v0.2607.0 als eigenständiges HA-Add-on

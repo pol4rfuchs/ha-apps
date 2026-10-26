@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2609.0-ha2-pol4r1] - Postgres-Passwort und Config-Fehler
+## [0.2610.0-ha2-pol4r1] - Postgres-Passwort und Config-Fehler
 
 - Postgres: Benutzer, Passwort und DB-Name werden in der DB-URI URL-kodiert.
   Passwörter mit `@ : / ? # %` zerlegten die URI (falscher Host, Passwort abgeschnitten).
