@@ -55,6 +55,10 @@
     "2026-10-24": {
       "count": 0,
       "uniques": 0
+    },
+    "2026-10-25": {
+      "count": 2,
+      "uniques": 1
     }
   },
   "downloads": {
@@ -63,21 +67,21 @@
     "intiface_central": 73,
     "matrix_auth_service": 104,
     "matrix_signal_bridge": 117,
-    "matrix_synapse": 556,
+    "matrix_synapse": 598,
     "matrix_telegram_bridge": 122,
     "matrix_whatsapp_bridge": 144,
-    "navidrome": 198,
-    "nextcloud": 217,
+    "navidrome": 215,
+    "nextcloud": 230,
     "nginx_proxy_manager": 35,
-    "ntfy": 568,
-    "ntfy_manager": 142,
+    "ntfy": 609,
+    "ntfy_manager": 163,
     "restic_backup": 56,
-    "searxng": 1234,
-    "teamspeak6": 382,
-    "ts6_manager": 244,
-    "unbound": 262,
+    "searxng": 1260,
+    "teamspeak6": 399,
+    "ts6_manager": 252,
+    "unbound": 279,
     "unifi_os_control_center": 127,
     "unifi_toolkit": 25,
-    "vaultwarden": 17
+    "vaultwarden": 30
   }
 }
