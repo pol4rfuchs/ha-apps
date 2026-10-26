@@ -1,5 +1,12 @@
 # Changelog
 
+## [33.0.25](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.24...nextcloud-v33.0.25) (2026-10-26)
+
+
+### Bug Fixes
+
+* **nextcloud:** run background jobs via cron and size Apache for a home server ([#679](https://github.com/pol4rfuchs/ha-apps/issues/679)) ([a06a38c](https://github.com/pol4rfuchs/ha-apps/commit/a06a38cf01b34bfb723337823d52f6aed87c6f2a))
+
 ## [33.0.24](https://github.com/pol4rfuchs/ha-apps/compare/nextcloud-v33.0.23...nextcloud-v33.0.24) (2026-10-22)
 
 
