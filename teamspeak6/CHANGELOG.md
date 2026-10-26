@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.25](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.24...teamspeak6-v1.1.25) (2026-10-26)
+
+
+### Bug Fixes
+
+* **teamspeak6:** exclude server logs from backups ([#645](https://github.com/pol4rfuchs/ha-apps/issues/645)) ([8c72530](https://github.com/pol4rfuchs/ha-apps/commit/8c72530356a494aa7df9cc0c85d8b4678b364cf3))
+
 ## [1.1.24](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.23...teamspeak6-v1.1.24) (2026-10-25)
 
 
