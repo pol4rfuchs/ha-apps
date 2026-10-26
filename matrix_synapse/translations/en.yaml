@@ -85,6 +85,9 @@ configuration:
   media_retention_remote_days:
     name: Media Retention — Remote (days)
     description: "Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default."
+  cache_max_memory_mb:
+    name: Cache Memory Limit (MB)
+    description: "Upper limit for Synapse's in-memory caches. Above it Synapse evicts cache entries instead of growing further. 512 suits a home server; raise it for many users or large federated rooms."
   backup_enabled:
     name: Enable Automatic PostgreSQL Backups
     description: "Periodically dump the Synapse database via pg_dump to /data/matrix/backups/ (consistent, unlike raw filesystem snapshots)."

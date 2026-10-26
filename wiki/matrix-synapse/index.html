@@ -566,6 +566,7 @@ enable_registration: false</code></pre>
             <tr><td><code>admin_ui_password</code></td><td>—</td><td>Basic-auth password for the admin UI. Leave empty to auto-generate on first start (stored in <code>/data/matrix/.admin_ui_auth</code>, never logged).</td></tr>
             <tr><td><code>media_retention_local_days</code></td><td><code>0</code></td><td>Auto-purge locally uploaded media older than this many days. 0 = keep forever.</td></tr>
             <tr><td><code>media_retention_remote_days</code></td><td><code>30</code></td><td>Auto-purge cached remote (federated) media older than this many days. 0 = keep forever.</td></tr>
+            <tr><td><code>cache_max_memory_mb</code></td><td><code>512</code></td><td>Upper limit for Synapse's in-memory caches (MB); above it cache entries are evicted instead of growing. Raise it for many users or large federated rooms.</td></tr>
             <tr><td><code>backup_enabled</code></td><td><code>true</code></td><td>Periodically dump the Synapse database with <code>pg_dump</code> to <code>/data/matrix/backups/</code> (consistent, unlike raw filesystem snapshots).</td></tr>
             <tr><td><code>backup_interval_hours</code></td><td><code>24</code></td><td>How often the <code>pg_dump</code> job runs.</td></tr>
             <tr><td><code>backup_retention_days</code></td><td><code>7</code></td><td>How many days of dumps to keep.</td></tr>
