@@ -59,29 +59,33 @@
     "2026-10-25": {
       "count": 2,
       "uniques": 1
+    },
+    "2026-10-26": {
+      "count": 2,
+      "uniques": 1
     }
   },
   "downloads": {
     "cortendesk": 28,
     "forgejo": 213,
-    "intiface_central": 73,
-    "matrix_auth_service": 104,
-    "matrix_signal_bridge": 130,
-    "matrix_synapse": 598,
-    "matrix_telegram_bridge": 122,
-    "matrix_whatsapp_bridge": 144,
-    "navidrome": 215,
-    "nextcloud": 230,
+    "intiface_central": 77,
+    "matrix_auth_service": 108,
+    "matrix_signal_bridge": 156,
+    "matrix_synapse": 631,
+    "matrix_telegram_bridge": 169,
+    "matrix_whatsapp_bridge": 174,
+    "navidrome": 227,
+    "nextcloud": 234,
     "nginx_proxy_manager": 35,
-    "ntfy": 613,
-    "ntfy_manager": 167,
+    "ntfy": 658,
+    "ntfy_manager": 171,
     "restic_backup": 56,
-    "searxng": 1260,
-    "teamspeak6": 412,
-    "ts6_manager": 252,
-    "unbound": 279,
-    "unifi_os_control_center": 127,
+    "searxng": 1337,
+    "teamspeak6": 448,
+    "ts6_manager": 272,
+    "unbound": 283,
+    "unifi_os_control_center": 148,
     "unifi_toolkit": 25,
-    "vaultwarden": 30
+    "vaultwarden": 34
   }
 }
