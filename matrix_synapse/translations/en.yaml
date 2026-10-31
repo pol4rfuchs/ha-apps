@@ -29,7 +29,7 @@ configuration:
     description: "Synapse log verbosity. WARNING recommended for normal operation."
   ntfy_url:
     name: ntfy URL (UnifiedPush)
-    description: "Optional: External URL of your ntfy server (e.g. https://ntfy.deine-domain.tld). Used at startup to verify the ntfy Matrix Push Gateway is reachable and to print setup instructions. Synapse itself does not need this URL — the UnifiedPush client (Element Android) registers the gateway with Synapse automatically."
+    description: "Optional: External URL of your ntfy server (e.g. https://ntfy.your-domain.tld). Used at startup to verify the ntfy Matrix Push Gateway is reachable and to print setup instructions. Synapse itself does not need this URL — the UnifiedPush client (Element Android) registers the gateway with Synapse automatically."
   enable_voice_calls:
     name: Enable Voice/Video Calls
     description: "Enable Element Call (MSC3401) with LiveKit SFU. Downloads LiveKit and lk-jwt-service on first start."
@@ -51,7 +51,7 @@ configuration:
       this option. Applied at the next add-on start.
   livekit_url:
     name: LiveKit URL
-    description: "External WSS URL for the LiveKit SFU (e.g. wss://livekit.deine-domain.tld)."
+    description: "External WSS URL for the LiveKit SFU (e.g. wss://livekit.your-domain.tld)."
   livekit_jwt_url:
     name: LiveKit JWT URL
     description: "External HTTPS URL for the lk-jwt-service token bridge."
@@ -109,3 +109,85 @@ configuration:
   registration_rate_limit_burst:
     name: Registration Rate Limit (burst)
     description: "Burst allowance for registration attempts before rate limiting kicks in."
+network:
+  7880/tcp:
+    name: "LiveKit SFU API port"
+    description: "LiveKit SFU API (NPM → here for WSS)."
+  8008/tcp:
+    name: "Synapse API port"
+    description: "Synapse Matrix API (NPM → here for HTTPS)."
+  3478/udp:
+    name: "TURN UDP port"
+    description: "TURN UDP — only active if livekit_turn_enabled=true (direct, no NPM)."
+  5349/tcp:
+    name: "TURN TLS port"
+    description: "TURN TLS fallback — only active if livekit_turn_enabled=true (direct, no NPM)."
+  30000/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30001/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30002/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30003/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30004/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30005/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30006/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30007/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30008/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30009/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30010/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30011/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30012/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30013/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30014/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30015/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30016/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30017/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30018/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30019/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30020/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  7881/tcp:
+    name: "LiveKit TCP fallback port"
+    description: "LiveKit WebRTC TCP fallback (internal)."
+  8089/tcp:
+    name: "lk-jwt-service port"
+    description: "lk-jwt-service token bridge (NPM → here)."
