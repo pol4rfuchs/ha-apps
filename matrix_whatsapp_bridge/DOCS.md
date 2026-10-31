@@ -2,45 +2,44 @@
 
 ## Secrets
 
-`as_token`/`hs_token` in `/data/registration.yaml` werden bei der Erstregistrierung
-automatisch generiert und dürfen danach **nicht** verändert werden — sonst verliert
-Synapse die Kopplung zur Appservice und alle bereits gebrückten Räume/User brechen.
+`as_token`/`hs_token` in `/data/registration.yaml` are generated automatically at the
+initial registration and **must not** be changed afterwards — otherwise Synapse loses the
+link to the appservice and all rooms/users that have already been bridged break.
 
-## Appservice-Registrierung (Shared Volume)
+## Appservice registration (shared volume)
 
-Diese Bridge schreibt ihre `registration.yaml` nach `/share/whatsapp_bridge_registration.yaml`.
-Das Matrix-Synapse-Add-on liest diese Datei nur ein, wenn dort die Option
-`whatsapp_bridge_enabled` aktiviert ist (Synapse-Neustart danach nötig).
+This bridge writes its `registration.yaml` to `/share/whatsapp_bridge_registration.yaml`.
+The Matrix Synapse add-on only reads this file if the option
+`whatsapp_bridge_enabled` is enabled there (a Synapse restart is needed afterwards).
 
-Ändert sich an dieser Bridge etwas, das die Appservice-Registrierung betrifft
-(`appservice_id`, Bot-Username, Namespaces), muss `/data/registration.yaml` gelöscht
-werden, damit sie beim nächsten Start neu generiert wird — Synapse muss danach ebenfalls
-neu gestartet werden.
+If anything changes on this bridge that affects the appservice registration
+(`appservice_id`, bot username, namespaces), `/data/registration.yaml` must be deleted
+so that it is regenerated on the next start — Synapse must be restarted afterwards as well.
 
 ## Backup
 
-- `/data` enthält `config.yaml`, `registration.yaml` und bei SQLite die komplette
-  Bridge-Datenbank (Session-State, Nachrichten-Mapping) — **muss** gesichert werden,
-  sonst muss WhatsApp nach einem Restore neu verknüpft werden.
-- `/share/whatsapp_bridge_registration.yaml` ist aus `/data/registration.yaml` reproduzierbar
-  (wird beim nächsten Start automatisch nachkopiert, falls fehlend) — nicht zwingend
-  Teil des Backups.
+- `/data` contains `config.yaml`, `registration.yaml` and, with SQLite, the complete
+  bridge database (session state, message mapping) — it **must** be backed up,
+  otherwise WhatsApp has to be linked again after a restore.
+- `/share/whatsapp_bridge_registration.yaml` can be reproduced from `/data/registration.yaml`
+  (it is copied again automatically on the next start if missing) — it is not strictly
+  part of the backup.
 
-## Datenbank-Wechsel (SQLite → Postgres)
+## Switching the database (SQLite → Postgres)
 
-Kein automatischer Migrationspfad. Wechsel des `db_type` nach dem ersten Start führt
-zu einer leeren Datenbank (alle Verknüpfungen/History gehen verloren) — vorher `login`-Status
-sauber trennen (`logout` im Bridge-Chat) und danach neu verknüpfen.
+There is no automatic migration path. Changing `db_type` after the first start results
+in an empty database (all links/history are lost) — cleanly disconnect the `login` state beforehand
+(`logout` in the bridge chat) and link again afterwards.
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die Bridge hat keine Weboberfläche und veröffentlicht keinen Host-Port. Der Appservice-Port `29318` ist nur im internen Netz von Home Assistant erreichbar, damit das Matrix-Synapse-Add-on die Bridge ansprechen kann (`appservice_address`). Die Kopplung ist durch `as_token`/`hs_token` in `/data/registration.yaml` geschützt; behandle `/data` und `/share/whatsapp_bridge_registration.yaml` wie ein Geheimnis.
+**Local (LAN):** The bridge has no web interface and publishes no host port. The appservice port `29318` is only reachable in Home Assistant's internal network, so that the Matrix Synapse add-on can reach the bridge (`appservice_address`). The link is protected by `as_token`/`hs_token` in `/data/registration.yaml`; treat `/data` and `/share/whatsapp_bridge_registration.yaml` like a secret.
 
-**Extern (Internet):** Empfehlung **nichts weiterleiten.** Die Bridge verbindet sich ausgehend zu WhatsApp; von außen muss nur Synapse erreichbar sein (siehe dessen Dokumentation), nie die Bridge selbst.
+**External (internet):** Recommendation: **forward nothing.** The bridge connects outbound to WhatsApp; only Synapse needs to be reachable from outside (see its documentation), never the bridge itself.
 
-## Bekannte Einschränkungen
+## Known limitations
 
-- Pro WhatsApp-Account wird eine eigene Bridge-Instanz benötigt (kein Multi-Account
-  innerhalb einer Bridge-Instanz vorgesehen).
-- Encryption (Megolm) muss auf beiden Seiten (Bridge-Option `encryption` + Matrix-Client)
-  aktiviert sein, um verschlüsselte Portal-Räume zu bekommen.
+- One bridge instance per WhatsApp account is needed (no multi-account
+  within a single bridge instance is intended).
+- Encryption (Megolm) must be enabled on both sides (bridge option `encryption` + Matrix client)
+  to get encrypted portal rooms.
