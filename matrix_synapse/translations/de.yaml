@@ -185,3 +185,9 @@ network:
   30020/udp:
     name: "LiveKit-Media-Port"
     description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  7881/tcp:
+    name: "LiveKit-TCP-Fallback-Port"
+    description: "LiveKit WebRTC TCP Fallback (intern)."
+  8089/tcp:
+    name: "lk-jwt-service-Port"
+    description: "lk-jwt-service Token Bridge (NPM → hier)."

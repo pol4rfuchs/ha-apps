@@ -63,9 +63,9 @@ ports_description:
   7080/tcp: Element Web Client
   7081/tcp: Element Call Voice/Video WebApp
   7880/tcp: LiveKit SFU API (NPM → here for WSS)
-  7881/tcp: LiveKit WebRTC TCP Fallback (intern)
+  7881/tcp: LiveKit WebRTC TCP fallback (internal)
   8008/tcp: Synapse Matrix API (NPM → here for HTTPS)
-  8089/tcp: lk-jwt-service Token Bridge (NPM → hier)
+  8089/tcp: lk-jwt-service token bridge (NPM → here)
   8448/tcp: Matrix Federation Port
   8090/tcp: Synapse Admin UI
   3478/udp: TURN UDP — only active if livekit_turn_enabled=true (direct, no NPM)
