@@ -27,7 +27,7 @@ LABEL \
 # The base is php:8.4-fpm-alpine (no bash, no bashio): jq reads /data/options.json.
 RUN apk add --no-cache jq
 
-# Wrapper-Entrypoint: options.json -> ENV, dann Upstream-/entrypoint.sh.
+# Wrapper entrypoint: options.json -> ENV, then the upstream /entrypoint.sh.
 COPY run.sh /run.sh
 RUN chmod 755 /run.sh
 

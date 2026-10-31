@@ -14,8 +14,8 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
   #include <abstractions/base>
 
   # --- Capabilities ---------------------------------------------------------
-  # supervisord (root) wechselt per setuid/setgid zu www-data; Entrypoint macht
-  # chown/chmod auf /data; nginx bindet Ports; supervisord signalisiert Kinder.
+  # supervisord (root) switches to www-data via setuid/setgid; the entrypoint does
+  # chown/chmod on /data; nginx binds ports; supervisord signals its children.
   capability chown,
   capability dac_override,
   capability dac_read_search,
@@ -25,8 +25,8 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
   capability setgid,
   capability setuid,
 
-  # --- Netzwerk -------------------------------------------------------------
-  # hbbs/hbbr: TCP + UDP (21116/udp); nginx/php-fpm: TCP und Unix-Sockets.
+  # --- Network -------------------------------------------------------------
+  # hbbs/hbbr: TCP + UDP (21116/udp); nginx/php-fpm: TCP and Unix sockets.
   network inet stream,
   network inet dgram,
   network inet6 stream,
@@ -36,7 +36,7 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
 
   signal (send,receive) peer=cortendesk,
 
-  # --- Ausfuehrbare Dateien -------------------------------------------------
+  # --- Executables -------------------------------------------------
   /run.sh                        ix,
   /entrypoint.sh                 ix,
   /bin/**                        ix,
@@ -46,19 +46,19 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
   /usr/local/bin/**              ix,
   /usr/local/sbin/**             ix,
 
-  # --- Bibliotheken / Laufzeit (PHP, Python fuer supervisord, nginx-Module) ---
+  # --- Libraries / runtime (PHP, Python for supervisord, nginx modules) ---
   /lib/**                        mr,
   /usr/lib/**                    mr,
   /usr/local/lib/**              mr,
   /usr/share/**                  r,
   /usr/local/include/**          r,
 
-  # --- Anwendung ------------------------------------------------------------
+  # --- Application ------------------------------------------------------------
   /app/**                        r,
   /app/storage/**                rwk,
   /app/bootstrap/cache/**        rwk,
 
-  # --- Persistente Daten (SQLite, Schluessel, hbbs-DB, Uploads) --------------
+  # --- Persistent data (SQLite, keys, hbbs DB, uploads) --------------
   /data/                         r,
   /data/**                       rwk,
 
@@ -68,7 +68,7 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
   /etc/supervisor.d/**           rw,
   /usr/local/etc/php/**          rw,
 
-  # --- Laufzeitverzeichnisse (PID-Dateien, Sockets, Logs, Temp) ---------------
+  # --- Runtime directories (PID files, sockets, logs, temp) ---------------
   /run/**                        rwk,
   /var/run/**                    rwk,
   /var/lib/nginx/**              rwk,
@@ -76,7 +76,7 @@ profile cortendesk flags=(attach_disconnected,mediate_deleted,complain) {
   /tmp/**                        rwk,
   /var/tmp/**                    rwk,
 
-  # --- System-Info, die PHP/nginx/Python lesen --------------------------------
+  # --- System info read by PHP/nginx/Python --------------------------------
   /proc/**                       r,
   /sys/fs/cgroup/**              r,
   /dev/null                      rw,
