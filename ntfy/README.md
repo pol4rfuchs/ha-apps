@@ -12,7 +12,7 @@
 [![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.35.0-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
 [![App Version](https://img.shields.io/badge/ntfy-v1.2.17-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Claude%20Code-C2410C?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=2D2D2D)](https://www.anthropic.com/claude-code)
 
 **Self-hosted Push Notifications für Home Assistant — direkt auf deinem HAOS, ohne fremde Push-Server, sauber per HTTP/API steuerbar.**
@@ -28,7 +28,7 @@
 
 [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
-> **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant add-on.  
+> **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant app.  
 > Not affiliated with or endorsed by the ntfy project or Binwiederhier.
 
 ---
@@ -74,7 +74,7 @@ http://homeassistant.local:4280
 <div align="center">
 
 ![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)
-![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)
+![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)
 ![Admin UI](https://img.shields.io/badge/Admin%20UI-ntfy__manager%20add--on-F39C12?style=for-the-badge)
 ![API](https://img.shields.io/badge/API-HTTP%20Publish-8E44AD?style=for-the-badge)
 
@@ -110,7 +110,7 @@ http://homeassistant.local:4280
 
 ## 🧭 Overview
 
-This repository contains a complete **Home Assistant Add-on** that runs a self-hosted [`ntfy`](https://github.com/binwiederhier/ntfy) server.
+This repository contains a complete **Home Assistant App** that runs a self-hosted [`ntfy`](https://github.com/binwiederhier/ntfy) server.
 
 | Property | Value |
 |---|---|
@@ -660,7 +660,7 @@ ha-apps/
 
 | File | Role |
 |---|---|
-| `repository.yaml` | Identifies the repository as a Home Assistant add-on repository |
+| `repository.yaml` | Identifies the repository as a Home Assistant app repository |
 | `ntfy/config.yaml` | Add-on metadata, ports, schema, options and UI settings |
 | `ntfy/build.yaml` | Build configuration per architecture |
 | `ntfy/Dockerfile` | Builds the ntfy add-on image |
@@ -808,7 +808,7 @@ Optional desktop companion:
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 
@@ -835,7 +835,7 @@ See also:
 
 Made with ❤️ for the Home Assistant and self-hosting community
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=flat-square&logo=ntfy&logoColor=white)](https://ntfy.sh)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
