@@ -1,109 +1,109 @@
 # CortenDesk
 
-Console (Geräte, Benutzer, Adressbücher, Gruppen) plus ID-Server und Relay in einer App.
-Der enthaltene Server ist der CortenDesk-Server-Fork (rustdesk-server 1.1.16 plus Fix für
-angemeldete Clients ab 1.4.1).
+Console (devices, users, address books, groups) plus ID server and relay in one app.
+The bundled server is the CortenDesk server fork (rustdesk-server 1.1.16 plus a fix for
+signed-in clients from 1.4.1).
 
-## Konfiguration
+## Configuration
 
-### Option: `app_url` (Pflicht)
+### Option: `app_url` (required)
 
-Öffentliche Adresse der App, wie deine Clients sie erreichen, inklusive Schema und
-Console-Port, z. B. `http://rd.example.com:21114`. Der Host-Teil wird den Clients als
-ID-Server (`<host>:21116`) und Relay (`<host>:21117`) mitgeteilt. Ohne erreichbaren Host
-hängen Sitzungen, die das Relay brauchen.
+Public address of the app as your clients reach it, including scheme and
+console port, e.g. `http://rd.example.com:21114`. The host part is announced to the clients as
+ID server (`<host>:21116`) and relay (`<host>:21117`). Without a reachable host,
+sessions that need the relay hang.
 
-### Optionen: `id_server` / `relay_server` (optional)
+### Options: `id_server` / `relay_server` (optional)
 
-Format `host:port`, z. B. `rd.example.com:21116` bzw. `rd.example.com:21117`. Leer = Host aus
-`app_url` mit den Ports 21116 bzw. 21117. Nötig, wenn Clients im LAN und von außen dieselbe
-Instanz nutzen: `hbbs` teilt **allen** Clients dieselbe Relay-Adresse mit. Steht dort eine
-LAN-IP, hängen Relay-Sitzungen von außen. Mit einem Hostnamen, der intern und extern auflöst
-(Split-DNS), funktioniert beides.
+Format `host:port`, e.g. `rd.example.com:21116` or `rd.example.com:21117`. Empty = host from
+`app_url` with ports 21116 or 21117. Needed if clients on the LAN and from outside use the same
+instance: `hbbs` announces the same relay address to **all** clients. If it is a
+LAN IP, relay sessions from outside hang. With a hostname that resolves both internally and externally
+(split DNS), both work.
 
-### Option: `admin_user` / `admin_password` (Pflicht)
+### Option: `admin_user` / `admin_password` (required)
 
-Erster Administrator. **Wirkt nur beim allerersten Start** (solange kein Benutzer existiert).
-Spätere Änderungen der Option ändern das Passwort nicht, das geschieht in der Console.
+First administrator. **Only takes effect on the very first start** (as long as no user exists).
+Later changes of the option do not change the password; that is done in the console.
 
 ### Option: `native_webclient`
 
-Aktiviert den Browser-Client. Standard: aus. Die WebSocket-Ports 21118/21119 werden nicht
-auf den Host gemappt: Sie lauschen im Container auf allen Adressen und sind deshalb nur im internen Docker-Netz erreichbar.
-Sprachanrufe im Browser-Client funktionieren nur über HTTPS (oder `localhost`), also über einen Reverse-Proxy mit TLS.
+Enables the browser client. Default: off. The WebSocket ports 21118/21119 are not mapped
+to the host: they listen on all addresses in the container and are therefore only reachable in the internal Docker network.
+Voice calls in the browser client only work over HTTPS (or `localhost`), i.e. through a reverse proxy with TLS.
 
 ### Option: `downloads_max_mb`
 
-Upload-Limit für Client-Installer unter System → Client Downloads. Standard: 512 MB (wie Upstream).
+Upload limit for client installers under System → Client Downloads. Default: 512 MB (as upstream).
 
 ### Option: `log_level`
 
-Steuert die Log-Verbosität von Console (Laravel) und ID-/Relay-Server (`RUST_LOG`).
-Werte: `DEBUG`, `INFO`, `WARNING`, `ERROR`. Default: `INFO`.
-Wird als `CORTENDESK_LOG_LEVEL` an Upstream gereicht, das daraus `LOG_LEVEL` und `RUST_LOG` ableitet.
+Controls the log verbosity of the console (Laravel) and of the ID/relay server (`RUST_LOG`).
+Values: `DEBUG`, `INFO`, `WARNING`, `ERROR`. Default: `INFO`.
+Passed on to upstream as `CORTENDESK_LOG_LEVEL`, which derives `LOG_LEVEL` and `RUST_LOG` from it.
 
 ## Ports
 
-| Port | Zweck |
+| Port | Purpose |
 |---|---|
-| 21114/tcp | Console (Container-Port 8080) |
-| 21115/tcp | hbbs NAT-Typ-Test |
-| 21116/tcp + udp | hbbs ID-Server |
-| 21117/tcp | hbbr Relay |
+| 21114/tcp | Console (container port 8080) |
+| 21115/tcp | hbbs NAT type test |
+| 21116/tcp + udp | hbbs ID server |
+| 21117/tcp | hbbr relay |
 
-Am Router nur 21115–21117/TCP und 21116/UDP freigeben. Die Console (21114) nur mit TLS
-(z. B. über einen Reverse-Proxy) und nur bei Bedarf von außen erreichbar machen.
+Only forward 21115–21117/TCP and 21116/UDP on the router. Make the console (21114) reachable from outside
+only with TLS (e.g. through a reverse proxy) and only if needed.
 
-In den RustDesk-Clients: ID-Server = `<host>`, Relay-Server = `<host>`, API-Server =
-`app_url`, Key = Public Key aus dem Log (`key …` in der Zeile `server …`) oder in der Console.
+In the RustDesk clients: ID server = `<host>`, relay server = `<host>`, API server =
+`app_url`, key = public key from the log (`key …` in the line `server …`) or in the console.
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die Console läuft direkt auf Port `21114` (`http://<ha-host>:21114`), nicht über Ingress. Sie hat eine eigene
-Anmeldung (Administrator aus `admin_user` und `admin_password`); die App startet erst, wenn `app_url` und `admin_password`
-gesetzt sind (sonst beendet sich die App mit einer Meldung im Log). RustDesk-Clients im LAN sprechen direkt mit ID-Server (`21115/21116`) und Relay (`21117`).
+**Local (LAN):** The console runs directly on port `21114` (`http://<ha-host>:21114`), not via ingress. It has its own
+login (administrator from `admin_user` and `admin_password`); the app only starts once `app_url` and `admin_password`
+are set (otherwise the app exits with a message in the log). RustDesk clients on the LAN talk directly to the ID server (`21115/21116`) and the relay (`21117`).
 
-**Extern (Internet):** Empfehlung **eingeschränkt ok.** Für Clients von außen genügt die Freigabe von `21115–21117/TCP` und
-`21116/UDP` am Router (siehe Ports); ID-Server und Relay sind dafür gedacht, die Clients prüfen den Server-Schlüssel. Die
-**Console (`21114`) nicht direkt ins Internet stellen**, nur hinter einem Reverse-Proxy mit TLS oder per VPN. Die
-WebSocket-Ports `21118/21119` nie freigeben: `hbbs`/`hbbr` vertrauen dort ungeprüften `X-Forwarded-For`-Headern, deshalb sind
-sie nicht auf den Host gemappt. Andere Apps im internen Docker-Netz von Home Assistant können sie erreichen; mit
-`host_network: true` wären sie im ganzen LAN offen.
+**External (internet):** Recommendation: **OK with restrictions.** For clients from outside it is enough to forward `21115–21117/TCP` and
+`21116/UDP` on the router (see Ports); the ID server and relay are meant for that, and the clients check the server key. Do **not put the
+console (`21114`) directly on the internet**, only behind a reverse proxy with TLS or via VPN. Never expose the
+WebSocket ports `21118/21119`: `hbbs`/`hbbr` trust unchecked `X-Forwarded-For` headers there, which is why
+they are not mapped to the host. Other apps in Home Assistant's internal Docker network can reach them; with
+`host_network: true` they would be open on the whole LAN.
 
-## Datenschutz und ausgehende Verbindungen
+## Privacy and outgoing connections
 
-Die App ruft von sich aus nichts im Internet ab: Der Update-Check bei GitHub ist abgeschaltet
-(`CORTENDESK_UPDATE_CHECK=false`), die Weboberfläche lädt keine externen Skripte, Schriften oder Tracker (geprüft mit
-Upstream 1.14.0: Login-Seite und Dashboard, im Leerlauf keine Verbindung nach außen). Nur wenn du es in der Console
-einrichtest, verbindet sich CortenDesk mit externen Diensten (Apprise-Benachrichtigungen, SMTP, FTP/FTPS- oder
-S3-Backupkopien, OIDC-Anmeldung). Der Menüpunkt „Build Installers“ ist ein Link auf den Drittdienst `rdgen.crayoneater.org`
-und wird erst beim Klick geöffnet.
+The app does not fetch anything from the internet on its own: the update check against GitHub is switched off
+(`CORTENDESK_UPDATE_CHECK=false`), the web interface loads no external scripts, fonts or trackers (checked with
+upstream 1.14.0: login page and dashboard, no outbound connection when idle). Only if you set it up in the console
+does CortenDesk connect to external services (Apprise notifications, SMTP, FTP/FTPS or
+S3 backup copies, OIDC login). The menu item "Build Installers" is a link to the third-party service `rdgen.crayoneater.org`
+and is only opened on click.
 
-## Daten und Backup
+## Data and backup
 
-Alles liegt in `/data` (SQLite-Datenbank, Server-Schlüsselpaar, App-Key, Uploads) und ist im
-App-Backup enthalten. Backup-Modus ist `cold` (App wird kurz gestoppt, damit die SQLite-Dateien
-konsistent sind). **Das Schlüsselpaar nicht verlieren:** ohne `/data/rustdesk/id_ed25519` müssen alle Clients
-neu eingerichtet werden. Ab Upstream 1.13.0 legt die Console zusätzlich eigene Backups unter `/data/backups` ab
-(täglich 03:30). Sie enthalten den App-Schlüssel und alle Geheimnisse, liegen damit auch im Home-Assistant-Backup und
-sind wie Passwörter zu behandeln.
+Everything lives in `/data` (SQLite database, server key pair, app key, uploads) and is included in the
+app backup. The backup mode is `cold` (the app is stopped briefly so the SQLite files
+are consistent). **Do not lose the key pair:** without `/data/rustdesk/id_ed25519` all clients have to
+be set up again. Since upstream 1.13.0 the console additionally stores its own backups under `/data/backups`
+(daily at 03:30). They contain the app key and all secrets, are therefore also part of the Home Assistant backup and
+must be treated like passwords.
 
-## Bekannte Einschränkungen
+## Known limitations
 
-- **AppArmor ist aus (`apparmor: false`):** Das Image läuft nicht unter s6, sondern `supervisord` (root)
-  mit `php-fpm`, `nginx`, `hbbs`, `hbbr`. Das mitgelieferte Profil `apparmor.txt` ist ein ungetesteter Entwurf im
-  Complain-Modus (protokolliert nur, blockiert nichts) und wird mit `apparmor: false` nicht geladen. Für einen Test
-  am eigenen System in einer lokalen Kopie der App `apparmor: true` setzen, das Log auswerten und erst danach `complain`
-  aus den `flags` entfernen.
-- **Meldung beim Start:** `nginx` kann beim Start kurz `connect() failed … /api/server/policy` loggen, weil
-  `hbbs` die Console abfragt, bevor `php-fpm` bereit ist. Das ist harmlos und verschwindet nach wenigen Sekunden.
-- **Update-Check abgeschaltet:** Die App setzt `CORTENDESK_UPDATE_CHECK=false` (Upstream ab 1.11.0),
-  die Console fragt GitHub nicht mehr ab und zeigt kein Update-Badge. Updates kommen über die App-Version.
-- **Datenbank-Pfad:** SQLite liegt in `/data/db/cortendesk.sqlite` (nicht `/data`), weil `/data`
-  in HA root gehört und php-fpm als `www-data` läuft.
-- **Bridge-Modus ungetestet für UDP:** Ob hbbs bei gemappten Ports die echte Client-IP sieht,
-  ist offen. Zeigt das Log Adressen aus 172.30.x.x, scheitert P2P und alles läuft über das Relay.
-  Dann auf `host_network: true` wechseln (siehe unten).
-- **SQLite:** Für wenige Geräte ausreichend. MariaDB-Anbindung ist nicht umgesetzt.
-- **Host-Netz:** Mit `host_network: true` lauscht nginx fest auf Port 8080 (Kollision mit
-  anderen Apps möglich) und 21118/21119 sind im LAN erreichbar.
+- **AppArmor is off (`apparmor: false`):** The image does not run under s6 but `supervisord` (root)
+  with `php-fpm`, `nginx`, `hbbs`, `hbbr`. The bundled profile `apparmor.txt` is an untested draft in
+  complain mode (only logs, blocks nothing) and is not loaded with `apparmor: false`. To test it
+  on your own system, set `apparmor: true` in a local copy of the app, evaluate the log and only then remove `complain`
+  from the `flags`.
+- **Message at startup:** `nginx` may briefly log `connect() failed … /api/server/policy` at startup, because
+  `hbbs` queries the console before `php-fpm` is ready. This is harmless and disappears after a few seconds.
+- **Update check switched off:** The app sets `CORTENDESK_UPDATE_CHECK=false` (upstream from 1.11.0),
+  the console no longer queries GitHub and shows no update badge. Updates come through the app version.
+- **Database path:** SQLite lives in `/data/db/cortendesk.sqlite` (not `/data`), because `/data`
+  belongs to root in HA and php-fpm runs as `www-data`.
+- **Bridge mode untested for UDP:** Whether hbbs sees the real client IP with mapped ports
+  is open. If the log shows addresses from 172.30.x.x, P2P fails and everything goes through the relay.
+  Then switch to `host_network: true` (see below).
+- **SQLite:** Sufficient for a few devices. A MariaDB connection is not implemented.
+- **Host network:** With `host_network: true` nginx listens on port 8080 only (possible collision with
+  other apps) and 21118/21119 are reachable on the LAN.
