@@ -1,24 +1,24 @@
 #!/usr/bin/with-contenv bashio
-# S6 Service: mautrix-signal Bridge
+# S6 service: mautrix-signal bridge
 
 CONFIG_PATH="/data/config.yaml"
 REG_PATH="/data/registration.yaml"
 
-# ── Warten bis cont-init config.yaml geschrieben hat ──────────────────────
-# (S6 und cont-init laufen parallel — ohne Wait startet die Bridge zu früh)
+# ── Wait until cont-init has written config.yaml ──────────────────────
+# (S6 and cont-init run in parallel — without the wait the bridge starts too early)
 WAIT=0
 while [ ! -f "${CONFIG_PATH}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "Warte auf config.yaml..."
+        bashio::log.info "Waiting for config.yaml..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 60 ]; then
-        bashio::log.error "Timeout: config.yaml wurde nicht erstellt!"
+        bashio::log.error "Timeout: config.yaml was not created!"
         exit 1
     fi
 done
 
-bashio::log.info "Starte mautrix-signal..."
+bashio::log.info "Starting mautrix-signal..."
 exec mautrix-signal -c "${CONFIG_PATH}" -r "${REG_PATH}" \
     2>&1
