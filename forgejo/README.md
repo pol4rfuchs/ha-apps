@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/forgejo/logo.png" alt="Forgejo Logo" width="500">
 
-# 🦊 Forgejo — Home Assistant Add-on
+# 🦊 Forgejo — Home Assistant App
 
 </div>
 
@@ -10,7 +10,7 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Forgejo Version](https://img.shields.io/badge/Forgejo-17.0.0-609926?style=for-the-badge&logo=forgejo&logoColor=white)](https://codeberg.org/forgejo/forgejo)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Forgejo v16** – Die freie, selbst-gehostete Git-Plattform direkt in Home Assistant.
 
