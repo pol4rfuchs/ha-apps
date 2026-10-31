@@ -15,7 +15,7 @@
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![AI Assisted](https://img.shields.io/badge/AI%20Assisted-Claude%20Code-C2410C?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=2D2D2D)](https://www.anthropic.com/claude-code)
 
-**Self-hosted Push Notifications für Home Assistant — direkt auf deinem HAOS, ohne fremde Push-Server, sauber per HTTP/API steuerbar.**
+**Self-hosted push notifications for Home Assistant — directly on your HAOS, without third-party push servers, cleanly controllable via HTTP/API.**
 
 </div>
 
@@ -78,7 +78,7 @@ http://homeassistant.local:4280
 ![Admin UI](https://img.shields.io/badge/Admin%20UI-ntfy__manager%20add--on-F39C12?style=for-the-badge)
 ![API](https://img.shields.io/badge/API-HTTP%20Publish-8E44AD?style=for-the-badge)
 
-**Kurz gesagt: ntfy ist dein eigener Push-Server für Home Assistant — schnell, lokal kontrollierbar und ideal für Automationen, Alerts und Systemmeldungen.**
+**In short: ntfy is your own push server for Home Assistant — fast, locally controllable and ideal for automations, alerts and system messages.**
 
 </div>
 
@@ -125,7 +125,7 @@ This repository contains a complete **Home Assistant App** that runs a self-host
 | **Architectures** | `amd64`, `aarch64` |
 
 > ℹ️ ntfy is simple by design: publish a message via HTTP, receive it on your phone, desktop or browser.  
-> Für Home Assistant ist das perfekt für Systemmeldungen, Alarmierungen, Status-Infos und eigene Automationen.
+> For Home Assistant this is perfect for system messages, alerts, status information and your own automations.
 
 ---
 

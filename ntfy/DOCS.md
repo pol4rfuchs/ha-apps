@@ -223,49 +223,49 @@ Set `behind_proxy: true` and `base_url: "https://ntfy.your-domain.com"`.
 
 ## UnifiedPush (Android Push via Element / FluffyChat)
 
-ntfy kann als **UnifiedPush Distributor** und als **Matrix Push Gateway** dienen — damit erhalten Android-Clients wie Element oder FluffyChat Push-Nachrichten über deinen eigenen Server, ohne Google FCM.
+ntfy can act as a **UnifiedPush distributor** and as a **Matrix push gateway** — this lets Android clients like Element or FluffyChat receive push notifications through your own server, without Google FCM.
 
-### Voraussetzungen
+### Requirements
 
-**`base_url` muss gesetzt sein.** Ohne `base_url` ist der Matrix Push Gateway Endpoint (`/_matrix/push/v1/notify`) nicht aktiv. Im Log erscheint dann beim Start eine deutliche Warnung.
+**`base_url` must be set.** Without `base_url` the Matrix push gateway endpoint (`/_matrix/push/v1/notify`) is not active. A clear warning appears in the log at startup.
 
-### Wie es funktioniert
+### How it works
 
 ```
 Element Android
-  → wählt ntfy als UnifiedPush Distributor
-  → registriert sich bei deinem ntfy-Server (Topic wird automatisch erstellt)
-  → trägt als Pusher bei Synapse ein:
-      Push Gateway URL: https://ntfy.deine-domain.tld/_matrix/push/v1/notify
+  → selects ntfy as the UnifiedPush distributor
+  → registers with your ntfy server (the topic is created automatically)
+  → registers as a pusher with Synapse:
+      Push gateway URL: https://ntfy.your-domain.tld/_matrix/push/v1/notify
 
 Synapse
-  → sendet Nachrichten-Pushes an den ntfy Gateway
-  → ntfy liefert die Nachricht an dein Gerät
+  → sends message pushes to the ntfy gateway
+  → ntfy delivers the message to your device
 
-Kein Google, kein Firebase, kein externer Dienst.
+No Google, no Firebase, no external service.
 ```
 
-### Einrichtung Schritt für Schritt
+### Step-by-step setup
 
-**1. ntfy Add-on:** `base_url` auf deine externe ntfy-URL setzen, Addon neu starten. Log zeigt:
+**1. ntfy add-on:** set `base_url` to your external ntfy URL and restart the add-on. The log shows:
 ```
-UnifiedPush / Matrix Push Gateway aktiv:
-  https://ntfy.deine-domain.tld/_matrix/push/v1/notify
+UnifiedPush / Matrix Push Gateway active:
+  https://ntfy.your-domain.tld/_matrix/push/v1/notify
 ```
 
-**2. ntfy App auf Android:** F-Droid Version installieren (die Play Store Version hat kein UnifiedPush). Server in den App-Einstellungen auf deine `base_url` setzen. Die App läuft danach als UnifiedPush Distributor im Hintergrund.
+**2. ntfy app on Android:** install the F-Droid version (the Play Store version has no UnifiedPush). Set the server in the app settings to your `base_url`. The app then runs in the background as the UnifiedPush distributor.
 
-**3. Element Android:** Einstellungen → Benachrichtigungen → ntfy als Distributor auswählen. Element registriert sich automatisch bei Synapse. Kein manueller Eingriff in Synapse nötig.
+**3. Element Android:** Settings → Notifications → select ntfy as the distributor. Element registers with Synapse automatically. No manual changes in Synapse are needed.
 
-**4. Prüfen:** Gateway erreichbar?
+**4. Check:** is the gateway reachable?
 ```bash
-curl -X POST https://ntfy.deine-domain.tld/_matrix/push/v1/notify
-# Erwartete Antwort: 400 Bad Request (kein JSON) — Gateway ist aktiv
+curl -X POST https://ntfy.your-domain.tld/_matrix/push/v1/notify
+# Expected response: 400 Bad Request (no JSON) — the gateway is active
 ```
 
-### Auth-Hinweis
+### Auth note
 
-Der Endpoint `/_matrix/push/v1/notify` ist von der normalen ACL ausgenommen und immer öffentlich — auch wenn `auth_default_access: deny-all` gesetzt ist. Synapse muss den Endpoint ohne Credentials erreichen können.
+The endpoint `/_matrix/push/v1/notify` is exempt from the normal ACL and always public — even if `auth_default_access: deny-all` is set. Synapse must be able to reach the endpoint without credentials.
 
 ---
 
