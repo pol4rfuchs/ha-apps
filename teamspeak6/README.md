@@ -22,7 +22,7 @@
 | **Voice port** | `9987/udp` |
 | **File transfer** | `30033/tcp` |
 | **ServerQuery** | `10011/tcp` (raw), `10022/tcp` (SSH), `10080/tcp` (HTTP) |
-| **Data** | `/data/teamspeak6` (included in Home Assistant backups) |
+| **Data** | `/data/teamspeak6` (included in Home Assistant backups, except the log files in logs/) |
 
 ---
 
@@ -99,7 +99,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0
 │   ├── query_ip_allowlist.txt
 │   ├── query_ip_denylist.txt
 │   └── files/
-├── logs/               ← server logs (cleared on every start, not in backups)
+├── logs/               ← server logs (cleared on every start, log files not in backups)
 └── .token_was_shown    ← marker: the token was already printed
 ```
 

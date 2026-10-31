@@ -736,7 +736,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       <div class="doc-content">
 
 <h2>Persistent Data Path</h2>
-<p>All data lives under <code>/data/teamspeak6</code>, which is included in Home Assistant backups.</p>
+<p>All data lives under <code>/data/teamspeak6</code>, which is included in Home Assistant backups, except the log files in <code>logs/</code>.</p>
 <pre><code>/data/teamspeak6/
 ├── server/             # persistent copy of the server data
 │   ├── tsserver.sqlitedb
@@ -744,7 +744,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 │   ├── query_ip_allowlist.txt
 │   ├── query_ip_denylist.txt
 │   └── files/
-├── logs/               # server logs (cleared on every start)
+├── logs/               # server logs (cleared on every start, log files not in backups)
 └── .token_was_shown    # marker: the token was already printed</code></pre>
 <p>TeamSpeak works on a copy in <code>/var/tsserver</code> inside the container. The add-on restores that copy from <code>/data/teamspeak6/server</code> on start and writes it back <strong>every 5 minutes</strong> (a consistent copy of the running database) and when the add-on stops cleanly. After a crash or power loss you lose at most the last 5 minutes.</p>
 <h2>What Is Critical?</h2>
