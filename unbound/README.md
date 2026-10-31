@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/unbound/logo.png" alt="Unbound DNS Resolver Logo" width="500">
 
-# 🛡️ Unbound DNS Resolver — Home Assistant Add-on
+# 🛡️ Unbound DNS Resolver — Home Assistant App
 
 </div>
 
@@ -10,9 +10,9 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Unbound Version](https://img.shields.io/badge/Unbound-1.26.2-2C3E50?style=for-the-badge&logoColor=white)](https://nlnetlabs.nl/projects/unbound/about/)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-**A self-managed Home Assistant add-on providing a recursive DNS resolver using [Unbound](https://nlnetlabs.nl/projects/unbound/about/). Fully configured through the built-in web UI — no YAML editing required.**
+**A self-managed Home Assistant app providing a recursive DNS resolver using [Unbound](https://nlnetlabs.nl/projects/unbound/about/). Fully configured through the built-in web UI — no YAML editing required.**
 
 </div>
 
@@ -64,7 +64,7 @@
 
 ## Installation
 
-1. Add this repository to your Home Assistant add-on store:
+1. Add this repository to your Home Assistant app store:
 
    [![Add repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/pol4rfuchs/ha-apps)
 
