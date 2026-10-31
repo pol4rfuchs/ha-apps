@@ -36,3 +36,10 @@ configuration:
   ha_discovery_prefix:
     name: HA-Discovery-Präfix
     description: "MQTT-Discovery-Präfix. Muss mit dem in der HA-MQTT-Integration konfigurierten Präfix übereinstimmen. Standard: homeassistant."
+network:
+  8199/tcp:
+    name: "WebGUI-Port"
+    description: "Intiface-WebGUI."
+  12345/tcp:
+    name: "Buttplug-WebSocket-Port"
+    description: "Buttplug-WebSocket für externe Clients."
