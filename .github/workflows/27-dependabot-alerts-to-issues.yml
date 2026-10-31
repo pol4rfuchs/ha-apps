@@ -1,15 +1,15 @@
-name: "27 - Dependabot Alerts zu Issues"
+name: "27 - Dependabot Alerts to Issues"
 
-# Dependabot selbst öffnet für offene Security-Alerts keine Issues - die landen nur
-# im Security-Tab. Dieser Workflow spiegelt offene Alerts als Issues, ordnet sie über
-# den Manifest-Pfad automatisch dem betroffenen Add-on zu (addons.json als Quelle,
-# 17 Apps im Monorepo) und dedupliziert über die Alert-Nummer, damit nichts doppelt
-# aufploppt. Ist ein Alert nicht mehr offen (gefixt/dismissed), wird das Issue
-# automatisch mit Kommentar geschlossen.
+# Dependabot itself does not open issues for open security alerts - they only show up
+# in the Security tab. This workflow mirrors open alerts as issues, assigns them
+# automatically to the affected add-on via the manifest path (addons.json as the source,
+# 17 apps in the monorepo) and deduplicates by the alert number so nothing shows up
+# twice. If an alert is no longer open (fixed/dismissed), the issue is closed
+# automatically with a comment.
 #
-# Voraussetzung (einmalig, kein Datei-Config): Settings -> Code security ->
-# "Dependency graph" + "Dependabot alerts" müssen aktiv sein, sonst bleibt die
-# Alert-Liste leer und dieser Workflow hat nichts zu spiegeln.
+# Prerequisite (once, no file config): Settings -> Code security ->
+# "Dependency graph" + "Dependabot alerts" must be enabled, otherwise the
+# alert list stays empty and this workflow has nothing to mirror.
 
 # yamllint disable-line rule:truthy
 on:
@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   sync:
-    name: Alerts synchronisieren
+    name: Sync alerts
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -75,7 +75,7 @@ jobs:
 
             for (const alert of alerts) {
               stillOpenAlertNumbers.add(alert.number);
-              if (markerToIssue.has(alert.number)) continue; // Issue existiert schon
+              if (markerToIssue.has(alert.number)) continue; // issue already exists
 
               const manifestPath = alert.dependency?.manifest_path;
               const addonLabel = addonLabelFor(manifestPath);
@@ -84,10 +84,10 @@ jobs:
               const severity = alert.security_advisory?.severity ?? "unknown";
               const ghsaId = alert.security_advisory?.ghsa_id ?? "unknown";
               const summary = alert.security_advisory?.summary ?? "";
-              const vulnRange = alert.security_vulnerability?.vulnerable_version_range ?? "unbekannt";
-              const fixedIn = alert.security_vulnerability?.first_patched_version?.identifier ?? "noch kein Patch";
+              const vulnRange = alert.security_vulnerability?.vulnerable_version_range ?? "unknown";
+              const fixedIn = alert.security_vulnerability?.first_patched_version?.identifier ?? "no patch yet";
               const alertUrl = alert.html_url;
-              const scope = addonLabel ? manifestPath.split("/")[0] : "repo-weit / Tooling";
+              const scope = addonLabel ? manifestPath.split("/")[0] : "repo-wide / tooling";
 
               const labels = ["dependencies", "security", `severity/${severity}`];
               if (addonLabel) labels.push(addonLabel);
@@ -99,19 +99,19 @@ jobs:
                 labels,
                 body: [
                   `<!-- dependabot-alert:${alert.number} -->`,
-                  `**Paket:** \`${pkg}\` (${eco})`,
-                  `**Betroffener Bereich:** ${manifestPath ?? "unbekannt"}`,
-                  `**Schweregrad:** ${severity}`,
+                  `**Package:** \`${pkg}\` (${eco})`,
+                  `**Affected area:** ${manifestPath ?? "unknown"}`,
+                  `**Severity:** ${severity}`,
                   `**Advisory:** ${ghsaId}`,
                   "",
                   summary,
                   "",
-                  `**Verwundbarer Bereich:** ${vulnRange}`,
-                  `**Gefixt in:** ${fixedIn}`,
+                  `**Vulnerable range:** ${vulnRange}`,
+                  `**Fixed in:** ${fixedIn}`,
                   "",
-                  `[Alert im Security-Tab ansehen](${alertUrl})`,
+                  `[View the alert in the Security tab](${alertUrl})`,
                   "",
-                  "_Auto-erstellt von 27-dependabot-alerts-to-issues.yml_",
+                  "_Auto-created by 27-dependabot-alerts-to-issues.yml_",
                 ].join("\n"),
               });
             }
@@ -123,7 +123,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: "Der zugehörige Dependabot-Alert ist nicht mehr offen (gefixt oder dismissed) - schließe automatisch.",
+                body: "The related Dependabot alert is no longer open (fixed or dismissed) - closing automatically.",
               });
               await github.rest.issues.update({
                 owner: context.repo.owner,

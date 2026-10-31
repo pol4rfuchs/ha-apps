@@ -2,21 +2,21 @@ name: Cleanup old workflow runs
 
 on:
   schedule:
-    - cron: "0 3 * * 0"  # jeden Sonntag 03:00 UTC
+    - cron: "0 3 * * 0"  # every Sunday 03:00 UTC
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Nur simulieren, nichts löschen"
+        description: "Only simulate, delete nothing"
         default: "true"
         type: choice
         options:
           - "true"
           - "false"
       retain_days:
-        description: "Tage, die Runs behalten werden"
+        description: "Days to keep runs"
         default: "30"
       keep_minimum_runs:
-        description: "Mindestanzahl Runs pro Workflow"
+        description: "Minimum number of runs per workflow"
         default: "10"
 
 jobs:
@@ -35,8 +35,8 @@ jobs:
           keep_minimum_runs: ${{ github.event.inputs.keep_minimum_runs || '10' }}
           delete_workflow_by_state_pattern: ALL
           delete_run_by_conclusion_pattern: ALL
-          # Beide Checks AUS: sonst bleiben alle Runs auf main (Branch existiert immer)
-          # und alle Runs von Renovate-/Release-Please-PRs dauerhaft erhalten.
+          # Both checks OFF: otherwise all runs on main (the branch always exists)
+          # and all runs of Renovate/Release Please PRs are kept permanently.
           check_pullrequest_exist: false
           check_branch_existence: false
           dry_run: ${{ github.event.inputs.dry_run || 'false' }}

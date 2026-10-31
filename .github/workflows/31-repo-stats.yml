@@ -7,7 +7,7 @@ name: 31 Repo Stats
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    # Täglich 23:50 deutscher Zeit; timezone folgt der Sommerzeit (sonst wäre cron UTC).
+    # Daily at 23:50 German time; timezone follows daylight saving time (otherwise cron would be UTC).
     - cron: "50 23 * * *"
       timezone: "Europe/Berlin"
   workflow_dispatch:
