@@ -310,7 +310,7 @@ html[data-theme="bento"] .card-link { display: none; }
   html[data-theme="bento"] .card[data-size] { grid-column: auto; grid-row: auto; }
 }
 
-/* bento: pages that share site.css but have their own layout (hwinfo-thermalguard) */
+/* bento: pages that share site.css but have their own layout */
 html[data-theme="bento"] .doc-sidebar,
 html[data-theme="bento"] .doc-main { background: var(--panel); backdrop-filter: none; box-shadow: var(--shadow); }
 html[data-theme="bento"] .doc-nav-link,
