@@ -12,7 +12,7 @@
 [![Forgejo Version](https://img.shields.io/badge/Forgejo-17.0.1-609926?style=for-the-badge&logo=forgejo&logoColor=white)](https://codeberg.org/forgejo/forgejo)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-**Forgejo v16** – Die freie, selbst-gehostete Git-Plattform direkt in Home Assistant.
+**Forgejo v16** – The free, self-hosted Git platform directly in Home Assistant.
 
 </div>
 
