@@ -71,6 +71,10 @@
     "2026-10-28": {
       "count": 1,
       "uniques": 1
+    },
+    "2026-10-29": {
+      "count": 23,
+      "uniques": 23
     }
   },
   "downloads": {
@@ -85,10 +89,10 @@
     "navidrome": 235,
     "nextcloud": 234,
     "nginx_proxy_manager": 35,
-    "ntfy": 670,
-    "ntfy_manager": 175,
-    "restic_backup": 56,
-    "searxng": 1349,
+    "ntfy": 678,
+    "ntfy_manager": 179,
+    "restic_backup": 80,
+    "searxng": 1353,
     "teamspeak6": 460,
     "ts6_manager": 272,
     "unbound": 283,
