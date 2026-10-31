@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/matrix_synapse/logo.png" alt="Matrix Server Logo" width="500">
 
-# 🔷 Matrix Server — Home Assistant Add-on
+# 🔷 Matrix Server — Home Assistant App
 
 </div>
 
@@ -10,9 +10,9 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.163.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-**Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) + Ketesa — as a single Home Assistant Add-on.**
+**Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) + Ketesa — as a single Home Assistant App.**
 
 </div>
 
@@ -268,7 +268,7 @@ https://federationtester.matrix.org/#example.org
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 
