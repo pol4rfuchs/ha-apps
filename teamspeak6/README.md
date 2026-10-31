@@ -6,7 +6,7 @@
 
 **TeamSpeak 6 voice server as a Home Assistant add-on, built on the official `teamspeaksystems/teamspeak6-server` image.**
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![TeamSpeak](https://img.shields.io/badge/TeamSpeak-6-blue?style=flat-square&logo=teamspeak&logoColor=white)](https://teamspeak.com)
 
 </div>
