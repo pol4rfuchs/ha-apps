@@ -2,20 +2,20 @@
 """
 smoke_supervisor.py
 -------------------
-Hilfsmittel für den Smoke-Test in .github/workflows/build-app.yaml.
+Helper for the smoke test in .github/workflows/build-app.yaml.
 
-  fixture <app> <dir>   schreibt <dir>/options.json: die `options:` aus
-                        <app>/config.yaml, Pflichtfelder ohne Wert gefüllt
-                        (Passwörter zufällig, nichts davon steht im Repo),
-                        plus SMOKE_OVERRIDES für Werte mit Bedeutung.
-  serve <options.json>  kleiner Ersatz für die Supervisor-API. bashio liest die
-                        Optionen nicht aus /data/options.json, sondern über
-                        http://supervisor/addons/self/options/config. Ohne
-                        diesen Ersatz endet fast jede App mit
+  fixture <app> <dir>   writes <dir>/options.json: the `options:` from
+                        <app>/config.yaml, required fields without a value
+                        filled in (random passwords, none of them are in the
+                        repo), plus SMOKE_OVERRIDES for values that matter.
+  serve <options.json>  small stand-in for the Supervisor API. bashio does not
+                        read the options from /data/options.json but via
+                        http://supervisor/addons/self/options/config. Without
+                        this stand-in almost every app ends with
                         "Could not resolve host: supervisor".
 
-Bewusste Grenzen: kein Ingress, keine Services (MQTT, MySQL), keine
-POST-Wirkung. Unbekannte Pfade antworten {"result": "ok", "data": {}}.
+Deliberate limits: no ingress, no services (MQTT, MySQL), no effect for
+POST requests. Unknown paths answer {"result": "ok", "data": {}}.
 """
 
 import argparse
@@ -27,23 +27,23 @@ import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-# Werte, die ein Platzhalter nicht erfüllt (Startprüfungen der Apps).
+# Values a placeholder does not satisfy (startup checks of the apps).
 SMOKE_OVERRIDES = {
-    # 10-matrix-init.sh bricht beim ersten Start mit Platzhalter-Domain ab.
+    # 10-matrix-init.sh aborts on first start with a placeholder domain.
     "matrix_synapse": {"server_name": "smoke.test"},
-    # run.sh beendet sich ohne akzeptierte Lizenz.
+    # run.sh exits without an accepted license.
     "teamspeak6": {"license_accepted": True},
-    # Standard ist mysql auf core-mariadb, das gibt es im Smoke-Test nicht.
+    # The default is mysql on core-mariadb, which does not exist in the smoke test.
     "nextcloud": {"db_type": "sqlite"},
     "forgejo": {"domain": "localhost"},
     "cortendesk": {"app_url": "http://localhost"},
-    # Schema str, landet aber als Zahl in der Bridge-Config.
+    # Schema is str, but it ends up as a number in the bridge config.
     "matrix_telegram_bridge": {"telegram_api_id": "12345"},
 }
 
 
 def dummy_for(schema_type: str):
-    """Platzhalter für ein Pflichtfeld anhand des Schema-Typs."""
+    """Placeholder for a required field, based on the schema type."""
     base = schema_type.split("(", 1)[0]
     if base == "password":
         return secrets.token_hex(16)
@@ -64,7 +64,7 @@ def dummy_for(schema_type: str):
 
 
 def build_options(app: str) -> dict:
-    import yaml  # nur hier gebraucht; serve läuft per sudo ohne pyyaml
+    import yaml  # only needed here; serve runs via sudo without pyyaml
 
     cfg = yaml.safe_load(Path(app, "config.yaml").read_text(encoding="utf-8")) or {}
     options = dict(cfg.get("options") or {})
@@ -116,8 +116,8 @@ def cmd_serve(args) -> None:
             "arch": "amd64",
             "hostname": "smoke",
         },
-        # Ein primäres Interface wie auf echter Hardware: matrix_synapse leitet
-        # daraus die LAN-IP ab (10-matrix-init.sh), sonst landet es im Fallback.
+        # A primary interface as on real hardware: matrix_synapse derives the
+        # LAN IP from it (10-matrix-init.sh), otherwise it ends up in the fallback.
         "/network/info": {
             "interfaces": [
                 {
@@ -150,9 +150,9 @@ def cmd_serve(args) -> None:
 
     server = ThreadingHTTPServer((args.bind, args.port), Handler)
     if args.daemon:
-        # Port ist gebunden, bevor der Elternprozess zurückkehrt. Der Kindprozess
-        # löst sich vom Terminal und schreibt nur ins Log, damit der CI-Schritt
-        # nicht auf seine offenen stdout/stderr wartet.
+        # The port is bound before the parent process returns. The child process
+        # detaches from the terminal and only writes to the log, so the CI step
+        # does not wait on its open stdout/stderr.
         if os.fork():
             return
         os.setsid()
@@ -177,8 +177,8 @@ def main() -> None:
     s.add_argument("--version", default="0.0.0")
     s.add_argument("--bind", default="0.0.0.0")
     s.add_argument("--port", type=int, default=80)
-    s.add_argument("--daemon", action="store_true", help="im Hintergrund laufen")
-    s.add_argument("--log", default="supervisor-mock.log", help="Log im --daemon-Modus")
+    s.add_argument("--daemon", action="store_true", help="run in the background")
+    s.add_argument("--log", default="supervisor-mock.log", help="log file in --daemon mode")
     s.set_defaults(func=cmd_serve)
     args = p.parse_args()
     args.func(args)
