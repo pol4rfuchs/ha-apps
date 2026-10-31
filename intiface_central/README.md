@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/intiface_central/icon.png" alt="Intiface Central Icon" width="256">
 
-# 🎛️ Intiface Central / Lovense Control — Home Assistant Add-on
+# 🎛️ Intiface Central / Lovense Control — Home Assistant App
 
 </div>
 
@@ -10,7 +10,7 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Intiface Engine](https://img.shields.io/badge/Intiface%20Engine-4.0.2-8E44AD?style=for-the-badge&logoColor=white)](https://github.com/intiface/intiface-engine)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Buttplug/Intiface Central with browser WebGUI, MQTT bridge and Home Assistant entity auto-discovery — no VNC, no X11.**
 
@@ -167,7 +167,7 @@ Vibration patterns are saved in your browser (localStorage), not on the server.
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 
