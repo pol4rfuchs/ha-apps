@@ -1,8 +1,8 @@
 ---
 name: Matrix Auth Service (MAS)
 description: >-
-  Matrix Authentication Service — next-gen OIDC-Auth für Matrix Synapse.
-  Voraussetzung für Element X QR-Code-Login, MFA und moderne Clients.
+  Matrix Authentication Service — next-gen OIDC auth for Matrix Synapse.
+  Prerequisite for Element X QR code login, MFA and modern clients.
 version: "1.0.6"
 slug: matrix_auth_service
 url: https://github.com/pol4rfuchs/ha-apps
@@ -16,8 +16,8 @@ ports:
   8082/tcp: 8082
   8083/tcp: 8083
 ports_description:
-  8082/tcp: MAS Public API + Account-UI (NPM → hier für HTTPS)
-  8083/tcp: MAS Internal (Health/Metrics, kein NPM)
+  8082/tcp: MAS public API + account UI (NPM → here for HTTPS)
+  8083/tcp: MAS internal (health/metrics, no NPM)
 options:
   mas_domain: account.example.org
   synapse_server_name: example.org
