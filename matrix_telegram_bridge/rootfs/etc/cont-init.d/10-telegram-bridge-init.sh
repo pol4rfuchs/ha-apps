@@ -1,13 +1,13 @@
 #!/usr/bin/with-contenv bashio
 # ==============================================================================
-# Telegram Bridge (mautrix) — Config-Init
-# Läuft einmalig vor dem Service-Start (legacy-cont-init), s6-rc.d/telegram-
-# bridge/run wartet auf das Ergebnis (config.yaml).
+# Telegram Bridge (mautrix) — config init
+# Runs once before the service starts (legacy-cont-init); s6-rc.d/telegram-
+# bridge/run waits for the result (config.yaml).
 # ==============================================================================
 set +e
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info "  Telegram Bridge (mautrix) — Initialisierung"
+bashio::log.info "  Telegram Bridge (mautrix) — Initialization"
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 LOG_LEVEL=$(bashio::config 'log_level')
@@ -29,10 +29,10 @@ SHARE_REG_PATH="/share/telegram_bridge_registration.yaml"
 
 mkdir -p "${DATA_DIR}"
 
-# ── DB-URI je nach gewähltem Backend zusammenbauen ────────────────────────
+# ── Build the DB URI depending on the selected backend ────────────────────────
 if [ "${DB_TYPE}" = "postgres" ]; then
-    # Benutzer, Passwort und DB-Name URL-kodieren: Zeichen wie @ : / ? # % im
-    # Passwort zerlegen sonst die URI (Host/DB falsch, Passwort abgeschnitten).
+    # URL-encode user, password and DB name: characters like @ : / ? # % in the
+    # password would otherwise break the URI (wrong host/DB, truncated password).
     PG_USER=$(jq -rn --arg v "$(bashio::config 'postgres_username')" '$v|@uri')
     PG_PASS=$(jq -rn --arg v "$(bashio::config 'postgres_password')" '$v|@uri')
     PG_DB=$(jq -rn --arg v "$(bashio::config 'postgres_database')" '$v|@uri')
@@ -43,23 +43,23 @@ else
     DB_TYPE_VAL="sqlite3-fk-wal"
 fi
 
-# ── config.yaml erzeugen (nur beim allerersten Start) ──────────────────────
-# "-e" schreibt die vollständige Beispiel-Config (network, bridge, database,
+# ── Generate config.yaml (only on the very first start) ──────────────────────
+# "-e" writes the complete example config (network, bridge, database,
 # homeserver, appservice, encryption, ...). pkg/connector/example-config.yaml
-# aus dem Quellbaum enthält nur den network-Teil und wird von der Bridge als
-# Legacy-Config abgelehnt.
+# from the source tree contains only the network part and is rejected by the
+# bridge as a legacy config.
 if [ ! -f "${CONFIG_PATH}" ]; then
-    bashio::log.info "Erzeuge config.yaml (mautrix-telegram -e)..."
+    bashio::log.info "Generating config.yaml (mautrix-telegram -e)..."
     if ! mautrix-telegram -c "${CONFIG_PATH}" -e; then
-        bashio::log.error "mautrix-telegram konnte keine Beispiel-Config erzeugen."
+        bashio::log.error "mautrix-telegram could not generate an example config."
         exit 1
     fi
 fi
 
-bashio::log.info "Schreibe Options in config.yaml..."
-# Werte per Umgebung + strenv() übergeben statt in den Ausdruck zu interpolieren:
-# ein " oder \ in Passwort/Hash/Domain machte den yq-Ausdruck sonst ungültig und
-# die Config blieb unbemerkt auf dem alten Stand.
+bashio::log.info "Writing options to config.yaml..."
+# Pass values via the environment + strenv() instead of interpolating them into
+# the expression: a " or \ in a password/hash/domain would otherwise make the
+# yq expression invalid and the config would silently stay at the old state.
 YQ_HOMESERVER_ADDRESS="${HOMESERVER_ADDRESS}" \
 YQ_HOMESERVER_DOMAIN="${HOMESERVER_DOMAIN}" \
 YQ_APPSERVICE_ADDRESS="${APPSERVICE_ADDRESS}" \
@@ -88,37 +88,37 @@ yq -i '
 ' "${CONFIG_PATH}"
 YQ_RC=$?
 if [ "${YQ_RC}" -ne 0 ]; then
-    bashio::log.error "config.yaml konnte nicht aktualisiert werden (yq rc=${YQ_RC}), Abbruch."
+    bashio::log.error "config.yaml could not be updated (yq rc=${YQ_RC}), aborting."
     exit 1
 fi
 
-# ── Appservice-Registrierung (nur beim allerersten Start, danach stabil) ──
-# WICHTIG: registration.yaml enthält as_token/hs_token — wird NICHT neu
-# generiert, sobald sie einmal existiert (sonst verliert Synapse die
-# Appservice-Kopplung bei jedem Neustart).
+# ── Appservice registration (only on the very first start, stable afterwards) ──
+# IMPORTANT: registration.yaml contains as_token/hs_token — it is NOT
+# regenerated once it exists (otherwise Synapse loses the appservice
+# link on every restart).
 if [ ! -f "${REG_PATH}" ]; then
-    bashio::log.info "Erste Registrierung — generiere registration.yaml..."
+    bashio::log.info "First registration — generating registration.yaml..."
     if ! mautrix-telegram -c "${CONFIG_PATH}" -r "${REG_PATH}" -g || [ ! -f "${REG_PATH}" ]; then
-        bashio::log.error "registration.yaml konnte nicht erzeugt werden (Config prüfen, siehe Ausgabe oben)."
+        bashio::log.error "registration.yaml could not be generated (check the config, see the output above)."
         exit 1
     fi
     if cp "${REG_PATH}" "${SHARE_REG_PATH}"; then
-        bashio::log.warning "registration.yaml nach ${SHARE_REG_PATH} kopiert!"
-        bashio::log.warning "→ Im Matrix-Synapse-Add-on 'telegram_bridge_enabled' aktivieren und Synapse neu starten."
+        bashio::log.warning "registration.yaml copied to ${SHARE_REG_PATH}!"
+        bashio::log.warning "→ Enable 'telegram_bridge_enabled' in the Matrix Synapse add-on and restart Synapse."
     else
-        bashio::log.error "registration.yaml konnte NICHT nach ${SHARE_REG_PATH} kopiert werden (siehe cp-Fehler oben)."
-        bashio::log.error "→ Synapse findet die Bridge so nicht. Ist /share eingebunden und beschreibbar? Beim nächsten Start wird erneut kopiert."
+        bashio::log.error "registration.yaml could NOT be copied to ${SHARE_REG_PATH} (see the cp error above)."
+        bashio::log.error "→ Synapse will not find the bridge this way. Is /share mounted and writable? It will be copied again on the next start."
     fi
 else
-    # Falls /share leer ist (z.B. nach Restore, wo /data erhalten blieb,
-    # /share aber nicht Teil des Backups war) erneut hinkopieren.
+    # If /share is empty (e.g. after a restore where /data was kept but
+    # /share was not part of the backup), copy it there again.
     if [ ! -f "${SHARE_REG_PATH}" ]; then
         if cp "${REG_PATH}" "${SHARE_REG_PATH}"; then
-            bashio::log.info "registration.yaml erneut nach /share kopiert (war dort nicht vorhanden)."
+            bashio::log.info "registration.yaml copied to /share again (it was not there)."
         else
-            bashio::log.error "registration.yaml konnte NICHT nach ${SHARE_REG_PATH} kopiert werden (siehe cp-Fehler oben). Ist /share eingebunden und beschreibbar?"
+            bashio::log.error "registration.yaml could NOT be copied to ${SHARE_REG_PATH} (see the cp error above). Is /share mounted and writable?"
         fi
     fi
 fi
 
-bashio::log.info "Init abgeschlossen."
+bashio::log.info "Init complete."
