@@ -1,447 +1,447 @@
 # Vaultwarden
 
-Vaultwarden ist eine in Rust geschriebene, Bitwarden-kompatible Server-Implementierung. Diese App packt das offizielle Upstream-Image (`ghcr.io/dani-garcia/vaultwarden`, Alpine-Variante) in eine Home-Assistant-App.
+Vaultwarden is a Bitwarden-compatible server implementation written in Rust. This app packages the official upstream image (`ghcr.io/dani-garcia/vaultwarden`, Alpine variant) as a Home Assistant app.
 
-## Voraussetzungen
+## Requirements
 
-- **HTTPS ist Pflicht.** Der Web Vault und alle Bitwarden-Clients funktionieren nur über HTTPS mit passender `domain`.
-- **Kein Ingress.** Der Web Vault lässt sich nicht unter einem Unterpfad betreiben; die App ist über Port `7277` direkt erreichbar.
-- Empfohlen: Reverse Proxy (z. B. Nginx Proxy Manager) vor der App, der HTTPS terminiert und die Domain (z. B. `vault.example.com`) auf `http://<HA-Host>:7277` weiterleitet. **WebSocket-Support im Proxy aktivieren.**
-- Alternativ: `ssl: true` – die App liefert HTTPS selbst aus `/ssl` aus (von Upstream nicht empfohlen).
+- **HTTPS is required.** The web vault and all Bitwarden clients only work over HTTPS with a matching `domain`.
+- **No ingress.** The web vault cannot be served under a subpath; the app is directly reachable on port `7277`.
+- Recommended: a reverse proxy (e.g. Nginx Proxy Manager) in front of the app that terminates HTTPS and forwards the domain (e.g. `vault.example.com`) to `http://<HA-Host>:7277`. **Enable WebSocket support in the proxy.**
+- Alternatively: `ssl: true` – the app serves HTTPS itself from `/ssl` (not recommended by upstream).
 
-## Erststart
+## First start
 
-1. `domain` auf die öffentliche HTTPS-URL setzen (z. B. `https://vault.example.com`).
-2. Admin-Token erzeugen (Argon2id-Hash, Klartext wird abgelehnt):
+1. Set `domain` to the public HTTPS URL (e.g. `https://vault.example.com`).
+2. Generate an admin token (Argon2id hash, plain text is rejected):
    ```
    docker run --rm -it ghcr.io/dani-garcia/vaultwarden:latest-alpine /vaultwarden hash
    ```
-   Den ausgegebenen `$argon2id$...`-String als `admin_token` eintragen. Leer = Admin-Panel deaktiviert.
-3. Für das erste Konto `signups_allowed` auf `true` stellen (Standard ist `false`) und die App starten.
-4. Im Web Vault die Konten anlegen.
-5. Danach `signups_allowed` wieder auf `false` stellen.
+   Enter the printed `$argon2id$...` string as `admin_token`. Empty = admin panel disabled.
+3. For the first account set `signups_allowed` to `true` (the default is `false`) and start the app.
+4. Create the accounts in the web vault.
+5. Afterwards set `signups_allowed` back to `false`.
 
-## Konfiguration
+## Configuration
 
-Alle Einstellungen sind App-Optionen. Leere optionale Felder (bei Zahlenfeldern `0`) werden nicht an Vaultwarden übergeben (Upstream-Default gilt). Secrets (Admin-Token, SMTP-Passwort, Push-Key, SSO-Secret, Yubico, Duo, HIBP) werden nicht als Umgebungsvariable, sondern über `*_FILE` aus einem tmpfs gelesen.
+All settings are app options. Empty optional fields (`0` for number fields) are not passed on to Vaultwarden (the upstream default applies). Secrets (admin token, SMTP password, push key, SSO secret, Yubico, Duo, HIBP) are not read as environment variables but via `*_FILE` from a tmpfs.
 
 ### `log_level`
 
-Verbosität der Logs. debug nur zur Fehlersuche verwenden.
+Verbosity of the log output. Use debug only for troubleshooting.
 
 Default: `info`
 
 ### `domain`
 
-Öffentliche HTTPS-URL, über die Clients Vaultwarden erreichen (DOMAIN). Nötig für Mail-Links, Anhänge, WebAuthn und SSO.
+Public HTTPS URL clients use to reach Vaultwarden (DOMAIN). Needed for e-mail links, attachments, WebAuthn and SSO.
 
 Default: –
 
 ### `ssl`
 
-HTTPS direkt aus der App ausliefern (Zertifikat und Key aus /ssl). Hinter einem Reverse Proxy nicht nötig.
+Serve HTTPS directly from the app using the certificate and key from /ssl. Not needed behind a reverse proxy.
 
 Default: `false`
 
 ### `certfile`
 
-Name der Zertifikatsdatei in /ssl (nur bei aktiviertem HTTPS).
+Certificate file name inside /ssl (only used when HTTPS is enabled).
 
 Default: `fullchain.pem`
 
 ### `keyfile`
 
-Name der Key-Datei in /ssl (nur bei aktiviertem HTTPS).
+Private key file name inside /ssl (only used when HTTPS is enabled).
 
 Default: `privkey.pem`
 
 ### `admin_token`
 
-Argon2id-PHC-Hash des Admin-Passworts. Leer = Admin-Panel aus. Klartext wird abgelehnt.
+Argon2id PHC hash of the admin password. Empty disables the admin panel. Plain text values are refused.
 
 Default: –
 
 ### `signups_allowed`
 
-Jeder mit Zugriff auf den Server darf sich registrieren. Standardmäßig aus; zum Anlegen der eigenen Konten kurz einschalten und danach wieder abschalten.
+Anyone who can reach the server may register. Off by default; switch it on briefly to create your own accounts and then turn it off again.
 
 Default: `false`
 
 ### `signups_verify`
 
-E-Mail-Verifikation für neue Konten verlangen (braucht SMTP).
+Require e-mail verification for new accounts (needs SMTP).
 
 Default: `false`
 
 ### `signups_domains_whitelist`
 
-Kommagetrennte E-Mail-Domains, die sich trotz deaktivierter Registrierung anmelden dürfen.
+Comma-separated e-mail domains that may register even if sign-ups are disabled.
 
 Default: –
 
 ### `invitations_allowed`
 
-Organisations-Admins dürfen Nutzer einladen, auch bei deaktivierter Registrierung.
+Allow organization admins to invite users, even if sign-ups are disabled.
 
 Default: `true`
 
 ### `org_creation_users`
 
-Leer oder all = alle, none = niemand, oder kommagetrennte E-Mail-Adressen.
+Empty or all = everyone, none = nobody, or a comma-separated list of e-mail addresses.
 
 Default: –
 
 ### `email_change_allowed`
 
-Nutzer dürfen ihre E-Mail-Adresse ändern.
+Allow users to change their e-mail address.
 
 Default: `true`
 
 ### `emergency_access_allowed`
 
-Nutzer dürfen einen Notfallzugriff auf ihr Konto einrichten.
+Allow users to set up emergency access to their account.
 
 Default: `true`
 
 ### `sends_allowed`
 
-Nutzer dürfen Sends anlegen.
+Allow users to create Bitwarden Sends.
 
 Default: `true`
 
 ### `password_hints_allowed`
 
-Nutzer dürfen Passwort-Hinweise setzen und abrufen.
+Allow users to set and request password hints.
 
 Default: `true`
 
 ### `show_password_hint`
 
-Hinweis ohne SMTP direkt auf der Seite zeigen. Für erreichbare Instanzen nicht empfohlen.
+Show hints directly on the web page when SMTP is not configured. Not recommended for reachable instances.
 
 Default: `false`
 
 ### `trash_auto_delete_days`
 
-Gelöschte Einträge nach so vielen Tagen endgültig löschen. 0 = nie.
+Permanently delete trashed items after this many days. 0 = never.
 
 Default: `0`
 
 ### `enable_websocket`
 
-Live-Sync-Benachrichtigungen für Web-, Desktop- und Browser-Clients.
+Live sync notifications for web, desktop and browser clients.
 
 Default: `true`
 
 ### `ip_header`
 
-Header, mit dem dein Reverse Proxy die Client-IP übergibt. none nutzt die Verbindungsadresse.
+Header your reverse proxy uses to pass the client IP. none uses the connection address.
 
 Default: `X-Real-IP`
 
 ### `ip_header_trusted_proxies`
 
-IPs oder CIDR-Bereiche, von denen der IP-Header akzeptiert wird. Leer = local (alle nicht-öffentlichen Adressen, Vaultwarden-Standard).
+IPs or CIDR ranges the IP header is accepted from. Empty = local (any non-public address, Vaultwarden default).
 
 Default: –
 
 ### `icon_service`
 
-internal lädt Favicons direkt von den Seiten, bitwarden leitet Clients auf den Icon-Dienst von Bitwarden um.
+internal fetches favicons from the sites themselves, bitwarden redirects clients to Bitwarden's icon service.
 
 Default: `internal`
 
 ### `disable_icon_download`
 
-Keine Favicon-Abrufe bei fremden Seiten (Datenschutz: sonst wäre sichtbar, welche Seiten im Tresor stehen). Bereits zwischengespeicherte Icons bleiben erhalten und laufen nicht ab. Auf `false` stellen, wenn Seiten-Icons angezeigt werden sollen.
+No favicon requests to third-party sites (privacy: otherwise it would be visible which sites are in the vault). Icons that are already cached are kept and do not expire. Set to `false` if site icons should be shown.
 
 Default: `true`
 
 ### `http_request_block_non_global_ips`
 
-Ausgehende Anfragen (Icons, Webhooks) an nicht-öffentliche Adressen verweigern.
+Refuse outgoing requests (icons, webhooks) to non-public addresses.
 
 Default: `true`
 
 ### `login_ratelimit_seconds`
 
-Durchschnittliche Sekunden zwischen Login-Anfragen je IP.
+Average seconds between login requests per IP.
 
 Default: `60`
 
 ### `login_ratelimit_max_burst`
 
-Erlaubter Burst an Login-Anfragen (Login und 2FA, mindestens 2).
+Allowed burst of login requests (login and 2FA, minimum 2).
 
 Default: `10`
 
 ### `admin_ratelimit_seconds`
 
-Durchschnittliche Sekunden zwischen Admin-Login-Anfragen je IP.
+Average seconds between admin login requests per IP.
 
 Default: `300`
 
 ### `admin_ratelimit_max_burst`
 
-Erlaubter Burst an Admin-Login-Anfragen.
+Allowed burst of admin login requests.
 
 Default: `3`
 
 ### `unauthenticated_ratelimit_seconds`
 
-Durchschnittliche Sekunden zwischen Anfragen an Endpunkte ohne Login (Hinweise, Recovery-Mails, Sends) je IP.
+Average seconds between requests to unauthenticated endpoints (hints, recovery mails, Sends) per IP.
 
 Default: `60`
 
 ### `unauthenticated_ratelimit_max_burst`
 
-Gemeinsames Burst-Budget für Endpunkte ohne Login.
+Shared burst budget for unauthenticated endpoints.
 
 Default: `50`
 
 ### `smtp_host`
 
-SMTP-Server für E-Mails (Einladungen, Verifikation, 2FA-Codes).
+SMTP server for e-mails (invitations, verification, 2FA codes).
 
 Default: –
 
 ### `smtp_port`
 
-0 = Standard des gewählten Modus (587, 465 oder 25).
+0 = default of the chosen security mode (587, 465 or 25).
 
 Default: `0`
 
 ### `smtp_security`
 
-starttls (587), force_tls (implizites TLS, 465) oder off (25).
+starttls (587), force_tls (implicit TLS, 465) or off (25).
 
 Default: `starttls`
 
 ### `smtp_from`
 
-Absenderadresse, zusammen mit dem SMTP-Server Pflicht.
+Sender address, required together with the SMTP host.
 
 Default: –
 
 ### `smtp_from_name`
 
-Anzeigename des Absenders. Leer = Vaultwarden.
+Display name of the sender. Empty = Vaultwarden.
 
 Default: –
 
 ### `smtp_username`
 
-Für Server ohne Authentifizierung leer lassen.
+Leave empty for servers without authentication.
 
 Default: –
 
 ### `smtp_password`
 
-Pflicht, sobald ein Benutzername gesetzt ist.
+Required when a username is set.
 
 Default: –
 
 ### `smtp_auth_mechanism`
 
-Kommagetrennt: Plain, Login, Xoauth2. Leer = automatisch.
+Comma-separated: Plain, Login, Xoauth2. Empty = automatic.
 
 Default: –
 
 ### `smtp_accept_invalid_certs`
 
-GEFÄHRLICH: ermöglicht Man-in-the-Middle. Nur als letzter Ausweg.
+DANGEROUS: allows man-in-the-middle attacks. Last resort only.
 
 Default: `false`
 
 ### `smtp_accept_invalid_hostnames`
 
-GEFÄHRLICH: ermöglicht Man-in-the-Middle. Nur als letzter Ausweg.
+DANGEROUS: allows man-in-the-middle attacks. Last resort only.
 
 Default: `false`
 
 ### `smtp_debug`
 
-Sehr ausführliches SMTP-Logging, kann Zugangsdaten enthalten. Nur zur Fehlersuche.
+Very verbose SMTP logging, may contain credentials. Troubleshooting only.
 
 Default: `false`
 
 ### `push_enabled`
 
-Mobile Push über das Bitwarden-Relay (externer Dienst). Braucht Installations-ID und Key von bitwarden.com/host.
+Mobile push via the Bitwarden relay (external service). Needs installation ID and key from bitwarden.com/host.
 
 Default: `false`
 
 ### `push_region`
 
-Datenregion, für die die Push-Keys ausgestellt wurden.
+Data region the push keys were issued for.
 
 Default: `us`
 
 ### `push_installation_id`
 
-Installations-ID von bitwarden.com/host.
+Installation ID from bitwarden.com/host.
 
 Default: –
 
 ### `push_installation_key`
 
-Installations-Key von bitwarden.com/host.
+Installation key from bitwarden.com/host.
 
 Default: –
 
 ### `sso_enabled`
 
-Login über einen OpenID-Connect-Identity-Provider erlauben.
+Allow login through an OpenID Connect identity provider.
 
 Default: `false`
 
 ### `sso_only`
 
-Login mit E-Mail und Master-Passwort abschalten.
+Disable login with e-mail and master password.
 
 Default: `false`
 
 ### `sso_signups_allowed`
 
-Der SSO-Ablauf darf Konten anlegen. Bei öffentlichen Providern abschalten.
+Let the SSO flow create accounts. Disable for public providers.
 
 Default: `true`
 
 ### `sso_signups_match_email`
 
-SSO-Registrierung mit einem Konto gleicher E-Mail verknüpfen.
+Link an SSO sign-up to an existing account with the same e-mail.
 
 Default: `true`
 
 ### `sso_allow_unknown_email_verification`
 
-Zusammen mit E-Mail-Zuordnung droht eine mögliche Kontoübernahme.
+Together with e-mail matching this opens a possible account takeover.
 
 Default: `false`
 
 ### `sso_authority`
 
-Basis-URL des OIDC-Servers, ohne /.well-known/... und genau wie vom Provider dokumentiert.
+Base URL of the OIDC server, without /.well-known/... and exactly as your provider documents it.
 
 Default: –
 
 ### `sso_client_id`
 
-Beim Identity-Provider registrierte Client-ID.
+Client ID registered at your identity provider.
 
 Default: –
 
 ### `sso_client_secret`
 
-Beim Identity-Provider registriertes Client-Secret.
+Client secret registered at your identity provider.
 
 Default: –
 
 ### `sso_scopes`
 
-Leerzeichengetrennte zusätzliche Scopes. Leer = email profile.
+Space-separated extra scopes. Empty = email profile.
 
 Default: –
 
 ### `sso_pkce`
 
-PKCE für den Authorization-Code-Flow verwenden.
+Use PKCE for the authorization code flow.
 
 Default: `true`
 
 ### `sso_authorize_extra_params`
 
-Zusätzliche URL-Parameter, z. B. um Refresh-Tokens zu erhalten.
+Additional URL parameters, for example to obtain refresh tokens.
 
 Default: –
 
 ### `yubico_client_id`
 
-Client-ID für YubiKey OTP.
+Client ID for YubiKey OTP.
 
 Default: –
 
 ### `yubico_secret_key`
 
-Secret Key für YubiKey OTP.
+Secret key for YubiKey OTP.
 
 Default: –
 
 ### `duo_ikey`
 
-Globaler Duo-Integration-Key (braucht auch Secret Key und API-Host).
+Global Duo integration key (needs secret key and API host too).
 
 Default: –
 
 ### `duo_skey`
 
-Globaler Duo-Secret-Key.
+Global Duo secret key.
 
 Default: –
 
 ### `duo_host`
 
-Duo-API-Hostname.
+Duo API hostname.
 
 Default: –
 
 ### `hibp_api_key`
 
-Aktiviert Leak-Prüfungen bei haveibeenpwned.com (externer Dienst).
+Enables breach checks against haveibeenpwned.com (external service).
 
 Default: –
 
 ### `experimental_client_feature_flags`
 
-Kommagetrennte Flags. In Vaultwarden 1.37.4 entfernte Flags werden automatisch verworfen.
+Comma-separated flags. Flags removed in Vaultwarden 1.37.4 are dropped automatically.
 
 Default: –
 
 ### `extra_env`
 
-Weitere Vaultwarden-Einstellungen als Liste aus `name`/`value` (z. B. `ORG_EVENTS_ENABLED`). Geschützte Namen (`DATA_FOLDER`, `DATABASE_URL`, `WEB_VAULT_FOLDER`, `WEB_VAULT_ENABLED`, `ENV_FILE`, `ROCKET_*`, `RSA_KEY_FILENAME`) werden abgelehnt. Die Werte stehen im Klartext in der App-Konfiguration – Secrets daher nicht hier eintragen.
+Further Vaultwarden settings as a list of `name`/`value` (e.g. `ORG_EVENTS_ENABLED`). Protected names (`DATA_FOLDER`, `DATABASE_URL`, `WEB_VAULT_FOLDER`, `WEB_VAULT_ENABLED`, `ENV_FILE`, `ROCKET_*`, `RSA_KEY_FILENAME`) are refused. The values are visible in plain text in the app configuration – so do not enter secrets here.
 
 Default: `[]`
 
-## Wichtige Hinweise
+## Important notes
 
-### Admin-Panel überschreibt App-Optionen
+### The admin panel overrides app options
 
-Speicherst du im Admin-Panel (`/admin`) Einstellungen, schreibt Vaultwarden eine `config.json` in den Datenordner. Deren Werte haben **Vorrang** vor den App-Optionen. Beim Start warnt die App im Log, wenn eine `config.json` existiert. Empfehlung: Konfiguration über die App-Optionen pflegen und das Admin-Panel nur zur Verwaltung nutzen.
+If you save settings in the admin panel (`/admin`), Vaultwarden writes a `config.json` into the data folder. Its values take **precedence** over the app options. At startup the app warns in the log if a `config.json` exists. Recommendation: maintain the configuration through the app options and use the admin panel only for administration.
 
-### Reverse Proxy und Client-IP
+### Reverse proxy and client IP
 
-Mit `ip_header` (Standard `X-Real-IP`) liest Vaultwarden die Client-IP aus dem Header deines Proxys; sie wird für Rate-Limits genutzt. Standardmäßig wird der Header von allen nicht-öffentlichen Adressen akzeptiert (`local`). Liegt dein Proxy auf einer öffentlichen Adresse oder willst du enger einschränken, trage in `ip_header_trusted_proxies` die Proxy-IPs bzw. CIDR-Bereiche ein. Ohne Proxy `ip_header: none` setzen.
+With `ip_header` (default `X-Real-IP`) Vaultwarden reads the client IP from your proxy's header; it is used for rate limits. By default the header is accepted from all non-public addresses (`local`). If your proxy is on a public address or you want to restrict it more tightly, enter the proxy IPs or CIDR ranges in `ip_header_trusted_proxies`. Without a proxy set `ip_header: none`.
 
-### Lokaler und externer Zugriff
+### Local and external access
 
-**Lokal (LAN):** Der Web Vault braucht einen sicheren Kontext (HTTPS). Über `http://<HA-Host>:7277` funktionieren Registrierung und Login im Browser nicht. Zwei Wege:
+**Local (LAN):** The web vault needs a secure context (HTTPS). Registration and login do not work in the browser via `http://<HA-Host>:7277`. Two ways:
 
-- **`ssl: true`:** Zertifikat und Schlüssel liegen in `/ssl`, der Zugriff läuft über `https://<HA-Host>:7277`. Bei einem selbstsignierten Zertifikat die Browser-Warnung bestätigen.
-- **Reverse Proxy mit lokalem DNS-Rewrite:** Eine Domain wie `vault.example.com` zeigt im lokalen DNS auf den HA-Host. Der Proxy (z. B. Nginx Proxy Manager) terminiert HTTPS mit einem gültigen Zertifikat und leitet auf `http://<HA-Host>:7277` weiter, WebSocket-Support aktiv. `domain` auf `https://vault.example.com` setzen.
+- **`ssl: true`:** Certificate and key live in `/ssl`, access goes through `https://<HA-Host>:7277`. With a self-signed certificate, confirm the browser warning.
+- **Reverse proxy with a local DNS rewrite:** A domain like `vault.example.com` points to the HA host in the local DNS. The proxy (e.g. Nginx Proxy Manager) terminates HTTPS with a valid certificate and forwards to `http://<HA-Host>:7277`, WebSocket support enabled. Set `domain` to `https://vault.example.com`.
 
-**Extern (Internet):** Empfehlung **ok, aber nur über den Reverse Proxy mit TLS.** Den App-Port `7277` nie direkt per Port-Forward freigeben. Dazu:
+**External (internet):** Recommendation: **OK, but only through the reverse proxy with TLS.** Never expose the app port `7277` directly via port forwarding. In addition:
 
-- `signups_allowed` abschalten, sobald die Konten angelegt sind.
-- Das Admin-Panel (`/admin`) nicht öffentlich erreichbar machen: `admin_token` leer lassen, wenn es nicht gebraucht wird, oder `/admin` im Proxy auf LAN bzw. VPN beschränken.
-- Zwei-Faktor-Anmeldung für alle Konten aktivieren.
+- Turn `signups_allowed` off as soon as the accounts have been created.
+- Do not make the admin panel (`/admin`) publicly reachable: leave `admin_token` empty if it is not needed, or restrict `/admin` in the proxy to LAN or VPN.
+- Enable two-factor login for all accounts.
 
-### Datenschutz externer Dienste
+### Privacy of external services
 
-- `push_enabled`: Push läuft über das Bitwarden-Relay (externer Dienst, Geräte-Metadaten gehen dorthin). Installations-ID und -Key kommen von bitwarden.com/host; `push_region` muss zur Region der Keys passen.
-- `icon_service: bitwarden` leitet Clients an Bitwarden um; `internal` ruft Favicons direkt von den Seiten ab. `disable_icon_download` schaltet jeden Abruf ab.
-- `hibp_api_key` aktiviert Leak-Prüfungen bei haveibeenpwned.com.
+- `push_enabled`: push runs through the Bitwarden relay (external service, device metadata goes there). Installation ID and key come from bitwarden.com/host; `push_region` must match the region of the keys.
+- `icon_service: bitwarden` redirects clients to Bitwarden; `internal` fetches favicons directly from the sites. `disable_icon_download` switches off every fetch.
+- `hibp_api_key` enables leak checks at haveibeenpwned.com.
 
-### Entfernte Feature-Flags
+### Removed feature flags
 
-Vaultwarden 1.37.4 hat mehrere Einträge aus `experimental_client_feature_flags` entfernt; enthält die Liste sie noch, scheitert das Speichern im Admin-Panel. Die App filtert diese Flags beim Start heraus und schreibt eine Warnung ins Log.
+Vaultwarden 1.37.4 removed several entries from `experimental_client_feature_flags`; if the list still contains them, saving in the admin panel fails. The app filters these flags out at startup and writes a warning to the log.
 
-### Daten, Backup und Restore
+### Data, backup and restore
 
-Alle Daten (SQLite-Datenbank, RSA-Schlüssel, Anhänge, Sends, `config.json`) liegen unter `/data/vaultwarden`. Die App nutzt ausschließlich SQLite. Home-Assistant-Backups sind als **cold** konfiguriert: Die App wird für das Backup kurz gestoppt, damit die Datenbank konsistent ist. Icon-Cache und Temp-Dateien sind vom Backup ausgenommen. Restore: Backup in Home Assistant einspielen und App starten.
+All data (SQLite database, RSA keys, attachments, sends, `config.json`) lives under `/data/vaultwarden`. The app uses SQLite only. Home Assistant backups are configured as **cold**: the app is stopped briefly for the backup so the database is consistent. The icon cache and temp files are excluded from the backup. Restore: restore the backup in Home Assistant and start the app.
 
-### Sicherheit
+### Security
 
-- Die App läuft nach der Initialisierung als unprivilegierter Benutzer `vaultwarden` und ist durch ein AppArmor-Profil eingeschränkt.
-- `smtp_accept_invalid_certs`, `smtp_accept_invalid_hostnames` und `sso_allow_unknown_email_verification` nur im Notfall aktivieren.
-- Die Werte in `extra_env` sind im Klartext in der App-Konfiguration sichtbar – keine Secrets dort eintragen; dafür gibt es die Passwort-Felder.
+- After initialization the app runs as the unprivileged user `vaultwarden` and is restricted by an AppArmor profile.
+- Enable `smtp_accept_invalid_certs`, `smtp_accept_invalid_hostnames` and `sso_allow_unknown_email_verification` only in an emergency.
+- The values in `extra_env` are visible in plain text in the app configuration – do not enter secrets there; use the password fields for that.
