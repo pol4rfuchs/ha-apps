@@ -1,9 +1,9 @@
 /*
-  Bento — Element Call. Wird nur geladen, wenn der Add-on-Schalter für das Bento-Theme an ist
-  (Standard: aus = Original). Element Call hat keine Theme-Auswahl und nutzt gehashte CSS-Module-
-  Klassen; deshalb setzt dieses Stylesheet die Compound-Tokens beider eingebauten Themes
-  (cpd-theme-light / cpd-theme-dark) und nur wenige robuste Selektoren (body, #root, header,
-  main, form). Relative Pfade, keine externen Abhängigkeiten.
+  Bento — Element Call. Only loaded when the add-on switch for the Bento theme is on
+  (default: off = original). Element Call has no theme picker and uses hashed CSS module
+  classes; therefore this stylesheet sets the Compound tokens of both built-in themes
+  (cpd-theme-light / cpd-theme-dark) and only a few robust selectors (body, #root, header,
+  main, form). Relative paths, no external dependencies.
 */
 body.cpd-theme-light {
   --cpd-color-bg-canvas-default: #ffffff;
@@ -45,8 +45,8 @@ body.cpd-theme-dark {
   --bento-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
 }
 
-/* Kein Farbverlauf: ruhiger Grund, die Kacheln tragen das Design.
-   Element Call setzt den Verlauf über data-Attribute am Wurzelelement. */
+/* No gradient: calm background, the tiles carry the design.
+   Element Call sets the gradient via data attributes on the root element. */
 body.cpd-theme-light,
 body.cpd-theme-dark,
 [data-element-call-root] {
@@ -56,7 +56,7 @@ body.cpd-theme-dark,
   background-image: none;
 }
 
-/* Startseite: Formular als Kachel */
+/* Start page: form as a tile */
 body.cpd-theme-light main form,
 body.cpd-theme-dark main form {
   box-sizing: border-box;

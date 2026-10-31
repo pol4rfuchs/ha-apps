@@ -2,7 +2,7 @@
 set +e
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info "  Matrix Server ESS CE — Initialisierung"
+bashio::log.info "  Matrix Server ESS CE — Initialization"
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 SERVER_NAME=$(bashio::config 'server_name' | sed 's|/$||')
@@ -35,7 +35,7 @@ MAS_SECRET=$(bashio::config 'mas_secret')
 WHATSAPP_BRIDGE_ENABLED=$(bashio::config 'whatsapp_bridge_enabled')
 SIGNAL_BRIDGE_ENABLED=$(bashio::config 'signal_bridge_enabled')
 TELEGRAM_BRIDGE_ENABLED=$(bashio::config 'telegram_bridge_enabled')
-# LK_DOMAIN früh ableiten — wird in Synapse TURN-Config und LiveKit-Config benötigt
+# Derive LK_DOMAIN early — needed in the Synapse TURN config and the LiveKit config
 LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
 DATA_DIR="/data/matrix"
@@ -49,15 +49,15 @@ LK_SECRET_FILE="${DATA_DIR}/.livekit_secret"
 ADMIN_UI_AUTH_FILE="${DATA_DIR}/.admin_ui_auth"
 BACKUP_DIR="${DATA_DIR}/backups"
 
-# ── Platzhalter-Schutz ────────────────────────────────────────────────────
-# server_name steckt dauerhaft in Datenbank und Signing-Key und lässt sich nach der
-# Ersteinrichtung nicht mehr ändern. Beim ersten Start daher nicht mit Platzhalter starten.
+# ── Placeholder guard ─────────────────────────────────────────────────────
+# server_name is permanently baked into the database and the signing key and cannot be
+# changed after the initial setup. So do not start with a placeholder on first start.
 case "${SERVER_NAME}" in
     ""|*example.org|*example.com|*example.net|*deine-domain*|*your-domain*)
         if [ ! -f "${SIGNING_KEY}" ]; then
-            bashio::exit.nok "server_name ist noch ein Platzhalter ('${SERVER_NAME}'). Trage deinen echten Servernamen ein (z. B. matrix.meinedomain.de) – er lässt sich nach der Ersteinrichtung nicht mehr ändern."
+            bashio::exit.nok "server_name is still a placeholder ('${SERVER_NAME}'). Enter your real server name (e.g. matrix.yourdomain.com) – it cannot be changed after the initial setup."
         else
-            bashio::log.warning "server_name ist ein Platzhalter ('${SERVER_NAME}') – prüfe die Option, falls das nicht gewollt ist."
+            bashio::log.warning "server_name is a placeholder ('${SERVER_NAME}') – check the option if that is not intended."
         fi
         ;;
 esac
@@ -67,32 +67,32 @@ mkdir -p "${SYNAPSE_DATA}" "${PG_DATA}" "/media/matrix" \
          "${DATA_DIR}/element-web" "${DATA_DIR}/element-call" \
          "${BACKUP_DIR}"
 
-# ── DB-Passwort ───────────────────────────────────────────────────────────
-# Option > gespeicherter Wert > generieren. Ohne Eintrag in der Option wird ein
-# zufälliges Passwort erzeugt und nur in /data abgelegt (nicht im Log).
+# ── DB password ───────────────────────────────────────────────────────────
+# Option > stored value > generate. If the option is empty, a random password
+# is generated and stored only in /data (not in the log).
 PG_PASSWORD_FILE="${DATA_DIR}/.pg_password"
 if [ -z "${PG_PASSWORD}" ]; then
     if [ -f "${PG_PASSWORD_FILE}" ]; then
         PG_PASSWORD=$(cat "${PG_PASSWORD_FILE}")
-        bashio::log.info "✅ postgres_password aus Speicher geladen"
+        bashio::log.info "✅ postgres_password loaded from storage"
     else
         PG_PASSWORD=$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)
         (umask 077; printf '%s\n' "${PG_PASSWORD}" > "${PG_PASSWORD_FILE}")
-        bashio::log.info "✅ postgres_password generiert und gespeichert (nur in ${PG_PASSWORD_FILE})"
+        bashio::log.info "✅ postgres_password generated and stored (only in ${PG_PASSWORD_FILE})"
     fi
 fi
 
-# Setzt das Passwort der DB-Rolle. Das Passwort geht als psql-Variable ein und
-# wird von psql selbst als SQL-Literal quotiert (:'pw') — Sonderzeichen wie '
-# oder " brechen weder das SQL noch die Shell.
+# Sets the password of the DB role. The password is passed as a psql variable and
+# quoted by psql itself as an SQL literal (:'pw') — special characters like '
+# or " break neither the SQL nor the shell.
 pg_set_password() {
     printf '%s\n' "$1 synapse WITH PASSWORD :'pw';" \
         | gosu postgres psql -v ON_ERROR_STOP=1 -v pw="${PG_PASSWORD}" >/dev/null
 }
 
-# ── PostgreSQL init (einmalig) ────────────────────────────────────────────
+# ── PostgreSQL init (once) ────────────────────────────────────────────────
 if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
-    bashio::log.info "Initialisiere PostgreSQL Datenbank..."
+    bashio::log.info "Initializing PostgreSQL database..."
     chown postgres:postgres "${PG_DATA}"
     gosu postgres /usr/lib/postgresql/15/bin/initdb \
         --pgdata="${PG_DATA}" \
@@ -124,28 +124,28 @@ EOF
 
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_init.log start -w -t 30
-    pg_set_password "CREATE USER" || { bashio::log.error "Konnte die DB-Rolle 'synapse' nicht anlegen."; exit 1; }
+    pg_set_password "CREATE USER" || { bashio::log.error "Could not create the DB role 'synapse'."; exit 1; }
     gosu postgres psql -c "CREATE DATABASE synapse ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER synapse;"
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
 
     touch "${PG_MARKER}"
-    bashio::log.info "✅ PostgreSQL initialisiert"
+    bashio::log.info "✅ PostgreSQL initialized"
 else
-    bashio::log.info "✅ PostgreSQL bereits initialisiert"
+    bashio::log.info "✅ PostgreSQL already initialized"
     touch "${PG_MARKER}"
-    # Die Rolle wurde beim ersten Start mit dem damaligen Passwort angelegt.
-    # Wurde die Option seitdem geändert, passt die DB nicht mehr zur Config
-    # (Anmeldung schlägt fehl) — bei jedem Start angleichen.
+    # The role was created on first start with the password of that time.
+    # If the option has changed since, the DB no longer matches the config
+    # (login fails) — sync it on every start.
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_sync.log start -w -t 30 \
-        || { bashio::log.error "PostgreSQL startet nicht — siehe /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
-    pg_set_password "ALTER USER" || { bashio::log.error "Konnte das DB-Passwort nicht angleichen."; exit 1; }
+        || { bashio::log.error "PostgreSQL does not start — see /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
+    pg_set_password "ALTER USER" || { bashio::log.error "Could not sync the DB password."; exit 1; }
     gosu postgres /usr/lib/postgresql/15/bin/pg_ctl -D "${PG_DATA}" stop -w
 fi
 
 # ── Synapse Signing Key ───────────────────────────────────────────────────
 if [ ! -f "${SIGNING_KEY}" ]; then
-    bashio::log.info "Generiere Synapse Signing Key..."
+    bashio::log.info "Generating Synapse signing key..."
     /opt/synapse/bin/python -m synapse.app.homeserver \
         --server-name "${SERVER_NAME}" \
         --config-path "${SYNAPSE_CONFIG}" \
@@ -157,12 +157,12 @@ SECRET_FILE="/data/matrix/.registration_secret"
 if [ -z "${REG_SECRET}" ]; then
     if [ -f "${SECRET_FILE}" ]; then
         REG_SECRET=$(cat "${SECRET_FILE}")
-        bashio::log.info "✅ registration_shared_secret aus Speicher geladen"
+        bashio::log.info "✅ registration_shared_secret loaded from storage"
     else
         REG_SECRET=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
         echo "${REG_SECRET}" > "${SECRET_FILE}"
-        bashio::log.info "✅ registration_shared_secret generiert und gespeichert"
-        bashio::log.info "   → Wert: ${SECRET_FILE} (nicht im Log, siehe Sicherheitshinweis)"
+        bashio::log.info "✅ registration_shared_secret generated and stored"
+        bashio::log.info "   → Value: ${SECRET_FILE} (not in the log, see the security note)"
     fi
 fi
 
@@ -171,33 +171,33 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     if [ -z "${LIVEKIT_SECRET}" ]; then
         if [ -f "${LK_SECRET_FILE}" ]; then
             LIVEKIT_SECRET=$(cat "${LK_SECRET_FILE}")
-            bashio::log.info "✅ LiveKit Secret aus Speicher geladen"
+            bashio::log.info "✅ LiveKit secret loaded from storage"
         else
             LIVEKIT_SECRET=$(cat /proc/sys/kernel/random/uuid | tr -d '-')$(cat /proc/sys/kernel/random/uuid | tr -d '-')
             echo "${LIVEKIT_SECRET}" > "${LK_SECRET_FILE}"
-            bashio::log.info "✅ LiveKit Secret generiert und gespeichert"
-            bashio::log.info "   → Trage es optional in die Addon-Config ein (livekit_secret)"
+            bashio::log.info "✅ LiveKit secret generated and stored"
+            bashio::log.info "   → Optionally enter it in the add-on config (livekit_secret)"
         fi
     fi
 fi
 
-# ── Ketesa (Admin UI) Basic-Auth Credentials ──────────────────────────────
+# ── Ketesa (Admin UI) basic-auth credentials ──────────────────────────────
 if [ -z "${ADMIN_UI_PASSWORD}" ]; then
     if [ -f "${ADMIN_UI_AUTH_FILE}" ]; then
         ADMIN_UI_PASSWORD=$(tail -n1 "${ADMIN_UI_AUTH_FILE}")
-        bashio::log.info "✅ Admin UI Passwort aus Speicher geladen"
+        bashio::log.info "✅ Admin UI password loaded from storage"
     else
         ADMIN_UI_PASSWORD=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
-        bashio::log.info "✅ Admin UI Passwort generiert und gespeichert"
-        bashio::log.info "   → Wert: ${ADMIN_UI_AUTH_FILE} (nicht im Log, siehe Sicherheitshinweis)"
-        bashio::log.info "   → Optional in die Addon-Config eintragen (admin_ui_password)"
+        bashio::log.info "✅ Admin UI password generated and stored"
+        bashio::log.info "   → Value: ${ADMIN_UI_AUTH_FILE} (not in the log, see the security note)"
+        bashio::log.info "   → Optionally enter it in the add-on config (admin_ui_password)"
     fi
 fi
 printf '%s\n%s\n' "${ADMIN_UI_USER}" "${ADMIN_UI_PASSWORD}" > "${ADMIN_UI_AUTH_FILE}"
 chmod 600 "${ADMIN_UI_AUTH_FILE}"
 
 # ── Synapse homeserver.yaml ───────────────────────────────────────────────
-bashio::log.info "Schreibe Synapse homeserver.yaml..."
+bashio::log.info "Writing Synapse homeserver.yaml..."
 
 if [ "${ENABLE_FEDERATION}" = "true" ]; then
     FEDERATE_FLAG="true"
@@ -205,23 +205,23 @@ else
     FEDERATE_FLAG="false"
 fi
 
-# enable_federation=false muss auch in Synapse selbst greifen, nicht nur im
-# Element-Web-Default (default_federate). Eine leere federation_domain_whitelist
-# sperrt jede ein- und ausgehende Föderation.
+# enable_federation=false must also take effect in Synapse itself, not only in the
+# Element Web default (default_federate). An empty federation_domain_whitelist
+# blocks all incoming and outgoing federation.
 if [ "${ENABLE_FEDERATION}" = "true" ]; then
     FEDERATION_BLOCK=""
 else
     FEDERATION_BLOCK="
-# Föderation deaktiviert (enable_federation: false)
+# Federation disabled (enable_federation: false)
 federation_domain_whitelist: []
 "
-    bashio::log.info "🔒 Föderation deaktiviert — federation_domain_whitelist ist leer"
+    bashio::log.info "🔒 Federation disabled — federation_domain_whitelist is empty"
 fi
 
-# ── ip_range_whitelist aus ntfy_url ableiten ──────────────────────────────
-# Synapses Standard-Blacklist greift auch für HTTP-Pusher. Liegt der ntfy-Server
-# im privaten Netz, wird nur dessen (aufgelöste) IPv4 freigegeben. Ohne
-# ntfy_url oder bei öffentlicher Adresse entsteht keine Ausnahme.
+# ── Derive ip_range_whitelist from ntfy_url ───────────────────────────────
+# Synapse's default blacklist also applies to HTTP pushers. If the ntfy server
+# is on the private network, only its (resolved) IPv4 is allowed. Without
+# ntfy_url, or with a public address, no exception is created.
 IP_WHITELIST_BLOCK=""
 if [ -n "${NTFY_URL}" ]; then
     NTFY_HOST=$(echo "${NTFY_URL}" | sed -e 's|^[a-zA-Z]*://||' -e 's|[/?#].*$||' -e 's|^.*@||' -e 's|:[0-9]*$||')
@@ -232,30 +232,30 @@ if [ -n "${NTFY_URL}" ]; then
     fi
     if echo "${NTFY_IP}" | grep -Eq '^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)'; then
         IP_WHITELIST_BLOCK="
-# ntfy-Push-Server liegt im privaten Netz (aus ntfy_url abgeleitet)
+# The ntfy push server is on the private network (derived from ntfy_url)
 ip_range_whitelist:
   - '${NTFY_IP}'
 "
-        bashio::log.info "ntfy liegt im privaten Netz — ip_range_whitelist: ${NTFY_IP}"
+        bashio::log.info "ntfy is on the private network — ip_range_whitelist: ${NTFY_IP}"
     fi
 fi
 
-# ── MAS-Delegation (Variante B: expliziter Toggle) ────────────────────────
-# Bei aktivem MAS übernimmt MAS komplett Login/Registrierung — Synapses
-# eigene password_config und enable_registration müssen dafür aus sein,
-# sonst laufen zwei konkurrierende Auth-Wege gegeneinander.
-# MSC4108_FLAG wird NICHT in einem eigenen experimental_features:-Block
-# geschrieben, sondern weiter unten in den EINEN Block eingemischt, der
-# auch für Voice-Calls (msc3266/msc3401/msc2285) zuständig ist — zwei
-# separate Top-Level-experimental_features:-Keys im selben YAML würden
-# sich sonst gegenseitig überschreiben (der zweite gewinnt stillschweigend).
+# ── MAS delegation (variant B: explicit toggle) ───────────────────────────
+# With MAS enabled, MAS takes over login/registration completely — Synapse's
+# own password_config and enable_registration must be off for that,
+# otherwise two competing auth paths work against each other.
+# MSC4108_FLAG is NOT written in a separate experimental_features: block
+# but merged further below into the ONE block that is also responsible for
+# voice calls (msc3266/msc3401/msc2285) — two separate top-level
+# experimental_features: keys in the same YAML would otherwise overwrite
+# each other (the second one silently wins).
 if [ "${MAS_ENABLED}" = "true" ]; then
     if [ -z "${MAS_SECRET}" ]; then
-        bashio::log.warning "⚠️  mas_enabled=true, aber mas_secret ist leer — MAS-Kopplung wird fehlschlagen!"
-        bashio::log.warning "   → Secret aus dem matrix-auth-service-Add-on übertragen (dort automatisch generiert, falls dort leer gelassen)."
+        bashio::log.warning "⚠️  mas_enabled=true, but mas_secret is empty — the MAS link will fail!"
+        bashio::log.warning "   → Copy the secret from the matrix-auth-service add-on (generated automatically there if left empty)."
     fi
     MAS_AUTH_BLOCK="
-# ── Matrix Authentication Service (MAS) — Variante B: aktiv ──────────────
+# ── Matrix Authentication Service (MAS) — variant B: active ──────────────
 matrix_authentication_service:
   enabled: true
   endpoint: \"${MAS_ENDPOINT}\"
@@ -266,7 +266,7 @@ password_config:
 "
     NATIVE_REGISTRATION_BLOCK=""
     MSC4108_FLAG="  msc4108_enabled: true"
-    bashio::log.info "🔐 MAS-Delegation aktiv — native Synapse-Auth deaktiviert (Endpoint: ${MAS_ENDPOINT})"
+    bashio::log.info "🔐 MAS delegation active — native Synapse auth disabled (endpoint: ${MAS_ENDPOINT})"
 else
     MAS_AUTH_BLOCK=""
     NATIVE_REGISTRATION_BLOCK="
@@ -277,16 +277,16 @@ registration_shared_secret: \"${REG_SECRET}\"
     MSC4108_FLAG=""
 fi
 
-# Das Passwort als JSON-String (inkl. Anführungszeichen) schreiben: das ist ein
-# gültiger YAML-Double-Quoted-Wert, auch mit " und \ im Passwort.
+# Write the password as a JSON string (including quotes): that is a
+# valid YAML double-quoted value, even with " and \ in the password.
 PG_PASSWORD_YAML=$(jq -rn --arg p "${PG_PASSWORD}" '$p|@json')
 
 cat > "${SYNAPSE_CONFIG}" << EOF
 server_name: "${SERVER_NAME}"
-# public_baseurl ist zwingend nötig, damit Synapse extra_well_known_client_content
-# (siehe rtc_foci weiter unten) ueberhaupt in die /.well-known/matrix/client
-# Antwort mit reinmischt — ohne diese Zeile wird der Extra-Content von Synapse
-# schlicht ignoriert, auch wenn er syntaktisch korrekt in der Config steht.
+# public_baseurl is required for Synapse to mix extra_well_known_client_content
+# (see rtc_foci further below) into the /.well-known/matrix/client
+# response at all — without this line Synapse simply ignores the extra content,
+# even if it is syntactically correct in the config.
 # Ref: https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html#extra_well_known_client_content
 public_baseurl: "https://${SERVER_NAME}/"
 pid_file: /tmp/synapse.pid
@@ -317,8 +317,8 @@ database:
 media_store_path: "${SYNAPSE_DATA}/media_store"
 max_upload_size: "${MAX_UPLOAD}M"
 
-# Cache-Obergrenze: ohne sie wachsen die Caches mit der Zeit immer weiter.
-# cache_autotuning braucht jemalloc (wird in synapse/run per LD_PRELOAD geladen).
+# Cache upper limit: without it the caches keep growing over time.
+# cache_autotuning needs jemalloc (loaded via LD_PRELOAD in synapse/run).
 caches:
   cache_autotuning:
     max_cache_memory_usage: ${CACHE_MAX_MB}M
@@ -363,13 +363,13 @@ url_preview_ip_range_blacklist:
 ${IP_WHITELIST_BLOCK}${FEDERATION_BLOCK}
 EOF
 
-# ── Bridge Appservice Registration (mautrix-* Bridges via /share) ────────
-# WICHTIG: app_service_config_files darf nur EIN Mal als Top-Level-Key
-# auftauchen (gleiches Prinzip wie unten bei experimental_features/MSC4108 —
-# ein zweiter Block würde den ersten sonst stillschweigend überschreiben).
-# Deshalb alle aktiven Bridges hier in EINER Liste sammeln. Bei künftigen
-# Signal-/Telegram-Bridge-Add-ons hier jeweils einen weiteren if-Block
-# ergänzen, NICHT einen zweiten "app_service_config_files:"-Block anhängen.
+# ── Bridge appservice registration (mautrix-* bridges via /share) ────────
+# IMPORTANT: app_service_config_files may appear only ONCE as a top-level key
+# (same principle as experimental_features/MSC4108 below — a second block
+# would otherwise silently overwrite the first one).
+# So collect all active bridges here in ONE list. For future Signal/Telegram
+# bridge add-ons, add another if block here each time, do NOT append a second
+# "app_service_config_files:" block.
 BRIDGE_REG_LIST=""
 if [ "${WHATSAPP_BRIDGE_ENABLED}" = "true" ]; then
     BRIDGE_REG_LIST="${BRIDGE_REG_LIST}  - \"/share/whatsapp_bridge_registration.yaml\"
@@ -385,15 +385,15 @@ if [ "${TELEGRAM_BRIDGE_ENABLED}" = "true" ]; then
 fi
 
 if [ -n "${BRIDGE_REG_LIST}" ]; then
-    bashio::log.info "🌉 Appservice-Bridge(s) registriert — bei Änderungen Synapse neu starten"
+    bashio::log.info "🌉 Appservice bridge(s) registered — restart Synapse after changes"
     cat >> "${SYNAPSE_CONFIG}" << EOF
 
 app_service_config_files:
 ${BRIDGE_REG_LIST}EOF
 fi
 
-# ── Media Retention (optional Auto-Purge) ─────────────────────────────────
-# 0 = deaktiviert (Standardverhalten von Synapse: Medien werden nie gelöscht)
+# ── Media retention (optional auto-purge) ─────────────────────────────────
+# 0 = disabled (Synapse default behavior: media is never deleted)
 if [ "${MEDIA_RETENTION_LOCAL}" != "0" ] || [ "${MEDIA_RETENTION_REMOTE}" != "0" ]; then
     bashio::log.info "🗑️  Media Retention: local=${MEDIA_RETENTION_LOCAL}d remote=${MEDIA_RETENTION_REMOTE}d"
     cat >> "${SYNAPSE_CONFIG}" << EOF
@@ -414,7 +414,7 @@ fi
 
 # ── Element Call / MSC3401 Support (Voice/Video) ──────────────────────────
 if [ "${ENABLE_VOICE}" = "true" ]; then
-    bashio::log.info "🎤 Konfiguriere Element Call Support in Synapse..."
+    bashio::log.info "🎤 Configuring Element Call support in Synapse..."
     cat >> "${SYNAPSE_CONFIG}" << EOF
 
 # ── Element Call / MSC3401 (Voice/Video) ────────────────────────────────
@@ -424,7 +424,7 @@ experimental_features:
   msc2285_enabled: true
 ${MSC4108_FLAG}
 
-# Höhere Rate Limits für Call-Signaling
+# Higher rate limits for call signaling
 rc_message:
   per_second: 1
   burst_count: 50
@@ -438,13 +438,13 @@ rc_joins:
     burst_count: 10
 EOF
 
-    # TURN für Legacy 1:1 Calls (behebt "falsch konfigurierter Server" Dialog)
-    # Nur relevant, wenn der interne LiveKit-TURN-Server auch läuft — sonst
-    # würde hier ein toter Endpunkt (Port 3478) deklariert.
+    # TURN for legacy 1:1 calls (fixes the "misconfigured server" dialog)
+    # Only relevant if the internal LiveKit TURN server is running too — otherwise
+    # a dead endpoint (port 3478) would be declared here.
     if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
         cat >> "${SYNAPSE_CONFIG}" << EOF
 
-# TURN für Legacy 1:1 Calls (behebt "falsch konfigurierter Server" Dialog)
+# TURN for legacy 1:1 calls (fixes the "misconfigured server" dialog)
 turn_uris:
   - "turn:${LK_DOMAIN}:3478?transport=udp"
 turn_shared_secret: "${LIVEKIT_SECRET}"
@@ -455,37 +455,37 @@ EOF
 
     cat >> "${SYNAPSE_CONFIG}" << EOF
 
-# ── MSC4143 rtc_foci — MatrixRTC-Discovery für moderne Clients ───────────
-# Ohne diesen Eintrag im .well-known/matrix/client wissen aktuelle Clients
-# (Element X, aktuelles Element Web, SchildiChat) nicht, welchen LiveKit-
-# Server sie für Calls verwenden sollen — sie brechen den Call-Versuch
-# lokal ab, BEVOR irgendeine Netzwerkverbindung nach draußen aufgebaut
-# wird. Betrifft nur den nativen MatrixRTC-Pfad; der alte Widget-Ansatz
-# (element_call.url in element-web config.json) läuft weiter unabhängig
-# davon, was erklärt, warum ältere/andere Clients teilweise noch funktionieren.
-# Referenz: https://github.com/element-hq/synapse/issues/18859
+# ── MSC4143 rtc_foci — MatrixRTC discovery for modern clients ────────────
+# Without this entry in .well-known/matrix/client, current clients
+# (Element X, current Element Web, SchildiChat) do not know which LiveKit
+# server to use for calls — they abort the call attempt locally, BEFORE
+# any network connection to the outside is made. This only affects the
+# native MatrixRTC path; the old widget approach (element_call.url in the
+# element-web config.json) keeps working independently of it, which explains
+# why older/other clients still partly work.
+# Reference: https://github.com/element-hq/synapse/issues/18859
 extra_well_known_client_content:
   org.matrix.msc4143.rtc_foci:
     - type: "livekit"
       livekit_service_url: "${LIVEKIT_JWT_URL}"
 EOF
 elif [ "${MAS_ENABLED}" = "true" ]; then
-    # Voice-Calls aus, aber MAS an: der obige Block läuft nicht, also
-    # braucht msc4108 (QR-Login-Voraussetzung) hier seinen eigenen,
-    # einzigen experimental_features:-Block.
-    bashio::log.info "🔑 MSC4108 (QR-Login) aktiviert, ohne Voice-Call-Block..."
+    # Voice calls off, but MAS on: the block above does not run, so
+    # msc4108 (prerequisite for QR login) needs its own, single
+    # experimental_features: block here.
+    bashio::log.info "🔑 MSC4108 (QR login) enabled, without the voice call block..."
     cat >> "${SYNAPSE_CONFIG}" << EOF
 
-# ── MSC4108 (MAS QR-Login), ohne Voice-Call-Features ─────────────────────
+# ── MSC4108 (MAS QR login), without voice call features ──────────────────
 experimental_features:
 ${MSC4108_FLAG}
 EOF
 fi
 
-# ── Push-Konfiguration (immer aktiv) ─────────────────────────────────────
-# include_content: true → Synapse bettet den vollständigen Nachrichtentext
-# in Push-Notifications ein. Ohne diese Option sehen Clients nur "New message".
-# Gilt für alle Push-Methoden (UnifiedPush, FCM, APNs) — daher bedingungslos.
+# ── Push configuration (always active) ───────────────────────────────────
+# include_content: true → Synapse embeds the full message text in push
+# notifications. Without this option clients only see "New message".
+# Applies to all push methods (UnifiedPush, FCM, APNs) — hence unconditional.
 cat >> "${SYNAPSE_CONFIG}" << EOF
 
 push:
@@ -493,34 +493,34 @@ push:
 EOF
 
 # ── ntfy UnifiedPush (optional) ───────────────────────────────────────────
-# Hinweis: Synapse muss ntfy_url NICHT kennen — der UnifiedPush-Client
-# (Element Android) trägt die Gateway-URL selbst bei Synapse ein.
-# ntfy_url wird hier ausschließlich für einen Erreichbarkeitscheck genutzt.
+# Note: Synapse does NOT need to know ntfy_url — the UnifiedPush client
+# (Element Android) registers the gateway URL with Synapse itself.
+# ntfy_url is used here only for a reachability check.
 if [ -n "${NTFY_URL}" ]; then
     bashio::log.info "🔔 ntfy UnifiedPush Gateway: ${NTFY_URL}/_matrix/push/v1/notify"
-    # Erreichbarkeitscheck (POST erwartet — 400 ist OK, Timeout/000 ist Fehler)
+    # Reachability check (POST expected — 400 is OK, timeout/000 is an error)
     HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" \
         --max-time 5 \
         -X POST "${NTFY_URL}/_matrix/push/v1/notify" \
         -H "Content-Type: application/json" \
         -d '{}' 2>/dev/null || echo "000")
     if [ "${HTTP_CODE}" = "000" ]; then
-        bashio::log.warning "⚠️  ntfy Gateway nicht erreichbar: ${NTFY_URL}"
-        bashio::log.warning "   Prüfen: base_url im ntfy Addon gesetzt? Reverse Proxy aktiv?"
+        bashio::log.warning "⚠️  ntfy gateway not reachable: ${NTFY_URL}"
+        bashio::log.warning "   Check: is base_url set in the ntfy add-on? Is the reverse proxy active?"
     else
-        bashio::log.info "✅ ntfy Gateway erreichbar (HTTP ${HTTP_CODE})"
+        bashio::log.info "✅ ntfy gateway reachable (HTTP ${HTTP_CODE})"
         bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         bashio::log.info " UnifiedPush Setup:"
-        bashio::log.info "   1. ntfy App (F-Droid) auf Android installieren"
-        bashio::log.info "   2. Server in ntfy App: ${NTFY_URL}"
-        bashio::log.info "   3. Element: Einstellungen → Benachrichtigungen"
-        bashio::log.info "      → ntfy als UnifiedPush Distributor wählen"
-        bashio::log.info "   Synapse wird automatisch vom Client konfiguriert."
+        bashio::log.info "   1. Install the ntfy app (F-Droid) on Android"
+        bashio::log.info "   2. Server in the ntfy app: ${NTFY_URL}"
+        bashio::log.info "   3. Element: Settings → Notifications"
+        bashio::log.info "      → select ntfy as the UnifiedPush distributor"
+        bashio::log.info "   Synapse is configured automatically by the client."
         bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     fi
 fi
 
-# ── Synapse Log-Config ────────────────────────────────────────────────────
+# ── Synapse log config ────────────────────────────────────────────────────
 cat > "${SYNAPSE_DATA}/log.yaml" << EOF
 version: 1
 formatters:
@@ -539,43 +539,43 @@ root:
 disable_existing_loggers: false
 EOF
 
-# ── LiveKit Server Config ─────────────────────────────────────────────────
+# ── LiveKit server config ─────────────────────────────────────────────────
 if [ "${ENABLE_VOICE}" = "true" ]; then
-    # TURN Domain aus livekit_url ableiten (wss://livekit.x.y → livekit.x.y)
+    # Derive the TURN domain from livekit_url (wss://livekit.x.y → livekit.x.y)
     LK_DOMAIN=$(echo "${LIVEKIT_URL}" | sed 's|wss://||' | sed 's|ws://||' | cut -d'/' -f1)
 
-    bashio::log.info "⚙️  Schreibe LiveKit Konfiguration..."
+    bashio::log.info "⚙️  Writing LiveKit configuration..."
     cat > "${LK_CONFIG}" << EOF
-# LiveKit Server Config — generiert von Matrix Addon v1.3.8
+# LiveKit server config — generated by Matrix add-on v1.3.8
 port: 7880
 bind_addresses:
   - "0.0.0.0"
 
 rtc:
-  # Direkter UDP-Port-Range für die SFU-Kandidaten (Host + STUN-srflx).
-  # Bis v1.3.8 lief hier alles zwingend über den internen TURN-Server
-  # (turn.enabled: true), was dazu führte, dass ICE bei manchen Clients
-  # ausschließlich den TURN-Relay-Pfad nutzen musste. Dieser Relay-Pfad
-  # läuft aber über dieselbe öffentliche IP wie der Server selbst zurück
-  # (Server → eigene WAN-IP → TURN-Relay-Port), was ohne NAT-Hairpin am
-  # Router konsequent scheitert (bestätigt: LiveKit GitHub Issue #4487,
-  # pion/turn Issue #82 — TURN-Relay-zu-Relay-Hairpin ist eine bekannte,
-  # nicht unterstützte Einschränkung). Der direkte SFU-Pfad braucht diesen
-  # Hairpin nicht, weshalb er der zuverlässigere Default ist. Der interne
-  # TURN-Server bleibt optional zuschaltbar (livekit_turn_enabled) für
-  # sehr restriktive Netze, die ausschließlich Port 443/HTTPS erlauben.
+  # Direct UDP port range for the SFU candidates (host + STUN-srflx).
+  # Up to v1.3.8 everything had to go through the internal TURN server
+  # (turn.enabled: true), which meant that for some clients ICE had to use
+  # only the TURN relay path. That relay path, however, comes back via the
+  # same public IP as the server itself (server → own WAN IP → TURN relay
+  # port), which consistently fails without NAT hairpin on the router
+  # (confirmed: LiveKit GitHub issue #4487, pion/turn issue #82 — TURN
+  # relay-to-relay hairpin is a known, unsupported limitation). The direct
+  # SFU path does not need this hairpin, which is why it is the more
+  # reliable default. The internal TURN server can still be enabled
+  # optionally (livekit_turn_enabled) for very restrictive networks that
+  # allow only port 443/HTTPS.
   port_range_start: 30000
   port_range_end: 30020
   tcp_port: 7881
   use_external_ip: true
-  # Die per STUN gefundene öffentliche IPv4 wird ohne Selbst-Ping übernommen.
-  # Router ohne NAT-Hairpin beantworten den Validierungs-Ping nie: LiveKit
-  # verwirft dann die IP ("could not validate external IP", ~5 s Verzögerung)
-  # und fällt auf "no external IPs found, using node IP" zurück, statt die
-  # Zuordnung lokale IP → öffentliche IP zu setzen. Getestet mit LiveKit 1.13.10.
+  # The public IPv4 found via STUN is accepted without a self-ping.
+  # Routers without NAT hairpin never answer the validation ping: LiveKit
+  # then discards the IP ("could not validate external IP", ~5 s delay)
+  # and falls back to "no external IPs found, using node IP" instead of
+  # setting the mapping local IP → public IP. Tested with LiveKit 1.13.10.
   skip_external_ip_validation: true
 
-# API-Keys: Key=devkey, Secret=aus Addon-Config
+# API keys: key=devkey, secret from the add-on config
 keys:
   devkey: "${LIVEKIT_SECRET}"
 
@@ -587,16 +587,16 @@ EOF
     if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
         cat >> "${LK_CONFIG}" << EOF
 
-# TURN built-in — nur UDP 3478 (kein TLS ohne Zertifikat)
-# Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben
-# Relay-Range explizit klein gehalten (21 Ports statt LiveKit-Default
-# 30000-40000 = 10.000 Ports). Grund: Docker/HA Supervisor muss jeden Port
-# einzeln im config.yaml "ports:"-Mapping deklarieren — 10.000 Ports sind
-# unpraktikabel und laut LiveKit-eigener Doku auch für den Container-Start
-# ein Problem (separate iptables-Regel pro Port). 21 Ports reichen für
-# mehrere gleichzeitige Calls.
-# Achtung: teilt sich den 30000-30020-Range mit den direkten SFU-Kandidaten
-# oben — das ist von LiveKit so vorgesehen und kein Konflikt.
+# TURN built-in — UDP 3478 only (no TLS without a certificate)
+# Router: forward UDP 3478 AND UDP 30000-30020 → Pi
+# Relay range deliberately kept small (21 ports instead of the LiveKit default
+# 30000-40000 = 10,000 ports). Reason: Docker/HA Supervisor must declare every
+# port individually in the config.yaml "ports:" mapping — 10,000 ports are
+# impractical and, according to LiveKit's own docs, also a problem for the
+# container start (separate iptables rule per port). 21 ports are enough for
+# several simultaneous calls.
+# Note: shares the 30000-30020 range with the direct SFU candidates
+# above — LiveKit intends it that way and it is not a conflict.
 turn:
   enabled: true
   domain: "${LK_DOMAIN}"
@@ -606,29 +606,29 @@ turn:
 EOF
         bashio::log.info "   TURN UDP 3478 → ${LK_DOMAIN} (livekit_turn_enabled=true)"
     else
-        bashio::log.info "   TURN deaktiviert — direkter SFU-Pfad über UDP 30000-30020 (livekit_turn_enabled=false)"
+        bashio::log.info "   TURN disabled — direct SFU path via UDP 30000-30020 (livekit_turn_enabled=false)"
     fi
     bashio::log.info "✅ LiveKit Config: ${LK_CONFIG}"
     if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
-        bashio::log.info "   ⚠️  Router: UDP 3478 UND UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
+        bashio::log.info "   ⚠️  Router: forward UDP 3478 AND UDP 30000-30020 → Pi (otherwise no audio/video in calls)"
     else
-        bashio::log.info "   ⚠️  Router: UDP 30000-30020 → Pi freigeben (sonst kein Ton/Bild bei Calls)"
+        bashio::log.info "   ⚠️  Router: forward UDP 30000-30020 → Pi (otherwise no audio/video in calls)"
     fi
 fi
 
 # ── Element Web config.json ───────────────────────────────────────────────
-bashio::log.info "Schreibe Element Web config.json..."
+bashio::log.info "Writing Element Web config.json..."
 
-# Primär: Home Assistant Supervisor Network API fragen — das ist die einzige
-# zuverlässige, netzwerk-unabhängige Quelle für die echte LAN-IP des Hosts.
-# Innerhalb des Containers sieht `hostname -I` / /proc/net/fib_trie nur das
-# interne Docker-Bridge-Netz des Supervisors (z.B. 172.30.x.x), NIEMALS die
-# tatsächliche LAN-IP — das funktioniert unabhängig vom Subnetz nie zuverlässig.
+# Primary: ask the Home Assistant Supervisor network API — that is the only
+# reliable, network-independent source for the host's real LAN IP.
+# Inside the container, `hostname -I` / /proc/net/fib_trie only see the
+# Supervisor's internal Docker bridge network (e.g. 172.30.x.x), NEVER the
+# actual LAN IP — that never works reliably, regardless of the subnet.
 #
-# Kurz nach Container-Start ist die Supervisor-API oft noch nicht routbar
-# (Supervisor braucht selbst noch einen Moment, um das interne Netzwerk für
-# den gerade gestarteten Container fertig einzurichten) — deshalb 3 Versuche
-# mit kurzer Pause statt sofort beim ersten Fehlschlag aufzugeben.
+# Shortly after container start the Supervisor API is often not yet routable
+# (the Supervisor itself needs a moment to finish setting up the internal
+# network for the container that was just started) — hence 3 attempts
+# with a short pause instead of giving up at the first failure.
 LOCAL_IP=""
 NETWORK_INFO=""
 for attempt in 1 2 3; do
@@ -646,10 +646,10 @@ if [ -n "${NETWORK_INFO}" ]; then
         | cut -d'/' -f1)
 fi
 
-# Fallback 1: alte Heuristik (funktioniert nur, falls Supervisor-API nicht
-# erreichbar ist UND der Container zufällig doch im Host-Netz hängt).
+# Fallback 1: old heuristic (only works if the Supervisor API is not
+# reachable AND the container happens to be on the host network after all).
 if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
-    bashio::log.warning "Supervisor Network API nach 3 Versuchen nicht erreichbar — versuche Fallback-Erkennung"
+    bashio::log.warning "Supervisor network API not reachable after 3 attempts — trying fallback detection"
     if [ -f /proc/net/fib_trie ]; then
         LOCAL_IP=$(awk '/32 HOST/ { print last } { last=$2 }' /proc/net/fib_trie 2>/dev/null \
             | grep -E "^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)" | head -1)
@@ -660,16 +660,16 @@ if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
         | grep -E "^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)" | head -1)
 fi
 
-# Fallback 2: hartcodierter Platzhalter — letzte Instanz, config.<IP>.json
-# wird dann zwar geschrieben, aber vom Browser nie unter diesem Hostnamen
-# angefragt und daher folgenlos ignoriert.
+# Fallback 2: hard-coded placeholder — last resort; config.<IP>.json
+# is then written, but the browser never requests it under this hostname
+# and it is therefore ignored without consequences.
 if [ -z "${LOCAL_IP}" ] || [ "${LOCAL_IP}" = "null" ]; then
     LOCAL_IP="192.168.1.100"
-    bashio::log.warning "Konnte LAN-IP nicht ermitteln — Fallback: ${LOCAL_IP}"
+    bashio::log.warning "Could not determine LAN IP — fallback: ${LOCAL_IP}"
 fi
-bashio::log.info "  Lokale IP: ${LOCAL_IP}"
+bashio::log.info "  Local IP: ${LOCAL_IP}"
 
-# Voice-Sektion für element-web config
+# Voice section for the element-web config
 VOICE_CONFIG=""
 if [ "${ENABLE_VOICE}" = "true" ]; then
     VOICE_CONFIG=",
@@ -689,14 +689,14 @@ else
     }"
 fi
 
-# Bento-Themes als zusätzliche Auswahl neben Hell/Dunkel (Einstellungen → Erscheinungsbild).
-# Standard bleibt default_theme. Fehlt die Datei oder ist sie kaputt, gibt es einfach keine
-# zusätzlichen Themes — Element Web startet trotzdem.
+# Bento themes as an additional choice next to light/dark (Settings → Appearance).
+# The default stays default_theme. If the file is missing or broken, there are simply no
+# additional themes — Element Web still starts.
 BENTO_THEMES_FILE="/usr/share/matrix-themes/element-web-themes.json"
 BENTO_THEMES="$(jq -c . "${BENTO_THEMES_FILE}" 2>/dev/null)" || BENTO_THEMES="[]"
 [ -n "${BENTO_THEMES}" ] || BENTO_THEMES="[]"
 
-# Externe config.json
+# External config.json
 cat > /data/matrix/element-web/config.json << EOF
 {
     "default_server_config": {
@@ -715,7 +715,7 @@ cat > /data/matrix/element-web/config.json << EOF
 }
 EOF
 
-# Lokale config (direkt via IP)
+# Local config (directly via IP)
 cat > /data/matrix/element-web/config.${LOCAL_IP}.json << EOF
 {
     "default_server_config": {
@@ -761,7 +761,7 @@ fi
 
 # ── Element Call config.json ──────────────────────────────────────────────
 if [ "${ENABLE_VOICE}" = "true" ]; then
-    bashio::log.info "Schreibe Element Call config.json..."
+    bashio::log.info "Writing Element Call config.json..."
     EC_DOMAIN=$(echo "${ELEMENT_CALL_URL}" | sed 's|https://||' | sed 's|http://||' | cut -d'/' -f1)
 
     cat > /data/matrix/element-call/config.json << EOF
@@ -778,7 +778,7 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     "showLabsSettings": false
 }
 EOF
-    # Auch domain-spezifische config
+    # Also the domain-specific config
     cp /data/matrix/element-call/config.json \
        /data/matrix/element-call/config.${EC_DOMAIN}.json 2>/dev/null || true
 
@@ -786,18 +786,18 @@ EOF
 fi
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info "✅ Initialisierung abgeschlossen!"
+bashio::log.info "✅ Initialization complete!"
 bashio::log.info "  Server:      ${SERVER_NAME}"
 bashio::log.info "  Element Web: http://[HA-IP]:7080"
 bashio::log.info "  Synapse API: http://[HA-IP]:8008"
-bashio::log.info "  Admin UI:    http://[HA-IP]:8090 (Basic-Auth: ${ADMIN_UI_USER}, siehe ${ADMIN_UI_AUTH_FILE})"
+bashio::log.info "  Admin UI:    http://[HA-IP]:8090 (basic auth: ${ADMIN_UI_USER}, see ${ADMIN_UI_AUTH_FILE})"
 if [ "${ENABLE_VOICE}" = "true" ]; then
 bashio::log.info "  Element Call: http://[HA-IP]:7081"
 bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"
 if [ "${LIVEKIT_TURN_ENABLED}" = "true" ]; then
-bashio::log.info "  ⚠️  Router: UDP 3478 + UDP 30000-30020 + TCP 5349 → Pi freigeben! (TURN aktiv)"
+bashio::log.info "  ⚠️  Router: forward UDP 3478 + UDP 30000-30020 + TCP 5349 → Pi! (TURN active)"
 else
-bashio::log.info "  ⚠️  Router: UDP 30000-30020 → Pi freigeben! (direkter SFU-Pfad, TURN deaktiviert)"
+bashio::log.info "  ⚠️  Router: forward UDP 30000-30020 → Pi! (direct SFU path, TURN disabled)"
 fi
 fi
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
