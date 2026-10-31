@@ -28,11 +28,11 @@ USE_HID="$(read_opt use_hid true)"
 USE_SERIAL="$(read_opt use_serial false)"
 LOG_LEVEL="$(read_opt log_level info)"
 
-# ── intiface-engine Argumente ─────────────────────────────────────────────────
+# ── intiface-engine arguments ─────────────────────────────────────────────────
 # --log accepts error|warn|info|debug|trace (intiface-engine --help)
 case "$LOG_LEVEL" in
   error|warn|info|debug|trace) ;;
-  *) echo "WARN: Unbekanntes log_level '$LOG_LEVEL' - verwende info"; LOG_LEVEL=info ;;
+  *) echo "WARN: Unknown log_level '$LOG_LEVEL' - using info"; LOG_LEVEL=info ;;
 esac
 
 ENGINE_ARGS=(
@@ -44,31 +44,31 @@ ENGINE_ARGS=(
 [ "$USE_HID"    = "true" ] && ENGINE_ARGS+=(--use-hid)
 [ "$USE_SERIAL" = "true" ] && ENGINE_ARGS+=(--use-serial)
 
-# ── D-Bus Setup ───────────────────────────────────────────────────────────────
-echo "INFO: D-Bus Socket: $(ls -la /run/dbus/system_bus_socket 2>/dev/null || echo 'FEHLT!')"
-echo "INFO: BT Adapter: $(ls /sys/class/bluetooth/ 2>/dev/null || echo 'nicht sichtbar')"
+# ── D-Bus setup ───────────────────────────────────────────────────────────────
+echo "INFO: D-Bus Socket: $(ls -la /run/dbus/system_bus_socket 2>/dev/null || echo 'MISSING!')"
+echo "INFO: BT Adapter: $(ls /sys/class/bluetooth/ 2>/dev/null || echo 'not visible')"
 echo "INFO: Engine Args: ${ENGINE_ARGS[*]}"
 
 if [ -S /run/dbus/system_bus_socket ]; then
   export DBUS_SYSTEM_BUS_ADDRESS="unix:path=/run/dbus/system_bus_socket"
-  echo "INFO: DBUS gesetzt: $DBUS_SYSTEM_BUS_ADDRESS"
+  echo "INFO: DBUS set: $DBUS_SYSTEM_BUS_ADDRESS"
 fi
 
 # ── Lovense BLE Auto-Trust ────────────────────────────────────────────────────
-# Scannt kurz und trusted alle gefundenen LVS-* Geräte damit BlueZ
-# stabile Verbindungen ohne Null-Byte-Pfade aufbauen kann.
+# Scans briefly and trusts all LVS-* devices found so BlueZ can
+# establish stable connections without null-byte paths.
 bt_trust_lovense() {
-  echo "INFO: Starte BLE-Scan für Lovense-Geräte (10s)..."
+  echo "INFO: Starting BLE scan for Lovense devices (10s)..."
   if ! command -v bluetoothctl &>/dev/null; then
-    echo "WARN: bluetoothctl nicht verfügbar – kein Auto-Trust"
+    echo "WARN: bluetoothctl not available – no auto-trust"
     return
   fi
 
-  # Scan starten, 10s warten, dann auswerten
+  # Start the scan, wait 10s, then evaluate
   local found
   found=$(timeout 12s bluetoothctl --timeout 10 scan on 2>/dev/null || true)
 
-  # Alle LVS-* MACs extrahieren und trusten
+  # Extract and trust all LVS-* MACs
   echo "$found" | grep -oE '([0-9A-F]{2}:){5}[0-9A-F]{2}' | sort -u | while read -r mac; do
     local name
     name=$(bluetoothctl info "$mac" 2>/dev/null | grep "Name:" | awk '{print $2}' || true)
@@ -78,29 +78,29 @@ bt_trust_lovense() {
     fi
   done
 
-  # Alternativ: direkt alle neuen Devices aus dem Scan-Output
+  # Alternatively: take all new devices straight from the scan output
   echo "$found" | grep -E 'NEW.*Device.*LVS-' | grep -oE '([0-9A-F]{2}:){5}[0-9A-F]{2}' | while read -r mac; do
     echo "INFO: Trusting LVS-Device $mac"
     bluetoothctl trust "$mac" 2>/dev/null || true
   done
 
-  echo "INFO: Auto-Trust abgeschlossen"
+  echo "INFO: Auto-trust finished"
 }
 
-# Nur ausführen wenn BLE aktiv
+# Only run if BLE is enabled
 if [ "$USE_BLE" = "true" ]; then
   bt_trust_lovense &
 fi
 
-# ── intiface-engine starten ───────────────────────────────────────────────────
+# ── Start intiface-engine ───────────────────────────────────────────────────
 ENGINE_VERSION="$(/usr/local/bin/intiface-engine --version 2>/dev/null | head -1 || true)"
-echo "INFO: Starte intiface-engine ${ENGINE_VERSION:-?} auf Port $ENGINE_PORT (log: $LOG_LEVEL)..."
+echo "INFO: Starting intiface-engine ${ENGINE_VERSION:-?} auf Port $ENGINE_PORT (log: $LOG_LEVEL)..."
 /usr/local/bin/intiface-engine "${ENGINE_ARGS[@]}" &
 ENGINE_PID=$!
 
-# ── Node.js WebGUI + MQTT Bridge ──────────────────────────────────────────────
+# ── Node.js web GUI + MQTT bridge ──────────────────────────────────────────────
 sleep 1
-echo "INFO: Starte Web-Server (Port 8199)..."
+echo "INFO: Starting web server (port 8199)..."
 export OPTIONS_FILE
 export WEB_PORT=8199
 node /opt/intiface-addon/server.js &
@@ -114,6 +114,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-echo "INFO: Alle Prozesse gestartet (engine PID=$ENGINE_PID, node PID=$NODE_PID)"
+echo "INFO: All processes started (engine PID=$ENGINE_PID, node PID=$NODE_PID)"
 wait -n "$ENGINE_PID" "$NODE_PID"
-echo "WARN: Ein Prozess ist beendet – Add-on wird neu gestartet"
+echo "WARN: A process has exited – the add-on will be restarted"
