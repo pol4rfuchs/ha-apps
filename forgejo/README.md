@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/forgejo/logo.png" alt="Forgejo Logo" width="500">
 
-# 🦊 Forgejo — Home Assistant Add-on
+# 🦊 Forgejo — Home Assistant App
 
 </div>
 
