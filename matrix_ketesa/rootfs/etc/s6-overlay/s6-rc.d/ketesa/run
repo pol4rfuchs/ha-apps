@@ -1,0 +1,43 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+LOG_LEVEL_OPT="$(bashio::config 'log_level')"
+bashio::log.level "${LOG_LEVEL_OPT}"
+
+USERNAME="$(bashio::config 'admin_ui_username')"
+PASSWORD="$(bashio::config 'admin_ui_password')"
+[[ "${PASSWORD}" == "null" ]] && PASSWORD=""
+PASSWORD_FILE="/config/admin_ui_password.txt"
+# The Supervisor mounts /config (addon_config); create it anyway so a start without that mount works
+mkdir -p /config
+
+if [[ -z "${USERNAME}" || "${USERNAME}" == "null" ]]; then
+  bashio::exit.nok "admin_ui_username must not be empty."
+fi
+if [[ "${USERNAME}" == *:* ]]; then
+  bashio::exit.nok "admin_ui_username must not contain a colon (basic auth)."
+fi
+
+# Option > stored value > generate. If the option is empty, a random password is
+# generated once and kept in the app config folder (not in the log).
+if [[ -z "${PASSWORD}" ]]; then
+  if [[ -s "${PASSWORD_FILE}" ]]; then
+    PASSWORD="$(cat "${PASSWORD_FILE}")"
+    bashio::log.info "admin_ui_password loaded from ${PASSWORD_FILE}"
+  else
+    PASSWORD="$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)"
+    ( umask 077; printf '%s\n' "${PASSWORD}" > "${PASSWORD_FILE}" )
+    bashio::log.info "admin_ui_password generated and stored in ${PASSWORD_FILE}"
+    bashio::log.info "  (on the host: /addon_configs/<slug>_matrix_ketesa/admin_ui_password.txt; set the option to override)"
+  fi
+fi
+
+export KETESA_USER="${USERNAME}"
+export KETESA_PASSWORD="${PASSWORD}"
+export KETESA_LOG_LEVEL="${LOG_LEVEL_OPT^^}"
+export KETESA_ROOT="/opt/ketesa"
+export KETESA_PORT="8091"
+
+bashio::log.info "Starting Ketesa admin UI on port ${KETESA_PORT} (basic auth, user '${USERNAME}')"
+exec s6-setuidgid ketesa python3 /usr/local/bin/ketesa-auth-server.py

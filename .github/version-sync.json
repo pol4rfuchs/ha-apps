@@ -136,6 +136,21 @@
       }
     ]
   },
+  "matrix_ketesa": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG KETESA_VERSION=(\\S+)" },
+        "table_row_label": "Ketesa version",
+        "table_value_format": "`{value}`"
+      },
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "table_row_label": "App version",
+        "table_value_format": "`{value}`"
+      }
+    ]
+  },
   "matrix_synapse": {
     "readme": "README.md",
     "items": [

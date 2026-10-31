@@ -1,0 +1,22 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: >-
+      Detailgrad der Log-Ausgabe. debug protokolliert zusätzlich jede Anfrage;
+      warning protokolliert Anfragen ohne gültige Zugangsdaten; error nur Fehler.
+  admin_ui_username:
+    name: Benutzername der Admin-Oberfläche
+    description: >-
+      Benutzername für die Anmeldung vor der Admin-Oberfläche. Darf keinen
+      Doppelpunkt enthalten.
+  admin_ui_password:
+    name: Passwort der Admin-Oberfläche
+    description: >-
+      Passwort für die Anmeldung vor der Admin-Oberfläche. Leer lassen, um beim
+      ersten Start eines erzeugen zu lassen; es liegt dann im Konfigurationsordner
+      der App (admin_ui_password.txt).
+network:
+  8091/tcp:
+    name: "Port der Admin-Oberfläche"
+    description: "Ketesa-Admin-Oberfläche (mit Anmeldung geschützt). Nicht ins Internet weiterleiten."
