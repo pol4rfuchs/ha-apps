@@ -109,3 +109,79 @@ configuration:
   registration_rate_limit_burst:
     name: Registrierungs-Ratenlimit (Burst)
     description: "Burst-Kontingent für Registrierungsversuche, bevor das Ratenlimit greift."
+network:
+  7880/tcp:
+    name: "LiveKit-SFU-API-Port"
+    description: "LiveKit SFU API (NPM → hier für WSS)."
+  8008/tcp:
+    name: "Synapse-API-Port"
+    description: "Synapse Matrix API (NPM → hier für HTTPS)."
+  3478/udp:
+    name: "TURN-UDP-Port"
+    description: "TURN UDP — nur aktiv wenn livekit_turn_enabled=true (direkt, kein NPM)."
+  5349/tcp:
+    name: "TURN-TLS-Port"
+    description: "TURN TLS Fallback — nur aktiv wenn livekit_turn_enabled=true (direkt, kein NPM)."
+  30000/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30001/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30002/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30003/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30004/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30005/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30006/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30007/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30008/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30009/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30010/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30011/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30012/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30013/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30014/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30015/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30016/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30017/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30018/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30019/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."
+  30020/udp:
+    name: "LiveKit-Media-Port"
+    description: "LiveKit Media (direkter SFU-Port oder TURN-Relay, je nach livekit_turn_enabled)."

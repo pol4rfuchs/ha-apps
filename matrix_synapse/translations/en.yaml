@@ -109,3 +109,79 @@ configuration:
   registration_rate_limit_burst:
     name: Registration Rate Limit (burst)
     description: "Burst allowance for registration attempts before rate limiting kicks in."
+network:
+  7880/tcp:
+    name: "LiveKit SFU API port"
+    description: "LiveKit SFU API (NPM → here for WSS)."
+  8008/tcp:
+    name: "Synapse API port"
+    description: "Synapse Matrix API (NPM → here for HTTPS)."
+  3478/udp:
+    name: "TURN UDP port"
+    description: "TURN UDP — only active if livekit_turn_enabled=true (direct, no NPM)."
+  5349/tcp:
+    name: "TURN TLS port"
+    description: "TURN TLS fallback — only active if livekit_turn_enabled=true (direct, no NPM)."
+  30000/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30001/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30002/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30003/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30004/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30005/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30006/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30007/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30008/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30009/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30010/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30011/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30012/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30013/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30014/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30015/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30016/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30017/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30018/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30019/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
+  30020/udp:
+    name: "LiveKit media port"
+    description: "LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)."
