@@ -1,8 +1,8 @@
 #include <tunables/global>
 
-# NOTE: this is by far the most complex add-on in the repo — 8 separate
+# NOTE: this is by far the most complex add-on in the repo — 7 separate
 # s6-rc.d services (synapse, postgresql, livekit, livekit-jwt, element-web,
-# synapse-admin, element-call, postgres-backup) all sharing one container
+# element-call, postgres-backup) all sharing one container
 # and one /data/matrix tree. The profile below was built from reading every
 # service's run script, but — like the other freshly-added profiles in this
 # batch — test a full start + a real login/message/voice-call cycle + a
@@ -56,8 +56,8 @@ profile matrix_synapse_addon flags=(attach_disconnected,mediate_deleted) {
   /data/matrix/bin/**          ix,
 
   # Everything under /data/matrix: Synapse config + media store, PostgreSQL
-  # data dir, Element Web / Synapse Admin / Element Call static builds,
-  # secrets (.livekit_secret, .admin_ui_auth), and pg_dump backups.
+  # data dir, Element Web / Element Call static builds,
+  # secrets (.livekit_secret), and pg_dump backups.
   /data/                       rw,
   /data/**                     rwk,
 

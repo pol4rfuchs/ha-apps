@@ -53,7 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # → 03-download-binaries.sh in cont-init.d does this on the first start
 
 # ── Prepare directories ────────────────────────────────────────────────
-RUN mkdir -p /opt/element-web /opt/synapse-admin /opt/element-call \
+RUN mkdir -p /opt/element-web /opt/element-call \
              /var/lib/postgresql && \
     chown -R postgres:postgres /var/lib/postgresql
 
@@ -70,20 +70,18 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit-jwt/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/element-call/run && \
-    chmod +x /etc/s6-overlay/s6-rc.d/synapse-admin/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/postgres-backup/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/postgres-backup/finish && \
     chmod +x /etc/s6-overlay/s6-rc.d/element-web/run && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit/finish && \
-    chmod +x /etc/s6-overlay/s6-rc.d/livekit-jwt/finish && \
-    chmod +x /usr/local/bin/admin-ui-auth-server.py
+    chmod +x /etc/s6-overlay/s6-rc.d/livekit-jwt/finish
 # Note: the livekit-server + lk-jwt-service binaries are downloaded to
 # /data/matrix/bin/ by 03-download-binaries.sh on the first start
 
 # ── Ports ───────────────────────────────────────────────────────────────────
 # 7080 = Element Web  |  7081 = Element Call  |  7880 = LiveKit API
-# 8008 = Synapse API  |  8448 = Federation    |  8090 = Synapse Admin
-EXPOSE 7080 7081 7880 8448 8090
+# 8008 = Synapse API  |  8448 = Federation
+EXPOSE 7080 7081 7880 8448
 
 # ── Healthcheck ─────────────────────────────────────────────────────────────
 # Checks Synapse's own /health endpoint instead of just trusting

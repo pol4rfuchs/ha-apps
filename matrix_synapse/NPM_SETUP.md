@@ -11,7 +11,6 @@
 | `element-call.example.org` | 7081 | Element Call (Voice/Video) |
 | `livekit.example.org` | 7880 | LiveKit SFU — **WebSocket required!** |
 | `livekit-jwt.example.org` | 8089 | LiveKit JWT Token Bridge |
-| `admin.example.org` | 8090 | Ketesa (Admin UI) |
 
 ## Router Port Forwards (not via NPM)
 
@@ -98,9 +97,11 @@ if ($request_method = OPTIONS) {
 
 ---
 
-## 6. Ketesa / Admin UI (admin.*) — Port 8090
+## 6. Admin UI (Ketesa)
 
-**Access List:** must be set to **Publicly Accessible** — authentication comes from Matrix login itself, not NPM.
+The admin UI is the separate `matrix_ketesa` app (port `8091`), not part of this app. Keep it on the LAN or behind a VPN;
+see its documentation. It talks to the Synapse admin API through the `matrix.*` proxy host above, so that host must not
+block `/_synapse/admin`.
 
 ---
 

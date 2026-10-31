@@ -18,9 +18,6 @@ configuration:
   max_upload_size_mb:
     name: Max Upload Size (MB)
     description: "Maximum file upload size in megabytes (10–500)."
-  enable_synapse_admin:
-    name: Enable Synapse Admin UI
-    description: "Start the Synapse Admin web UI on port 8090."
   postgres_password:
     name: PostgreSQL Password
     description: "Password for the internal Synapse database user. Leave empty to generate one (stored in /data/matrix/.pg_password). A value set here is applied to the database on every start."
@@ -55,12 +52,6 @@ configuration:
   livekit_jwt_url:
     name: LiveKit JWT URL
     description: "External HTTPS URL for the lk-jwt-service token bridge."
-  admin_ui_username:
-    name: Admin UI Username
-    description: "Basic-Auth username for the Ketesa (Admin UI) on port 8090. Protects the admin interface at the network level."
-  admin_ui_password:
-    name: Admin UI Password
-    description: "Basic-Auth password for the Ketesa (Admin UI). Leave empty to auto-generate on first start (stored in /data/matrix/.admin_ui_auth, never logged)."
   mas_enabled:
     name: Enable MAS Delegation
     description: "Delegates login/registration entirely to the matrix-auth-service add-on (required for Element X QR-code login). Disables native Synapse auth."
