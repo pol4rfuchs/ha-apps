@@ -32,50 +32,50 @@
 
 ## Installation
 
-1. **Repository hinzufügen** in HA:
+1. **Add the repository** in HA:
    ```
    https://github.com/pol4rfuchs/ha-apps
    ```
-2. **Add-on installieren** (suche nach „Forgejo")
-3. **Starten** – beim ersten Aufruf erscheint der Einrichtungs-Wizard
+2. **Install the add-on** (search for "Forgejo")
+3. **Start it** – on the first visit the setup wizard appears
 
-## Konfiguration
+## Configuration
 
-| Option | Standard | Beschreibung |
+| Option | Default | Description |
 |--------|----------|--------------|
-| `app_name` | `Forgejo` | Name der Instanz |
-| `domain` | *(leer)* | Hostname für externe Erreichbarkeit |
-| `ssl` | `false` | HTTPS aktivieren |
-| `certfile` | `fullchain.pem` | SSL-Zertifikat aus `/ssl/` |
-| `keyfile` | `privkey.pem` | SSL-Schlüssel aus `/ssl/` |
-| `ssh_enabled` | `false` | SSH Git-Zugriff |
-| `ssh_port` | `22` | SSH-Port |
-| `log_level` | `Info` | Log-Detailgrad |
+| `app_name` | `Forgejo` | Name of the instance |
+| `domain` | *(empty)* | Hostname for external access |
+| `ssl` | `false` | Enable HTTPS |
+| `certfile` | `fullchain.pem` | SSL certificate from `/ssl/` |
+| `keyfile` | `privkey.pem` | SSL key from `/ssl/` |
+| `ssh_enabled` | `false` | SSH Git access |
+| `ssh_port` | `22` | SSH port |
+| `log_level` | `Info` | Log verbosity |
 
-## Datenpersistenz
+## Data persistence
 
-Alle Daten liegen in `addon_config` – überlebt Updates und Neustarts:
+All data lives in `addon_config` – it survives updates and restarts:
 
 ```
-/addon_configs/local_forgejo/   (Host)
-/config/                        (im Container)
-├── conf/app.ini                ← Forgejo-Konfiguration (editierbar)
-├── data/                       ← SQLite-DB, Pakete, Sessions
-├── repositories/               ← Git-Repositories
-├── ssh/                        ← SSH-Host-Keys
-└── log/                        ← Logs
+/addon_configs/local_forgejo/   (host)
+/config/                        (in the container)
+├── conf/app.ini                ← Forgejo configuration (editable)
+├── data/                       ← SQLite DB, packages, sessions
+├── repositories/               ← Git repositories
+├── ssh/                        ← SSH host keys
+└── log/                        ← logs
 ```
 
-`app.ini` kann direkt über den HA Datei-Editor bearbeitet werden
-(Einstellungen → Add-ons → Forgejo → Konfiguration oder Datei-Editor Add-on).
-Erweiterte Forgejo-Einstellungen die nicht im HA-UI sind → direkt in app.ini.
+`app.ini` can be edited directly with the HA file editor
+(Settings → Add-ons → Forgejo → Configuration, or the File editor add-on).
+Advanced Forgejo settings that are not in the HA UI → directly in app.ini.
 
-## Lokales Testen (vor erstem GHCR-Push)
+## Local testing (before the first GHCR push)
 
-Das Add-on nutzt ein prebuilt Image von GHCR (`ghcr.io/pol4rfuchs/forgejo`).
-`build.yaml` gibt es im Repo nicht mehr (die zentrale CI/CD-Pipeline bricht
-sogar hart ab, falls eine im Add-on-Ordner liegt) — lokales Testen läuft
-stattdessen direkt über das Dockerfile:
+The add-on uses a prebuilt image from GHCR (`ghcr.io/pol4rfuchs/forgejo`).
+`build.yaml` no longer exists in the repo (the central CI/CD pipeline even
+aborts hard if one is present in the add-on folder) — local testing runs
+directly through the Dockerfile instead:
 
 ```bash
 docker buildx build \
@@ -84,13 +84,13 @@ docker buildx build \
   -t forgejo-local ./forgejo
 ```
 
-Oder: PR mit der Änderung öffnen — `02-build-test.yml` baut automatisch nur
-das geänderte Add-on (Path-Filtering) für amd64+arm64 im CI.
+Or: open a PR with the change — `02-build-test.yml` automatically builds only
+the changed add-on (path filtering) for amd64+arm64 in CI.
 
-## Erweiterte Konfiguration (direkt in app.ini)
+## Advanced configuration (directly in app.ini)
 
-Alle Forgejo-Einstellungen die nicht im HA-UI sind, können direkt in
-`/config/conf/app.ini` gesetzt werden:
+All Forgejo settings that are not in the HA UI can be set directly in
+`/config/conf/app.ini`:
 
 ```ini
 [service]
@@ -103,7 +103,7 @@ ENABLED = true
 ENABLED = true
 ```
 
-Alternativ via Umgebungsvariablen (werden beim Start automatisch angewendet):
+Alternatively via environment variables (applied automatically at startup):
 ```
 FORGEJO__service__DISABLE_REGISTRATION=true
 FORGEJO__packages__ENABLED=true
