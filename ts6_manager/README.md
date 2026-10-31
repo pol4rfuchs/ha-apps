@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/ts6_manager/logo.png" alt="TS6 Manager Logo" width="500">
 
-# TS6 Manager — Home Assistant Add-on
+# TS6 Manager — Home Assistant App
 
 </div>
 
@@ -11,10 +11,10 @@
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Upstream](https://img.shields.io/badge/Upstream-clusterzx%2Fts6--manager-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/clusterzx/ts6-manager)
 [![App Version](https://img.shields.io/badge/ts6--manager-1.1.9-F39C12?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-2ECC71?style=for-the-badge)](LICENSE)
 
-**Web-based Management Interface für deinen TeamSpeak 6 Server — als sauber verpacktes Home Assistant Add-on.**
+**Web-based Management Interface für deinen TeamSpeak 6 Server — als sauber verpacktes Home Assistant App.**
 
 </div>
 
@@ -27,7 +27,7 @@
 
 [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
-> **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant add-on wrapper for `clusterzx/ts6-manager`.  
+> **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant app wrapper for `clusterzx/ts6-manager`.  
 > Not affiliated with or endorsed by TeamSpeak Systems, Inc. or the upstream project maintainer.
 
 ---
@@ -36,7 +36,7 @@
 
 ### [TS6 Manager](./ts6_manager)
 
-Run a web-based TeamSpeak 6 management panel directly as a Home Assistant Add-on.
+Run a web-based TeamSpeak 6 management panel directly as a Home Assistant App.
 
 - Web Dashboard with live stats
 - Channel tree and client management
@@ -49,7 +49,7 @@ Run a web-based TeamSpeak 6 management panel directly as a Home Assistant Add-on
 
 ---
 
-# 🎛️ TS6 Manager — Home Assistant Add-on
+# 🎛️ TS6 Manager — Home Assistant App
 
 <div align="center">
 
@@ -84,7 +84,7 @@ Run a web-based TeamSpeak 6 management panel directly as a Home Assistant Add-on
 
 ## 🧭 Overview
 
-This repository contains a complete **Home Assistant Add-on** that wraps [`clusterzx/ts6-manager`](https://github.com/clusterzx/ts6-manager) into a single add-on image.
+This repository contains a complete **Home Assistant App** that wraps [`clusterzx/ts6-manager`](https://github.com/clusterzx/ts6-manager) into a single add-on image.
 
 | Property | Value |
 |---|---|
@@ -363,7 +363,7 @@ ha-apps/
 
 | File | Role |
 |---|---|
-| `repository.yaml` | Identifies the repository as a Home Assistant add-on repository |
+| `repository.yaml` | Identifies the repository as a Home Assistant app repository |
 | `ts6_manager/config.yaml` | Add-on metadata, ports, schema, options and UI settings |
 | `ts6_manager/Dockerfile` | Builds the single-image TS6 Manager add-on |
 | `ts6_manager/rootfs/` | s6-overlay services (init, backend, sidecar, nginx) and the nginx config |
@@ -469,7 +469,7 @@ If this file is missing, the manager starts like a fresh installation.
 
 ### v1.0.0 — Initial Release
 
-- ✅ Initial Home Assistant Add-on wrapper for `clusterzx/ts6-manager`
+- ✅ Initial Home Assistant App wrapper for `clusterzx/ts6-manager`
 - ✅ Web UI exposed on port `8066`
 - ✅ Persistent SQLite database under `/data/ts6webui.db`
 - ✅ Auto-generated secrets under `/data/secrets.env`
@@ -480,7 +480,7 @@ If this file is missing, the manager starts like a fresh installation.
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 
@@ -511,7 +511,7 @@ See also:
 
 Made with ❤️ for the Home Assistant and TeamSpeak community
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
 [![TeamSpeak](https://img.shields.io/badge/TeamSpeak-6-blue?style=flat-square&logo=teamspeak&logoColor=white)](https://teamspeak.com)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 
