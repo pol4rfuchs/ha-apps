@@ -3,7 +3,7 @@ set -e
 
 echo "[entrypoint] Navidrome HA Add-on starting..."
 
-# Bashio laden — einmal hier, gilt für alle gesourcten Scripts
+# Load bashio — once here, applies to all sourced scripts
 if [ -f /usr/lib/bashio/bashio.sh ]; then
   # shellcheck source=/dev/null
   source /usr/lib/bashio/bashio.sh
