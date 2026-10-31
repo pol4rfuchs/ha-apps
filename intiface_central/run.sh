@@ -94,7 +94,7 @@ fi
 
 # ── Start intiface-engine ───────────────────────────────────────────────────
 ENGINE_VERSION="$(/usr/local/bin/intiface-engine --version 2>/dev/null | head -1 || true)"
-echo "INFO: Starting intiface-engine ${ENGINE_VERSION:-?} auf Port $ENGINE_PORT (log: $LOG_LEVEL)..."
+echo "INFO: Starting intiface-engine ${ENGINE_VERSION:-?} on port $ENGINE_PORT (log: $LOG_LEVEL)..."
 /usr/local/bin/intiface-engine "${ENGINE_ARGS[@]}" &
 ENGINE_PID=$!
 

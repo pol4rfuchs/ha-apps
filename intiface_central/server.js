@@ -585,7 +585,7 @@ app.post('/bp/devices/:idx/pattern', async (req, res) => {
   })();
 });
 
-// ─── Server starten ───────────────────────────────────────────────────────────
+// ─── Start the server ───────────────────────────────────────────────────────────
 const server = http.createServer(app);
 server.listen(WEB_PORT, '0.0.0.0', () => {
   console.log(`[web] UI on port ${WEB_PORT}`);
