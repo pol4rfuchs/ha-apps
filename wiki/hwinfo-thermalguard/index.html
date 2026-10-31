@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>HWiNFO Thermal Guard · HWiNFO Thermal Guard · Pol4rFuchs Pages</title>
-<meta content="HWiNFO Thermal Guard Wiki: thermischer Schutz, Watchdog, ntfy Alerts und HWiNFO Remote Monitoring." name="description"/>
+<meta content="HWiNFO Thermal Guard Wiki: thermal protection, watchdog, ntfy alerts and HWiNFO remote monitoring." name="description"/>
 <meta content="#03110c" name="theme-color"/>
 <link href="../assets/css/site.css" rel="stylesheet"/>
 <script defer="" src="../assets/js/site.js"></script>
@@ -22,16 +22,10 @@
   @media(max-width:900px){.doc-layout{grid-template-columns:1fr}.doc-sidebar{position:static}.doc-nav{display:grid;grid-template-columns:1fr 1fr}.doc-nav-link{flex-direction:column;gap:4px}}
   @media(max-width:560px){.doc-nav{grid-template-columns:1fr}}
 
-  .compact-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px}
-  .lang-pill{border:1px solid rgba(116,255,184,.18);border-radius:999px;background:rgba(3,17,12,.48);color:var(--text);font-weight:900;padding:9px 13px;cursor:pointer}
-  .lang-pill[aria-pressed="true"]{border-color:var(--border-strong);background:rgba(52,211,153,.14)}
-  .doc-nav-group{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:10px 10px;border:1px solid rgba(116,255,184,.10);border-radius:14px;background:rgba(3,17,12,.30)}
+  .doc-nav-group{display:grid;grid-template-columns:1fr;align-items:center;gap:8px;padding:10px 10px;border:1px solid rgba(116,255,184,.10);border-radius:14px;background:rgba(3,17,12,.30)}
   .doc-nav-title{font-weight:900;font-size:.86rem;color:var(--text);text-decoration:none}
-  .doc-nav-chip{font-family:var(--mono);font-size:.68rem;color:var(--dim);text-decoration:none;border:1px solid rgba(116,255,184,.12);border-radius:999px;padding:5px 8px;background:rgba(0,0,0,.18)}
-  .doc-nav-chip:hover{color:var(--text);border-color:var(--border-strong);background:rgba(52,211,153,.10)}
   .doc-section{display:none}
   .doc-section.active{display:block}
-  .lang-note{color:var(--dim);font-family:var(--mono);font-size:.78rem;margin:0 0 16px}
 </style>
 <link rel="stylesheet" href="../assets/css/themes.css">
 <script src="../assets/js/themes.js"></script>
@@ -39,17 +33,17 @@
 <body>
 <div class="shell">
 <header class="topbar">
-<a aria-label="Zur Startseite" class="brand" href="../index.html"><span class="brand-mark">PF</span><span>Pol4rFuchs Pages</span></a>
+<a aria-label="Go to the start page" class="brand" href="../index.html"><span class="brand-mark">PF</span><span>Pol4rFuchs Pages</span></a>
 <div class="theme-switch" data-theme-switch></div>
-<nav aria-label="Hauptnavigation" class="nav"><a href="../index.html">Portal</a><a href="#">GPU Tools AIO</a><a aria-current="page" href="../">HA App Wikis</a></nav>
+<nav aria-label="Main navigation" class="nav"><a href="../index.html">Portal</a><a href="#">GPU Tools AIO</a><a aria-current="page" href="../">HA App Wikis</a></nav>
 </header>
 <main>
 <section aria-labelledby="page-title" class="hero">
 <div class="hero-panel">
 <span class="eyebrow">HWiNFO Thermal Guard</span>
 <h1 id="page-title">HWiNFO Thermal Guard</h1>
-<p class="lead">Windows-Gaming-PC Thermal Guard mit HWiNFO, RemoteHWInfo, Watchdog, 12h-Reset, Toasts und optionalem ntfy Push.</p>
-<div class="actions"><a class="button" href="https://codeberg.org/Pol4rFuchs/HWiNFO-ThermalGuard" rel="noopener">Repository öffnen</a><a class="ghost-button" href="../">Wiki-Hub</a></div>
+<p class="lead">Windows gaming PC thermal guard with HWiNFO, RemoteHWInfo, watchdog, 12h reset, toasts and optional ntfy push.</p>
+<div class="actions"><a class="button" href="https://codeberg.org/Pol4rFuchs/HWiNFO-ThermalGuard" rel="noopener">Open repository</a><a class="ghost-button" href="../">Wiki hub</a></div>
 </div>
 <aside aria-label="Status" class="status-panel">
 <div class="status-row"><span class="status-label">App</span><span class="status-value">ThermalGuard</span></div>
@@ -62,178 +56,85 @@
 <aside aria-label="Wiki Navigation" class="doc-sidebar"><h2>Wiki Navigation</h2>
 <nav class="doc-nav">
 <a class="doc-nav-link" data-section="home" href="#home"><span>Home</span><small>Landing</small></a>
-<div class="doc-nav-group"><a class="doc-nav-title" data-section="quick" href="#quick">Schnellstart / Quick Start</a><a class="doc-nav-chip" data-section="quick" data-show="de" href="#quick">DE</a><a class="doc-nav-chip" data-section="quick" data-show="en" href="#quick">EN</a></div>
-<div class="doc-nav-group"><a class="doc-nav-title" data-section="config" href="#config">Konfiguration / Configuration</a><a class="doc-nav-chip" data-section="config" data-show="de" href="#config">DE</a><a class="doc-nav-chip" data-section="config" data-show="en" href="#config">EN</a></div>
-<div class="doc-nav-group"><a class="doc-nav-title" data-section="watchdog" href="#watchdog">Watchdog</a><a class="doc-nav-chip" data-section="watchdog" data-show="de" href="#watchdog">DE</a><a class="doc-nav-chip" data-section="watchdog" data-show="en" href="#watchdog">EN</a></div>
-<div class="doc-nav-group"><a class="doc-nav-title" data-section="trouble" href="#trouble">Troubleshooting</a><a class="doc-nav-chip" data-section="trouble" data-show="de" href="#trouble">DE</a><a class="doc-nav-chip" data-section="trouble" data-show="en" href="#trouble">EN</a></div>
+<div class="doc-nav-group"><a class="doc-nav-title" data-section="quick" href="#quick">Quick Start</a></div>
+<div class="doc-nav-group"><a class="doc-nav-title" data-section="config" href="#config">Configuration</a></div>
+<div class="doc-nav-group"><a class="doc-nav-title" data-section="watchdog" href="#watchdog">Watchdog &amp; 12h-Reset</a></div>
+<div class="doc-nav-group"><a class="doc-nav-title" data-section="trouble" href="#trouble">Troubleshooting</a></div>
 </nav></aside>
 <article class="doc-main">
-<div aria-label="Sprache" class="compact-toolbar">
-<button aria-pressed="true" class="lang-pill" data-global-lang="de" type="button">Deutsch</button>
-<button aria-pressed="false" class="lang-pill" data-global-lang="en" type="button">English</button>
-</div>
-<p class="lang-note">Kompakte Ein-Datei-Wiki: Themen bleiben in dieser Seite, DE/EN wird per Button umgeschaltet.</p>
 <section class="doc-section active" data-topic="home" id="home"><h1>HWiNFO Thermal Guard</h1>
-<p><strong>Automatischer thermischer Schutz für Windows-Gaming-PCs.</strong></p>
-<p>3-Stufen-Eskalation: Warnung → Programme beenden → Notabschaltung.</p>
+<p><strong>Automatic thermal protection for Windows gaming PCs.</strong></p>
+<p>3-stage escalation: warning → close programs → emergency shutdown.</p>
 <hr/>
-<h2>🌐 Sprache / Language</h2>
-<table>
-<thead>
-<tr>
-<th>Deutsch</th>
-<th>English</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a data-section="quick" data-show="de" href="#quick">Schnellstart</a></td>
-<td><a data-section="quick" data-show="en" href="#quick">Quick Start</a></td>
-</tr>
-<tr>
-<td><a data-section="config" data-show="de" href="#config">Konfiguration</a></td>
-<td><a data-section="config" data-show="en" href="#config">Configuration</a></td>
-</tr>
-<tr>
-<td><a data-section="watchdog" data-show="de" href="#watchdog">Watchdog &amp; 12h-Reset</a></td>
-<td><a data-section="watchdog" data-show="en" href="#watchdog">Watchdog &amp; 12h-Reset</a></td>
-</tr>
-<tr>
-<td><a data-section="trouble" data-show="de" href="#trouble">Troubleshooting</a></td>
-<td><a data-section="trouble" data-show="en" href="#trouble">Troubleshooting</a></td>
-</tr>
-</tbody>
-</table>
+<h2>Topics</h2>
+<ul>
+<li><a data-section="quick" href="#quick">Quick Start</a></li>
+<li><a data-section="config" href="#config">Configuration</a></li>
+<li><a data-section="watchdog" href="#watchdog">Watchdog &amp; 12h-Reset</a></li>
+<li><a data-section="trouble" href="#trouble">Troubleshooting</a></li>
+</ul>
 <hr/>
 <h2>Features</h2>
 <ul>
-<li>🔥 CPU + GPU Temperaturüberwachung mit 3-Stufen-Eskalation</li>
-<li>🎮 GPU-Profil Auto-Detection (NVIDIA / AMD)</li>
-<li>📦 Auto-Download fehlender Dependencies (HWiNFO, RemoteHWInfo, BurntToast)</li>
-<li>🔍 Pfad-Scan: findet installierte Software automatisch</li>
-<li>🐕 Watchdog: startet abgestürzte Prozesse neu</li>
-<li>🔄 HWiNFO Free 12h-Reset: automatischer Neustart vor Session-Ablauf</li>
-<li>🔔 Windows Toast (BurntToast) + ntfy Push-Benachrichtigungen</li>
-<li>⚡ PowerShell 5.1 + 7 kompatibel</li>
+<li>🔥 CPU + GPU temperature monitoring with 3-stage escalation</li>
+<li>🎮 GPU profile auto-detection (NVIDIA / AMD)</li>
+<li>📦 Auto-download of missing dependencies (HWiNFO, RemoteHWInfo, BurntToast)</li>
+<li>🔍 Path scan: finds installed software automatically</li>
+<li>🐕 Watchdog: restarts crashed processes</li>
+<li>🔄 HWiNFO Free 12h reset: automatic restart before the session expires</li>
+<li>🔔 Windows toast (BurntToast) + ntfy push notifications</li>
+<li>⚡ PowerShell 5.1 + 7 compatible</li>
 </ul>
 <hr/>
-<h2>Dateien</h2>
+<h2>Files</h2>
 <table>
 <thead>
 <tr>
-<th>Datei</th>
-<th>Beschreibung</th>
+<th>File</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>HWiNFO-ThermalGuard.ps1</code></td>
-<td>Hauptscript</td>
+<td>Main script</td>
 </tr>
 <tr>
 <td><code>Start-HWiNFO-Remote.bat</code></td>
-<td>Autostart-Kette</td>
+<td>Autostart chain</td>
 </tr>
 <tr>
 <td><code>Start-HWiNFO-Remote.vbs</code></td>
-<td>Unsichtbar-Wrapper</td>
+<td>Invisible wrapper</td>
 </tr>
 <tr>
 <td><code>README.md</code></td>
-<td>Offline-Dokumentation</td>
+<td>Offline documentation</td>
 </tr>
 </tbody>
 </table>
 <hr/>
-<h2>Architektur</h2>
+<h2>Architecture</h2>
 <pre><code>Start-HWiNFO-Remote.vbs (shell:startup)
 └── Start-HWiNFO-Remote.bat
-    ├── PS-Version erkennen (pwsh / powershell)
-    ├── Shared Memory Registry setzen
-    ├── Pfade scannen + Auto-Download
-    ├── HWiNFO64.exe starten
-    ├── RemoteHWInfo.exe starten (hidden)
-    └── HWiNFO-ThermalGuard.ps1 starten (hidden)
+    ├── detect the PS version (pwsh / powershell)
+    ├── set the shared memory registry
+    ├── scan paths + auto-download
+    ├── start HWiNFO64.exe
+    ├── start RemoteHWInfo.exe (hidden)
+    └── start HWiNFO-ThermalGuard.ps1 (hidden)
         ├── GPU Auto-Detection
-        ├── BurntToast prüfen/installieren
-        ├── Watchdog alle 60s
-        └── Polling-Loop alle 5s
-            ├── Stufe 1: Toast + ntfy
-            ├── Stufe 2: taskkill
-            └── Stufe 3: shutdown.exe
+        ├── check/install BurntToast
+        ├── watchdog every 60s
+        └── polling loop every 5s
+            ├── Stage 1: toast + ntfy
+            ├── Stage 2: taskkill
+            └── Stage 3: shutdown.exe
 </code></pre>
 <hr/>
 <p>v1.4 · <a href="https://codeberg.org/Pol4rFuchs/HWiNFO-ThermalGuard" rel="noopener">Repository</a> · © Pol4rFuchs</p>
 </section>
-<section class="doc-section" data-lang="de" data-topic="quick" id="quick"><h1>Schnellstart</h1>
-<p><a href="./">← Startseite</a></p>
-<hr/>
-<h2>Frischer PC (nix installiert)</h2>
-<ol>
-<li>Ordner <code>C:\Tools\HWiNFO-ThermalGuard\</code> anlegen</li>
-<li>Alle Dateien reinkopieren:<ul>
-<li><code>HWiNFO-ThermalGuard.ps1</code></li>
-<li><code>Start-HWiNFO-Remote.bat</code></li>
-<li><code>Start-HWiNFO-Remote.vbs</code></li>
-</ul>
-</li>
-<li><code>Start-HWiNFO-Remote.bat</code> per Rechtsklick → <strong>Als Administrator ausführen</strong></li>
-<li>Fertig</li>
-</ol>
-<p>Alles was fehlt (HWiNFO64, RemoteHWInfo, BurntToast) wird automatisch heruntergeladen und installiert. Die GPU (NVIDIA oder AMD) wird automatisch erkannt.</p>
-<hr/>
-<h2>Was passiert beim ersten Start?</h2>
-<pre><code>Bat startet
-├── PowerShell 7 oder 5.1 erkennen
-├── HWiNFO Shared Memory in Registry aktivieren
-├── HWiNFO64 suchen → nicht da? → winget install
-├── RemoteHWInfo suchen → nicht da? → GitHub ZIP download
-├── HWiNFO64 starten + 15s warten
-├── RemoteHWInfo starten + 5s warten
-├── ThermalGuard starten
-│   ├── GPU erkennen (NVIDIA / AMD)
-│   ├── BurntToast prüfen → nicht da? → Install-Module
-│   ├── Sensor-Check
-│   └── Polling-Loop aktiv
-└── Alle Dienste aktiv
-</code></pre>
-<hr/>
-<h2>Autostart einrichten</h2>
-<ol>
-<li><code>.bat</code> und <code>.vbs</code> müssen im <strong>gleichen Ordner</strong> liegen</li>
-<li><code>Win+R</code> → <code>shell:startup</code> → Enter</li>
-<li>Rechtsklick auf <code>.vbs</code> → <strong>Verknüpfung erstellen</strong> → in den startup-Ordner verschieben</li>
-</ol>
-<p>Ab jetzt startet alles unsichtbar bei jedem Login.</p>
-<hr/>
-<h2>Dienste prüfen</h2>
-<p>PowerShell-Einzeiler:</p>
-<pre><code class="language-powershell">"HWiNFO64: $(if(Get-Process HWiNFO64 -EA 0){'[OK]'}else{'[TOT]'})  |  RemoteHWInfo: $(if(Get-Process RemoteHWInfo -EA 0){'[OK]'}else{'[TOT]'})  |  ThermalGuard: $(if(Get-CimInstance Win32_Process|?{$_.CommandLine -match 'ThermalGuard'}){'[OK]'}else{'[TOT]'})"
-</code></pre>
-<hr/>
-<h2>Beispiel-Setups</h2>
-<h3>Gaming-PC mit NVIDIA + eigenem ntfy-Server</h3>
-<pre><code class="language-powershell">$GPUProfile = "AUTO"
-$EnableNtfy = $true
-$NTFY_URL   = "https://ntfy.deine-domain.duckdns.org"
-$NTFY_TOPIC = "ha-system"
-$EnableHWiNFO12hReset = $false   # HWiNFO Pro
-</code></pre>
-<h3>Kumpel-PC mit AMD + kein ntfy</h3>
-<p>Nichts anpassen — Defaults reichen:</p>
-<pre><code class="language-powershell">$GPUProfile = "AUTO"      # erkennt AMD automatisch
-$EnableNtfy = $false      # Default
-</code></pre>
-<h3>PC mit ntfy.sh (kostenlos, kein eigener Server)</h3>
-<pre><code class="language-powershell">$EnableNtfy = $true
-$NTFY_URL   = "https://ntfy.sh"
-$NTFY_TOPIC = "thermalguard-deinname"
-</code></pre>
-<p>ntfy-App installieren (Android/iOS), Topic subscriben, fertig.</p>
-<hr/>
-<p><a data-section="config" data-show="de" href="#config">Konfiguration →</a></p>
-</section>
-<section class="doc-section" data-lang="en" data-topic="quick" id="quick-en"><h1>Quick Start</h1>
+<section class="doc-section" data-topic="quick" id="quick"><h1>Quick Start</h1>
 <p><a href="./">← Home</a></p>
 <hr/>
 <h2>Fresh PC (nothing installed)</h2>
@@ -299,188 +200,9 @@ $NTFY_TOPIC = "thermalguard-yourname"
 </code></pre>
 <p>Install ntfy app (Android/iOS), subscribe to topic, done.</p>
 <hr/>
-<p><a data-section="config" data-show="en" href="#config">Configuration →</a></p>
+<p><a data-section="config" href="#config">Configuration →</a></p>
 </section>
-<section class="doc-section" data-lang="de" data-topic="config" id="config"><h1>Konfiguration</h1>
-<p><a href="./">← Startseite</a></p>
-<hr/>
-<p>Alle Einstellungen stehen am Anfang der <code>HWiNFO-ThermalGuard.ps1</code>.</p>
-<h2>GPU-Profil</h2>
-<pre><code class="language-powershell">$GPUProfile = "AUTO"      # Erkennt automatisch NVIDIA oder AMD (Standard)
-$GPUProfile = "NVIDIA"    # Manueller Override
-$GPUProfile = "AMD"       # Manueller Override
-</code></pre>
-<p>Bei <code>AUTO</code> erkennt das Script die GPU über zwei Methoden:</p>
-<ol>
-<li><strong>Windows WMI</strong> (<code>Win32_VideoController</code>) — funktioniert immer</li>
-<li><strong>HWiNFO JSON</strong> (Fallback) — liest GPU-Name aus Sensor-Daten</li>
-</ol>
-<h3>Sensor-Labels nach Profil</h3>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>NVIDIA</th>
-<th>AMD</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GPU Temp</td>
-<td><code>GPU Temperature</code></td>
-<td><code>GPU Temperature</code></td>
-</tr>
-<tr>
-<td>GPU Hotspot</td>
-<td>nicht verfügbar</td>
-<td><code>GPU Hot Spot Temperature</code></td>
-</tr>
-<tr>
-<td>GPU Fan</td>
-<td><code>GPU Fan1</code></td>
-<td><code>GPU Fan</code></td>
-</tr>
-<tr>
-<td>GPU Load</td>
-<td><code>GPU Core Load</code></td>
-<td><code>GPU Utilization</code></td>
-</tr>
-</tbody>
-</table>
-<hr/>
-<h2>Toggles</h2>
-<pre><code class="language-powershell">$EnableCPU  = $true     # CPU-Temperatur überwachen
-$EnableGPU  = $true     # GPU-Temperatur überwachen
-$EnableNtfy = $false    # ntfy Push (true = aktivieren, URL+Topic setzen)
-</code></pre>
-<hr/>
-<h2>ntfy</h2>
-<h3>Eigener Server</h3>
-<pre><code class="language-powershell">$EnableNtfy = $true
-$NTFY_URL   = "https://dein-server.duckdns.org"
-$NTFY_TOPIC = "ha-system"
-</code></pre>
-<h3>ntfy.sh (kostenlos, kein Server nötig)</h3>
-<pre><code class="language-powershell">$EnableNtfy = $true
-$NTFY_URL   = "https://ntfy.sh"
-$NTFY_TOPIC = "thermalguard-deinname"
-</code></pre>
-<h3>Aus (nur Windows Toast)</h3>
-<pre><code class="language-powershell">$EnableNtfy = $false
-</code></pre>
-<hr/>
-<h2>Schwellwerte</h2>
-<pre><code class="language-powershell">$CPU_WarnTemp    = 85     # CPU Vorwarnung
-$CPU_CritTemp    = 91     # CPU Hard-Stop
-$GPU_WarnTemp    = 83     # GPU Vorwarnung
-$GPU_CritTemp    = 90     # GPU Hard-Stop
-$GPU_HotspotWarn = 95     # GPU Hotspot Vorwarnung (nur AMD)
-$GPU_HotspotCrit = 100    # GPU Hotspot Hard-Stop (nur AMD)
-$GPU_FanWarnRPM  = 300    # Fan-Warnung unter diesem Wert bei Last
-$GPU_FanCritRPM  = 0      # Fan Hard-Stop: 0 RPM bei Last
-</code></pre>
-<h3>Richtwerte</h3>
-<table>
-<thead>
-<tr>
-<th>Komponente</th>
-<th>Konservativ</th>
-<th>Standard</th>
-<th>Aggressiv</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CPU Warn</td>
-<td>80°C</td>
-<td>85°C</td>
-<td>88°C</td>
-</tr>
-<tr>
-<td>CPU Crit</td>
-<td>88°C</td>
-<td>91°C</td>
-<td>95°C</td>
-</tr>
-<tr>
-<td>GPU Warn</td>
-<td>78°C</td>
-<td>83°C</td>
-<td>85°C</td>
-</tr>
-<tr>
-<td>GPU Crit</td>
-<td>85°C</td>
-<td>90°C</td>
-<td>92°C</td>
-</tr>
-<tr>
-<td>GPU Hotspot Warn</td>
-<td>90°C</td>
-<td>95°C</td>
-<td>97°C</td>
-</tr>
-<tr>
-<td>GPU Hotspot Crit</td>
-<td>95°C</td>
-<td>100°C</td>
-<td>105°C</td>
-</tr>
-</tbody>
-</table>
-<hr/>
-<h2>Timing</h2>
-<pre><code class="language-powershell">$PollInterval = 5     # Sekunden zwischen Sensor-Abfragen
-$Stage2Delay  = 30    # Sekunden bis Programme beendet werden
-$Stage3Delay  = 90    # Sekunden bis Shutdown (gesamt ab Trigger)
-</code></pre>
-<p><code>$Stage3Delay</code> ist die Gesamtzeit ab dem ersten kritischen Wert. Bei Defaults: 30s bis Kill, dann 60s bis Shutdown.</p>
-<hr/>
-<h2>Prozessliste (Stufe 2)</h2>
-<pre><code class="language-powershell">$KillProcesses = @(
-    "TslGame"                  # PUBG
-    "Stalker2-Win64-Shipping"  # Stalker 2
-    "obs64"                    # OBS Studio
-    "chrome"
-    "firefox"
-    "floorp"
-)
-</code></pre>
-<p>Prozessnamen findest du im Task-Manager unter "Details" oder:</p>
-<pre><code class="language-powershell">Get-Process | Where-Object { $_.MainWindowTitle -ne "" }
-</code></pre>
-<hr/>
-<h2>Pfade (optional)</h2>
-<p>Normalerweise nicht nötig — Auto-Scan findet alles. Nur setzen bei ungewöhnlichem Installationsort:</p>
-<pre><code class="language-powershell">$HWiNFO_Path       = ""    # leer = auto-scan
-$RemoteHWInfo_Path  = ""    # leer = auto-scan
-</code></pre>
-<h3>Scan-Reihenfolge HWiNFO64</h3>
-<ol>
-<li>Manueller Override → 2. <code>Program Files</code> → 3. <code>Program Files (x86)</code> → 4. <code>C:\Tools\</code> → 5. Desktop → 6. Downloads → 7. PATH → 8. winget install</li>
-</ol>
-<h3>Scan-Reihenfolge RemoteHWInfo</h3>
-<ol>
-<li>Manueller Override → 2. <code>C:\Tools\RemoteHWInfo\</code> → 3. <code>C:\Tools\</code> → 4. Desktop → 5. Downloads → 6. Script-Ordner → 7. GitHub ZIP download</li>
-</ol>
-<hr/>
-<h2>3-Stufen-Eskalation</h2>
-<pre><code>t=0s     Schwelle erreicht → Toast + ntfy + Timer
-t=0-30s  Polling → Wert fällt? → Reset
-t=30s    STUFE 2: Programme beenden
-t=30-90s Polling → Wert fällt? → Reset
-t=90s    STUFE 3: shutdown.exe /s /f /t 0
-</code></pre>
-<p>Jeder Sensor hat einen eigenen Timer. Fan-Check nur bei GPU-Last &gt; 50%.</p>
-<hr/>
-<h2>Logging</h2>
-<pre><code>%USERPROFILE%\HWiNFO-ThermalGuard\thermalguard.log
-</code></pre>
-<p>Levels: <code>INFO</code>, <code>WARN</code>, <code>CRIT</code>, <code>ERROR</code>. Rotation bei 10 MB.</p>
-<hr/>
-<p><a data-section="quick" data-show="de" href="#quick">← Schnellstart</a> · <a data-section="watchdog" data-show="de" href="#watchdog">Watchdog →</a></p>
-</section>
-<section class="doc-section" data-lang="en" data-topic="config" id="config-en"><h1>Configuration</h1>
+<section class="doc-section" data-topic="config" id="config"><h1>Configuration</h1>
 <p><a href="./">← Home</a></p>
 <hr/>
 <p>All settings are at the top of <code>HWiNFO-ThermalGuard.ps1</code>.</p>
@@ -595,96 +317,9 @@ t=90s    STAGE 3: shutdown.exe /s /f /t 0
 </code></pre>
 <p>Levels: <code>INFO</code>, <code>WARN</code>, <code>CRIT</code>, <code>ERROR</code>. Rotation at 10 MB.</p>
 <hr/>
-<p><a data-section="quick" data-show="en" href="#quick">← Quick Start</a> · <a data-section="watchdog" data-show="en" href="#watchdog">Watchdog →</a></p>
+<p><a data-section="quick" href="#quick">← Quick Start</a> · <a data-section="watchdog" href="#watchdog">Watchdog →</a></p>
 </section>
-<section class="doc-section" data-lang="de" data-topic="watchdog" id="watchdog"><h1>Watchdog &amp; 12h-Reset</h1>
-<p><a href="./">← Startseite</a></p>
-<hr/>
-<h2>Konfiguration</h2>
-<pre><code class="language-powershell">$EnableWatchdog       = $true   # Prozess-Watchdog an/aus
-$WatchdogIntervalSec  = 60     # Prüf-Intervall in Sekunden
-$EnableHWiNFO12hReset = $true  # Automatischer Neustart vor 12h-Limit
-$HWiNFOMaxRuntimeMin  = 690   # Neustart nach X Minuten (690 = 11.5h)
-</code></pre>
-<hr/>
-<h2>Was der Watchdog macht</h2>
-<p>Alle 60 Sekunden (konfigurierbar) prüft der Watchdog:</p>
-<table>
-<thead>
-<tr>
-<th>Prüfung</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>HWiNFO64 Prozess weg</td>
-<td>Neustart + 15s warten</td>
-</tr>
-<tr>
-<td>RemoteHWInfo Prozess weg</td>
-<td>Neustart + 5s warten</td>
-</tr>
-<tr>
-<td>HWiNFO Laufzeit &gt; 11.5h</td>
-<td>Beide stoppen → neu starten</td>
-</tr>
-<tr>
-<td>Endpoint offline</td>
-<td>Sofortiger Watchdog-Check</td>
-</tr>
-</tbody>
-</table>
-<p>Bei jedem Fehler wird ein Alert (Toast + ntfy) gesendet.</p>
-<hr/>
-<h2>HWiNFO Free 12h-Limit</h2>
-<p>Die kostenlose Version von HWiNFO beendet sich nach 12 Stunden. Ohne den 12h-Reset läuft ThermalGuard danach blind.</p>
-<h3>Ablauf</h3>
-<pre><code>HWiNFO läuft seit 11.5h
-├── Alert: "HWiNFO 12h-Reset"
-├── HWiNFO64 stoppen
-├── RemoteHWInfo stoppen
-│   (braucht neues Shared Memory nach HWiNFO-Neustart)
-├── 3s warten
-├── HWiNFO64 neu starten
-├── 15s warten auf Sensor-Initialisierung
-├── RemoteHWInfo neu starten
-├── 5s warten auf HTTP-Server
-└── Timer zurücksetzen → nächster Reset in 11.5h
-</code></pre>
-<h3>Warum 11.5h statt 12h?</h3>
-<p>30 Minuten Puffer. HWiNFO zeigt vor dem 12h-Limit einen Dialog — wenn niemand am PC ist, bleibt der Dialog offen und HWiNFO läuft noch kurz weiter. Mit 11.5h ist der Neustart sicher durch bevor das Limit greift.</p>
-<h3>Warum wird RemoteHWInfo auch neugestartet?</h3>
-<p>RemoteHWInfo liest den HWiNFO Shared Memory. Nach einem HWiNFO-Neustart wird ein neuer Shared Memory Block erstellt. RemoteHWInfo muss sich neu verbinden — ein Neustart ist der sauberste Weg.</p>
-<hr/>
-<h2>HWiNFO Pro</h2>
-<p>Wer HWiNFO Pro hat braucht den 12h-Reset nicht:</p>
-<pre><code class="language-powershell">$EnableHWiNFO12hReset = $false
-</code></pre>
-<p>Der Prozess-Watchdog (Crash-Recovery) bleibt trotzdem aktiv.</p>
-<hr/>
-<h2>Endpoint-Ausfall</h2>
-<p>Wenn der HTTP-Endpoint (<code>localhost:60000/json.json</code>) nicht antwortet:</p>
-<ol>
-<li>ThermalGuard loggt "Endpoint nicht erreichbar"</li>
-<li>Alert wird gesendet (max alle 15 Minuten)</li>
-<li>Watchdog-Check wird sofort erzwungen (normales Intervall überspringen)</li>
-<li>Watchdog prüft ob HWiNFO + RemoteHWInfo laufen → startet neu wenn nötig</li>
-<li>Polling läuft weiter — sobald Endpoint wieder da, normaler Betrieb</li>
-</ol>
-<p>ThermalGuard beendet sich <strong>nie</strong> wegen eines Endpoint-Ausfalls.</p>
-<hr/>
-<h2>Log-Beispiel</h2>
-<pre><code>[2026-05-18 23:01:22] [WARN] WATCHDOG: HWiNFO64 laeuft seit 690 Minuten — 12h-Reset...
-[2026-05-18 23:01:22] [INFO] Alert: HWiNFO 12h-Reset
-[2026-05-18 23:01:25] [INFO] WATCHDOG: Warte 15s auf HWiNFO Sensor-Init...
-[2026-05-18 23:01:40] [INFO] WATCHDOG: Warte 5s auf RemoteHWInfo...
-[2026-05-18 23:01:45] [INFO] WATCHDOG: 12h-Reset erfolgreich — HWiNFO (PID 4521) + RemoteHWInfo (PID 7832)
-</code></pre>
-<hr/>
-<p><a data-section="config" data-show="de" href="#config">← Konfiguration</a> · <a data-section="trouble" data-show="de" href="#trouble">Troubleshooting →</a></p>
-</section>
-<section class="doc-section" data-lang="en" data-topic="watchdog" id="watchdog-en"><h1>Watchdog &amp; 12h-Reset</h1>
+<section class="doc-section" data-topic="watchdog" id="watchdog"><h1>Watchdog &amp; 12h-Reset</h1>
 <p><a href="./">← Home</a></p>
 <hr/>
 <h2>Configuration</h2>
@@ -758,158 +393,9 @@ $HWiNFOMaxRuntimeMin  = 690   # Restart after X minutes (690 = 11.5h)
 </ol>
 <p>ThermalGuard <strong>never</strong> exits due to an endpoint failure.</p>
 <hr/>
-<p><a data-section="config" data-show="en" href="#config">← Configuration</a> · <a data-section="trouble" data-show="en" href="#trouble">Troubleshooting →</a></p>
+<p><a data-section="config" href="#config">← Configuration</a> · <a data-section="trouble" href="#trouble">Troubleshooting →</a></p>
 </section>
-<section class="doc-section" data-lang="de" data-topic="trouble" id="trouble"><h1>Troubleshooting</h1>
-<p><a href="./">← Startseite</a></p>
-<hr/>
-<h2>HWiNFO64 konnte nicht installiert werden</h2>
-<p>winget braucht den Windows Update Service:</p>
-<pre><code class="language-powershell">Get-Service wuauserv | Select-Object Status, StartType
-</code></pre>
-<p>Falls deaktiviert:</p>
-<pre><code class="language-powershell">Set-Service wuauserv -StartupType Manual; Start-Service wuauserv
-</code></pre>
-<p>Danach nochmal starten. Oder manuell: <a href="https://www.hwinfo.com/download/" rel="noopener">hwinfo.com/download</a></p>
-<hr/>
-<h2>RemoteHWInfo Download fehlgeschlagen</h2>
-<p>GitHub nicht erreichbar oder Firewall blockiert. Manuell:</p>
-<ol>
-<li><a href="https://github.com/Demion/remotehwinfo/releases/download/v0.5/RemoteHWInfo_v0.5.zip" rel="noopener">RemoteHWInfo v0.5 ZIP</a> herunterladen</li>
-<li>Entpacken nach <code>C:\Tools\RemoteHWInfo\</code></li>
-</ol>
-<hr/>
-<h2>HTTP-Endpoint nicht erreichbar</h2>
-<p>Checkliste:</p>
-<ul>
-<li>HWiNFO64 im <strong>Sensors-only</strong> Modus?</li>
-<li>Shared Memory aktiv? → wird automatisch per Registry gesetzt</li>
-<li>RemoteHWInfo läuft? → Task-Manager → Details → <code>RemoteHWInfo.exe</code></li>
-<li>Port 60000 frei? → <code>netstat -ano | findstr 60000</code></li>
-<li>Browser-Test: <code>http://localhost:60000/json.json</code></li>
-</ul>
-<hr/>
-<h2>Sensor fehlt</h2>
-<p>Der <code>SensorMatch</code>-String passt nicht zu den tatsächlichen Labels.</p>
-<ol>
-<li>HWiNFO64 + RemoteHWInfo müssen laufen</li>
-<li>Browser → <code>http://localhost:60000/json.json</code></li>
-<li>Strg+F → nach dem Sensor suchen (z.B. "GPU Temperature")</li>
-<li><code>labelOriginal</code> im JSON mit <code>SensorMatch</code> im Script vergleichen</li>
-<li>Bei Bedarf <code>$GPUProfile</code> von <code>AUTO</code> auf manuell setzen und SensorMatch anpassen</li>
-</ol>
-<hr/>
-<h2>Toast-Benachrichtigungen kommen nicht</h2>
-<p>BurntToast installiert?</p>
-<pre><code class="language-powershell">Get-Module -ListAvailable -Name BurntToast
-</code></pre>
-<p>Falls nicht:</p>
-<pre><code class="language-powershell">Install-Module BurntToast -Force -Scope CurrentUser
-</code></pre>
-<p>Test:</p>
-<pre><code class="language-powershell">New-BurntToastNotification -Text "Test", "Funktioniert!"
-</code></pre>
-<p>Falls Test funktioniert aber ThermalGuard-Toasts nicht: Windows Fokus-Assistent prüfen → <strong>Aus</strong> stellen (Einstellungen → System → Benachrichtigungen).</p>
-<hr/>
-<h2>GPU wird nicht erkannt</h2>
-<p>Auto-Detection zeigt "Keine unterstützte GPU erkannt":</p>
-<ol>
-<li>Prüfe ob die GPU im Geräte-Manager sichtbar ist</li>
-<li>Sind GPU-Treiber installiert?</li>
-<li>Workaround: manuell setzen statt AUTO:</li>
-</ol>
-<pre><code class="language-powershell">$GPUProfile = "NVIDIA"   # oder "AMD"
-</code></pre>
-<hr/>
-<h2>Script startet nicht / beendet sich sofort</h2>
-<p>Log prüfen:</p>
-<pre><code>%USERPROFILE%\HWiNFO-ThermalGuard\thermalguard.log
-</code></pre>
-<p>Häufige Ursachen:</p>
-<ul>
-<li><strong>"PowerShell 5.1 oder höher erforderlich"</strong> → Windows PowerShell aktualisieren</li>
-<li><strong>"Software-Check fehlgeschlagen"</strong> → HWiNFO oder RemoteHWInfo nicht installierbar (Logs lesen)</li>
-<li><strong>ExecutionPolicy blockiert</strong> → <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></li>
-</ul>
-<hr/>
-<h2>RemoteHWInfo crasht beim Start</h2>
-<p>Shared Memory nicht aktiv. Prüfen:</p>
-<ol>
-<li>HWiNFO64 muss <strong>vorher</strong> laufen</li>
-<li>Settings → Shared Memory Support → Haken</li>
-<li>HWiNFO komplett beenden und neu starten</li>
-</ol>
-<p>Manueller Test:</p>
-<pre><code class="language-cmd">cd C:\Tools\RemoteHWInfo
-RemoteHWInfo.exe -hwinfo=1 -gpuz=0 -afterburner=0
-</code></pre>
-<hr/>
-<h2>Dienste beenden</h2>
-<table>
-<thead>
-<tr>
-<th>Prozess</th>
-<th>Methode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ThermalGuard</td>
-<td>Task-Manager → Details → <code>powershell.exe</code>/<code>pwsh.exe</code> mit ThermalGuard → Task beenden</td>
-</tr>
-<tr>
-<td>RemoteHWInfo</td>
-<td>Task-Manager → Details → <code>RemoteHWInfo.exe</code> → Task beenden</td>
-</tr>
-<tr>
-<td>HWiNFO64</td>
-<td>Tray-Icon → Rechtsklick → Exit</td>
-</tr>
-</tbody>
-</table>
-<hr/>
-<h2>PowerShell-Kompatibilität</h2>
-<table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>PS 5.1</th>
-<th>PS 7+</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Script</td>
-<td>✅</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>BurntToast</td>
-<td>✅</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>Auto-Scan</td>
-<td>✅</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>Auto-Download</td>
-<td>✅</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>winget</td>
-<td>✅</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<p>Die <code>.bat</code> erkennt automatisch ob <code>pwsh.exe</code> (PS7) verfügbar ist und bevorzugt es.</p>
-<hr/>
-<p><a data-section="watchdog" data-show="de" href="#watchdog">← Watchdog</a></p>
-</section>
-<section class="doc-section" data-lang="en" data-topic="trouble" id="trouble-en"><h1>Troubleshooting</h1>
+<section class="doc-section" data-topic="trouble" id="trouble"><h1>Troubleshooting</h1>
 <p><a href="./">← Home</a></p>
 <hr/>
 <h2>HWiNFO64 could not be installed</h2>
@@ -1038,30 +524,26 @@ RemoteHWInfo.exe -hwinfo=1 -gpuz=0 -afterburner=0
 </table>
 <p>The <code>.bat</code> auto-detects <code>pwsh.exe</code> (PS7) and prefers it over <code>powershell.exe</code> (PS5.1).</p>
 <hr/>
-<p><a data-section="watchdog" data-show="en" href="#watchdog">← Watchdog</a></p>
+<p><a data-section="watchdog" href="#watchdog">← Watchdog</a></p>
 </section>
 <script>
 (function(){
-  const state={lang:'de', topic:'home'};
+  const state={topic:'home'};
   const sections=[...document.querySelectorAll('.doc-section')];
-  const pills=[...document.querySelectorAll('[data-global-lang]')];
-  function show(topic, lang){
-    state.topic=topic||state.topic||'home'; state.lang=lang||state.lang||'de';
+  function show(topic){
+    state.topic=topic||state.topic||'home';
     sections.forEach(s=>{
-      const ok=s.dataset.topic===state.topic && (state.topic==='home' || s.dataset.lang===state.lang);
-      s.classList.toggle('active', ok);
+      s.classList.toggle('active', s.dataset.topic===state.topic);
     });
-    pills.forEach(p=>p.setAttribute('aria-pressed', String(p.dataset.globalLang===state.lang)));
     if(location.hash.replace('#','')!==state.topic) history.replaceState(null,'','#'+state.topic);
   }
   document.addEventListener('click', function(e){
-    const langBtn=e.target.closest('[data-global-lang]');
     const nav=e.target.closest('[data-section]');
-    if(langBtn){ e.preventDefault(); show(state.topic==='home'?'quick':state.topic, langBtn.dataset.globalLang); return; }
-    if(nav){ e.preventDefault(); show(nav.dataset.section, nav.dataset.show||state.lang); }
+    if(nav){ e.preventDefault(); show(nav.dataset.section); }
   });
-  const initial=(location.hash||'#home').slice(1);
-  if(['quick','config','watchdog','trouble'].includes(initial)) show(initial, state.lang); else show('home', state.lang);
+  // Old links used #<topic>-en for the English variant.
+  const initial=(location.hash||'#home').slice(1).replace(/-en$/,'');
+  if(['quick','config','watchdog','trouble'].includes(initial)) show(initial); else show('home');
 })();
 </script>
 </article>
