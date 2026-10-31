@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/pol4rfuchs/ha-apps/main/nginx_proxy_manager/logo.png" alt="Nginx Proxy Manager Logo" width="500">
 
-# 🔀 Nginx Proxy Manager — Home Assistant Add-on
+# 🔀 Nginx Proxy Manager — Home Assistant App
 
 </div>
 
@@ -10,7 +10,7 @@
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![NPM Version](https://img.shields.io/badge/NPM-2.16.0-E74C3C?style=for-the-badge&logo=nginx&logoColor=white)](https://github.com/NginxProxyManager/nginx-proxy-manager)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Reverse proxy management with a clean UI, SSL automation and native Home Assistant integration.**
 
@@ -158,7 +158,7 @@ HA backups include the add-on `/data` directory automatically.
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 
