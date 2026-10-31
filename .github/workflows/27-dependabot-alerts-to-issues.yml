@@ -43,7 +43,7 @@ jobs:
             const fs = require("fs");
             const addons = JSON.parse(fs.readFileSync("addons.json", "utf8"));
 
-            // Ordnername (Unterstrich) -> Label-Slug (Bindestrich), z.B. ntfy_manager -> addon/ntfy-manager
+            // Folder name (underscore) -> label slug (hyphen), e.g. ntfy_manager -> addon/ntfy-manager
             function addonLabelFor(manifestPath) {
               if (!manifestPath) return null;
               const top = manifestPath.split("/")[0];
