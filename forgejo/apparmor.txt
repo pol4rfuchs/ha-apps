@@ -3,7 +3,7 @@
 profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Netzwerk (HTTP, SSH, DNS)
+  # Network (HTTP, SSH, DNS)
   network udp,
   network tcp,
   network dgram,
@@ -20,7 +20,7 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   capability dac_read_search,
   capability sys_chroot,
 
-  # s6-Overlay Init-System
+  # s6 overlay init system
   /init                     ix,
   /run/{s6,s6-rc*,service}/** ix,
   /package/**               ix,
@@ -46,22 +46,22 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   # bashio
   /usr/lib/bashio/**        ix,
 
-  # s6 Skripte
+  # s6 scripts
   /etc/s6/**                rix,
   /etc/s6-overlay/**        rix,
   /run/s6/**                rix,
 
-  # Systemdaten
+  # System data
   /var/run/**               mrwkl,
   /tmp/**                   mrkwl,
 
-  # Addon-Daten (addon_config Mount)
+  # Add-on data (addon_config mount)
   /config/**                rw,
 
-  # SSL-Zertifikate (Read-only)
+  # SSL certificates (read-only)
   /ssl/**                   r,
 
-  # Git-User Home
+  # Git user home
   /var/lib/gitea/**         rw,
 
   # Proc (for gosu / process information)
@@ -72,6 +72,6 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   # ptrace for Docker introspection
   ptrace (trace,read) peer=docker-default,
 
-  # Signal von Docker-Daemon
+  # Signal from the Docker daemon
   signal (receive) set=(kill,term) peer=/usr/bin/docker,
 }

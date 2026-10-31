@@ -86,7 +86,7 @@ ENV \
     GITEA_APP_INI="/config/conf/app.ini" \
     HOME="/var/lib/gitea/git" \
     USER="git"
-# s6-Overlay Service-Skripte aus rootfs kopieren
+# Copy the s6 overlay service scripts from rootfs
 COPY rootfs /
 # Make executable
 RUN chmod a+x \
@@ -94,5 +94,5 @@ RUN chmod a+x \
     /etc/s6-overlay/s6-rc.d/forgejo/run \
     /etc/s6-overlay/s6-rc.d/forgejo/finish
 EXPOSE 3000 22
-# s6-overlay init als Entrypoint (vom HA-Base-Image bereitgestellt)
+# s6 overlay init as the entrypoint (provided by the HA base image)
 ENTRYPOINT ["/init"]
