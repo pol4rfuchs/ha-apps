@@ -15,21 +15,21 @@ cfg() {
 
 log "Reading Home Assistant configuration..."
 
-# ── s6-overlay: /run/ ist noexec in HA → /tmp/ nutzen ────────────────────────
+# ── s6-overlay: /run/ is noexec in HA → use /tmp/ ────────────────────────
 export S6_BASEDIR=/tmp/s6
 mkdir -p /tmp/s6
 
 # ── Data Paths ────────────────────────────────────────────────────────────────
 mkdir -p /data/npm/data /data/npm/letsencrypt /data/npm/logs
 
-# ── Zertifikate persistent ────────────────────────────────────────────────────
+# ── Persistent certificates ────────────────────────────────────────────────────
 mkdir -p /etc/letsencrypt
 if [ -d /data/npm/letsencrypt ] && [ "$(ls -A /data/npm/letsencrypt 2>/dev/null)" ]; then
     cp -rn /data/npm/letsencrypt/. /etc/letsencrypt/ 2>/dev/null || true
     log "Certificates restored from persistent storage"
 fi
 
-# Hintergrund-Sync alle 5 Minuten: container → persistent
+# Background sync every 5 minutes: container → persistent
 (
     while true; do
         sleep 300
@@ -39,15 +39,15 @@ fi
 ) &
 trap "cp -ru /etc/letsencrypt/. /data/npm/letsencrypt/ 2>/dev/null || true" EXIT INT TERM
 
-# ── Self-Healing: fehlende Zertifikate (Dummy statt Crash-Loop) ──────────────
-# Falls ein Certbot-Request fehlschlägt (z.B. DuckDNS DNS-01 Fehler), generiert
-# NPM trotzdem eine nginx-Config, die auf das (nie erzeugte) Zertifikat zeigt.
-# nginx crasht dann in einer Endlosschleife und reißt ALLE Proxy Hosts mit,
-# nicht nur den fehlerhaften. Dieser Watcher patcht fehlende Zertifikatsdateien
-# mit einem kurzlebigen Self-Signed-Dummy, damit nginx startet — der Host mit
-# dem kaputten Zertifikat zeigt dann nur eine Browser-Warnung statt den
-# kompletten Reverse Proxy lahmzulegen. Sobald ein echtes Zertifikat erfolg-
-# reich ausgestellt wird, überschreibt Certbot den Dummy automatisch.
+# ── Self-healing: missing certificates (dummy instead of crash loop) ──────────────
+# If a Certbot request fails (e.g. a DuckDNS DNS-01 error), NPM still
+# generates an nginx config pointing at the (never created) certificate.
+# nginx then crashes in an endless loop and takes ALL proxy hosts down with
+# it, not just the faulty one. This watcher patches missing certificate files
+# with a short-lived self-signed dummy so nginx starts — the host with the
+# broken certificate then only shows a browser warning instead of crippling
+# the whole reverse proxy. Once a real certificate is issued successfully,
+# Certbot overwrites the dummy automatically.
 (
     for _ in $(seq 1 40); do
         grep -rhoE 'ssl_certificate[[:space:]]+/etc/letsencrypt/live/[^;[:space:]]+' \
@@ -71,7 +71,7 @@ trap "cp -ru /etc/letsencrypt/. /data/npm/letsencrypt/ 2>/dev/null || true" EXIT
 export DATA_PATH="/data/npm/data"
 export LETSENCRYPT_PATH="/etc/letsencrypt"
 
-# ── Datenbank ─────────────────────────────────────────────────────────────────
+# ── Database ─────────────────────────────────────────────────────────────────
 DB_TYPE="$(cfg 'db_type')"
 
 if [ "${DB_TYPE}" = "mariadb" ]; then
