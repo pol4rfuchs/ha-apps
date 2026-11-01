@@ -1,7 +1,7 @@
 {
   "forgejo": "16.0.21",
   "intiface_central": "1.0.6",
-  "matrix_synapse": "2.0.0",
+  "matrix_synapse": "2.0.1",
   "nginx_proxy_manager": "2.1.7",
   "navidrome": "2.1.12",
   "restic_backup": "0.2.3",
