@@ -1,51 +1,52 @@
 #!/usr/bin/with-contenv bashio
 
 if ! bashio::config.true 'enable_voice_calls'; then
-    bashio::log.info "LiveKit: Voice Calls deaktiviert — Service inaktiv"
+    bashio::log.info "LiveKit: voice calls disabled — service inactive"
     exec sleep infinity
 fi
 
 LK_CONFIG="/data/matrix/livekit.yaml"
 LK_BIN="/data/matrix/bin/livekit-server"
 
-# Warten bis Binary vorhanden
+# Wait until the binary is present
 WAIT=0
 while [ ! -x "${LK_BIN}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "LiveKit: Warte auf Binary Download..."
+        bashio::log.info "LiveKit: Waiting for binary download..."
     fi
     sleep 2
     WAIT=$((WAIT + 2))
     if [ $WAIT -gt 300 ]; then
-        bashio::log.error "Timeout: livekit-server Binary nicht gefunden!"
+        bashio::log.error "Timeout: livekit-server binary not found!"
         exec sleep infinity
     fi
 done
 ln -sf "${LK_BIN}" /usr/local/bin/livekit-server
 
-# Warten bis cont-init die Config FRISCH geschrieben hat
-# (nicht eine evtl. veraltete Config vom letzten Start lesen)
-# Erkennbar daran dass homeserver.yaml auch frisch ist — beide werden im selben Script geschrieben
+# Wait until cont-init has written the config FRESH
+# (do not read a possibly stale config from the last start)
+# Recognizable by homeserver.yaml being fresh too — both are written in the same script
 SYNAPSE_CONFIG="/data/matrix/synapse/homeserver.yaml"
 WAIT=0
 while [ ! -f "${LK_CONFIG}" ] || [ ! -f "${SYNAPSE_CONFIG}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "LiveKit: Warte auf Config-Generierung..."
+        bashio::log.info "LiveKit: Waiting for config generation..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: livekit.yaml nicht gefunden!"
+        bashio::log.error "Timeout: livekit.yaml not found!"
         exec sleep infinity
     fi
 done
 
-# LiveKit prüft die Config strikt: ein unbekanntes Feld beendet den Start sofort
-# mit exit 1 ("field <name> not found"). livekit-server wird bei jedem Start auf
-# "latest" aktualisiert; kennt eine Version skip_external_ip_validation nicht
-# (mehr), läuft Voice ohne die Option weiter, statt komplett auszufallen.
-# Probestart: Eine gültige Config läuft bis zum Timeout (124), eine abgelehnte
-# endet sofort. Nur wenn genau dieses Feld bemängelt wird, fliegt seine Zeile raus.
+# LiveKit validates the config strictly: an unknown field aborts startup right
+# away with exit 1 ("field <name> not found"). livekit-server is updated to
+# "latest" on every start; if a version does not (or no longer) know
+# skip_external_ip_validation, voice keeps running without the option instead
+# of failing completely.
+# Trial start: a valid config runs until the timeout (124), a rejected one
+# ends immediately. Its line is removed only if exactly this field is flagged.
 livekit_config_fallback() {
     local cfg="$1" out="" rc=0
     grep -q '^  skip_external_ip_validation:' "${cfg}" || return 0
@@ -54,17 +55,17 @@ livekit_config_fallback() {
         case "${out}" in
             *skip_external_ip_validation*)
                 sed -i '/^  skip_external_ip_validation:/d' "${cfg}"
-                bashio::log.warning "LiveKit kennt skip_external_ip_validation nicht — starte ohne die Option (Hairpin-NAT-Router können die öffentliche IP dann verwerfen)"
+                bashio::log.warning "LiveKit does not know skip_external_ip_validation — starting without the option (hairpin-NAT routers may then discard the public IP)"
                 ;;
         esac
     fi
     return 0
 }
 
-# Zusätzlich kurz warten bis cont-init komplett durch ist
+# Additionally wait briefly until cont-init has fully finished
 sleep 3
 
 livekit_config_fallback "${LK_CONFIG}"
 
-bashio::log.info "🚀 Starte LiveKit SFU auf Port 7880 (TURN UDP 3478)..."
+bashio::log.info "🚀 Starting LiveKit SFU on port 7880 (TURN UDP 3478)..."
 exec livekit-server --config "${LK_CONFIG}" 2>&1

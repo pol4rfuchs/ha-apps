@@ -1,11 +1,11 @@
 #!/usr/bin/with-contenv bashio
-# S6 Service: Periodische PostgreSQL Backups via pg_dump
+# S6 service: periodic PostgreSQL backups via pg_dump
 #
-# Warum pg_dump statt nur auf HA-Snapshots verlassen: ein HA-Snapshot
-# kopiert /data/matrix/postgresql im laufenden Betrieb (Hot-Copy) — das
-# ist kein konsistenter Datenbank-Zustand. pg_dump erzeugt ein logisches,
-# in sich konsistentes Backup, das man notfalls auch in eine andere
-# Postgres-Version/-Instanz einspielen kann.
+# Why pg_dump instead of relying on HA snapshots alone: an HA snapshot
+# copies /data/matrix/postgresql while it is running (hot copy) — that is
+# not a consistent database state. pg_dump produces a logical, internally
+# consistent backup that can, if needed, also be restored into a different
+# Postgres version/instance.
 
 BACKUP_ENABLED=$(bashio::config 'backup_enabled')
 BACKUP_INTERVAL_HOURS=$(bashio::config 'backup_interval_hours')
@@ -15,14 +15,14 @@ BACKUP_DIR="/data/matrix/backups"
 mkdir -p "${BACKUP_DIR}"
 
 if [ "${BACKUP_ENABLED}" != "true" ]; then
-    bashio::log.info "postgres-backup: backup_enabled=false — Service bleibt idle"
-    # longrun-Service darf nicht sofort exiten (sonst restart-loop) — schlafen und leben lassen
+    bashio::log.info "postgres-backup: backup_enabled=false — service stays idle"
+    # a longrun service must not exit immediately (otherwise restart loop) — sleep and stay alive
     exec sleep infinity
 fi
 
-bashio::log.info "postgres-backup: aktiv, Intervall=${BACKUP_INTERVAL_HOURS}h, Retention=${BACKUP_RETENTION_DAYS}d"
+bashio::log.info "postgres-backup: active, interval=${BACKUP_INTERVAL_HOURS}h, retention=${BACKUP_RETENTION_DAYS}d"
 
-# Erster Lauf 2 Minuten nach Start, damit Postgres/Synapse sicher hochgefahren sind
+# First run 2 minutes after start, so Postgres/Synapse are certainly up
 sleep 120
 
 while true; do
@@ -35,10 +35,10 @@ while true; do
         bashio::log.info "postgres-backup: ✅ ${DUMP_FILE} (${SIZE})"
     else
         rm -f "${DUMP_FILE}.tmp"
-        bashio::log.error "postgres-backup: ❌ pg_dump fehlgeschlagen: $(cat /tmp/pg_dump.err)"
+        bashio::log.error "postgres-backup: ❌ pg_dump failed: $(cat /tmp/pg_dump.err)"
     fi
 
-    # Rotation: alte Dumps jenseits der Retention löschen
+    # Rotation: delete old dumps beyond the retention period
     find "${BACKUP_DIR}" -name 'synapse_*.sql.gz' -mtime "+${BACKUP_RETENTION_DAYS}" -delete
 
     sleep "$((BACKUP_INTERVAL_HOURS * 3600))"

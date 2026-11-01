@@ -1,9 +1,9 @@
 /*
-  Bento — Formen für Element Web. Greift NUR, wenn eines der Themes "Bento Light" / "Bento Dark"
-  aktiv ist: deren Theme-Definition --cpd-color-border-focused auf #0DBD8B setzt (siehe custom_themes). Element übernimmt nur --cpd-* Tokens, daher dient dieser Wert als Kennzeichen.
-  Farben kommen aus den Compound-Tokens des Themes, hier stehen nur Rundungen, Abstände, Schatten.
-  Bewusst konservativ: nur stabile Haupt-Container (Space-Leiste, Raumliste, Raum, Composer).
-  Relative Pfade, keine externen Abhängigkeiten.
+  Bento — shapes for Element Web. Applies ONLY when one of the themes "Bento Light" / "Bento Dark"
+  is active: their theme definition sets --cpd-color-border-focused to #0DBD8B (see custom_themes). Element only picks up --cpd-* tokens, so this value serves as the marker.
+  Colors come from the theme's Compound tokens; only radii, spacing and shadows are set here.
+  Deliberately conservative: only stable main containers (space bar, room list, room, composer).
+  Relative paths, no external dependencies.
 */
 @container style(--cpd-color-border-focused: #0DBD8B) {
   .mx_MatrixChat_wrapper {
@@ -13,12 +13,12 @@
     --bento-shadow: 0 10px 30px rgb(0 0 0 / 0.09);
   }
 
-  /* App-Hintergrund = Zwischenraum zwischen den Kacheln */
+  /* App background = gap between the tiles */
   .mx_MatrixChat_wrapper, .mx_MatrixChat {
     background: var(--cpd-color-bg-subtle-secondary);
   }
 
-  /* Hauptflächen als schwebende Kacheln */
+  /* Main surfaces as floating tiles */
   .mx_SpacePanel,
   .mx_RoomListPanel,
   .mx_RoomView {
@@ -39,17 +39,17 @@
     border-radius: var(--bento-radius) var(--bento-radius) 0 0;
   }
 
-  /* Raumliste: runde Einträge */
+  /* Room list: rounded entries */
   [class*="mx_RoomListItem"] {
     border-radius: var(--bento-radius-s);
   }
 
-  /* Nachrichten: weiche Hover-Kachel */
+  /* Messages: soft hover tile */
   .mx_EventTile {
     border-radius: var(--bento-radius-s);
   }
 
-  /* Composer als eigene Kachel */
+  /* Composer as its own tile */
   .mx_MessageComposer {
     box-sizing: border-box;
     margin: 0 var(--bento-gap) var(--bento-gap);

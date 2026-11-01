@@ -5,23 +5,23 @@ PG_DATA="/data/matrix/postgresql"
 PG_BIN="/usr/lib/postgresql/15/bin"
 MARKER="/data/matrix/.pg_initialized"
 
-# ── Warten bis cont-init die DB vollständig initialisiert hat ─────────────
-# cont-init und S6-Services starten PARALLEL — ohne diesen Wait entsteht
-# eine Race Condition: S6 versucht postgres zu starten während initdb läuft.
+# ── Wait until cont-init has fully initialized the DB ─────────────────────
+# cont-init and S6 services start in PARALLEL — without this wait there is
+# a race condition: S6 tries to start postgres while initdb is running.
 WAIT=0
 while [ ! -f "${MARKER}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "Warte auf PostgreSQL Initialisierung durch cont-init..."
+        bashio::log.info "Waiting for PostgreSQL initialization by cont-init..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: PostgreSQL Initialisierung dauert zu lang!"
+        bashio::log.error "Timeout: PostgreSQL initialization is taking too long!"
         exit 1
     fi
 done
 
-bashio::log.info "Starte PostgreSQL..."
+bashio::log.info "Starting PostgreSQL..."
 
 exec gosu postgres "${PG_BIN}/postgres" \
     -D "${PG_DATA}" \
