@@ -1,2 +1,2 @@
 #!/usr/bin/with-contenv bashio
-bashio::log.warning "Matrix Authentication Service wurde beendet (Exit-Code: ${1})"
+bashio::log.warning "Matrix Authentication Service exited (exit code: ${1})"
