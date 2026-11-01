@@ -44,14 +44,16 @@ reachable from outside, never this UI.
 
 ## Migrating from the bundled Ketesa in `matrix_synapse`
 
-`matrix_synapse` still contains its own copy of Ketesa on port `8090` (options `enable_synapse_admin`,
-`admin_ui_username`, `admin_ui_password`). This app replaces it:
+Up to `matrix_synapse` 1.x, the admin UI was part of that app on port `8090` (options `enable_synapse_admin`,
+`admin_ui_username`, `admin_ui_password`). `matrix_synapse` 2.0 removed it, and this app replaces it:
 
 1. Install and start this app, set the credentials and open port `8091`.
 2. Check that you can sign in to your homeserver.
-3. After that you can switch off `enable_synapse_admin` in `matrix_synapse`.
-
-The old copy is removed from `matrix_synapse` in a later release, announced in that app's changelog.
+3. Reverse proxy: if you had a proxy host (for example in Nginx Proxy Manager) that forwarded to port `8090`, delete it
+   or point it to port `8091`. The port changed, and `8090` no longer serves anything. Keep the UI on the LAN or behind a
+   VPN (see above); only your homeserver needs a public proxy host, and it must not block `/_synapse/admin`.
+4. The login of the old UI is gone. Set the credentials of this app instead. The old files in `/data/matrix` of
+   `matrix_synapse` are removed on its first start.
 
 ## Updates
 
