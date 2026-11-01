@@ -24,6 +24,8 @@ map:
 options:
   set_base_url_for_ingress: true
   log_level: info
+  enable_tor: false
 schema:
   set_base_url_for_ingress: bool
   log_level: list(debug|info|warning|error)
+  enable_tor: bool

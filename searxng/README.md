@@ -61,6 +61,7 @@ Open via the **Open Web UI** button or the HA sidebar. The Ingress URL is set au
 | Option | Default | Description |
 |---|---|---|
 | `set_base_url_for_ingress` | `true` | Auto-sets `SEARXNG_BASE_URL` to the HA Ingress URL. Disable only if you access SearXNG through an external reverse proxy. |
+| `enable_tor` | `false` | Starts a Tor client in the app and enables the onion engines `ahmia` and `torch`. Only these two use Tor. |
 
 ---
 
