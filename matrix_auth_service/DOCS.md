@@ -1,46 +1,46 @@
 # Matrix Auth Service (MAS)
 
-Next-Gen-Authentifizierung für Matrix Synapse via OIDC/OAuth2. Voraussetzung
-für Element X QR-Code-Login, MFA und weitere "Matrix 2.0"-Client-Features.
+Next-gen authentication for Matrix Synapse via OIDC/OAuth2. Prerequisite
+for Element X QR code login, MFA and further "Matrix 2.0" client features.
 
 ## Status
 
-Die App wird gebaut und veröffentlicht (siehe CHANGELOG). Offen sind die
-Punkte unten, vor allem AppArmor: `apparmor.txt` fehlt und `apparmor: false`
-ist gesetzt.
+The app is built and published (see CHANGELOG). The items below are still
+open, above all AppArmor: `apparmor.txt` is missing and `apparmor: false`
+is set.
 
-## Voraussetzungen
+## Requirements
 
-- Ein bereits laufendes Matrix Synapse Add-on mit **Simplified Sliding
-  Sync**-Unterstützung (ab Synapse 1.114 nativ vorhanden)
-- Eigene Subdomain für die Account-UI (z.B. `account.example.org`)
-- Fresh-Start empfohlen: bestehende Accounts werden **nicht** automatisch
-  migriert (kein `syn2mas`-Schritt in diesem Add-on eingebaut)
+- An already running Matrix Synapse add-on with **Simplified Sliding
+  Sync** support (natively available since Synapse 1.114)
+- Own subdomain for the account UI (e.g. `account.example.org`)
+- A fresh start is recommended: existing accounts are **not** migrated
+  automatically (no `syn2mas` step is built into this add-on)
 
-## Einrichtung
+## Setup
 
-1. Add-on installieren, `mas_domain`, `synapse_server_name`,
-   `synapse_endpoint` setzen
-2. `synapse_secret` leer lassen → wird beim ersten Start automatisch
-   generiert (Wert erscheint im Log und unter `/data/mas/.synapse_secret`)
-3. Generierten Secret-Wert ins Synapse-Add-on übertragen:
-   `mas_enabled: true`, `mas_secret: <Wert>`, `mas_endpoint: http://[HA-IP]:8082`
-4. Beide Add-ons neu starten
+1. Install the add-on, set `mas_domain`, `synapse_server_name`,
+   `synapse_endpoint`
+2. Leave `synapse_secret` empty → it is generated automatically on the first
+   start (the value appears in the log and under `/data/mas/.synapse_secret`)
+3. Copy the generated secret value into the Synapse add-on:
+   `mas_enabled: true`, `mas_secret: <value>`, `mas_endpoint: http://[HA-IP]:8082`
+4. Restart both add-ons
 
-## Offene Punkte (vor Produktivbetrieb)
+## Open items (before production use)
 
-- [ ] Erster Build + Test-Lauf (Postgres-Init, `mas-cli database migrate`,
+- [ ] First build + test run (Postgres init, `mas-cli database migrate`,
       `mas-cli config sync`)
-- [x] `icon.png` / `logo.png` (Icon aus dem Logo abgeleitet, bei Bedarf ersetzen)
+- [x] `icon.png` / `logo.png` (icon derived from the logo, replace if needed)
 - [ ] `apparmor.txt`
-- [x] Reverse-Proxy-Route für `mas_domain` in NPM: siehe Abschnitt *Lokaler und externer Zugriff*
-- [ ] Prüfen: reicht `password_login_enabled: true` als Fallback, oder soll
-      MAS von Anfang an nur mit einem Upstream-OIDC-Provider laufen?
+- [x] Reverse proxy route for `mas_domain` in NPM: see the section *Local and external access*
+- [ ] Check: is `password_login_enabled: true` enough as a fallback, or should
+      MAS run with an upstream OIDC provider only from the start?
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die Account-UI läuft auf Port `8082` (`http://<HA-Host>:8082`). MAS verwendet `https://<mas_domain>/` als öffentliche Adresse (Issuer). Der Login-Ablauf funktioniert deshalb nur über diese HTTPS-Domain, nicht über die reine LAN-IP. Lokal nutzbar wird es mit einem DNS-Rewrite im lokalen DNS-Server auf den HA-Host plus Reverse Proxy mit Zertifikat.
+**Local (LAN):** The account UI runs on port `8082` (`http://<HA-Host>:8082`). MAS uses `https://<mas_domain>/` as its public address (issuer). The login flow therefore only works through this HTTPS domain, not through the bare LAN IP. It becomes usable locally with a DNS rewrite on the local DNS server pointing to the HA host, plus a reverse proxy with a certificate.
 
-**Reverse-Proxy-Route (z. B. Nginx Proxy Manager):** neuer Proxy Host mit Domain = `mas_domain`, Scheme `http`, Forward-Host = HA-Host, Port `8082`. Zertifikat anfordern und „Force SSL“ aktivieren. Port `8083` (nur Health-Check) gehört nicht in den Proxy.
+**Reverse proxy route (e.g. Nginx Proxy Manager):** new proxy host with domain = `mas_domain`, scheme `http`, forward host = HA host, port `8082`. Request a certificate and enable "Force SSL". Port `8083` (health check only) does not belong in the proxy.
 
-**Extern (Internet):** Empfehlung **ok, nur über den Reverse Proxy mit TLS** (Matrix-Clients brauchen die öffentliche Adresse). Die Ports `8082` und `8083` nie direkt freigeben. `password_registration_enabled` bleibt aus (Standard).
+**External (internet):** Recommendation: **OK, but only through the reverse proxy with TLS** (Matrix clients need the public address). Never expose ports `8082` and `8083` directly. `password_registration_enabled` stays off (default).
