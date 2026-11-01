@@ -7,6 +7,8 @@ login in front of it.
 ## How it works
 
 - The app serves the Ketesa files from the image on port `8091`. Every request needs the app login (HTTP basic auth).
+  A failed login is answered after one second, and the app serves at most 64 connections at once (more get `503`),
+  which slows down password guessing. There is no lockout, so keep the port on the LAN or behind a VPN.
 - Ketesa itself runs in your **browser**. After the app login you enter the URL of your homeserver and sign in with a
   Matrix account that has admin rights. The browser talks to the homeserver directly; this app never connects to Synapse.
 - Two logins therefore apply: the app login (this app) and the Matrix admin login (your homeserver).
