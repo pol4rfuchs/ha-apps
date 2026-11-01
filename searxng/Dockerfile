@@ -7,7 +7,7 @@ ARG BUILD_VERSION
 ARG SEARXNG_VERSION
 
 # Tor is only started when the option `enable_tor` is on (needed by the ahmia and torch engines).
-RUN cat /etc/os-release; id; uname -m; ls -d /sbin/apk /usr/bin/apk /usr/bin/apt /usr/bin/apt-get /usr/bin/dpkg /usr/bin/microdnf /usr/bin/dnf /usr/bin/tdnf /usr/bin/pip /usr/bin/uv /usr/local/bin/uv 2>&1; ls /usr/bin | head -80; ls /lib/apk /var/lib/dpkg /var/lib/apk 2>&1 | head; echo PROBE; false
+RUN (cat /etc/os-release; id; uname -m; echo LIBC; ls /lib/ld-musl* /lib64/ld-linux* /lib/ld-linux* /lib/*-linux-gnu/ld-linux* 2>&1; echo PM; ls -d /sbin/apk /usr/bin/apk /usr/bin/apt /usr/bin/dpkg /usr/bin/microdnf /usr/bin/dnf /usr/bin/tdnf /usr/local/bin/uv /usr/bin/uv 2>&1; echo PY; ls /usr/local/searxng/.venv/bin | head -5; ls -l /usr/local/searxng/.venv/bin/python3; echo LAYOUT; ls /; ls /var/lib | head; echo PROBE) 2>&1 | head -60; false
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
