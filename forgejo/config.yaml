@@ -3,9 +3,9 @@ name: Forgejo
 version: "16.0.21"
 slug: forgejo
 description: >-
-  Self-hosted Git-Plattform – die freie GitHub-Alternative. Repositories,
-  Issues, Pull Requests, CI/CD Actions, Package-Registry, Wiki, Projekte und
-  mehr.
+  Self-hosted Git platform – the free GitHub alternative. Repositories,
+  issues, pull requests, CI/CD actions, package registry, wiki, projects and
+  more.
 url: https://github.com/pol4rfuchs/ha-apps
 apparmor: false
 arch:
@@ -27,8 +27,8 @@ ports:
   3000/tcp: 3000
   22/tcp: null
 ports_description:
-  3000/tcp: Web-UI (Direktzugriff – Host-Port muss 3000 bleiben)
-  22/tcp: 'SSH Git-Zugriff (nur bei ssh_enabled: true nötig)'
+  3000/tcp: Web UI (direct access – the host port must stay 3000)
+  22/tcp: 'SSH Git access (only needed if ssh_enabled: true)'
 options:
   app_name: Forgejo
   domain: ''
