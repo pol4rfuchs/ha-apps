@@ -118,27 +118,28 @@ fi
 # copy of settings.yml in which only these two engines use it. The user's own
 # settings.yml is never modified.
 TOR_BOOTSTRAP_TIMEOUT=120
+TOR_BIN="${TOR_BIN:-/usr/local/lib/tor/tor}"
 RUNTIME_SETTINGS="/etc/searxng/.settings.runtime.yml"
 rm -f "${RUNTIME_SETTINGS}"
 
 start_tor() {
-    if ! command -v tor >/dev/null 2>&1; then
+    if [ ! -x "${TOR_BIN}" ]; then
         warn "Tor is not installed in this image — starting without Tor."
         return 1
     fi
     mkdir -p /tmp/tor
     chmod 700 /tmp/tor
-    chown tor:tor /tmp/tor 2>/dev/null || true
+    chown _tor:_tor /tmp/tor 2>/dev/null || true
     rm -f /tmp/tor/notice.log
     cat > /tmp/torrc << 'ENDOFTORRC'
-User tor
+User _tor
 DataDirectory /tmp/tor
 ClientOnly 1
 SocksPort 127.0.0.1:9050
 Log notice file /tmp/tor/notice.log
 ENDOFTORRC
     log "Starting Tor (waiting up to ${TOR_BOOTSTRAP_TIMEOUT}s for the connection)..."
-    tor -f /tmp/torrc > /dev/null 2>&1 &
+    LD_LIBRARY_PATH=/usr/local/lib/tor "${TOR_BIN}" -f /tmp/torrc > /dev/null 2>&1 &
     TOR_PID=$!
     waited=0
     while [ "${waited}" -lt "${TOR_BOOTSTRAP_TIMEOUT}" ]; do
