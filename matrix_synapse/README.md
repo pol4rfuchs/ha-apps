@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.163.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
+[![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.164.1-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) — as a single Home Assistant App.**
