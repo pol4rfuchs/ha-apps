@@ -6,11 +6,24 @@ ARG SEARXNG_VERSION=2026.10.30-ffa88e3ba
 # `tor --version`, so the build fails if the libraries do not fit the SearXNG image.
 # hadolint ignore=DL3007
 FROM ghcr.io/void-linux/void-glibc:latest AS tor-build
+# The Void package servers are sometimes unreachable ("Connection refused"), which failed a release
+# build once. So retry, and fall back to other mirrors by rewriting the host in the repository config.
 # hadolint ignore=DL4006
-RUN xbps-install -Sy xbps \
-    && xbps-install -Syu \
-    && xbps-install -y tor \
-    && mkdir -p /out \
+RUN set -e; \
+    ok=0; \
+    mkdir -p /etc/xbps.d; \
+    for mirror in repo-default repo-fastly repo-de repo-fi; do \
+        if [ -f /usr/share/xbps.d/00-repository-main.conf ]; then \
+            sed "s#repo-default[.]voidlinux[.]org#${mirror}.voidlinux.org#" /usr/share/xbps.d/00-repository-main.conf > /etc/xbps.d/00-repository-main.conf; \
+        fi; \
+        for try in 1 2 3; do \
+            if xbps-install -Sy xbps && xbps-install -Syu && xbps-install -y tor; then ok=1; break 2; fi; \
+            echo "xbps failed (mirror ${mirror}, try ${try}), retrying" >&2; \
+            sleep 5; \
+        done; \
+    done; \
+    test "${ok}" = 1; \
+    mkdir -p /out \
     && cp /usr/bin/tor /out/tor \
     && LD_TRACE_LOADED_OBJECTS=1 /usr/bin/tor \
         | awk '/=> \//{print $3}' \
