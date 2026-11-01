@@ -1,0 +1,53 @@
+#include <tunables/global>
+
+# DRAFT for the Matrix Ketesa app, modeled on the vaultwarden profile.
+# Starts in COMPLAIN mode: violations are only logged, nothing is blocked.
+# After a test run on the Pi (apparmor: true in config.yaml), evaluate the host log
+# (lines "apparmor=ALLOWED"), close the gaps, then remove "complain" from the flags
+# (enforce mode). Syntax is checked in the CI (workflow 29), runtime behavior is untested.
+profile matrix_ketesa flags=(attach_disconnected,mediate_deleted,complain) {
+  #include <abstractions/base>
+
+  # --- s6 overlay baseline (required, §8) ---
+  /init                          ix,
+  /package/**                    ix,
+  /command/**                    ix,
+  /run/s6/**                     ix,
+  /run/{,**}                     rwk,
+  /etc/s6-overlay/**             ix,
+  /etc/services.d/**             rwix,
+  /etc/cont-init.d/**            rwix,
+  /etc/cont-finish.d/**          rwix,
+
+  # Privilege drop (s6-setuidgid to the ketesa user)
+  capability setuid,
+  capability setgid,
+  capability dac_override,
+  capability chown,
+  capability fowner,
+
+  # --- App-specific ---
+  /bin/**                        ix,
+  /usr/bin/**                    ix,
+  /usr/local/bin/**              ix,
+  /lib/**                        mr,
+  /usr/lib/**                    mr,
+  /etc/**                        r,
+  /usr/share/**                  r,
+
+  # The unpacked Ketesa release (read-only static files)
+  /opt/ketesa/**                 r,
+
+  # App config folder: the generated admin password lives here
+  /config/                       r,
+  /config/**                     rwk,
+
+  /tmp/                          r,
+  /tmp/**                        rwk,
+
+  @{PROC}/**                     r,
+  /sys/fs/cgroup/**              r,
+
+  network inet stream,
+  network inet6 stream,
+}

@@ -1,0 +1,21 @@
+---
+configuration:
+  log_level:
+    name: Log level
+    description: >-
+      Verbosity of the log output. debug also logs every request; warning
+      logs requests without valid credentials; error only logs failures.
+  admin_ui_username:
+    name: Admin UI username
+    description: >-
+      User name for the login in front of the admin UI. Must not contain a colon.
+  admin_ui_password:
+    name: Admin UI password
+    description: >-
+      Password for the login in front of the admin UI. Leave empty to have one
+      generated on the first start; it is then kept in the app config folder
+      (admin_ui_password.txt).
+network:
+  8091/tcp:
+    name: "Admin UI port"
+    description: "Ketesa admin UI (basic-auth protected). Do not forward it to the internet."

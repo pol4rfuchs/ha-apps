@@ -31,6 +31,7 @@ jobs:
           - forgejo
           - intiface_central
           - matrix_auth_service
+          - matrix_ketesa
           - matrix_signal_bridge
           - matrix_synapse
           - matrix_telegram_bridge

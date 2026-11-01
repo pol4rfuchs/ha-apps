@@ -122,6 +122,12 @@
       "semanticCommitScope": "cortendesk"
     },
     {
+      "matchFileNames": [
+        "matrix_ketesa/**"
+      ],
+      "semanticCommitScope": "matrix_ketesa"
+    },
+    {
       "matchManagers": [
         "github-actions"
       ],
@@ -171,6 +177,16 @@
       ],
       "semanticCommitType": "fix",
       "description": "MAS version bumps default to 'chore', which does not trigger a release/image rebuild in Release Please (see PR #311 — merged, but no release/package followed). Force 'fix', analogous to the matrix-synapse rule above."
+    },
+    {
+      "matchFileNames": [
+        "matrix_ketesa/Dockerfile"
+      ],
+      "matchDepNames": [
+        "etkecc/ketesa"
+      ],
+      "semanticCommitType": "fix",
+      "description": "Ketesa version bumps default to 'chore', which does not trigger a Release Please release or image rebuild. Force 'fix', like the matrix_auth_service rule above."
     },
     {
       "description": "Automerge only for low-risk updates: minor/patch of npm/pip dependencies and GitHub Actions, only after a 48-hour (2-day) waiting period and only with green checks (smoke test, AppArmor, lint). Majors stay manual (see appbuildrules 7, test them together). platformAutomerge is deliberately off: GitHub's auto-merge only waits for the required checks of the ruleset, and the path-filtered build test is not one of them. Renovate therefore merges itself, and only once all checks of the PR are green.",
@@ -297,6 +313,18 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "element-hq/matrix-authentication-service",
       "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Track etkecc/ketesa releases for ARG KETESA_VERSION in matrix_ketesa/Dockerfile. The value keeps the 'v' prefix of the GitHub tag, because the download URL uses the tag.",
+      "managerFilePatterns": [
+        "/^matrix_ketesa/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG KETESA_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "etkecc/ketesa"
     },
     {
       "customType": "regex",

@@ -28,6 +28,7 @@ remain under their respective upstream licenses.
 | Unbound | Unbound (NLnet Labs) | https://github.com/NLnetLabs/unbound | BSD-3-Clause |
 | Restic Backup | restic | https://github.com/restic/restic | BSD-2-Clause |
 | Matrix Authentication Service | Matrix Authentication Service | https://github.com/element-hq/matrix-authentication-service | AGPL-3.0 |
+| Matrix Ketesa (Admin UI) | Ketesa (formerly Synapse Admin) | https://github.com/etkecc/ketesa | See upstream license |
 | Matrix WhatsApp Bridge | mautrix-whatsapp | https://github.com/mautrix/whatsapp | AGPL-3.0 |
 | Matrix Signal Bridge | mautrix-signal | https://github.com/mautrix/signal | AGPL-3.0 |
 | Matrix Telegram Bridge | mautrix-telegram | https://github.com/mautrix/telegram | AGPL-3.0 |
