@@ -5,52 +5,52 @@ MARKER="/data/mas/.pg_initialized"
 CONFIG_MAIN="/data/mas/config.yaml"
 CONFIG_SECRETS="/data/mas/secrets.yaml"
 
-# ── Warten auf Postgres-Init durch cont-init ──────────────────────────────
+# ── Wait for the Postgres init by cont-init ──────────────────────────────
 WAIT=0
 while [ ! -f "${MARKER}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "Warte auf PostgreSQL Initialisierung..."
+        bashio::log.info "Waiting for PostgreSQL initialization..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: PostgreSQL Initialisierung dauert zu lang!"
+        bashio::log.error "Timeout: PostgreSQL initialization is taking too long!"
         exit 1
     fi
 done
 
-# ── Warten bis Postgres tatsächlich Verbindungen annimmt ─────────────────
-# Der postgresql-Service startet parallel — Marker-Datei existiert bereits
-# nach der einmaligen Init, sagt aber nichts darüber aus, ob der laufende
-# Postgres-Prozess in DIESEM Start-Zyklus schon lauscht.
+# ── Wait until Postgres actually accepts connections ─────────────────────
+# The postgresql service starts in parallel — the marker file already exists
+# after the one-time init, but says nothing about whether the running
+# Postgres process is already listening in THIS start cycle.
 WAIT=0
 until pg_isready -h 127.0.0.1 -p 5433 -U mas >/dev/null 2>&1; do
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 60 ]; then
-        bashio::log.error "Timeout: PostgreSQL antwortet nicht auf Port 5433!"
+        bashio::log.error "Timeout: PostgreSQL does not answer on port 5433!"
         exit 1
     fi
 done
 
-# Reihenfolge: spätere --config-Dateien überschreiben frühere. secrets.yaml kommt
-# von "mas-cli config generate" und enthält die komplette Standard-Config (auch
-# database.uri, http, matrix); sie muss daher VOR unserer config.yaml stehen,
-# sonst überschreibt sie DB-URI und Synapse-Kopplung mit Standardwerten.
-bashio::log.info "Führe Datenbank-Migration aus..."
+# Order: later --config files override earlier ones. secrets.yaml comes
+# from "mas-cli config generate" and contains the complete default config (also
+# database.uri, http, matrix); it must therefore come BEFORE our config.yaml,
+# otherwise it overrides the DB URI and the Synapse link with default values.
+bashio::log.info "Running database migration..."
 mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     database migrate || {
-        bashio::log.error "mas-cli database migrate fehlgeschlagen!"
+        bashio::log.error "mas-cli database migrate failed!"
         exit 1
     }
 
-bashio::log.info "Synchronisiere Clients/Policy-Config..."
+bashio::log.info "Syncing clients/policy config..."
 mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     config sync --prune || {
-        bashio::log.error "mas-cli config sync fehlgeschlagen!"
+        bashio::log.error "mas-cli config sync failed!"
         exit 1
     }
 
-bashio::log.info "Starte Matrix Authentication Service..."
+bashio::log.info "Starting Matrix Authentication Service..."
 exec mas-cli --config "${CONFIG_SECRETS}" --config "${CONFIG_MAIN}" \
     server 2>&1

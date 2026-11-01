@@ -81,6 +81,13 @@
       "include-component-in-tag": true,
       "tag-separator": "-"
     },
+    "matrix_ketesa": {
+      "release-type": "simple",
+      "component": "matrix_ketesa",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "prerelease": true
+    },
     "unifi_toolkit": {
       "release-type": "simple",
       "component": "unifi_toolkit",

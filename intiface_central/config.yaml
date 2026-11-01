@@ -1,6 +1,6 @@
 ---
 name: Intiface Central
-description: Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities
+description: Buttplug/Intiface Central with web GUI, MQTT bridge and Home Assistant entities
 version: "1.0.6"
 slug: intiface_central
 image: ghcr.io/pol4rfuchs/intiface_central
@@ -15,8 +15,8 @@ ports:
   8199/tcp: 8199
   12345/tcp: 12345
 ports_description:
-  8199/tcp: Intiface WebGUI
-  12345/tcp: Buttplug WebSocket (externe Clients)
+  8199/tcp: Intiface web GUI
+  12345/tcp: Buttplug WebSocket (external clients)
 host_dbus: true
 host_network: true
 full_access: true

@@ -5,6 +5,17 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [2.0.0](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.3...matrix_synapse-v2.0.0) (2026-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **matrix_synapse:** remove the bundled Ketesa admin UI ([#788](https://github.com/pol4rfuchs/ha-apps/issues/788))
+
+### Features
+
+* **matrix_synapse:** remove the bundled Ketesa admin UI ([#788](https://github.com/pol4rfuchs/ha-apps/issues/788)) ([a25be09](https://github.com/pol4rfuchs/ha-apps/commit/a25be099c33035d5e05c9aaa147826eee6492e98))
+
 ## [1.8.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v1.8.2...matrix_synapse-v1.8.3) (2026-10-26)
 
 

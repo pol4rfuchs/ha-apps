@@ -2,7 +2,7 @@
 name: "WhatsApp Bridge (mautrix)"
 version: "0.2610.0-ha3-pol4r1"
 slug: "matrix_whatsapp_bridge"
-description: "mautrix-whatsapp Application-Service Bridge für Matrix Synapse"
+description: "mautrix-whatsapp application service bridge for Matrix Synapse"
 url: https://github.com/pol4rfuchs/ha-apps
 image: "ghcr.io/pol4rfuchs/matrix_whatsapp_bridge"
 arch:

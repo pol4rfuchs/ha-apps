@@ -21,7 +21,7 @@ const loginLimiter = rateLimit({
   max: 10,                   // max 10 attempts per IP per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "too_many_attempts", message: "Zu viele Login-Versuche, bitte später erneut versuchen." }
+  message: { error: "too_many_attempts", message: "Too many login attempts, please try again later." }
 });
 
 const loginSchema = z.discriminatedUnion("authType", [

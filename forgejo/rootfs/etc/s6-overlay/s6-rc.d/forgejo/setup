@@ -1,17 +1,17 @@
 #!/bin/bash
 # ==============================================================================
 # Forgejo – Setup Script
-# Läuft als root VOR dem Forgejo-Prozess (via source aus run)
-# Aufgaben:
-#   1. Verzeichnisse anlegen
-#   2. Persistente SSH-Host-Keys generieren (einmalig)
-#   3. app.ini aus Template erzeugen (einmalig, beim ersten Start)
-#   4. environment-to-ini: FORGEJO__SECTION__KEY Env-Vars → app.ini
-#   5. Permissions korrigieren
+# Runs as root BEFORE the Forgejo process (sourced from run)
+# Tasks:
+#   1. Create directories
+#   2. Generate persistent SSH host keys (once)
+#   3. Create app.ini from the template (once, on first start)
+#   4. environment-to-ini: FORGEJO__SECTION__KEY env vars → app.ini
+#   5. Fix permissions
 # ==============================================================================
 set -e
 
-# ── 1. Verzeichnisse ──────────────────────────────────────────────────────────
+# ── 1. Directories ──────────────────────────────────────────────────────────
 mkdir -p \
     "${GITEA_CUSTOM}/conf" \
     "${GITEA_CUSTOM}/data" \
@@ -23,11 +23,11 @@ mkdir -p \
 
 chmod 700 "${GITEA_CUSTOM}/git/.ssh"
 
-# ── 2. SSH-Host-Keys (persistent, einmalig) ───────────────────────────────────
-# Persistente Keys verhindern "Host key changed"-Warnungen bei Neustart.
-# Werden in addon_config gespeichert (/config/ssh/) → überleben Updates.
+# ── 2. SSH host keys (persistent, once) ───────────────────────────────────
+# Persistent keys prevent "Host key changed" warnings after a restart.
+# They are stored in addon_config (/config/ssh/) → they survive updates.
 if [ ! -f "${GITEA_CUSTOM}/ssh/forgejo_host_ed25519" ]; then
-    echo "[setup] Generiere SSH-Host-Keys..."
+    echo "[setup] Generating SSH host keys..."
     ssh-keygen -t ed25519 \
         -f "${GITEA_CUSTOM}/ssh/forgejo_host_ed25519" \
         -N "" -q
@@ -36,16 +36,16 @@ if [ ! -f "${GITEA_CUSTOM}/ssh/forgejo_host_ed25519" ]; then
         -N "" -q
     chown git:git "${GITEA_CUSTOM}/ssh/"*
     chmod 600 "${GITEA_CUSTOM}/ssh/"*
-    echo "[setup] SSH-Host-Keys generiert"
+    echo "[setup] SSH host keys generated"
 fi
 
-# ── 3. app.ini aus Template (einmalig beim ersten Start) ─────────────────────
-# Nur wenn noch keine app.ini existiert. Danach bleibt sie erhalten
-# und kann vom Nutzer direkt bearbeitet werden (via HA Datei-Editor).
+# ── 3. app.ini from the template (once, on first start) ─────────────────────
+# Only if no app.ini exists yet. After that it is kept
+# and can be edited directly by the user (via the HA file editor).
 if [ ! -f "${GITEA_CUSTOM}/conf/app.ini" ]; then
-    echo "[setup] Erstelle app.ini aus Template..."
+    echo "[setup] Creating app.ini from template..."
 
-    # Defaults für envsubst setzen (werden durch FORGEJO__ Vars überschrieben)
+    # Set defaults for envsubst (overridden by FORGEJO__ vars)
     APP_NAME="${APP_NAME:-Forgejo}"                         \
     DOMAIN="${DOMAIN:-localhost}"                           \
     HTTP_PORT="${HTTP_PORT:-3000}"                          \
@@ -64,18 +64,18 @@ if [ ! -f "${GITEA_CUSTOM}/conf/app.ini" ]; then
     envsubst < /etc/templates/app.ini > "${GITEA_CUSTOM}/conf/app.ini"
 
     chown git:git "${GITEA_CUSTOM}/conf/app.ini"
-    echo "[setup] app.ini erstellt: ${GITEA_CUSTOM}/conf/app.ini"
+    echo "[setup] app.ini created: ${GITEA_CUSTOM}/conf/app.ini"
 fi
 
 # ── 4. environment-to-ini: FORGEJO__SECTION__KEY → app.ini ───────────────────
-# Verarbeitet alle FORGEJO__-Umgebungsvariablen und schreibt sie in app.ini.
-# Das ist Forgejos eigenes Tool – sauber und korrekt.
-# run.sh setzt alle FORGEJO__-Vars bevor setup gesourct wird.
-echo "[setup] Wende FORGEJO__-Umgebungsvariablen auf app.ini an..."
+# Processes all FORGEJO__ environment variables and writes them to app.ini.
+# This is Forgejo's own tool – clean and correct.
+# run sets all FORGEJO__ vars before setup is sourced.
+echo "[setup] Applying FORGEJO__ environment variables to app.ini..."
 environment-to-ini --config "${GITEA_CUSTOM}/conf/app.ini"
 
 # ── 5. Permissions ────────────────────────────────────────────────────────────
-# Nur chown wenn nötig (spart Zeit bei großen Repos)
+# Only chown if needed (saves time with large repos)
 if ! [[ "$(stat -c '%U' "${GITEA_CUSTOM}/data" 2>/dev/null)" = "git" ]]; then
     chown -R git:git "${GITEA_CUSTOM}"
 fi
@@ -84,4 +84,4 @@ if ! [[ "$(stat -c '%U' /var/lib/gitea 2>/dev/null)" = "git" ]]; then
 fi
 chmod 0755 "${GITEA_CUSTOM}" /var/lib/gitea
 
-echo "[setup] Setup abgeschlossen"
+echo "[setup] Setup complete"

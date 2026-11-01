@@ -12,7 +12,7 @@
 [![Synapse Version](https://img.shields.io/badge/Synapse-%3E%3D1.163.0-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/element-hq/synapse)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
-**Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) + Ketesa — as a single Home Assistant App.**
+**Full Matrix homeserver stack — Synapse + Element Web + Element Call (Voice/Video) — as a single Home Assistant App.**
 
 </div>
 
@@ -27,10 +27,9 @@
 | **Element Web** | latest (auto-fetched, version-tracked) | Web client |
 | **Element Call** | latest (auto-fetched, version-tracked) | Voice / Video calls |
 | **LiveKit SFU** | latest (auto-fetched, version-tracked) | WebRTC media server |
-| **Ketesa** (formerly Synapse Admin) | latest (auto-fetched, version-tracked) | Admin UI |
 | **S6-Overlay** | — | Multi-service init |
 
-> ℹ️ The admin UI is [Ketesa](https://github.com/etkecc/ketesa) — the etke.cc project formerly known as Synapse Admin, renamed in 2026. It's a drop-in replacement of the original Awesome-Technologies fork, with wider Synapse compatibility and active maintenance. Element Web, Element Call, and Ketesa are all downloaded at first start and re-checked against upstream `latest` on every subsequent start — no manual updates needed.
+> ℹ️ The admin UI [Ketesa](https://github.com/etkecc/ketesa) (formerly Synapse Admin) is a separate app now: `matrix_ketesa`. This app keeps the Synapse admin API enabled; see the `matrix_ketesa` documentation for setup and the upgrade notes in this app's DOCS.
 >
 > ℹ️ Synapse itself works differently: it's `pip install`ed at **Docker build time**, not fetched at container start. A new Synapse release only lands once the image is rebuilt — Renovate opens a PR when a new PyPI release appears, and merging it triggers that rebuild.
 
@@ -62,7 +61,7 @@ enable_registration: false
 
 ### Step 3 — Start
 
-First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtime (HA blocks network during the Docker build phase).
+First start takes 2–3 minutes. Element Web is downloaded at runtime (HA blocks network during the Docker build phase).
 
 ---
 
@@ -90,10 +89,7 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | `whatsapp_bridge_enabled` | `false` | Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge add-on running with its registration.yaml present in /share). |
 | `signal_bridge_enabled` | `false` | Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge add-on running with its registration.yaml present in /share). |
 | `telegram_bridge_enabled` | `false` | Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge add-on running with its registration.yaml present in /share). |
-| `enable_synapse_admin` | `true` | Start the Synapse Admin web UI on port 8090. |
 | `livekit_turn_enabled` | `false` | Off by default: calls use direct SFU UDP ports (30000-30020), which is more reliable on normal home/mobile networks. Only enable this if you're on a very restrictive network that only allows HTTPS/port 443 (the internal TURN server then uses that fallback path). |
-| `admin_ui_username` | `admin` | Basic-Auth username for the Ketesa (Admin UI) on port 8090. Protects the admin interface at the network level. |
-| `admin_ui_password` | — | Basic-Auth password for the Ketesa (Admin UI). Leave empty to auto-generate on first start (stored in /data/matrix/.admin_ui_auth, never logged). |
 | `media_retention_local_days` | `0` | Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever). |
 | `media_retention_remote_days` | `30` | Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default. |
 | `cache_max_memory_mb` | `512` | Upper limit for Synapse's in-memory caches (MB). Above it Synapse evicts cache entries instead of growing. Raise it for many users or large federated rooms. |
@@ -116,7 +112,6 @@ First start takes 2–3 minutes. Element Web and Ketesa are downloaded at runtim
 | `7080` | Element Web | Via NPM → `element.your-domain` |
 | `7081` | Element Call | Via NPM → `element-call.your-domain` |
 | `8008` | Synapse API | Via NPM → `matrix.your-domain` |
-| `8090` | Ketesa (Admin UI) | Via NPM → `admin.your-domain` |
 | `8448` | Matrix Federation | Direct — port-forward required |
 | `7880` | LiveKit SFU | Via NPM (WebSocket required) |
 | `8089` | LiveKit JWT Bridge | Via NPM |
@@ -168,10 +163,8 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 │   └── media_store/        ← Uploaded media
 ├── element-web/                    ← Element Web (persistent), incl. config.json + per-domain variants
 ├── element-call/                   ← Element Call (persistent, only if enable_voice_calls), incl. config.json + per-domain variants
-├── synapse-admin/                  ← Ketesa / Admin UI (persistent, folder name kept for compat)
 ├── livekit.yaml                     ← LiveKit server config (rewritten on every start, only if enable_voice_calls)
 ├── .element-web_version            ← Installed Element Web version
-├── .ketesa_version                 ← Installed Ketesa version
 ├── .element-call_version           ← Installed Element Call version (if voice enabled)
 ├── .livekit-server_version         ← Installed LiveKit binary version (if voice enabled)
 ├── .lk-jwt-service_version         ← Installed lk-jwt-service binary version (if voice enabled)
@@ -179,12 +172,12 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 └── .registration_secret            ← Auto-generated registration_shared_secret
 ```
 
-Element Web, Ketesa, Element Call, and (if voice is enabled) the LiveKit/lk-jwt-service binaries each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch — no manual action needed.
+Element Web, Element Call, and (if voice is enabled) the LiveKit/lk-jwt-service binaries each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch — no manual action needed.
 
 To force a re-download of a specific component (e.g. after a corrupted extraction):
 
 ```bash
-docker exec addon_local_matrix_server rm /data/matrix/.ketesa_version
+docker exec addon_local_matrix_server rm /data/matrix/.element-web_version
 # then restart the add-on — it will detect the missing version file and re-fetch
 ```
 
@@ -236,7 +229,6 @@ See [`ha_matrix_integration.yaml`](ha_matrix_integration.yaml) for a full exampl
 | PostgreSQL | ~100 MB | <1% |
 | Synapse | ~300–500 MB | 1–3% |
 | Element Web | ~10 MB | <1% |
-| Ketesa | ~10 MB | <1% |
 | LiveKit + lk-jwt-service (if enabled) | ~50–100 MB | 1–2% idle, more during calls |
 | **Total** | **~450–650 MB** (~550–750 MB with voice) | **~3–5%** |
 

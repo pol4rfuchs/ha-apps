@@ -39,7 +39,7 @@
 
   const fill = (box) => {
     box.setAttribute('role', 'group');
-    box.setAttribute('aria-label', 'Design wählen');
+    box.setAttribute('aria-label', 'Choose theme');
     box.textContent = '';
     THEMES.forEach(([id, label]) => {
       const b = document.createElement('button');

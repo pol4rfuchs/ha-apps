@@ -1,9 +1,9 @@
 #!/usr/bin/with-contenv bashio
-# S6 Service: Periodische PostgreSQL Backups via pg_dump (MAS-DB)
+# S6 service: periodic PostgreSQL backups via pg_dump (MAS DB)
 #
-# Gleiche Begründung wie im Synapse-Add-on: pg_dump erzeugt ein logisches,
-# konsistentes Backup statt eines Hot-Copy-Snapshots der laufenden DB-Files.
-# MAS-eigene Instanz läuft auf Port 5433 (getrennt von Synapse), DB-Name "mas".
+# Same reasoning as in the Synapse add-on: pg_dump produces a logical,
+# consistent backup instead of a hot-copy snapshot of the running DB files.
+# MAS's own instance runs on port 5433 (separate from Synapse), DB name "mas".
 
 BACKUP_ENABLED=$(bashio::config 'backup_enabled')
 BACKUP_INTERVAL_HOURS=$(bashio::config 'backup_interval_hours')
@@ -13,14 +13,14 @@ BACKUP_DIR="/data/mas/backups"
 mkdir -p "${BACKUP_DIR}"
 
 if [ "${BACKUP_ENABLED}" != "true" ]; then
-    bashio::log.info "postgres-backup: backup_enabled=false — Service bleibt idle"
-    # longrun-Service darf nicht sofort exiten (sonst restart-loop) — schlafen und leben lassen
+    bashio::log.info "postgres-backup: backup_enabled=false — service stays idle"
+    # a longrun service must not exit immediately (otherwise restart loop) — sleep and stay alive
     exec sleep infinity
 fi
 
-bashio::log.info "postgres-backup: aktiv, Intervall=${BACKUP_INTERVAL_HOURS}h, Retention=${BACKUP_RETENTION_DAYS}d"
+bashio::log.info "postgres-backup: active, interval=${BACKUP_INTERVAL_HOURS}h, retention=${BACKUP_RETENTION_DAYS}d"
 
-# Erster Lauf 2 Minuten nach Start, damit Postgres/MAS sicher hochgefahren sind
+# First run 2 minutes after start, so Postgres/MAS are certainly up
 sleep 120
 
 while true; do
@@ -33,10 +33,10 @@ while true; do
         bashio::log.info "postgres-backup: ✅ ${DUMP_FILE} (${SIZE})"
     else
         rm -f "${DUMP_FILE}.tmp"
-        bashio::log.error "postgres-backup: ❌ pg_dump fehlgeschlagen: $(cat /tmp/pg_dump.err)"
+        bashio::log.error "postgres-backup: ❌ pg_dump failed: $(cat /tmp/pg_dump.err)"
     fi
 
-    # Rotation: alte Dumps jenseits der Retention löschen
+    # Rotation: delete old dumps beyond the retention period
     find "${BACKUP_DIR}" -name 'mas_*.sql.gz' -mtime "+${BACKUP_RETENTION_DAYS}" -delete
 
     sleep "$((BACKUP_INTERVAL_HOURS * 3600))"

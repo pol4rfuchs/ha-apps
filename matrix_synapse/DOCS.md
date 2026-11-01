@@ -1,6 +1,6 @@
 # Matrix Server (ESS CE) — Home Assistant Add-on
 
-Full Matrix homeserver stack: Synapse + Element Web + Element Call (Voice/Video) + Ketesa (Admin UI) — as a single Home Assistant Add-on.
+Full Matrix homeserver stack: Synapse + Element Web + Element Call (Voice/Video) — as a single Home Assistant Add-on. The admin UI (Ketesa) is the separate `matrix_ketesa` app.
 
 ---
 
@@ -36,7 +36,6 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 | `7080` | Element Web | Via NPM |
 | `7081` | Element Call (Voice/Video WebApp) | Via NPM |
 | `8008` | Synapse API | Via NPM |
-| `8090` | Ketesa (Admin UI) | Via NPM |
 | `8448` | Matrix Federation | Direct — port-forward required |
 | `7880` | LiveKit SFU | Via NPM (WebSocket required) |
 | `8089` | LiveKit JWT Bridge | Via NPM |
@@ -60,13 +59,11 @@ See the [NPM_SETUP.md](https://github.com/pol4rfuchs/ha-apps/blob/main/matrix_sy
 │   ├── signing.key         ← Back this up — loss = loss of federation identity
 │   └── media_store/
 ├── element-web/            ← Element Web (persistent)
-├── synapse-admin/          ← Ketesa / Admin UI (persistent, folder name kept for compat)
 ├── .element-web_version    ← Installed Element Web version
-├── .ketesa_version         ← Installed Ketesa version
 └── .element-call_version   ← Installed Element Call version (if voice enabled)
 ```
 
-Element Web, Ketesa, and Element Call each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch.
+Element Web and Element Call each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch.
 
 ---
 
@@ -84,12 +81,22 @@ The files live in the image (`/usr/share/matrix-themes`) and are re-applied afte
 | Problem | Fix |
 |---------|-----|
 | `Server name has invalid format` | Remove trailing slash from `server_name` |
-| Admin Panel shows "Something went wrong" | F12 → Application → Clear Site Data |
+| Admin UI (`matrix_ketesa` app) shows "Something went wrong" | F12 → Application → Clear Site Data |
 | Federation broken | Router: forward port 8448 → HA-IP:8448 |
-| Element Web / Ketesa / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
+| Element Web / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
 | Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (direct, not via NPM); with `livekit_turn_enabled` also UDP 3478 / TCP 5349 |
 | Login stuck loading via `http://<LAN-IP>:7080` | Plain HTTP has no secure context — browsers disable WebCrypto. Use the HTTPS domain instead, even from the LAN |
 | Calls fail for IPv4-only clients behind a router without NAT hairpin | LiveKit runs with `skip_external_ip_validation: true`: it uses the public IPv4 found via STUN without the self-ping that such routers never answer. If your LiveKit version does not know this option, the add-on logs a warning and starts without it |
+
+## Admin UI (Ketesa)
+
+The Synapse admin UI is not part of this app any more. Use the separate `matrix_ketesa` app (port `8091`), which runs
+Ketesa behind its own login. This app keeps the Synapse admin API enabled (`/_synapse/admin`), which Ketesa uses.
+
+**Upgrading from a version that bundled Ketesa:** the options `enable_synapse_admin`, `admin_ui_username` and
+`admin_ui_password` and the host port `8090` are gone. On the first start the app removes the old leftovers in
+`/data/matrix/` (`synapse-admin/`, `.ketesa_version`, `.admin_ui_auth`). Install `matrix_ketesa` before you update if you
+need the admin UI without a gap, and update any reverse proxy host that pointed to port `8090`.
 
 ## Local and external access
 
@@ -99,5 +106,5 @@ The files live in the image (`/usr/share/matrix-themes`) and are re-applied afte
 
 - Element Web, Synapse API and LiveKit: only through a reverse proxy with TLS (for example Nginx Proxy Manager).
 - Federation (`8448`) and the LiveKit media range (and the TURN ports, if enabled) are meant to be port-forwarded directly (see the port table). This is the exception for a federating Matrix server. Set `enable_federation: false` for a private server; it is **on by default**.
-- Ketesa (admin UI, `8090`): **LAN or VPN only.** It is protected by basic auth (a password is generated when `admin_ui_password` is empty) but should not be public.
+- Admin UI: it is the separate `matrix_ketesa` app (port `8091`): **LAN or VPN only**, see its documentation.
 - Registration is off by default (`enable_registration: false`). Keep it off.

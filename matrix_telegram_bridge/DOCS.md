@@ -2,47 +2,47 @@
 
 ## Secrets
 
-`as_token`/`hs_token` in `/data/registration.yaml` werden bei der Erstregistrierung
-automatisch generiert und dürfen danach **nicht** verändert werden — sonst verliert
-Synapse die Kopplung zur Appservice und alle bereits gebrückten Räume/User brechen.
+`as_token`/`hs_token` in `/data/registration.yaml` are generated automatically at the
+initial registration and **must not** be changed afterwards — otherwise Synapse loses the
+link to the appservice and all rooms/users that have already been bridged break.
 
-`telegram_api_id`/`telegram_api_hash` sind eigene, von Telegram vergebene Werte
-(https://my.telegram.org) — nicht zu verwechseln mit as_token/hs_token. Ohne sie startet
-die Bridge zwar (Log-Warnung), kann aber keine Telegram-Verbindung aufbauen.
+`telegram_api_id`/`telegram_api_hash` are your own values issued by Telegram
+(https://my.telegram.org) — not to be confused with as_token/hs_token. Without them the
+bridge starts (log warning), but cannot establish a Telegram connection.
 
-## Appservice-Registrierung (Shared Volume)
+## Appservice registration (shared volume)
 
-Diese Bridge schreibt ihre `registration.yaml` nach `/share/telegram_bridge_registration.yaml`.
-Das Matrix-Synapse-Add-on liest diese Datei nur ein, wenn dort die Option
-`telegram_bridge_enabled` aktiviert ist (Synapse-Neustart danach nötig).
+This bridge writes its `registration.yaml` to `/share/telegram_bridge_registration.yaml`.
+The Matrix Synapse add-on only reads this file if the option
+`telegram_bridge_enabled` is enabled there (a Synapse restart is needed afterwards).
 
 ## Backup
 
-- `/data` enthält `config.yaml`, `registration.yaml` und bei SQLite die komplette
-  Bridge-Datenbank — **muss** gesichert werden, sonst muss Telegram nach einem Restore
-  neu verknüpft werden (Telefonnummer + Code erneut nötig).
-- `telegram_api_id`/`telegram_api_hash` sind reine Config-Werte, kein separates Secret-File.
+- `/data` contains `config.yaml`, `registration.yaml` and, with SQLite, the complete
+  bridge database — it **must** be backed up, otherwise Telegram has to be linked again
+  after a restore (phone number + code needed again).
+- `telegram_api_id`/`telegram_api_hash` are plain config values, not a separate secret file.
 
-## Login-Ablauf
+## Login flow
 
-Anders als WhatsApp/Signal läuft der Login **nicht** über QR-Code, sondern klassisch über
-Telefonnummer + SMS-/App-Bestätigungscode (Telegram-eigener Login-Flow, MTProto-Protokoll).
-`login`-Befehl an den Bridge-Bot schicken, Telefonnummer eingeben, Code aus der Telegram-App
-oder SMS eintippen.
+Unlike WhatsApp/Signal, the login does **not** work via QR code but the classic way via
+phone number + SMS/app confirmation code (Telegram's own login flow, MTProto protocol).
+Send the `login` command to the bridge bot, enter the phone number, type in the code from the Telegram app
+or SMS.
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die Bridge hat keine Weboberfläche und veröffentlicht keinen Host-Port. Der Appservice-Port `29317` ist nur im internen Netz von Home Assistant erreichbar, damit das Matrix-Synapse-Add-on die Bridge ansprechen kann (`appservice_address`). Die Kopplung ist durch `as_token`/`hs_token` in `/data/registration.yaml` geschützt; behandle `/data` und `/share/telegram_bridge_registration.yaml` wie ein Geheimnis.
+**Local (LAN):** The bridge has no web interface and publishes no host port. The appservice port `29317` is only reachable in Home Assistant's internal network, so that the Matrix Synapse add-on can reach the bridge (`appservice_address`). The link is protected by `as_token`/`hs_token` in `/data/registration.yaml`; treat `/data` and `/share/telegram_bridge_registration.yaml` like a secret.
 
-**Extern (Internet):** Empfehlung **nichts weiterleiten.** Die Bridge verbindet sich ausgehend zu Telegram; von außen muss nur Synapse erreichbar sein (siehe dessen Dokumentation), nie die Bridge selbst.
+**External (internet):** Recommendation: **forward nothing.** The bridge connects outbound to Telegram; only Synapse needs to be reachable from outside (see its documentation), never the bridge itself.
 
-## Bekannte Einschränkungen / bewusste Vereinfachungen
+## Known limitations / deliberate simplifications
 
-- **LottieConverter nicht im Image enthalten** (Ressourcenschonung, §12) — animierte
-  Sticker/Emoji-Packs werden dadurch evtl. nicht korrekt gebridged. Bei Bedarf im
-  Dockerfile nachrüstbar.
-- Encryption (Megolm) muss auf beiden Seiten (Bridge-Option `encryption` + Matrix-Client)
-  aktiviert sein, um verschlüsselte Portal-Räume zu bekommen.
-- Go-Rewrite (April 2026): Alter Python-Relaybot-Modus wird laut Upstream-Release-Notes
-  nicht automatisch migriert — bei Bedarf `default_relays` manuell in `config.yaml`
-  nachpflegen (betrifft nur, wer vorher schon eine Python-Instanz hatte, nicht bei uns).
+- **LottieConverter is not included in the image** (saves resources, §12) — animated
+  sticker/emoji packs may therefore not be bridged correctly. Can be added in the
+  Dockerfile if needed.
+- Encryption (Megolm) must be enabled on both sides (bridge option `encryption` + Matrix client)
+  to get encrypted portal rooms.
+- Go rewrite (April 2026): according to the upstream release notes the old Python relaybot mode
+  is not migrated automatically — if needed, maintain `default_relays` manually in `config.yaml`
+  (only affects anyone who already had a Python instance before, not us).

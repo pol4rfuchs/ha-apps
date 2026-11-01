@@ -1,0 +1,33 @@
+---
+name: "Matrix Ketesa (Admin UI)"
+version: "0.2.0"
+slug: "matrix_ketesa"
+description: "Ketesa (formerly Synapse Admin), the admin web UI for Matrix Synapse, behind a login"
+url: "https://github.com/pol4rfuchs/ha-apps"
+arch:
+  - aarch64
+  - amd64
+image: "ghcr.io/pol4rfuchs/matrix_ketesa"
+stage: experimental
+init: false
+ports:
+  8091/tcp: 8091
+ports_description:
+  8091/tcp: "Ketesa admin UI (basic-auth protected)"
+webui: "http://[HOST]:[PORT:8091]"
+watchdog: "tcp://[HOST]:[PORT:8091]"
+map:
+  - type: addon_config
+    read_only: false
+# AppArmor is off: apparmor.txt is an untested draft in COMPLAIN mode and is not loaded
+# with apparmor: false. After a test run on the Pi (apparmor: true, evaluate the log, close
+# the gaps), remove "complain" from the flags and set this to true.
+apparmor: false
+options:
+  log_level: "info"
+  admin_ui_username: "admin"
+  admin_ui_password: ""
+schema:
+  log_level: "list(debug|info|warning|error)"
+  admin_ui_username: "str"
+  admin_ui_password: "password?"

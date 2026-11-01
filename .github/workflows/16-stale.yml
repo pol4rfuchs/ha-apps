@@ -1,5 +1,5 @@
 ---
-# Stale Issues/PRs automatisch schließen nach 60/14 Tagen Inaktivität
+# Automatically close stale issues/PRs after 60/14 days of inactivity
 name: 16 Stale
 
 # yamllint disable-line rule:truthy

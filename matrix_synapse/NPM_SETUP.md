@@ -1,39 +1,36 @@
 # Nginx Proxy Manager — Setup Guide
-# Nginx Proxy Manager — Einrichtungsanleitung
 
 ---
 
-## Proxy Hosts Overview / Proxy Host Übersicht
+## Proxy Hosts Overview
 
-| Domain | Port | Notes / Hinweise |
+| Domain | Port | Notes |
 |--------|------|------------------|
 | `matrix.example.org` | 8008 | Synapse API + well-known |
 | `element.example.org` | 7080 | Element Web Client |
 | `element-call.example.org` | 7081 | Element Call (Voice/Video) |
-| `livekit.example.org` | 7880 | LiveKit SFU — **WebSocket required / WebSocket Pflicht!** |
+| `livekit.example.org` | 7880 | LiveKit SFU — **WebSocket required!** |
 | `livekit-jwt.example.org` | 8089 | LiveKit JWT Token Bridge |
-| `admin.example.org` | 8090 | Ketesa (Admin UI) |
 
-## Router Port Forwards (not via NPM / nicht über NPM)
+## Router Port Forwards (not via NPM)
 
-| Port | Protocol | Target / Ziel | Purpose / Zweck |
+| Port | Protocol | Target | Purpose |
 |------|----------|---------------|-----------------|
-| 3478 | **UDP** | Pi-IP | TURN Standard — Mobil + Heimnetz |
-| 5349 | **TCP** | Pi-IP | TURN TLS Fallback — strict firewalls / strenge Firewalls |
-| 30000-30020 | **UDP** | Pi-IP | TURN Relay Range — Media (Audio/Video) |
+| 3478 | **UDP** | Pi-IP | TURN standard — mobile + home network |
+| 5349 | **TCP** | Pi-IP | TURN TLS fallback — strict firewalls |
+| 30000-30020 | **UDP** | Pi-IP | TURN relay range — media (audio/video) |
 
-> EN: These ports go **directly** to the Pi — NPM cannot proxy UDP or raw WebRTC media traffic. Without the 30000-30020 relay range forwarded, calls will connect (signaling works) but carry no audio/video at all — even between two devices on the same LAN, since LiveKit always routes media through TURN by design. This range is deliberately kept small (21 ports) rather than LiveKit's 10,000-port default, since Home Assistant's add-on port schema requires each port to be listed individually — see the add-on's `config.yaml`.
-> DE: Diese Ports gehen **direkt** zum Pi — NPM kann kein UDP und keinen rohen WebRTC-Medienverkehr proxyen. Ohne die weitergeleitete Relay-Range 30000-30020 verbindet sich der Call zwar (Signaling funktioniert), überträgt aber weder Ton noch Bild — auch zwischen zwei Geräten im selben LAN, da LiveKit Medien grundsätzlich über TURN routet. Die Range ist bewusst klein gehalten (21 Ports statt LiveKits 10.000-Port-Default), weil Home Assistants Add-on-Port-Schema jeden Port einzeln in der `config.yaml` auflisten muss.
+> These ports go **directly** to the Pi — NPM cannot proxy UDP or raw WebRTC media traffic. Without the 30000-30020 relay range forwarded, calls will connect (signaling works) but carry no audio/video at all — even between two devices on the same LAN, since LiveKit always routes media through TURN by design. This range is deliberately kept small (21 ports) rather than LiveKit's 10,000-port default, since Home Assistant's add-on port schema requires each port to be listed individually — see the add-on's `config.yaml`.
 
 ---
 
 ## 1. Synapse API (matrix.*)
 
-**Details Tab / Details-Tab:**
+**Details tab:**
 - Scheme: `http` | Forward Port: `8008`
 - Cache Assets: OFF | Block Common Exploits: ON
 
-**SSL Tab / SSL-Tab:**
+**SSL tab:**
 - Let's Encrypt | Force SSL: ON | HTTP/2: ON
 
 **Advanced → Custom Nginx Config:**
@@ -54,8 +51,7 @@ location /.well-known/matrix/server {
 
 ## 2. Element Web (element.*)
 
-EN: Standard HTTPS proxy — no custom config needed.
-DE: Standard HTTPS Proxy — keine Custom Config nötig.
+Standard HTTPS proxy — no custom config needed.
 
 ---
 
@@ -70,12 +66,11 @@ add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
 
 ---
 
-## 4. LiveKit SFU (livekit.*) — ⚠️ WebSocket required / WebSocket Pflicht
+## 4. LiveKit SFU (livekit.*) — ⚠️ WebSocket required
 
-EN: Without WebSocket support enabled, signaling won't connect at all. Note that this is separate from the TURN/relay port forwards above — WebSocket gets you the signaling connection, the router forwards get you the actual audio/video.
-DE: Ohne WebSocket-Support verbindet sich nicht mal die Signalisierung. Das ist unabhängig von den TURN/Relay-Portweiterleitungen oben — WebSocket sorgt für die Signalisierungsverbindung, die Router-Freigaben für Ton und Bild.
+Without WebSocket support enabled, signaling won't connect at all. Note that this is separate from the TURN/relay port forwards above — WebSocket gets you the signaling connection, the router forwards get you the actual audio/video.
 
-**Details Tab:** Websockets Support → **ON / AN**
+**Details Tab:** Websockets Support → **ON**
 
 **Advanced → Custom Nginx Config:**
 ```nginx
@@ -102,13 +97,15 @@ if ($request_method = OPTIONS) {
 
 ---
 
-## 6. Ketesa / Admin UI (admin.*) — Port 8090
+## 6. Admin UI (Ketesa)
 
-**Access List:** must be set to **Publicly Accessible** — authentication comes from Matrix login itself, not NPM.
+The admin UI is the separate `matrix_ketesa` app (port `8091`), not part of this app. Keep it on the LAN or behind a VPN;
+see its documentation. It talks to the Synapse admin API through the `matrix.*` proxy host above, so that host must not
+block `/_synapse/admin`.
 
 ---
 
-## Addon Config / Addon-Konfiguration
+## Add-on Config
 
 ```yaml
 server_name: "example.org"
@@ -120,24 +117,20 @@ livekit_url: "wss://livekit.example.org"
 livekit_jwt_url: "https://livekit-jwt.example.org"
 ```
 
-> EN: Leave `livekit_secret` empty — auto-generated on first start and stored in `/data/matrix/.livekit_secret`.
-> DE: `livekit_secret` leer lassen — wird beim ersten Start automatisch generiert und in `/data/matrix/.livekit_secret` gespeichert.
+> Leave `livekit_secret` empty — auto-generated on first start and stored in `/data/matrix/.livekit_secret`.
 
 ---
 
-## TLS Certificate for TURN 5349 / TLS-Zertifikat für TURN 5349
+## TLS Certificate for TURN 5349
 
-EN: LiveKit TURN TLS needs a certificate directly — not via NPM proxy. Copy after NPM has issued one:
-DE: LiveKit TURN TLS braucht ein Zertifikat direkt — nicht über NPM Proxy. Nach NPM-Zertifikat-Ausstellung kopieren:
+LiveKit TURN TLS needs a certificate directly — not via NPM proxy. Copy after NPM has issued one:
 
 ```bash
 mkdir -p /data/matrix/tls
 cp /ssl/livekit.example.org/fullchain.pem /data/matrix/tls/livekit.crt
 cp /ssl/livekit.example.org/privkey.pem   /data/matrix/tls/livekit.key
-# Addon neu starten / restart addon
+# restart the add-on
 ```
 
-> EN: TURN UDP 3478 + relay range 30000-30020 work without TLS and cover home + mobile networks.
+> TURN UDP 3478 + relay range 30000-30020 work without TLS and cover home + mobile networks.
 > TCP 5349 (TLS) is only needed for colleagues behind very strict corporate firewalls.
-> DE: TURN UDP 3478 + Relay-Range 30000-30020 funktionieren ohne TLS und decken Heimnetz + Mobilnetz ab.
-> TCP 5349 (TLS) nur für Kollegen hinter sehr strikten Firmen-Firewalls nötig.

@@ -1,8 +1,8 @@
 ---
-# Synct die Labels aus .github/labels.yml (taeglich + bei Aenderung + manuell).
-# prune: false ist Pflicht: Release Please verwaltet "autorelease: pending/tagged"
-# selbst. Wuerde der Sync diese Labels loeschen, findet Release Please beim Merge
-# das Release-PR nicht mehr und legt Tag + GHCR-Image nicht an.
+# Syncs the labels from .github/labels.yml (daily + on change + manually).
+# prune: false is mandatory: Release Please manages "autorelease: pending/tagged"
+# itself. If the sync deleted these labels, Release Please would no longer find
+# the release PR on merge and would not create the tag + GHCR image.
 name: 15 Sync Labels
 
 # yamllint disable-line rule:truthy

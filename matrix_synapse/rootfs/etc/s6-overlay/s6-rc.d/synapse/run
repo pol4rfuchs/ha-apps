@@ -4,40 +4,40 @@
 SYNAPSE_CONFIG="/data/matrix/synapse/homeserver.yaml"
 MARKER="/data/matrix/.pg_initialized"
 
-# ── Warten bis cont-init homeserver.yaml geschrieben hat ─────────────────
-# (S6 und cont-init laufen parallel — ohne Wait startet Synapse zu früh)
+# ── Wait until cont-init has written homeserver.yaml ─────────────────────
+# (S6 and cont-init run in parallel — without the wait Synapse starts too early)
 WAIT=0
 while [ ! -f "${SYNAPSE_CONFIG}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "Warte auf homeserver.yaml..."
+        bashio::log.info "Waiting for homeserver.yaml..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: homeserver.yaml wurde nicht erstellt!"
+        bashio::log.error "Timeout: homeserver.yaml was not created!"
         exit 1
     fi
 done
 
-# ── Warten bis PostgreSQL bereit ist ─────────────────────────────────────
-bashio::log.info "Warte auf PostgreSQL..."
+# ── Wait until PostgreSQL is ready ───────────────────────────────────────
+bashio::log.info "Waiting for PostgreSQL..."
 for i in $(seq 1 60); do
     if [ -f "${MARKER}" ] && pg_isready -h 127.0.0.1 -p 5432 -U synapse -q 2>/dev/null; then
-        bashio::log.info "✅ PostgreSQL bereit"
+        bashio::log.info "✅ PostgreSQL ready"
         break
     fi
     sleep 1
 done
 
-# jemalloc als Allocator nur für Synapse (wie das offizielle Synapse-Image):
-# weniger Fragmentierung, und Voraussetzung für caches.cache_autotuning.
+# jemalloc as the allocator for Synapse only (like the official Synapse image):
+# less fragmentation, and a prerequisite for caches.cache_autotuning.
 if [ -e /usr/local/lib/libjemalloc.so.2 ]; then
     export LD_PRELOAD=/usr/local/lib/libjemalloc.so.2
 else
-    bashio::log.warning "jemalloc nicht gefunden – Synapse läuft mit dem Standard-Allocator, die Cache-Obergrenze greift dann nicht."
+    bashio::log.warning "jemalloc not found – Synapse runs with the default allocator, so the cache upper limit does not apply."
 fi
 
-bashio::log.info "Starte Synapse Homeserver..."
+bashio::log.info "Starting Synapse homeserver..."
 exec /opt/synapse/bin/python -m synapse.app.homeserver \
     --config-path "${SYNAPSE_CONFIG}" \
     2>&1

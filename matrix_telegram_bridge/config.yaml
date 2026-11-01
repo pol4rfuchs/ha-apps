@@ -2,7 +2,7 @@
 name: "Telegram Bridge (mautrix)"
 version: "0.2610.0-ha3-pol4r1"
 slug: "matrix_telegram_bridge"
-description: "mautrix-telegram Application-Service Bridge für Matrix Synapse"
+description: "mautrix-telegram application service bridge for Matrix Synapse"
 url: https://github.com/pol4rfuchs/ha-apps
 image: "ghcr.io/pol4rfuchs/matrix_telegram_bridge"
 arch:

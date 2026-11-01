@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Test für livekit_config_fallback in s6-rc.d/livekit/run.
+# Test for livekit_config_fallback in s6-rc.d/livekit/run.
 #
-# LiveKit bricht bei einem unbekannten Config-Feld sofort mit exit 1 ab. Kennt
-# ein (künftiges) LiveKit skip_external_ip_validation nicht, muss die Zeile
-# entfernt werden, andere Fehler dürfen die Config nicht anfassen.
-# Die Funktion wird aus dem echten Script geladen; livekit-server ist ein
-# Stub, bashio::log.warning wird gestubbt. Braucht bash und timeout.
+# LiveKit aborts with exit 1 right away on an unknown config field. If a
+# (future) LiveKit does not know skip_external_ip_validation, the line must be
+# removed; other errors must not touch the config.
+# The function is loaded from the real script; livekit-server is a stub and
+# bashio::log.warning is stubbed. Needs bash and timeout.
 set -euo pipefail
 S="$(dirname "$0")/../rootfs/etc/s6-overlay/s6-rc.d/livekit/run"
 
@@ -19,7 +19,7 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "${WORK}"' EXIT
 mkdir -p "${WORK}/bin"
 
-# livekit-server-Stub. FAKE_LK_MODE: accept | reject-skip | other-error
+# livekit-server stub. FAKE_LK_MODE: accept | reject-skip | other-error
 cat > "${WORK}/bin/livekit-server" <<'EOF'
 #!/usr/bin/env bash
 echo "called" >> "${FAKE_LK_CALLS}"
@@ -48,7 +48,7 @@ write_cfg() {
 rtc:
   tcp_port: 7881
   use_external_ip: true
-  # Kommentar
+  # comment
   skip_external_ip_validation: true
 
 keys:
@@ -57,13 +57,13 @@ EOF
 }
 reset() { : > "${FAKE_LK_CALLS}"; WARN_LOG=""; write_cfg; }
 
-# 1. LiveKit akzeptiert die Option: Config bleibt, keine Warnung
+# 1. LiveKit accepts the option: config stays, no warning
 reset
 FAKE_LK_MODE=accept livekit_config_fallback "${WORK}/livekit.yaml"
 grep -q '^  skip_external_ip_validation: true' "${WORK}/livekit.yaml" || { echo "accept: option removed"; exit 1; }
 [ -z "${WARN_LOG}" ] || { echo "accept: unexpected warning"; exit 1; }
 
-# 2. LiveKit lehnt die Option ab: Zeile weg, Rest der Config unverändert, genau eine Warnung
+# 2. LiveKit rejects the option: line removed, rest of the config unchanged, exactly one warning
 reset
 FAKE_LK_MODE=reject-skip livekit_config_fallback "${WORK}/livekit.yaml"
 ! grep -q 'skip_external_ip_validation' "${WORK}/livekit.yaml" || { echo "reject: option still present"; exit 1; }
@@ -71,13 +71,13 @@ grep -q '^  use_external_ip: true' "${WORK}/livekit.yaml" || { echo "reject: use
 grep -q '^  devkey: "x"' "${WORK}/livekit.yaml" || { echo "reject: keys lost"; exit 1; }
 [ "$(printf '%s' "${WARN_LOG}" | grep -c .)" = "1" ] || { echo "reject: expected exactly one warning"; exit 1; }
 
-# 3. Anderer Fehler (z.B. Port belegt): Config unverändert, keine Warnung
+# 3. Other error (e.g. port in use): config unchanged, no warning
 reset
 FAKE_LK_MODE=other-error livekit_config_fallback "${WORK}/livekit.yaml"
 grep -q '^  skip_external_ip_validation: true' "${WORK}/livekit.yaml" || { echo "other-error: option removed"; exit 1; }
 [ -z "${WARN_LOG}" ] || { echo "other-error: unexpected warning"; exit 1; }
 
-# 4. Config ohne die Option: LiveKit wird gar nicht erst gestartet
+# 4. Config without the option: LiveKit is not started at all
 reset
 sed -i '/skip_external_ip_validation/d' "${WORK}/livekit.yaml"
 FAKE_LK_MODE=reject-skip livekit_config_fallback "${WORK}/livekit.yaml"

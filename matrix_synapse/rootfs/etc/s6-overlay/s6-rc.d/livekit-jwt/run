@@ -1,52 +1,52 @@
 #!/usr/bin/with-contenv bashio
 
 if ! bashio::config.true 'enable_voice_calls'; then
-    bashio::log.info "lk-jwt-service: Voice Calls deaktiviert — Service inaktiv"
+    bashio::log.info "lk-jwt-service: voice calls disabled — service inactive"
     exec sleep infinity
 fi
 
 LK_JWT_BIN="/data/matrix/bin/lk-jwt-service"
 LK_SECRET_FILE="/data/matrix/.livekit_secret"
 
-# Warten bis Binary vorhanden
+# Wait until the binary is present
 WAIT=0
 while [ ! -x "${LK_JWT_BIN}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "lk-jwt: Warte auf Binary Download..."
+        bashio::log.info "lk-jwt: Waiting for binary download..."
     fi
     sleep 2
     WAIT=$((WAIT + 2))
     if [ $WAIT -gt 300 ]; then
-        bashio::log.error "Timeout: lk-jwt-service Binary nicht gefunden!"
+        bashio::log.error "Timeout: lk-jwt-service binary not found!"
         exec sleep infinity
     fi
 done
 
 ln -sf "${LK_JWT_BIN}" /usr/local/bin/lk-jwt-service
 
-# Die Datei schreibt 10-matrix-init.sh nur, wenn die Option leer ist (Auto-Generierung).
-# Ist livekit_secret gesetzt, gibt es sie nie — dann nicht darauf warten.
+# 10-matrix-init.sh writes this file only if the option is empty (auto-generation).
+# If livekit_secret is set, the file never exists — do not wait for it then.
 LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
 if [ -z "${LIVEKIT_SECRET}" ]; then
     WAIT=0
     while [ ! -f "${LK_SECRET_FILE}" ]; do
         if [ $WAIT -eq 0 ]; then
-            bashio::log.info "lk-jwt: Warte auf LiveKit Secret..."
+            bashio::log.info "lk-jwt: Waiting for LiveKit secret..."
         fi
         sleep 1
         WAIT=$((WAIT + 1))
         if [ $WAIT -gt 120 ]; then
-            bashio::log.error "Timeout: LiveKit Secret nicht gefunden!"
+            bashio::log.error "Timeout: LiveKit secret not found!"
             exec sleep infinity
         fi
     done
     LIVEKIT_SECRET=$(cat "${LK_SECRET_FILE}")
 fi
 
-# Warten bis Synapse erreichbar
+# Wait until Synapse is reachable
 for i in $(seq 1 60); do
     if curl -sf "http://127.0.0.1:8008/_matrix/client/versions" -o /dev/null 2>/dev/null; then
-        bashio::log.info "✅ Synapse erreichbar"
+        bashio::log.info "✅ Synapse reachable"
         break
     fi
     sleep 2
@@ -55,17 +55,17 @@ done
 SERVER_NAME=$(bashio::config 'server_name')
 LIVEKIT_PUBLIC_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
 
-bashio::log.info "🚀 Starte lk-jwt-service auf Port 8089..."
-bashio::log.info "   LiveKit-URL fuer Clients: ${LIVEKIT_PUBLIC_URL}"
-# WICHTIG: lk-jwt-service verwendet LIVEKIT_URL fuer ZWEI Dinge gleichzeitig:
-#   1) interne Server-zu-Server Raum-Erstellung (Twirp/REST API)
-#   2) die Adresse, die 1:1 an den Client fuer dessen eigene WebSocket-
-#      Verbindung weitergegeben wird (im "url"-Feld der SFU-Config)
-# Ein interner Wert wie ws://127.0.0.1:7880 waere fuer den Server korrekt,
-# wird aber unveraendert an den Client geschickt -> der Client versucht dann,
-# sich mit SEINEM EIGENEN localhost zu verbinden und scheitert IMMER
-# (net::ERR_CONNECTION_REFUSED), unabhaengig von NPM/DNS/Firewall.
-# Muss daher zwingend die oeffentliche WSS-Adresse sein.
+bashio::log.info "🚀 Starting lk-jwt-service on port 8089..."
+bashio::log.info "   LiveKit URL for clients: ${LIVEKIT_PUBLIC_URL}"
+# IMPORTANT: lk-jwt-service uses LIVEKIT_URL for TWO things at once:
+#   1) internal server-to-server room creation (Twirp/REST API)
+#   2) the address that is passed on 1:1 to the client for its own WebSocket
+#      connection (in the "url" field of the SFU config)
+# An internal value like ws://127.0.0.1:7880 would be correct for the server,
+# but is sent unchanged to the client -> the client then tries to connect to
+# ITS OWN localhost and ALWAYS fails (net::ERR_CONNECTION_REFUSED),
+# regardless of NPM/DNS/firewall.
+# It must therefore be the public WSS address.
 # Ref: https://github.com/element-hq/lk-jwt-service/issues/161
 exec env \
     LIVEKIT_URL="${LIVEKIT_PUBLIC_URL}" \

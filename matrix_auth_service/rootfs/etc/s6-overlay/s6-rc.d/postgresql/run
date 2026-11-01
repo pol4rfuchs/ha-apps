@@ -1,27 +1,27 @@
 #!/usr/bin/with-contenv bashio
-# S6 Service: PostgreSQL (eigene Instanz für MAS, getrennt von Synapse-DB)
+# S6 service: PostgreSQL (own instance for MAS, separate from the Synapse DB)
 
 PG_DATA="/data/mas/postgresql"
 PG_BIN="/usr/lib/postgresql/17/bin"
 MARKER="/data/mas/.pg_initialized"
 
-# ── Warten bis cont-init die DB vollständig initialisiert hat ─────────────
-# Gleiche Race-Condition-Absicherung wie im Synapse-Add-on: cont-init und
-# S6-Services starten PARALLEL.
+# ── Wait until cont-init has fully initialized the DB ─────────────────────
+# Same race-condition protection as in the Synapse add-on: cont-init and
+# S6 services start in PARALLEL.
 WAIT=0
 while [ ! -f "${MARKER}" ]; do
     if [ $WAIT -eq 0 ]; then
-        bashio::log.info "Warte auf PostgreSQL Initialisierung durch cont-init..."
+        bashio::log.info "Waiting for PostgreSQL initialization by cont-init..."
     fi
     sleep 1
     WAIT=$((WAIT + 1))
     if [ $WAIT -gt 120 ]; then
-        bashio::log.error "Timeout: PostgreSQL Initialisierung dauert zu lang!"
+        bashio::log.error "Timeout: PostgreSQL initialization is taking too long!"
         exit 1
     fi
 done
 
-bashio::log.info "Starte PostgreSQL (MAS)..."
+bashio::log.info "Starting PostgreSQL (MAS)..."
 
 exec gosu postgres "${PG_BIN}/postgres" \
     -D "${PG_DATA}" \

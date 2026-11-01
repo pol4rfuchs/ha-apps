@@ -3,7 +3,7 @@
 profile vaultwarden flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # --- s6-overlay-Baseline (PFLICHT, §8) ---
+  # --- s6-overlay baseline (REQUIRED, §8) ---
   /init                          ix,
   /package/**                    ix,
   /command/**                    ix,
@@ -13,16 +13,16 @@ profile vaultwarden flags=(attach_disconnected,mediate_deleted) {
   /etc/cont-init.d/**            rwix,
   /etc/cont-finish.d/**          rwix,
 
-  # Kein /run.sh: Start läuft über s6 (services.d), nicht über ein Entrypoint-Script.
+  # No /run.sh: startup runs via s6 (services.d), not via an entrypoint script.
 
-  # Privilege-Drop (s6-setuidgid auf User vaultwarden) und chown der Datenordner
+  # Privilege drop (s6-setuidgid to the vaultwarden user) and chown of the data folders
   capability chown,
   capability dac_override,
   capability fowner,
   capability setuid,
   capability setgid,
 
-  # --- App-spezifisch ---
+  # --- App-specific ---
   /bin/**                        ix,
   /usr/bin/**                    ix,
   /usr/local/bin/**              ix,
