@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.1.1...searxng-v1.1.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* **searxng:** retry the Void package download and fall back to other mirrors ([#807](https://github.com/pol4rfuchs/ha-apps/issues/807)) ([1bc69ae](https://github.com/pol4rfuchs/ha-apps/commit/1bc69ae646a294e90083e3003a7f268cd9cc2446))
+
 ## [1.1.1](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.1.0...searxng-v1.1.1) (2026-11-01)
 
 
