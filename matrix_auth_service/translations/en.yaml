@@ -39,3 +39,10 @@ configuration:
   backup_retention_days:
     name: Backup Retention (Days)
     description: "How long backups are kept before deletion."
+network:
+  8082/tcp:
+    name: "MAS public API port"
+    description: "MAS public API + account UI (NPM → here for HTTPS)."
+  8083/tcp:
+    name: "MAS internal port"
+    description: "MAS internal (health/metrics, no NPM)."
