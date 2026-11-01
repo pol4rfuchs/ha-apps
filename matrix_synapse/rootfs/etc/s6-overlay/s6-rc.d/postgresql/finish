@@ -1,2 +1,2 @@
 #!/usr/bin/with-contenv bashio
-bashio::log.warning "PostgreSQL wurde beendet (exit code: $1)"
+bashio::log.warning "PostgreSQL exited (exit code: $1)"

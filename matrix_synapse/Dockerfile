@@ -15,15 +15,15 @@ LABEL \
     org.opencontainers.image.title="Matrix Server (ESS CE)" \
     org.opencontainers.image.version="${BUILD_VERSION}"
 
-# ── System Pakete + Synapse via pip ─────────────────────────────────────────
-# Ein RUN, damit Compiler, -dev-Pakete und pip-Cache nach dem Build wieder aus
-# dem Image verschwinden (in einer späteren Schicht gelöscht, blieben sie im
-# Image und belegten weiter Speicher). Die Laufzeit-Bibliotheken werden vor
-# dem Aufräumen als "manuell" markiert, damit autoremove sie nicht mitnimmt.
-# Am Ende prüft Synapse seine eigenen Abhängigkeiten (Kern, postgres,
-# url-preview); psycopg2 wird importiert, weil es gegen libpq5 gelinkt ist.
-# libjemalloc2: Allocator für Synapse (siehe synapse/run), von der Synapse-Doku
-# empfohlen; mit glibc-malloc fragmentiert Python stark und der RAM wächst.
+# ── System packages + Synapse via pip ─────────────────────────────────────────
+# A single RUN, so the compiler, -dev packages and the pip cache disappear from
+# the image again after the build (if deleted in a later layer, they would stay
+# in the image and keep taking up space). The runtime libraries are marked as
+# "manual" before the cleanup so autoremove does not take them along.
+# At the end Synapse checks its own dependencies (core, postgres,
+# url-preview); psycopg2 is imported because it is linked against libpq5.
+# libjemalloc2: allocator for Synapse (see synapse/run), recommended by the
+# Synapse docs; with glibc malloc Python fragments heavily and RAM keeps growing.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip python3-venv \
     libffi8 libssl3 libjpeg62-turbo libwebp7 libwebpmux3 libwebpdemux2 \
@@ -48,19 +48,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && test -e /usr/local/lib/libjemalloc.so.2 \
     && /opt/synapse/bin/python -c "import psycopg2, PIL, synapse; from synapse.util.check_dependencies import check_requirements as c; c(); c('postgres'); c('url-preview'); print('synapse', synapse.__version__, 'dependencies OK')"
 
-# LiveKit + lk-jwt-service werden zur LAUFZEIT geladen (nicht im Build)
-# Grund: GitHub ist im HA Build-Netzwerk geblockt
-# → 03-download-binaries.sh in cont-init.d erledigt das beim ersten Start
+# LiveKit + lk-jwt-service are downloaded at RUNTIME (not during the build)
+# Reason: GitHub is blocked in the HA build network
+# → 03-download-binaries.sh in cont-init.d does this on the first start
 
-# ── Verzeichnisse vorbereiten ────────────────────────────────────────────────
+# ── Prepare directories ────────────────────────────────────────────────
 RUN mkdir -p /opt/element-web /opt/synapse-admin /opt/element-call \
              /var/lib/postgresql && \
     chown -R postgres:postgres /var/lib/postgresql
 
-# ── S6-Overlay Configs kopieren ─────────────────────────────────────────────
+# ── Copy the s6 overlay configs ─────────────────────────────────────────────
 COPY rootfs/ /
 
-# ── Berechtigungen ──────────────────────────────────────────────────────────
+# ── Permissions ──────────────────────────────────────────────────────────
 RUN chmod +x /etc/cont-init.d/*.sh && \
     chmod +x /usr/local/bin/*.sh && \
     chmod +x /etc/s6-overlay/s6-rc.d/postgresql/run && \
@@ -77,8 +77,8 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit/finish && \
     chmod +x /etc/s6-overlay/s6-rc.d/livekit-jwt/finish && \
     chmod +x /usr/local/bin/admin-ui-auth-server.py
-# Hinweis: livekit-server + lk-jwt-service Binaries werden beim ersten Start
-# durch 03-download-binaries.sh nach /data/matrix/bin/ geladen
+# Note: the livekit-server + lk-jwt-service binaries are downloaded to
+# /data/matrix/bin/ by 03-download-binaries.sh on the first start
 
 # ── Ports ───────────────────────────────────────────────────────────────────
 # 7080 = Element Web  |  7081 = Element Call  |  7880 = LiveKit API
@@ -86,9 +86,9 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
 EXPOSE 7080 7081 7880 8448 8090
 
 # ── Healthcheck ─────────────────────────────────────────────────────────────
-# Prüft Synapses eigenen /health-Endpoint statt nur "Prozess läuft" zu
-# vertrauen. start-period=90s, weil beim ersten Start Postgres-Init +
-# Signing-Key-Generierung + ggf. Webapp-Downloads laufen, bevor Synapse
-# überhaupt hochkommt.
+# Checks Synapse's own /health endpoint instead of just trusting
+# "process is running". start-period=90s, because on the first start Postgres
+# init + signing key generation + possibly web app downloads run before
+# Synapse even comes up.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
     CMD curl -sf http://127.0.0.1:8008/health || exit 1

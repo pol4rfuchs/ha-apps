@@ -1,19 +1,19 @@
 # ==============================================================================
-# Forgejo – Home Assistant Add-on Dockerfile
+# Forgejo – Home Assistant add-on Dockerfile
 #
-# Strategie (von GitLab-Repo abgeleitet, sauberste Methode):
-#   Stage 1: Offizielles Forgejo-Image als Quelle für Binary + Tools
-#   Stage 2: Offizielles HA-Base-Image (hat s6-overlay, bashio, with-contenv)
+# Strategy (derived from the GitLab repo, cleanest method):
+#   Stage 1: official Forgejo image as the source for binary + tools
+#   Stage 2: official HA base image (has s6-overlay, bashio, with-contenv)
 #
-# Nur 4 Dateien aus dem Forgejo-Image werden übernommen:
-#   - /app/gitea/gitea            → Forgejo-Binary
+# Only 4 files are taken from the Forgejo image:
+#   - /app/gitea/gitea            → Forgejo binary
 #   - /usr/local/bin/environment-to-ini → env vars → app.ini
-#   - /etc/templates/app.ini      → Basis-Template für app.ini
+#   - /etc/templates/app.ini      → base template for app.ini
 #
-# Das HA-Base-Image bringt s6-overlay, bashio und with-contenv mit.
-# Kein manuelles Nachinstallieren dieser Tools nötig.
+# The HA base image brings s6-overlay, bashio and with-contenv.
+# No need to install these tools manually.
 # ==============================================================================
-# BUILD_FROM muss vor dem ersten FROM deklariert werden (Docker Multi-Stage Regel)
+# BUILD_FROM must be declared before the first FROM (Docker multi-stage rule)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 ARG BUILD_VERSION
 ARG FORGEJO_IMAGE_VERSION=17.0.1
@@ -29,7 +29,7 @@ ARG BUILD_NAME
 ARG BUILD_REF
 ARG BUILD_REPOSITORY
 ARG BUILD_VERSION
-# FORGEJO_VERSION als Major-Tracking entfernt – FORGEJO_IMAGE_VERSION übernimmt
+# FORGEJO_VERSION as major tracking removed – FORGEJO_IMAGE_VERSION takes over
 
 # OCI Labels
 LABEL \
@@ -47,12 +47,12 @@ LABEL \
     org.opencontainers.image.created="${BUILD_DATE}" \
     org.opencontainers.image.revision="${BUILD_REF}" \
     org.opencontainers.image.version="${BUILD_VERSION}"
-# Laufzeit-Abhängigkeiten (Alpine):
-# - gosu: sicheres Privilege-Dropping (git-User für Forgejo-Prozess)
-# - git: für Git-Operationen
-# - openssh-keygen: persistente SSH-Host-Keys generieren
-# - gettext-envsubst: app.ini wird beim ersten Start per envsubst aus dem Template erzeugt
-# - curl/jq: allgemeine Hilfswerkzeuge, oft schon in der HA-Base
+# Runtime dependencies (Alpine):
+# - gosu: safe privilege dropping (git user for the Forgejo process)
+# - git: for Git operations
+# - openssh-keygen: generate persistent SSH host keys
+# - gettext-envsubst: app.ini is created from the template via envsubst on first start
+# - curl/jq: general helper tools, often already in the HA base
 RUN apk add --no-cache \
         gosu \
         git \
@@ -60,12 +60,12 @@ RUN apk add --no-cache \
         gettext-envsubst \
         curl \
         jq
-# Forgejo Binary + Tools aus Stage 1 kopieren
-# Pfade gelten für das rootless-Image (stabil seit v9)
+# Copy the Forgejo binary + tools from stage 1
+# Paths apply to the rootless image (stable since v9)
 COPY --from=forgejo /app/gitea/gitea                    /app/gitea/gitea
 COPY --from=forgejo /usr/local/bin/environment-to-ini   /usr/local/bin/environment-to-ini
 COPY --from=forgejo /etc/templates/app.ini              /etc/templates/app.ini
-# git-User anlegen (uid/gid 1000, identisch mit Forgejo-Standard)
+# Create the git user (uid/gid 1000, identical to the Forgejo default)
 RUN addgroup -S -g 1000 git \
     && adduser -S -H -D \
         -h /var/lib/gitea/git \
@@ -73,12 +73,12 @@ RUN addgroup -S -g 1000 git \
         -u 1000 \
         -G git \
         git
-# Forgejo-Verzeichnisse (Work-Dir, nicht die persistenten Daten)
+# Forgejo directories (work dir, not the persistent data)
 RUN mkdir -p /var/lib/gitea /tmp/gitea \
     && chown -R git:git /var/lib/gitea /tmp/gitea
-# Umgebungsvariablen für Forgejo
-# GITEA_CUSTOM=/config → addon_config Mount (app.ini, Repos, Daten)
-# GITEA_WORK_DIR=/var/lib/gitea → internes Work-Directory
+# Environment variables for Forgejo
+# GITEA_CUSTOM=/config → addon_config mount (app.ini, repos, data)
+# GITEA_WORK_DIR=/var/lib/gitea → internal work directory
 ENV \
     GITEA_CUSTOM="/config" \
     GITEA_WORK_DIR="/var/lib/gitea" \
@@ -86,13 +86,13 @@ ENV \
     GITEA_APP_INI="/config/conf/app.ini" \
     HOME="/var/lib/gitea/git" \
     USER="git"
-# s6-Overlay Service-Skripte aus rootfs kopieren
+# Copy the s6 overlay service scripts from rootfs
 COPY rootfs /
-# Ausführbar machen
+# Make executable
 RUN chmod a+x \
     /etc/s6-overlay/s6-rc.d/forgejo/setup \
     /etc/s6-overlay/s6-rc.d/forgejo/run \
     /etc/s6-overlay/s6-rc.d/forgejo/finish
 EXPOSE 3000 22
-# s6-overlay init als Entrypoint (vom HA-Base-Image bereitgestellt)
+# s6 overlay init as the entrypoint (provided by the HA base image)
 ENTRYPOINT ["/init"]

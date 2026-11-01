@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
-# ── Stage 1: intiface-engine nativ kompilieren ──────────────────────────────
-# cargo install = immer korrekte Version, nativ für die Build-Architektur,
-# kein box64 nötig. Build-Zeit: ~15 Min auf Pi4 (danach gecacht).
+# ── Stage 1: compile intiface-engine natively ──────────────────────────────
+# cargo install = always the correct version, native for the build architecture,
+# no box64 needed. Build time: ~15 min on a Pi4 (cached afterwards).
 FROM rust:slim-bookworm AS engine-builder
 RUN apt-get update && apt-get install -y --no-install-recommends \
       pkg-config \
@@ -18,7 +18,7 @@ ARG BUILD_ARCH
 ARG BUILD_VERSION
 LABEL \
   io.hass.name="Intiface Central" \
-  io.hass.description="Buttplug/Intiface Central mit WebGUI, MQTT Bridge und Home Assistant Entities" \
+  io.hass.description="Buttplug/Intiface Central with web GUI, MQTT bridge and Home Assistant entities" \
   io.hass.type="app" \
   io.hass.arch="${BUILD_ARCH}" \
   io.hass.version="${BUILD_VERSION}"

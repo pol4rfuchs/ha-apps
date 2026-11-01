@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -98,8 +98,8 @@ input.inn:focus{border-color:var(--acc)}
 <div class="tb">
   <button class="bp"  id="bsc"  onclick="scan(true)"  disabled>▶ Scan</button>
   <button class="bs"  id="bscs" onclick="scan(false)" disabled>■ Stop Scan</button>
-  <button class="bd"  id="bsa"  onclick="stopAll()"   disabled>⏹ Alle stoppen</button>
-  <div class="sw" id="scw"><div class="sp2"></div>Scanne…</div>
+  <button class="bd"  id="bsa"  onclick="stopAll()"   disabled>⏹ Stop all</button>
+  <div class="sw" id="scw"><div class="sp2"></div>Scanning…</div>
   <div style="flex:1"></div>
   <button class="bs bsm" onclick="exportPat()">⬇ Export</button>
   <button class="bs bsm" onclick="document.getElementById('fi').click()">⬆ Import</button>
@@ -110,18 +110,18 @@ input.inn:focus{border-color:var(--acc)}
 
   <!-- Devices -->
   <div class="devp">
-    <div class="ptitle">Geräte</div>
-    <div id="dl"><div class="nodev"><big>📡</big>Keine Geräte.<br>Scan starten.</div></div>
+    <div class="ptitle">Devices</div>
+    <div id="dl"><div class="nodev"><big>📡</big>No devices.<br>Start a scan.</div></div>
   </div>
 
   <!-- Sequencer -->
   <div class="seqp">
     <div class="seqtb">
-      <input class="it" id="pn" placeholder="Pattern-Name" style="width:120px">
+      <input class="it" id="pn" placeholder="Pattern name" style="width:120px">
       <select class="sel" id="ps" onchange="loadPat()" style="min-width:140px">
         <option value="">— Pattern —</option>
       </select>
-      <button class="bs bsm" onclick="newPat()">+ Neu</button>
+      <button class="bs bsm" onclick="newPat()">+ New</button>
       <button class="bs bsm" onclick="savePat()">💾</button>
       <button class="bd bsm" onclick="delPat()">🗑</button>
       <div class="div"></div>
@@ -129,7 +129,7 @@ input.inn:focus{border-color:var(--acc)}
       <input class="inn" id="cd" type="number" min="1" max="600" value="10" onchange="cfgChange()">
       <label style="font-size:11px;color:var(--muted)">BPM</label>
       <input class="inn" id="cb" type="number" min="20" max="300" value="60" onchange="cfgChange()">
-      <label style="font-size:11px;color:var(--muted)">Raster</label>
+      <label style="font-size:11px;color:var(--muted)">Grid</label>
       <select class="sel" id="cg" onchange="cfgChange()">
         <option value="4">1/4</option>
         <option value="8" selected>1/8</option>
@@ -137,7 +137,7 @@ input.inn:focus{border-color:var(--acc)}
         <option value="32">1/32</option>
       </select>
       <div style="flex:1"></div>
-      <select class="sel" id="pd" onchange="devChange()"><option value="">— Gerät —</option></select>
+      <select class="sel" id="pd" onchange="devChange()"><option value="">— Device —</option></select>
       <button class="bp" id="bpl" onclick="playSeq()" disabled>▶ Play</button>
       <button class="bd bsm" id="bsp" onclick="stopSeq()" style="display:none">■ Stop</button>
       <button class="bs bsm" id="blp" onclick="toggleLoop()" title="Loop">🔁</button>
@@ -149,7 +149,7 @@ input.inn:focus{border-color:var(--acc)}
         <span><span class="l">Cursor:</span><span id="ct">—</span></span>
         <span><span class="l">Motor:</span><span id="cm">1</span></span>
         <span id="php" style="display:none;color:var(--amber)">▶ <span id="pht">0.0s</span></span>
-        <span style="margin-left:auto;font-size:10px;color:#374151">LMB=Zeichnen · RMB=Löschen · Scroll=Zoom · Shift+Drag=Pan</span>
+        <span style="margin-left:auto;font-size:10px;color:#374151">LMB=Draw · RMB=Delete · Scroll=Zoom · Shift+Drag=Pan</span>
       </div>
     </div>
 
@@ -158,12 +158,12 @@ input.inn:focus{border-color:var(--acc)}
     <div class="prebar">
       <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Presets:</span>
       <button class="prbt" onclick="preset('pulse')">💓 Pulse</button>
-      <button class="prbt" onclick="preset('escalate')">📈 Eskalierend</button>
-      <button class="prbt" onclick="preset('wave')">🌊 Welle</button>
+      <button class="prbt" onclick="preset('escalate')">📈 Escalating</button>
+      <button class="prbt" onclick="preset('wave')">🌊 Wave</button>
       <button class="prbt" onclick="preset('heartbeat')">❤️ Heartbeat</button>
       <button class="prbt" onclick="preset('zigzag')">⚡ Zigzag</button>
       <button class="prbt" onclick="preset('staccato')">🎵 Staccato</button>
-      <button class="prbt" onclick="preset('breath')">🫁 Atem</button>
+      <button class="prbt" onclick="preset('breath')">🫁 Breath</button>
       <button class="prbt" onclick="clearMot()">🗑 Clear</button>
       <button class="prbt" onclick="addLane()">➕ Motor</button>
     </div>
@@ -341,7 +341,7 @@ function cfgChange(){
 function clearMot(){motors=motors.map(()=>[]);draw();}
 function addLane(){
   const d=devs[parseInt(document.getElementById('pd').value,10)];
-  if(d&&motors.length>=d.vibrateCount){toast('Gerät hat nur '+d.vibrateCount+' Motor(en)','er');return;}
+  if(d&&motors.length>=d.vibrateCount){toast('Device has only '+d.vibrateCount+' motor(s)','er');return;}
   motors.push([]);draw();
 }
 
@@ -383,9 +383,9 @@ function toSteps(N=60){
 // ─── Playback ─────────────────────────────────────────────────────────────────
 async function playSeq(){
   const idx=parseInt(document.getElementById('pd').value,10);
-  if(isNaN(idx)||!devs[idx]){toast('Kein Gerät','er');return;}
+  if(isNaN(idx)||!devs[idx]){toast('No device','er');return;}
   const steps=toSteps(Math.max(20,Math.ceil(cfg.dur*20)));
-  if(!steps.length){toast('Pattern leer','er');return;}
+  if(!steps.length){toast('Pattern empty','er');return;}
   playing=true;aborted=false;
   document.getElementById('bpl').style.display='none';
   document.getElementById('bsp').style.display='inline-block';
@@ -419,15 +419,15 @@ function stopSeq(){
 function toggleLoop(){
   looping=!looping;
   const b=document.getElementById('blp');b.style.background=looping?'var(--acc)':'';b.style.color=looping?'#fff':'';
-  toast(looping?'Loop AN':'Loop AUS','ok');
+  toast(looping?'Loop ON':'Loop OFF','ok');
 }
 
 // ─── Pattern storage ──────────────────────────────────────────────────────────
 function savePat(){
-  const n=document.getElementById('pn').value.trim();if(!n){toast('Name fehlt','er');return;}
+  const n=document.getElementById('pn').value.trim();if(!n){toast('Name missing','er');return;}
   pats[n]={cfg:{...cfg},motors:motors.map(m=>[...m])};
   localStorage.setItem('bp_seq',JSON.stringify(pats));updPS();
-  document.getElementById('ps').value=n;toast('"'+n+'" gespeichert','ok');
+  document.getElementById('ps').value=n;toast('"'+n+'" saved','ok');
 }
 function loadPat(){
   const n=document.getElementById('ps').value;if(!n||!pats[n]){newPat();return;}
@@ -440,7 +440,7 @@ function loadPat(){
 }
 function delPat(){
   const n=document.getElementById('ps').value;if(!n)return;
-  delete pats[n];localStorage.setItem('bp_seq',JSON.stringify(pats));updPS();newPat();toast('"'+n+'" gelöscht','ok');
+  delete pats[n];localStorage.setItem('bp_seq',JSON.stringify(pats));updPS();newPat();toast('"'+n+'" deleted','ok');
 }
 function newPat(){
   motors=[[]];cfg={dur:10,bpm:60,grid:8};
@@ -471,14 +471,14 @@ function importPat(e){
       document.getElementById('pn').value=d.name||'';
       document.getElementById('cd').value=cfg.dur;document.getElementById('cb').value=cfg.bpm;document.getElementById('cg').value=cfg.grid;
       fitZ();draw();toast('Import OK','ok');
-    }catch(_){toast('Import fehlgeschlagen','er');}
+    }catch(_){toast('Import failed','er');}
   };r.readAsText(f);e.target.value='';
 }
 
 // ─── Devices ──────────────────────────────────────────────────────────────────
 function renderDevs(){
   const el=document.getElementById('dl'),list=Object.values(devs);
-  if(!list.length){el.innerHTML='<div class="nodev"><big>📡</big>Keine Geräte.<br>Scan starten.</div>';return;}
+  if(!list.length){el.innerHTML='<div class="nodev"><big>📡</big>No devices.<br>Start a scan.</div>';return;}
   el.innerHTML=list.map(d=>`<div class="dcard" id="dc-${d.index}">
     <div class="dname">${esc(d.name)}</div>
     <div class="dsub">${esc(d.address||'idx:'+d.index)} · ${d.vibrateCount}M</div>
@@ -502,7 +502,7 @@ function renderDevs(){
 function selD(i){document.getElementById('pd').value=i;devChange();}
 function updPD(){
   const sel=document.getElementById('pd'),cur=sel.value;
-  sel.innerHTML='<option value="">— Gerät —</option>';
+  sel.innerHTML='<option value="">— Device —</option>';
   Object.values(devs).forEach(d=>{const o=document.createElement('option');o.value=d.index;o.textContent=d.name;sel.appendChild(o);});
   if(cur)sel.value=cur;devChange();
 }

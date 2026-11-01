@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Regressionstest für die Element-Call-Asset-Auswahl in 05-download-webapps.sh.
+# Regression test for the Element Call asset selection in 05-download-webapps.sh.
 #
-# Upstream veröffentlicht neben element-call-<ver>.tar.gz auch
-# element-call-embedded-<ver>.tar.gz (anderer Build). Die frühere Regex
-# "element-call.*\.tar\.gz" traf beide und verließ sich auf die Reihenfolge der
-# GitHub-API. Der Filter wird aus dem echten Script geladen, nicht dupliziert.
-# Läuft ohne bashio und ohne Netzwerk, braucht nur bash und jq.
+# Besides element-call-<ver>.tar.gz, upstream also publishes
+# element-call-embedded-<ver>.tar.gz (a different build). The earlier regex
+# "element-call.*\.tar\.gz" matched both and relied on the order of the
+# GitHub API. The filter is loaded from the real script, not duplicated.
+# Runs without bashio and without network, needs only bash and jq.
 set -euo pipefail
 S="$(dirname "$0")/../rootfs/etc/cont-init.d/05-download-webapps.sh"
 
@@ -22,17 +22,17 @@ WANT="${BASE}/element-call-0.26.1.tar.gz"
 
 pick() { printf '{"assets":[%s]}' "$1" | jq -r "${FILTER}" | head -1; }
 
-# 1. Reihenfolge wie bei GitHub (alphabetisch)
+# 1. Order as returned by GitHub (alphabetical)
 [ "$(pick "${A_SHA},${A_MAIN},${A_EMB_SHA},${A_EMB}")" = "${WANT}" ] || { echo "normal order picked wrong asset"; exit 1; }
 
-# 2. Umgekehrte Reihenfolge: das embedded-Tarball steht vor dem normalen
+# 2. Reversed order: the embedded tarball comes before the normal one
 [ "$(pick "${A_EMB},${A_EMB_SHA},${A_MAIN},${A_SHA}")" = "${WANT}" ] || { echo "reversed order picked wrong asset"; exit 1; }
 
-# 3. Fork-Tag mit "v" im Dateinamen wird ebenfalls erkannt
+# 3. A fork tag with "v" in the file name is matched as well
 FORK="$(asset element-call-v0.27.0.tar.gz)"
 [ "$(pick "${FORK}")" = "${BASE}/element-call-v0.27.0.tar.gz" ] || { echo "v-prefixed name not matched"; exit 1; }
 
-# 4. Nur embedded und Prüfsummen: nichts auswählen (das Script nimmt dann die Fallback-URL)
+# 4. Only embedded and checksums: select nothing (the script then uses the fallback URL)
 [ -z "$(pick "${A_SHA},${A_EMB_SHA},${A_EMB}")" ] || { echo "embedded-only release must not match"; exit 1; }
 
 echo "ec-asset-select tests passed"

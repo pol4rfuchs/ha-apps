@@ -1,8 +1,8 @@
 # Matrix Auth Service (MAS)
 
-Home Assistant Add-on für den [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
-von Element HQ. Läuft eigenständig neben dem `matrix_synapse`-Add-on und
-übernimmt auf Wunsch die komplette Auth-Delegation (OIDC/OAuth2), inklusive
-Voraussetzung für Element X QR-Code-Login und MFA.
+Home Assistant add-on for the [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
+by Element HQ. Runs standalone next to the `matrix_synapse` add-on and,
+if wanted, takes over the complete auth delegation (OIDC/OAuth2), including
+the prerequisite for Element X QR code login and MFA.
 
-Siehe [DOCS.md](DOCS.md) für Einrichtung und offene Punkte.
+See [DOCS.md](DOCS.md) for setup and open items.

@@ -1,24 +1,24 @@
 ---
 name: release-review
-description: Prüft einen offenen Release-Please-PR eines Add-ons, bevor er gemergt wird (Tag der Vorgängerversion, Changelog nur mit neuen Commits, Checks, Titel, Umfang). Liest nur, mergt und pusht nie. Aufruf mit dem Add-on-Slug oder der PR-Nummer, z. B. /release-review ntfy.
+description: Reviews an open Release Please PR of an add-on before it is merged (tag of the previous version, changelog with new commits only, checks, title, scope). Only reads, never merges or pushes. Call it with the add-on slug or the PR number, e.g. /release-review ntfy.
 disable-model-invocation: true
 allowed-tools: Read, Bash(gh pr list *), Bash(gh pr view *), Bash(gh release list *), Bash(git tag *), Bash(git log *), Bash(git show *), Bash(git status *)
-argument-hint: <slug oder PR-Nummer>
+argument-hint: <slug or PR number>
 ---
 
-# Release-PR prüfen: $ARGUMENTS
+# Review a release PR: $ARGUMENTS
 
-Grundlage ist Katalog §7 (Skill `ha-apps-buildrules`, Abschnitt „Versionierung / Release Please“). Dieser Skill liest nur: nichts mergen, nichts pushen, keine Tags oder Releases anlegen, kein `gh api`.
+The basis is catalog §7 (skill `ha-apps-buildrules`, section "Versioning / Release Please"). This skill only reads: merge nothing, push nothing, create no tags or releases, no `gh api`.
 
-## Ablauf
+## Procedure
 
-1. **PR finden.** Ist `$ARGUMENTS` eine Zahl, den PR direkt öffnen (`gh pr view <n> --json number,title,body,files,statusCheckRollup,mergeable,labels`). Sonst `gh pr list --state open --search "release $ARGUMENTS in:title"`. Gibt es mehrere oder keinen, anhalten und fragen.
-2. **Vorgänger-Tag prüfen.** Version des Add-ons aus `.release-please-manifest.json` auf `origin/main` lesen (`git show origin/main:.release-please-manifest.json`). Existiert der Tag `<slug>-v<Version>` (`git tag -l "<slug>-v*"`, ergänzend `gh release list`)? Fehlt er, ist das der bekannte Fehler „fehlender Anker“: den PR **nicht** mergen und das so melden.
-3. **Changelog nur mit neuen Commits.** Die Commits seit dem Vorgänger-Tag zählen (`git log <slug>-v<alt>..origin/main --oneline -- <slug>/`) und mit den Einträgen im PR-Text vergleichen. Wiederholte alte Einträge oder ein aufgeblähter Changelog: nicht mergen, Ursache im Log von „05 Release Please“ klären (§7).
-4. **Checks.** Alle Einträge aus `statusCheckRollup` ansehen, nicht nur den Gesamtstatus. Offene, rote oder übersprungene Checks einzeln nennen. Renovate-Hinweise zu `minimumReleaseAge` oder Lock-Dateien sind informativ und blockieren nicht.
-5. **Umfang und Titel.** Der Titel folgt `chore(main): release <slug> x.y.z`. Geänderte Dateien dürfen nur unter `<slug>/` sowie im Manifest liegen. Ein PR mit mehreren Add-ons ist ein Fehler.
-6. **Reihenfolge.** Laut §7 zuerst die eigenen Fix-PRs, dann Renovate, zuletzt Release-PRs, und Release-PRs nacheinander, nie gleichzeitig (sonst Manifest-Konflikte). Melde, ob für andere Add-ons noch Release-PRs offen sind.
+1. **Find the PR.** If `$ARGUMENTS` is a number, open the PR directly (`gh pr view <n> --json number,title,body,files,statusCheckRollup,mergeable,labels`). Otherwise `gh pr list --state open --search "release $ARGUMENTS in:title"`. If there are several or none, stop and ask.
+2. **Check the previous tag.** Read the add-on's version from `.release-please-manifest.json` on `origin/main` (`git show origin/main:.release-please-manifest.json`). Does the tag `<slug>-v<version>` exist (`git tag -l "<slug>-v*"`, additionally `gh release list`)? If it is missing, this is the known "missing anchor" error: do **not** merge the PR and report it as such.
+3. **Changelog with new commits only.** Count the commits since the previous tag (`git log <slug>-v<old>..origin/main --oneline -- <slug>/`) and compare them with the entries in the PR text. Repeated old entries or a bloated changelog: do not merge, clarify the cause in the log of "05 Release Please" (§7).
+4. **Checks.** Look at every entry of `statusCheckRollup`, not only the overall status. Name open, red or skipped checks individually. Renovate notes about `minimumReleaseAge` or lock files are informational and do not block.
+5. **Scope and title.** The title follows `chore(main): release <slug> x.y.z`. Changed files may only be under `<slug>/` and in the manifest. A PR with several add-ons is an error.
+6. **Order.** According to §7 first your own fix PRs, then Renovate, release PRs last, and release PRs one after the other, never at the same time (otherwise manifest conflicts). Report whether release PRs for other add-ons are still open.
 
-## Ausgabe
+## Output
 
-Eine Liste, kein Git-Befehl. Je Punkt 1 bis 6: **in Ordnung**, **nicht in Ordnung** oder **nicht geprüft** (mit Grund). Am Ende genau eine Empfehlung: „mergen“ oder „nicht mergen, weil …“. Die Entscheidung und das Mergen bleiben beim Nutzer.
+A list, no git command. For each point 1 to 6: **OK**, **not OK** or **not checked** (with the reason). At the end exactly one recommendation: "merge" or "do not merge, because …". The decision and the merging stay with the user. Write the answer in German (it is a chat reply to the maintainer).

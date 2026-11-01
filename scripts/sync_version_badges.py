@@ -12,11 +12,12 @@ Deliberate limits (see the comment in .github/version-sync.json):
   - navidrome uses a dynamic shields.io endpoint badge
     (img.shields.io/github/v/release/...) -> it updates itself and is
     deliberately not listed here.
-  - matrix_synapse: Synapse itself (pip "matrix-synapse[all]>=1.121.0")
-    as well as Element Web / Element Call / LiveKit are resolved at RUNTIME
-    in the container (see rootfs/etc/cont-init.d/03-/05-*.sh) and are
-    therefore not statically known at build/CI time. Only Synapse Admin
-    has a real static pin -> only that one is synchronized.
+  - matrix_synapse: only the Synapse pip floor ("matrix-synapse[all]>=...")
+    in the Dockerfile is a static value, so only that badge is synchronized.
+    Element Web / Element Call / LiveKit / Ketesa are resolved at RUNTIME
+    in the container (see rootfs/etc/cont-init.d/03-/05-*.sh); the scripts
+    only keep an emergency fallback version for an unreachable GitHub API.
+    The README rows for them say "latest" on purpose and are not synchronized.
   - ts6_manager: upstream is a git commit ref, not a version tag ->
     it is not synchronized, only the add-on version is.
 

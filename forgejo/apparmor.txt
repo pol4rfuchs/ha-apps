@@ -3,7 +3,7 @@
 profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Netzwerk (HTTP, SSH, DNS)
+  # Network (HTTP, SSH, DNS)
   network udp,
   network tcp,
   network dgram,
@@ -14,13 +14,13 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   network unix dgram,
   network unix stream,
 
-  # Capabilities für s6 und gosu
+  # Capabilities for s6 and gosu
   capability setgid,
   capability setuid,
   capability dac_read_search,
   capability sys_chroot,
 
-  # s6-Overlay Init-System
+  # s6 overlay init system
   /init                     ix,
   /run/{s6,s6-rc*,service}/** ix,
   /package/**               ix,
@@ -28,10 +28,10 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   /run/{,**}                rwk,
   /dev/tty                  rw,
 
-  # s6-overlay Baseline (Minimum laut Buildrules §8): ohne diese drei Pfade
-  # crasht der Container beim ersten sauberen Neustart mit
-  # "/bin/sh: can't open '/init': Permission denied", weil s6-overlay beim
-  # Runterfahren diese internen Legacy-Compat-Pfade selbst erneut ausführt.
+  # s6-overlay baseline (minimum per build rules §8): without these three paths
+  # the container crashes on the first clean restart with
+  # "/bin/sh: can't open '/init': Permission denied", because s6-overlay runs
+  # these internal legacy-compat paths again itself during shutdown.
   /etc/services.d/**        rwix,
   /etc/cont-init.d/**       rwix,
   /etc/cont-finish.d/**     rwix,
@@ -46,32 +46,32 @@ profile forgejo_addon flags=(attach_disconnected,mediate_deleted) {
   # bashio
   /usr/lib/bashio/**        ix,
 
-  # s6 Skripte
+  # s6 scripts
   /etc/s6/**                rix,
   /etc/s6-overlay/**        rix,
   /run/s6/**                rix,
 
-  # Systemdaten
+  # System data
   /var/run/**               mrwkl,
   /tmp/**                   mrkwl,
 
-  # Addon-Daten (addon_config Mount)
+  # Add-on data (addon_config mount)
   /config/**                rw,
 
-  # SSL-Zertifikate (Read-only)
+  # SSL certificates (read-only)
   /ssl/**                   r,
 
-  # Git-User Home
+  # Git user home
   /var/lib/gitea/**         rw,
 
-  # Proc (für gosu / Prozessinformationen)
+  # Proc (for gosu / process information)
   @{PROC}/**                r,
   @{PROC}/*/fd/             rw,
   @{PROC}/*/status          r,
 
-  # ptrace für Docker-Introspection
+  # ptrace for Docker introspection
   ptrace (trace,read) peer=docker-default,
 
-  # Signal von Docker-Daemon
+  # Signal from the Docker daemon
   signal (receive) set=(kill,term) peer=/usr/bin/docker,
 }

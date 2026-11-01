@@ -29,7 +29,7 @@ ARG MAS_VERSION
 
 LABEL \
     io.hass.name="Matrix Auth Service (MAS)" \
-    io.hass.description="Matrix Authentication Service — next-gen OIDC-Auth für Matrix Synapse" \
+    io.hass.description="Matrix Authentication Service — next-gen OIDC auth for Matrix Synapse" \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="app" \
     io.hass.version="${BUILD_VERSION}" \
@@ -37,13 +37,13 @@ LABEL \
     org.opencontainers.image.title="Matrix Auth Service (MAS)" \
     org.opencontainers.image.version="${BUILD_VERSION}"
 
-# ── System Pakete ───────────────────────────────────────────────────────────
+# ── System packages ───────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-17 postgresql-client-17 \
     curl ca-certificates jq gosu \
     && rm -rf /var/lib/apt/lists/*
 
-# ── MAS Binary + Assets aus Stage 1 ─────────────────────────────────────────
+# ── MAS binary + assets from stage 1 ─────────────────────────────────────────
 COPY --from=mas-src /usr/local/bin/mas-cli /usr/local/bin/mas-cli
 COPY --from=mas-src /usr/local/share/mas-cli /usr/local/share/mas-cli
 
@@ -51,7 +51,7 @@ RUN mkdir -p /var/lib/postgresql && \
     chown -R postgres:postgres /var/lib/postgresql && \
     chmod +x /usr/local/bin/mas-cli
 
-# ── S6-Overlay Configs kopieren ─────────────────────────────────────────────
+# ── Copy the s6 overlay configs ─────────────────────────────────────────────
 COPY rootfs/ /
 
 RUN chmod +x /etc/cont-init.d/*.sh && \
@@ -65,8 +65,8 @@ RUN chmod +x /etc/cont-init.d/*.sh && \
 EXPOSE 8082 8083
 
 # ── Healthcheck ─────────────────────────────────────────────────────────────
-# MAS' eigener Health-Endpoint läuft auf dem internen Port 8083.
-# start-period=60s: Postgres-Init + DB-Migration + Config-Sync brauchen beim
-# ersten Start etwas, bevor mas-cli server überhaupt lauscht.
+# MAS's own health endpoint runs on the internal port 8083.
+# start-period=60s: Postgres init + DB migration + config sync take a while
+# on the first start before mas-cli server is even listening.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD curl -sf http://127.0.0.1:8083/health || exit 1

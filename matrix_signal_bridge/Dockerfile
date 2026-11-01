@@ -1,9 +1,9 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add build.yaml here.
 #
-# 3-Stage-Build, analog zum offiziellen github.com/mautrix/signal/Dockerfile:
-# Signal braucht Rust (libsignal_ffi.a) UND Go (Bridge-Binary, linkt gegen
-# das Rust-Artefakt via CGO/LIBRARY_PATH). Deshalb komplexer als WhatsApp.
+# 3-stage build, analogous to the official github.com/mautrix/signal/Dockerfile:
+# Signal needs Rust (libsignal_ffi.a) AND Go (bridge binary, links against
+# the Rust artifact via CGO/LIBRARY_PATH). Hence more complex than WhatsApp.
 ARG SIGNAL_VERSION=v0.2610.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
@@ -52,11 +52,11 @@ LABEL \
   org.opencontainers.image.version="${BUILD_VERSION}" \
   org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.7" \
   org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
-  org.opencontainers.image.description="mautrix-signal ${SIGNAL_VERSION} als Application-Service Bridge für Matrix Synapse"
+  org.opencontainers.image.description="mautrix-signal ${SIGNAL_VERSION} as an application service bridge for Matrix Synapse"
 
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
-# ffmpeg: Sprachnachrichten/GIF-Konvertierung (siehe docs.mau.fi Bridge-Setup)
+# ffmpeg: voice message/GIF conversion (see the docs.mau.fi bridge setup)
 RUN apk add --no-cache ffmpeg olm ca-certificates yq
 
 COPY --from=go-builder /build/mautrix-signal /usr/bin/mautrix-signal

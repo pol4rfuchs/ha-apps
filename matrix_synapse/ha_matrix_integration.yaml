@@ -1,24 +1,24 @@
 # ════════════════════════════════════════════════════════════════════════════
-# Home Assistant — Matrix Benachrichtigungen
-# In configuration.yaml einfügen (oder packages/ Ordner)
+# Home Assistant — Matrix notifications
+# Add to configuration.yaml (or the packages/ folder)
 # ════════════════════════════════════════════════════════════════════════════
 
 notify:
   - platform: matrix
     name: matrix_notify
-    homeserver: https://example.org  # ← deinen Server eintragen
+    homeserver: https://example.org  # ← enter your server
     username: "@homeassistant:example.org"
-    password: "dein_ha_matrix_passwort"
+    password: "your_ha_matrix_password"
     default_room: "#homeassistant:example.org"
-    # Weitere Räume definieren:
+    # Define more rooms:
     rooms:
       - "#alarms:example.org"
       - "#presence:example.org"
 
-# ── Beispiel Automationen ──────────────────────────────────────────────────
+# ── Example automations ──────────────────────────────────────────────────
 automation:
-  # Alarm-Benachrichtigung
-  - alias: "Matrix: Bewegungsalarm"
+  # Alarm notification
+  - alias: "Matrix: Motion alarm"
     trigger:
       - platform: state
         entity_id: binary_sensor.motion_sensor
@@ -26,11 +26,11 @@ automation:
     action:
       - service: notify.matrix_notify
         data:
-          message: "🚨 Bewegung erkannt!"
+          message: "🚨 Motion detected!"
           target: "#alarms:example.org"
 
-  # Tagesübersicht morgens
-  - alias: "Matrix: Tagesübersicht"
+  # Daily summary in the morning
+  - alias: "Matrix: Daily summary"
     trigger:
       - platform: time
         at: "07:00:00"
@@ -38,24 +38,24 @@ automation:
       - service: notify.matrix_notify
         data:
           message: >
-            🏠 **Guten Morgen!**
-            🌡️ Wohnzimmer: {{ states('sensor.wohnzimmer_temperatur') }}°C
-            💡 Lichter an: {{ states | selectattr('domain','eq','light') | selectattr('state','eq','on') | list | count }}
-            🔒 Türen offen: {{ states | selectattr('domain','eq','binary_sensor') | selectattr('attributes.device_class','eq','door') | selectattr('state','eq','on') | list | count }}
+            🏠 **Good morning!**
+            🌡️ Living room: {{ states('sensor.living_room_temperature') }}°C
+            💡 Lights on: {{ states | selectattr('domain','eq','light') | selectattr('state','eq','on') | list | count }}
+            🔒 Doors open: {{ states | selectattr('domain','eq','binary_sensor') | selectattr('attributes.device_class','eq','door') | selectattr('state','eq','on') | list | count }}
 
-  # Matrix Webhook für HA Events empfangen
-  # (Matrix → HA via REST API, kein Plugin nötig)
+  # Receive a Matrix webhook for HA events
+  # (Matrix → HA via REST API, no plugin needed)
 
-# ── Matrix als HA-Benachrichtigungsziel in scripts.yaml ───────────────────
+# ── Matrix as an HA notification target in scripts.yaml ───────────────────
 script:
   matrix_alert:
-    alias: "Matrix Alert senden"
+    alias: "Send Matrix alert"
     fields:
       message:
-        description: "Nachrichtentext"
-        example: "Alarm ausgelöst!"
+        description: "Message text"
+        example: "Alarm triggered!"
       room:
-        description: "Zielraum (optional)"
+        description: "Target room (optional)"
         example: "#alarms:domain.duckdns.org"
     sequence:
       - service: notify.matrix_notify

@@ -1,23 +1,23 @@
 # Vaultwarden
 
-Schlanker, Bitwarden-kompatibler Passwortmanager-Server (Vaultwarden) als Home-Assistant-App – mit allen Upstream-Funktionen: Organisationen, Sends, Notfallzugriff, 2FA (TOTP, WebAuthn, Duo, YubiKey), SSO (OpenID Connect), Push, SMTP.
+Lean, Bitwarden-compatible password manager server (Vaultwarden) as a Home Assistant app – with all upstream features: organizations, sends, emergency access, 2FA (TOTP, WebAuthn, Duo, YubiKey), SSO (OpenID Connect), push, SMTP.
 
 **Status:** wip
 
-Wichtig: Der Web Vault braucht einen eigenen HTTPS-Ursprung (Ingress ist technisch nicht möglich). Setup mit Reverse Proxy siehe [DOCS.md](DOCS.md).
+Important: the web vault needs its own HTTPS origin (ingress is technically not possible). For the setup with a reverse proxy see [DOCS.md](DOCS.md).
 
 ## Installation
 
-1. In Home Assistant **Settings → Apps → App Store** öffnen.
-2. Oben rechts im Menü **Repositories** wählen und `https://github.com/pol4rfuchs/ha-apps` hinzufügen.
-3. **Vaultwarden** in der Liste auswählen und **Install** klicken.
-4. Optionen setzen (mindestens `domain`; für das erste Konto `signups_allowed` kurz auf `true`, siehe [DOCS.md](DOCS.md)) und die App starten.
+1. Open **Settings → Apps → App Store** in Home Assistant.
+2. In the menu at the top right choose **Repositories** and add `https://github.com/pol4rfuchs/ha-apps`.
+3. Select **Vaultwarden** in the list and click **Install**.
+4. Set the options (at least `domain`; for the first account set `signups_allowed` to `true` briefly, see [DOCS.md](DOCS.md)) and start the app.
 
-Siehe [DOCS.md](DOCS.md) für Konfigurationsdetails.
+See [DOCS.md](DOCS.md) for configuration details.
 
 ## Links
 
-- [Dokumentation](DOCS.md)
+- [Documentation](DOCS.md)
 - [Changelog](CHANGELOG.md)
 - [Repository ha-apps](https://github.com/pol4rfuchs/ha-apps)
 - [Vaultwarden (Upstream)](https://github.com/dani-garcia/vaultwarden)

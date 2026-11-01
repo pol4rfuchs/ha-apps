@@ -12,7 +12,7 @@ LABEL \
     io.hass.version="${BUILD_VERSION}" \
     org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps"
 
-# ── jq für Supervisor API ─────────────────────────────────────────────────────
+# ── jq for the Supervisor API ─────────────────────────────────────────────────────
 RUN apt-get update \
     && apt-get install -y --no-install-recommends jq rsync \
     && apt-get clean \

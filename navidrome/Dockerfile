@@ -1,6 +1,6 @@
-# Navidrome Home Assistant Add-on
-# Basis: offizielles deluan/navidrome Image (Alpine)
-# Ergänzt: bash, jq, bashio für HA-Supervisor-Integration
+# Navidrome Home Assistant add-on
+# Base: official deluan/navidrome image (Alpine)
+# Adds: bash, jq, bashio for HA Supervisor integration
 ARG NAVIDROME_VERSION=0.64.2
 ARG BUILD_VERSION
 FROM deluan/navidrome:${NAVIDROME_VERSION}
