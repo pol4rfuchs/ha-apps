@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 set -euo pipefail
 
-# ---------------------------------------------------------------- Log-Level
+# --------------------------------------------------------------- Log level
 LOG_LEVEL_OPT="$(bashio::config 'log_level')"
 case "${LOG_LEVEL_OPT}" in
   trace)   bashio::log.level debug; export LOG_LEVEL=trace ;;
@@ -10,7 +10,7 @@ case "${LOG_LEVEL_OPT}" in
   *)       bashio::log.level "${LOG_LEVEL_OPT}"; export LOG_LEVEL="${LOG_LEVEL_OPT}" ;;
 esac
 
-# ------------------------------------------------------------------ Pfade
+# ------------------------------------------------------------------ Paths
 DATA_DIR="/data/vaultwarden"
 SECRET_DIR="/tmp/secrets"
 TLS_DIR="/tmp/tls"
@@ -28,11 +28,11 @@ export ROCKET_PROFILE="release"
 export WEB_VAULT_FOLDER="${WEB_VAULT_FOLDER:-/opt/vaultwarden/web-vault}"
 
 if bashio::fs.file_exists "${DATA_DIR}/config.json"; then
-  bashio::log.warning "config.json gefunden (vom Admin-Panel gespeichert): diese Werte überschreiben die App-Optionen!"
+  bashio::log.warning "config.json found (saved by the admin panel): these values override the app options!"
 fi
 
-# ---------------------------------------------------- einfache Optionen -> ENV
-# Format: option:ENV_NAME – nur gesetzte (nicht leere) Werte werden exportiert.
+# --------------------------------------------------- simple options -> ENV
+# Format: option:ENV_NAME – only set (non-empty) values are exported.
 PLAIN_OPTIONS=(
   domain:DOMAIN
   signups_allowed:SIGNUPS_ALLOWED
@@ -91,7 +91,7 @@ for pair in "${PLAIN_OPTIONS[@]}"; do
   fi
 done
 
-# Zahlenoptionen: 0 = nicht gesetzt (Upstream-Default gilt), da HA kein leeres Zahlenfeld kennt
+# Numeric options: 0 = not set (upstream default applies), since HA has no empty number field
 for pair in trash_auto_delete_days:TRASH_AUTO_DELETE_DAYS smtp_port:SMTP_PORT; do
   value="$(bashio::config "${pair%%:*}")"
   if [[ -n "${value}" && "${value}" != "null" && "${value}" != "0" ]]; then
@@ -120,18 +120,18 @@ for pair in "${SECRET_OPTIONS[@]}"; do
   fi
 done
 
-# ------------------------------------------------------------ Admin-Token
+# ----------------------------------------------------------- Admin token
 if bashio::config.has_value 'admin_token'; then
   # shellcheck disable=SC2016
   if [[ "$(bashio::config 'admin_token')" != '$argon2id$'* ]]; then
-    bashio::exit.nok "admin_token muss ein Argon2id-PHC-Hash sein (\$argon2id\$...). Erzeugen mit: vaultwarden hash"
+    bashio::exit.nok "admin_token must be an Argon2id PHC hash (\$argon2id\$...). Generate it with: vaultwarden hash"
   fi
 fi
 
-# ------------------------------------------------------------- Validierung
+# ------------------------------------------------------------- Validation
 if bashio::config.true 'push_enabled'; then
   if ! bashio::config.has_value 'push_installation_id' || ! bashio::config.has_value 'push_installation_key'; then
-    bashio::exit.nok "push_enabled benötigt push_installation_id und push_installation_key."
+    bashio::exit.nok "push_enabled requires push_installation_id and push_installation_key."
   fi
   if [[ "$(bashio::config 'push_region')" == "eu" ]]; then
     export PUSH_RELAY_URI="https://api.bitwarden.eu"
@@ -145,34 +145,34 @@ fi
 if bashio::config.true 'sso_enabled'; then
   for req in sso_authority sso_client_id sso_client_secret; do
     if ! bashio::config.has_value "${req}"; then
-      bashio::exit.nok "sso_enabled benötigt ${req}."
+      bashio::exit.nok "sso_enabled requires ${req}."
     fi
   done
 fi
 
 if bashio::config.has_value 'smtp_username' && ! bashio::config.has_value 'smtp_password'; then
-  bashio::exit.nok "smtp_username ist gesetzt, aber smtp_password fehlt."
+  bashio::exit.nok "smtp_username is set, but smtp_password is missing."
 fi
 if bashio::config.has_value 'smtp_host' && ! bashio::config.has_value 'smtp_from'; then
-  bashio::log.warning "smtp_host ist gesetzt, aber smtp_from fehlt – Mailversand wird nicht funktionieren."
+  bashio::log.warning "smtp_host is set, but smtp_from is missing – sending mail will not work."
 fi
 
 if ! bashio::config.has_value 'domain'; then
-  bashio::log.warning "domain ist nicht gesetzt – Web Vault, WebAuthn, Mail-Links und SSO brauchen eine HTTPS-Domain."
+  bashio::log.warning "domain is not set – Web Vault, WebAuthn, mail links and SSO need an HTTPS domain."
 elif [[ "$(bashio::config 'domain')" != https://* ]]; then
-  bashio::log.warning "domain ist nicht HTTPS – der Web Vault funktioniert nur in einem Secure Context."
+  bashio::log.warning "domain is not HTTPS – the Web Vault only works in a secure context."
 fi
 
 if bashio::config.true 'signups_allowed' && ! bashio::fs.file_exists "${DATA_DIR}/config.json"; then
-  bashio::log.notice "Registrierung ist offen (signups_allowed) – nach dem Anlegen der Konten abschalten."
+  bashio::log.notice "Sign-up is open (signups_allowed) – turn it off after the accounts have been created."
 fi
 
 # --------------------------------------------------------------------- TLS
 if bashio::config.true 'ssl'; then
   CERT="/ssl/$(bashio::config 'certfile')"
   KEY="/ssl/$(bashio::config 'keyfile')"
-  bashio::fs.file_exists "${CERT}" || bashio::exit.nok "Zertifikat ${CERT} nicht gefunden."
-  bashio::fs.file_exists "${KEY}"  || bashio::exit.nok "Schlüssel ${KEY} nicht gefunden."
+  bashio::fs.file_exists "${CERT}" || bashio::exit.nok "Certificate ${CERT} not found."
+  bashio::fs.file_exists "${KEY}"  || bashio::exit.nok "Key ${KEY} not found."
   mkdir -p "${TLS_DIR}"
   chmod 700 "${TLS_DIR}"
   cp "${CERT}" "${TLS_DIR}/cert.pem"
@@ -180,7 +180,7 @@ if bashio::config.true 'ssl'; then
   chmod 600 "${TLS_DIR}/cert.pem" "${TLS_DIR}/key.pem"
   chown -R vaultwarden:vaultwarden "${TLS_DIR}"
   export ROCKET_TLS="{certs=\"${TLS_DIR}/cert.pem\",key=\"${TLS_DIR}/key.pem\"}"
-  bashio::log.info "HTTPS in der App aktiv."
+  bashio::log.info "HTTPS active in the app."
 fi
 
 # ------------------------------------------------------------------- Icons
@@ -189,7 +189,7 @@ if bashio::config.true 'disable_icon_download'; then
   export ICON_CACHE_TTL=0
 fi
 
-# ------------------------------------------- entfernte Client-Feature-Flags
+# ------------------------------------------ removed client feature flags
 if bashio::config.has_value 'experimental_client_feature_flags'; then
   REMOVED_FLAGS=" ssh-agent ssh-key-vault-item mutual-tls anon-addy-self-host-alias simple-login-self-host-alias pm-25373-windows-biometrics-v2 pm-26340-linux-biometrics-v2 desktop-ui-migration-milestone-1 desktop-ui-migration-milestone-2 desktop-ui-migration-milestone-3 desktop-ui-migration-milestone-4 cxp-import-mobile cxp-export-mobile "
   kept=()
@@ -198,7 +198,7 @@ if bashio::config.has_value 'experimental_client_feature_flags'; then
     flag="${flag//[[:space:]]/}"
     [[ -z "${flag}" ]] && continue
     if [[ "${REMOVED_FLAGS}" == *" ${flag} "* ]]; then
-      bashio::log.warning "Feature-Flag '${flag}' wurde in Vaultwarden 1.37.4 entfernt und wird ignoriert."
+      bashio::log.warning "Feature flag '${flag}' was removed in Vaultwarden 1.37.4 and is ignored."
     else
       kept+=("${flag}")
     fi
@@ -217,15 +217,15 @@ for idx in $(bashio::config 'extra_env|keys'); do
   name="$(bashio::config "extra_env[${idx}].name")"
   value="$(bashio::config "extra_env[${idx}].value")"
   if [[ "${name}" =~ ${PROTECTED_RE} ]]; then
-    bashio::exit.nok "extra_env: ${name} ist geschützt und darf nicht gesetzt werden."
+    bashio::exit.nok "extra_env: ${name} is protected and must not be set."
   fi
   if [[ -n "${!name+x}" ]]; then
-    bashio::log.warning "extra_env: ${name} überschreibt einen bereits gesetzten Wert."
+    bashio::log.warning "extra_env: ${name} overrides a value that is already set."
   fi
   export "${name}=${value}"
 done
 
 # ------------------------------------------------------------------- Start
-bashio::log.info "Starte Vaultwarden (Daten: ${DATA_DIR})"
+bashio::log.info "Starting Vaultwarden (data: ${DATA_DIR})"
 umask 077
 exec s6-setuidgid vaultwarden /usr/local/bin/vaultwarden

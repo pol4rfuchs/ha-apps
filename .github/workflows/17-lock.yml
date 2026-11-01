@@ -1,7 +1,7 @@
 ---
-# Geschlossene Issues/PRs nach 30 Tagen automatisch locken
-# Reine Hausmeisterei: transiente GitHub-Fehler (5xx) werden wiederholt und
-# fuehren danach nur zu einer Warnung, nicht zu einem roten Lauf.
+# Automatically lock closed issues/PRs after 30 days
+# Pure housekeeping: transient GitHub errors (5xx) are retried and
+# afterwards only lead to a warning, not to a red run.
 name: 17 Lock
 
 # yamllint disable-line rule:truthy
@@ -36,8 +36,8 @@ jobs:
           tmp=$(mktemp)
           trap 'rm -f "${tmp}"' EXIT
 
-          # Alle Seiten holen. Bei Fehler (z. B. HTTP 504) oder wenn die Antwort
-          # kein Array ist (Fehlerobjekt), bis zu 4x mit steigender Wartezeit wiederholen.
+          # Fetch all pages. On an error (e.g. HTTP 504) or if the response is
+          # not an array (error object), retry up to 4 times with an increasing wait.
           fetch_all() {
             local url=$1 attempt
             for attempt in 1 2 3 4; do
@@ -51,8 +51,8 @@ jobs:
             return 1
           }
 
-          # Gilt fuer beide Endpoints: /pulls-Objekte haben kein pull_request-Feld
-          # (null), /issues-Objekte die PRs sind, haben es und werden uebersprungen.
+          # Applies to both endpoints: /pulls objects have no pull_request field
+          # (null), /issues objects that are PRs have it and are skipped.
           lock_stale() {
             local label=$1 url=$2 num
             if ! fetch_all "${url}"; then

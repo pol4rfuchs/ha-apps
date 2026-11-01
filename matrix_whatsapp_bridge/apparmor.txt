@@ -3,14 +3,14 @@
 profile matrix_whatsapp_bridge flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Namensauflösung + TLS-Zertifikate (Homeserver, Whatsapp-Backend)
+  # Name resolution + TLS certificates (homeserver, Whatsapp backend)
   /etc/resolv.conf               r,
   /etc/hosts                     r,
   /etc/nsswitch.conf             r,
   /etc/ssl/certs/**              r,
   /usr/share/ca-certificates/**  r,
 
-  # ── s6-overlay Baseline (Pflicht — sonst Crash-Loop beim Restart) ────────
+  # ── s6-overlay baseline (required — otherwise crash loop on restart) ────────
   /init                          ix,
   /package/**                    ix,
   /command/**                    ix,
@@ -21,13 +21,13 @@ profile matrix_whatsapp_bridge flags=(attach_disconnected,mediate_deleted) {
   /etc/cont-init.d/**            rwix,
   /etc/cont-finish.d/**          rwix,
 
-  # Eigene Service-Scripts brauchen ix, nicht nur r
+  # Own service scripts need ix, not just r
   /etc/s6-overlay/s6-rc.d/whatsapp_bridge/run    ix,
   /etc/s6-overlay/s6-rc.d/whatsapp_bridge/finish ix,
 
-  # Shell, Coreutils (bash, cp, mkdir, grep, awk, date, jq, yq, ...), bashio
-  # und die s6-Helfer (s6-envdir, importas, ... liegen in /usr/bin).
-  # Per strace im Image ermittelt: Init + Run-Skript starten genau diese Tools.
+  # Shell, coreutils (bash, cp, mkdir, grep, awk, date, jq, yq, ...), bashio
+  # and the s6 helpers (s6-envdir, importas, ... live in /usr/bin).
+  # Determined with strace in the image: init + run script start exactly these tools.
   /bin/**                        ix,
   /usr/bin/**                    ix,
   /usr/sbin/**                   ix,
@@ -36,21 +36,21 @@ profile matrix_whatsapp_bridge flags=(attach_disconnected,mediate_deleted) {
   /etc/profile.d/**              r,
   /dev/tty                       rw,
 
-  # Beispiel-Config (Read-only-Quelle für Erststart)
+  # Example config (read-only source for the first start)
   /opt/mautrix-whatsapp/** r,
 
-  # Daten (SQLite-DB, State-Store, config.yaml, registration.yaml)
+  # Data (SQLite DB, state store, config.yaml, registration.yaml)
   /data/ rw,
   /data/** rwk,
 
-  # Shared Volume für registration.yaml → Synapse
+  # Shared volume for registration.yaml → Synapse
   /share/ r,
   /share/whatsapp_bridge_registration.yaml rw,
 
-  # Optionen
+  # Options
   /data/options.json r,
 
-  # Netzwerk
+  # Network
   network inet stream,
   network inet6 stream,
   network inet dgram,

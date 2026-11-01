@@ -170,10 +170,10 @@
         "element-hq/matrix-authentication-service"
       ],
       "semanticCommitType": "fix",
-      "description": "MAS-Versions-Bumps default zu 'chore', das triggert bei Release Please keinen Release/Image-Rebuild (siehe PR #311 — gemerged, aber ohne Release/Package geblieben). Force 'fix' analog zur matrix-synapse-Regel oben."
+      "description": "MAS version bumps default to 'chore', which does not trigger a release/image rebuild in Release Please (see PR #311 — merged, but no release/package followed). Force 'fix', analogous to the matrix-synapse rule above."
     },
     {
-      "description": "Automerge nur fuer risikoarme Updates: Minor/Patch von npm-/pip-Abhaengigkeiten und GitHub Actions, erst nach 48 Stunden (2 Tagen) Wartezeit und nur bei gruenen Checks (Smoke-Test, AppArmor, Lint). Majors bleiben manuell (siehe appbuildrules 7, gesammelt testen). platformAutomerge ist bewusst aus: GitHubs Auto-Merge wartet nur auf die Pflicht-Checks des Rulesets, der pfadgefilterte Build-Test gehoert nicht dazu. Renovate mergt deshalb selbst und erst, wenn alle Checks des PRs gruen sind.",
+      "description": "Automerge only for low-risk updates: minor/patch of npm/pip dependencies and GitHub Actions, only after a 48-hour (2-day) waiting period and only with green checks (smoke test, AppArmor, lint). Majors stay manual (see appbuildrules 7, test them together). platformAutomerge is deliberately off: GitHub's auto-merge only waits for the required checks of the ruleset, and the path-filtered build test is not one of them. Renovate therefore merges itself, and only once all checks of the PR are green.",
       "matchManagers": [
         "npm",
         "pip_requirements",
@@ -188,7 +188,7 @@
       "platformAutomerge": false
     },
     {
-      "description": "Apps mit Datenbank/Migrationen werden NIE automatisch gemergt (kein Downgrade moeglich). Muss nach der Automerge-Regel stehen, damit sie gewinnt.",
+      "description": "Apps with a database/migrations are NEVER merged automatically (no downgrade possible). Must come after the automerge rule so it wins.",
       "matchFileNames": [
         "forgejo/**",
         "nextcloud/**",
@@ -201,7 +201,7 @@
       "automerge": false
     },
     {
-      "description": "Das Frontend von unifi_os_control_center wird nicht in CI gebaut: das Image kopiert das eingecheckte frontend/dist. npm-Updates dort prueft kein Check, deshalb kein Automerge, solange dist von Hand gebaut wird. Muss nach der Automerge-Regel stehen, damit sie gewinnt.",
+      "description": "The frontend of unifi_os_control_center is not built in CI: the image copies the checked-in frontend/dist. No check verifies npm updates there, so no automerge as long as dist is built by hand. Must come after the automerge rule so it wins.",
       "matchFileNames": [
         "unifi_os_control_center/frontend/**"
       ],
@@ -214,7 +214,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Track NLnetLabs/unbound upstream releases for ARG UNBOUND_VERSION in unbound/Dockerfile. Tag-Format auf GitHub ist 'release-X.Y.Z', daher extractVersionTemplate. Bumpt nur die reine Upstream-Version, das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt unangetastet (siehe Release-Please-Ausnahme).",
+      "description": "Track NLnetLabs/unbound upstream releases for ARG UNBOUND_VERSION in unbound/Dockerfile. The tag format on GitHub is 'release-X.Y.Z', hence extractVersionTemplate. Only bumps the plain upstream version; the manual '-haNN-pol4rN' suffix in config.yaml is left untouched (see the Release Please exception).",
       "managerFilePatterns": [
         "/^unbound/Dockerfile$/"
       ],
@@ -227,7 +227,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track matrix-synapse PyPI releases for die Mindestversion in matrix_synapse/Dockerfile. pip install ohne Renovate-PR bekommt beim naechsten Image-Build zwar automatisch die neueste Version >= dieser Untergrenze, aber ohne Trigger findet gar kein Rebuild statt. Dieser Manager sorgt fuer PRs bei neuen Synapse-Releases und stoesst damit den Rebuild an.",
+      "description": "Track matrix-synapse PyPI releases for the minimum version in matrix_synapse/Dockerfile. A pip install without a Renovate PR automatically gets the latest version >= this lower bound on the next image build, but without a trigger no rebuild happens at all. This manager creates PRs for new Synapse releases and thereby kicks off the rebuild.",
       "managerFilePatterns": [
         "/^matrix_synapse/Dockerfile$/"
       ],
@@ -239,7 +239,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/whatsapp upstream releases for ARG in matrix_whatsapp_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_whatsapp_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
+      "description": "Track mautrix/whatsapp upstream releases for ARG in matrix_whatsapp_bridge/Dockerfile. The tag format on GitHub is 'vX.YYMM.0'. Pulls the version WITHOUT the 'v' prefix so it matches the companion manager for matrix_whatsapp_bridge/config.yaml 1:1 (both bump in the same PR, since they use the same datasourceTemplate/packageNameTemplate). The manual '-haNN-pol4rN' suffix in config.yaml stays manual work (Release Please exception); only the upstream version is kept in sync.",
       "managerFilePatterns": [
         "/^matrix_whatsapp_bridge/Dockerfile$/"
       ],
@@ -251,7 +251,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/signal upstream releases for ARG in matrix_signal_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_signal_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
+      "description": "Track mautrix/signal upstream releases for ARG in matrix_signal_bridge/Dockerfile. The tag format on GitHub is 'vX.YYMM.0'. Pulls the version WITHOUT the 'v' prefix so it matches the companion manager for matrix_signal_bridge/config.yaml 1:1 (both bump in the same PR, since they use the same datasourceTemplate/packageNameTemplate). The manual '-haNN-pol4rN' suffix in config.yaml stays manual work (Release Please exception); only the upstream version is kept in sync.",
       "managerFilePatterns": [
         "/^matrix_signal_bridge/Dockerfile$/"
       ],
@@ -263,7 +263,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track mautrix/telegram upstream releases for ARG in matrix_telegram_bridge/Dockerfile. Tag-Format auf GitHub ist 'vX.YYMM.0'. Zieht die Version OHNE 'v'-Prefix, damit sie 1:1 mit dem Companion-Manager fuer matrix_telegram_bridge/config.yaml uebereinstimmt (beide bumpen im selben PR, da gleicher datasourceTemplate/packageNameTemplate). Das manuelle '-haNN-pol4rN' Suffix in config.yaml bleibt Handarbeit (Release-Please-Ausnahme), nur die Upstream-Version wird synchron gehalten.",
+      "description": "Track mautrix/telegram upstream releases for ARG in matrix_telegram_bridge/Dockerfile. The tag format on GitHub is 'vX.YYMM.0'. Pulls the version WITHOUT the 'v' prefix so it matches the companion manager for matrix_telegram_bridge/config.yaml 1:1 (both bump in the same PR, since they use the same datasourceTemplate/packageNameTemplate). The manual '-haNN-pol4rN' suffix in config.yaml stays manual work (Release Please exception); only the upstream version is kept in sync.",
       "managerFilePatterns": [
         "/^matrix_telegram_bridge/Dockerfile$/"
       ],
@@ -275,7 +275,7 @@
     },
     {
       "customType": "regex",
-      "description": "Track element-hq/matrix-authentication-service GHCR releases for ARG MAS_VERSION in matrix_auth_service/Dockerfile. GitHub-Tags haben ein 'v'-Praefix (z.B. v1.22.0), Docker-Tags nicht (1.22.0) - extractVersionTemplate gleicht das an, analog zum unbound-Manager.",
+      "description": "Track element-hq/matrix-authentication-service GHCR releases for ARG MAS_VERSION in matrix_auth_service/Dockerfile. GitHub tags have a 'v' prefix (e.g. v1.22.0), Docker tags do not (1.22.0) - extractVersionTemplate aligns them, analogous to the unbound manager.",
       "managerFilePatterns": [
         "/^matrix_auth_service/Dockerfile$/"
       ],
@@ -288,7 +288,7 @@
     },
     {
       "customType": "regex",
-      "description": "Companion zu ARG WHATSAPP_VERSION: haelt die Upstream-Version in matrix_whatsapp_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "description": "Companion to ARG WHATSAPP_VERSION: keeps the upstream version in matrix_whatsapp_bridge/config.yaml in sync with the Dockerfile ARG. extractVersionTemplate strips the 'v' prefix; the '-ha1-pol4r1' suffix is left untouched (only the number before it is replaced).",
       "managerFilePatterns": [
         "/^matrix_whatsapp_bridge/config.yaml$/"
       ],
@@ -301,7 +301,7 @@
     },
     {
       "customType": "regex",
-      "description": "Companion zu ARG SIGNAL_VERSION: haelt die Upstream-Version in matrix_signal_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "description": "Companion to ARG SIGNAL_VERSION: keeps the upstream version in matrix_signal_bridge/config.yaml in sync with the Dockerfile ARG. extractVersionTemplate strips the 'v' prefix; the '-ha1-pol4r1' suffix is left untouched (only the number before it is replaced).",
       "managerFilePatterns": [
         "/^matrix_signal_bridge/config.yaml$/"
       ],
@@ -314,7 +314,7 @@
     },
     {
       "customType": "regex",
-      "description": "Companion zu ARG TELEGRAM_VERSION: haelt die Upstream-Version in matrix_telegram_bridge/config.yaml synchron mit dem Dockerfile-ARG. extractVersionTemplate strippt das 'v'-Prefix, das '-ha1-pol4r1'-Suffix bleibt unangetastet (nur die Zahl davor wird ersetzt).",
+      "description": "Companion to ARG TELEGRAM_VERSION: keeps the upstream version in matrix_telegram_bridge/config.yaml in sync with the Dockerfile ARG. extractVersionTemplate strips the 'v' prefix; the '-ha1-pol4r1' suffix is left untouched (only the number before it is replaced).",
       "managerFilePatterns": [
         "/^matrix_telegram_bridge/config.yaml$/"
       ],

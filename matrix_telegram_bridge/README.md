@@ -1,28 +1,28 @@
 # Telegram Bridge (mautrix)
 
-Application-Service Bridge, die Telegram über [mautrix-telegram](https://github.com/mautrix/telegram)
-an einen selbstgehosteten Matrix-Synapse-Homeserver anbindet. Läuft als eigenständiges,
-isoliertes Add-on (kein gemeinsamer Container mit anderen Bridges — siehe Isolations-Philosophie).
+Application service bridge that connects Telegram to a self-hosted Matrix Synapse homeserver via
+[mautrix-telegram](https://github.com/mautrix/telegram). Runs as a standalone,
+isolated add-on (no shared container with other bridges — see the isolation philosophy).
 
 ## Installation
 
-1. Add-on installieren und starten.
-2. Auf https://my.telegram.org eine App registrieren (kostenlos), `telegram_api_id` +
-   `telegram_api_hash` in die Add-on-Optionen eintragen — **ohne diese beiden Werte
-   verbindet sich die Bridge nicht mit Telegram.**
-3. Weitere Optionen setzen: `homeserver_address` / `homeserver_domain` (Adresse des
-   Matrix-Synapse-Add-ons), `db_type` (SQLite oder Postgres).
-4. Beim ersten Start generiert die Bridge automatisch:
-   - `config.yaml` (aus den gesetzten Optionen)
-   - `registration.yaml`, kopiert nach `/share/telegram_bridge_registration.yaml`
-5. Im **Matrix-Synapse-Add-on** die Option `telegram_bridge_enabled` aktivieren und Synapse
-   neu starten (Appservice-Registrierung wird erst dann von Synapse eingelesen).
-6. In einem beliebigen Matrix-Client eine DM an `@telegrambot:<deine-domain>` schicken,
-   `login` senden — anders als bei WhatsApp/Signal läuft der Login über Telefonnummer +
-   SMS/App-Code, nicht über QR-Scan.
+1. Install and start the add-on.
+2. Register an app at https://my.telegram.org (free) and enter `telegram_api_id` +
+   `telegram_api_hash` in the add-on options — **without these two values
+   the bridge does not connect to Telegram.**
+3. Set further options: `homeserver_address` / `homeserver_domain` (address of the
+   Matrix Synapse add-on), `db_type` (SQLite or Postgres).
+4. On the first start the bridge generates automatically:
+   - `config.yaml` (from the options you set)
+   - `registration.yaml`, copied to `/share/telegram_bridge_registration.yaml`
+5. In the **Matrix Synapse add-on** enable the option `telegram_bridge_enabled` and restart
+   Synapse (Synapse only reads the appservice registration then).
+6. In any Matrix client send a DM to `@telegrambot:<your-domain>` and
+   send `login` — unlike WhatsApp/Signal the login works via phone number +
+   SMS/app code, not via QR scan.
 
 ## Links
 
 - Upstream: https://github.com/mautrix/telegram
-- Doku: https://docs.mau.fi/bridges/go/telegram/index.html
+- Docs: https://docs.mau.fi/bridges/go/telegram/index.html
 - Repo: https://github.com/pol4rfuchs/ha-apps

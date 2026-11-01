@@ -1,11 +1,11 @@
 # Build parameters are intentionally kept in this Dockerfile.
 # Home Assistant build.yaml is deprecated; do not re-add build.yaml here.
 #
-# HINWEIS: mautrix-telegram wurde im April 2026 von Python (Telethon) auf
-# Go (bridgev2-Framework, gotd-Library) umgeschrieben. Ab v0.2604.0 ist die
-# alte Python-Codebase vollständig ersetzt. Laut go.mod ist Go 1.26+ Pflicht
-# (seit v0.2609.0) - daher hier ein neuerer Go-Builder als bei
-# WhatsApp/Signal (die kommen mit 1.23/1 aus).
+# NOTE: mautrix-telegram was rewritten from Python (Telethon) to Go
+# (bridgev2 framework, gotd library) in April 2026. From v0.2604.0 the
+# old Python codebase is fully replaced. According to go.mod, Go 1.26+ is required
+# (since v0.2609.0) - hence a newer Go builder here than for
+# WhatsApp/Signal (which get by with 1.23/1).
 ARG TELEGRAM_VERSION=v0.2610.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
@@ -42,12 +42,12 @@ LABEL \
   org.opencontainers.image.version="${BUILD_VERSION}" \
   org.opencontainers.image.base.name="ghcr.io/hassio-addons/base:21.0.7" \
   org.opencontainers.image.source="https://github.com/pol4rfuchs/ha-apps" \
-  org.opencontainers.image.description="mautrix-telegram ${TELEGRAM_VERSION} als Application-Service Bridge für Matrix Synapse"
+  org.opencontainers.image.description="mautrix-telegram ${TELEGRAM_VERSION} as an application service bridge for Matrix Synapse"
 
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
-# ffmpeg: Sticker/Video-Konvertierung. LottieConverter (fuer animierte Sticker)
-# bewusst NICHT installiert - Ressourcenschonung (§12), optionales Feature.
+# ffmpeg: sticker/video conversion. LottieConverter (for animated stickers)
+# deliberately NOT installed - saves resources (§12), optional feature.
 RUN apk add --no-cache ffmpeg olm ca-certificates yq
 
 COPY --from=builder /build/mautrix-telegram /usr/bin/mautrix-telegram

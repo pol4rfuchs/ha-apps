@@ -2,7 +2,7 @@
 set +e
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info "  Matrix Auth Service — Initialisierung"
+bashio::log.info "  Matrix Auth Service — Initialization"
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 MAS_DOMAIN=$(bashio::config 'mas_domain' | sed 's|/$||')
@@ -26,36 +26,36 @@ PG_PASSWORD_FILE="${DATA_DIR}/.pg_password"
 
 mkdir -p "${PG_DATA}" "${DATA_DIR}/logs"
 
-# ── DB-Passwort ───────────────────────────────────────────────────────────
-# Option > gespeicherter Wert > generieren. Ohne Eintrag in der Option wird ein
-# zufälliges Passwort erzeugt und nur in /data abgelegt (nicht im Log).
+# ── DB password ───────────────────────────────────────────────────────────
+# Option > stored value > generate. If the option is empty, a random password
+# is generated and stored only in /data (not in the log).
 if [ -z "${PG_PASSWORD}" ]; then
     if [ -f "${PG_PASSWORD_FILE}" ]; then
         PG_PASSWORD=$(cat "${PG_PASSWORD_FILE}")
-        bashio::log.info "✅ postgres_password aus Speicher geladen"
+        bashio::log.info "✅ postgres_password loaded from storage"
     else
         PG_PASSWORD=$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)
         (umask 077; printf '%s\n' "${PG_PASSWORD}" > "${PG_PASSWORD_FILE}")
-        bashio::log.info "✅ postgres_password generiert und gespeichert (nur in ${PG_PASSWORD_FILE})"
+        bashio::log.info "✅ postgres_password generated and stored (only in ${PG_PASSWORD_FILE})"
     fi
 fi
 
-# Setzt das Passwort der DB-Rolle. Das Passwort geht als psql-Variable ein und
-# wird von psql selbst als SQL-Literal quotiert (:'pw') — Sonderzeichen wie '
-# oder " brechen weder das SQL noch die Shell.
+# Sets the password of the DB role. The password is passed as a psql variable and
+# quoted by psql itself as an SQL literal (:'pw') — special characters like '
+# or " break neither the SQL nor the shell.
 pg_set_password() {
     printf '%s\n' "$1 mas WITH PASSWORD :'pw';" \
         | gosu postgres psql -p 5433 -v ON_ERROR_STOP=1 -v pw="${PG_PASSWORD}" >/dev/null
 }
 
-# ── PostgreSQL init (einmalig) ────────────────────────────────────────────
-# Eigene, von Synapse komplett getrennte Postgres-Instanz — kein Schema-
-# Sharing, kein gemeinsamer Cluster. Port 5433 statt 5432, rein zur
-# Klarheit falls jemand die Container mal im selben Netzwerk-Namespace
-# debuggt; für die Isolation selbst ist es wegen getrennter Container
-# nicht nötig.
+# ── PostgreSQL init (once) ────────────────────────────────────────────────
+# Own Postgres instance, completely separate from Synapse — no schema
+# sharing, no shared cluster. Port 5433 instead of 5432, purely for
+# clarity in case someone debugs the containers in the same network
+# namespace; the isolation itself does not need it because the containers
+# are separate.
 if [ ! -f "${PG_DATA}/PG_VERSION" ]; then
-    bashio::log.info "Initialisiere PostgreSQL Datenbank..."
+    bashio::log.info "Initializing PostgreSQL database..."
     chown postgres:postgres "${PG_DATA}"
     gosu postgres /usr/lib/postgresql/17/bin/initdb \
         --pgdata="${PG_DATA}" \
@@ -87,67 +87,67 @@ EOF
 
     gosu postgres /usr/lib/postgresql/17/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_init.log -o "-p 5433" start -w -t 30
-    pg_set_password "CREATE USER" || { bashio::log.error "Konnte die DB-Rolle 'mas' nicht anlegen."; exit 1; }
+    pg_set_password "CREATE USER" || { bashio::log.error "Could not create the DB role 'mas'."; exit 1; }
     gosu postgres psql -p 5433 -c "CREATE DATABASE mas ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER mas;"
     gosu postgres /usr/lib/postgresql/17/bin/pg_ctl -D "${PG_DATA}" stop -w
 
     touch "${PG_MARKER}"
-    bashio::log.info "✅ PostgreSQL initialisiert"
+    bashio::log.info "✅ PostgreSQL initialized"
 else
-    bashio::log.info "✅ PostgreSQL bereits initialisiert"
+    bashio::log.info "✅ PostgreSQL already initialized"
     touch "${PG_MARKER}"
-    # Die Rolle wurde beim ersten Start mit dem damaligen Passwort angelegt.
-    # Wurde die Option seitdem geändert, passt die DB nicht mehr zur Config
-    # (Anmeldung schlägt fehl) — bei jedem Start angleichen.
+    # The role was created on first start with the password of that time.
+    # If the option has changed since, the DB no longer matches the config
+    # (login fails) — sync it on every start.
     gosu postgres /usr/lib/postgresql/17/bin/pg_ctl \
         -D "${PG_DATA}" -l /tmp/pg_sync.log -o "-p 5433" start -w -t 30 \
-        || { bashio::log.error "PostgreSQL startet nicht — siehe /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
-    pg_set_password "ALTER USER" || { bashio::log.error "Konnte das DB-Passwort nicht angleichen."; exit 1; }
+        || { bashio::log.error "PostgreSQL does not start — see /tmp/pg_sync.log"; cat /tmp/pg_sync.log; exit 1; }
+    pg_set_password "ALTER USER" || { bashio::log.error "Could not sync the DB password."; exit 1; }
     gosu postgres /usr/lib/postgresql/17/bin/pg_ctl -D "${PG_DATA}" stop -w
 fi
 
-# ── Synapse Shared Secret ─────────────────────────────────────────────────
-# Muss 1:1 dem Wert entsprechen, der im Synapse-Add-on unter
-# matrix_authentication_service.secret eingetragen wird (dortige Option:
-# mas_secret). Bleibt die Addon-Option leer, wird ein Wert generiert und
-# persistiert — muss dann manuell ins Synapse-Add-on übertragen werden.
+# ── Synapse shared secret ─────────────────────────────────────────────────
+# Must match 1:1 the value entered in the Synapse add-on under
+# matrix_authentication_service.secret (option there: mas_secret).
+# If the add-on option stays empty, a value is generated and persisted —
+# it then has to be copied manually into the Synapse add-on.
 if [ -z "${SYNAPSE_SECRET}" ]; then
     if [ -f "${SYNAPSE_SECRET_FILE}" ]; then
         SYNAPSE_SECRET=$(cat "${SYNAPSE_SECRET_FILE}")
-        bashio::log.info "✅ synapse_secret aus Speicher geladen"
+        bashio::log.info "✅ synapse_secret loaded from storage"
     else
         SYNAPSE_SECRET=$(tr -d '-' < /proc/sys/kernel/random/uuid)$(tr -d '-' < /proc/sys/kernel/random/uuid)
         echo "${SYNAPSE_SECRET}" > "${SYNAPSE_SECRET_FILE}"
-        bashio::log.info "✅ synapse_secret generiert und gespeichert"
-        bashio::log.info "   → Wert: ${SYNAPSE_SECRET_FILE}"
-        bashio::log.info "   → Diesen Wert im Synapse-Add-on unter 'mas_secret' eintragen!"
+        bashio::log.info "✅ synapse_secret generated and stored"
+        bashio::log.info "   → Value: ${SYNAPSE_SECRET_FILE}"
+        bashio::log.info "   → Enter this value in the Synapse add-on under 'mas_secret'!"
     fi
 fi
 
-# ── MAS Secrets (Encryption-Key + Signing-Keys) ───────────────────────────
-# Einmalig generieren, danach NIE wieder — ein Wechsel invalidiert alle
-# bestehenden Sessions/Tokens. mas-cli config generate schreibt eine
-# vollständige Config inkl. zufälliger secrets/encryption + secrets/keys
-# nach stdout; wir behalten daraus nur den secrets-Teil und pflegen den
-# Rest (http/database/matrix/account/policy) selbst in CONFIG_MAIN.
+# ── MAS secrets (encryption key + signing keys) ───────────────────────────
+# Generate once, NEVER again afterwards — a change invalidates all existing
+# sessions/tokens. mas-cli config generate writes a complete config incl.
+# random secrets/encryption + secrets/keys to stdout; we keep only the
+# secrets part of it and maintain the rest (http/database/matrix/account/
+# policy) ourselves in CONFIG_MAIN.
 if [ ! -s "${CONFIG_SECRETS}" ]; then
-    bashio::log.info "Generiere MAS Secrets (Encryption + Signing-Keys)..."
+    bashio::log.info "Generating MAS secrets (encryption + signing keys)..."
     mas-cli config generate > "${CONFIG_SECRETS}" 2>/tmp/mas_generate.log
     if [ ! -s "${CONFIG_SECRETS}" ]; then
-        bashio::log.error "mas-cli config generate fehlgeschlagen — siehe /tmp/mas_generate.log"
+        bashio::log.error "mas-cli config generate failed — see /tmp/mas_generate.log"
         cat /tmp/mas_generate.log
         exit 1
     fi
     chmod 600 "${CONFIG_SECRETS}"
-    bashio::log.info "✅ Secrets generiert: ${CONFIG_SECRETS} (NICHT löschen — invalidiert alle Sessions!)"
+    bashio::log.info "✅ Secrets generated: ${CONFIG_SECRETS} (do NOT delete — invalidates all sessions!)"
 else
-    bashio::log.info "✅ MAS Secrets bereits vorhanden"
+    bashio::log.info "✅ MAS secrets already present"
 fi
 
-# ── Admin-User-Liste als YAML-Block vorbereiten ───────────────────────────
-# Policy-Block wird nur geschrieben, wenn mindestens ein Admin-User gesetzt
-# ist — leeres "policy: data: admin_users:" ohne Einträge ist zwar gültiges
-# YAML, aber unnötiger Ballast in der Config.
+# ── Prepare the admin user list as a YAML block ───────────────────────────
+# The policy block is only written if at least one admin user is set —
+# an empty "policy: data: admin_users:" without entries is valid YAML,
+# but unnecessary ballast in the config.
 POLICY_BLOCK=""
 if [ -n "${ADMIN_USERS}" ]; then
     POLICY_BLOCK="policy:
@@ -162,17 +162,17 @@ if [ -n "${ADMIN_USERS}" ]; then
     done
 fi
 
-# ── Haupt-Config (config.yaml) ────────────────────────────────────────────
-bashio::log.info "Schreibe MAS config.yaml..."
+# ── Main config (config.yaml) ────────────────────────────────────────────
+bashio::log.info "Writing MAS config.yaml..."
 
-# Das Passwort steht in der DB-URI und muss URL-kodiert sein (@ : / ? # % ...).
+# The password is part of the DB URI and must be URL-encoded (@ : / ? # % ...).
 PG_PASSWORD_URI=$(jq -rn --arg p "${PG_PASSWORD}" '$p|@uri')
 
 cat > "${CONFIG_MAIN}" << EOF
-# public_base/issuer sind zwingend nötig, damit MAS korrekte absolute
-# Redirect-URIs für den OAuth/OIDC-Flow baut — ohne diese zwei Zeilen war
-# mas_domain bislang eine reine Phantom-Option (wurde gelesen, aber nie
-# tatsächlich verwendet).
+# public_base/issuer are required for MAS to build correct absolute
+# redirect URIs for the OAuth/OIDC flow — without these two lines
+# mas_domain used to be a pure phantom option (it was read, but never
+# actually used).
 http:
   public_base: "https://${MAS_DOMAIN}/"
   issuer: "https://${MAS_DOMAIN}/"
@@ -225,10 +225,10 @@ logging:
 EOF
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info "✅ Initialisierung abgeschlossen!"
+bashio::log.info "✅ Initialization complete!"
 bashio::log.info "  MAS Domain:      ${MAS_DOMAIN}"
 bashio::log.info "  Synapse Server:  ${SYNAPSE_SERVER_NAME}"
-bashio::log.info "  Synapse Endpoint: ${SYNAPSE_ENDPOINT}"
+bashio::log.info "  Synapse endpoint: ${SYNAPSE_ENDPOINT}"
 bashio::log.info "  Account-UI:      http://[HA-IP]:8082"
-bashio::log.info "  ⚠️  Im Synapse-Add-on: mas_enabled=true, mas_secret=<siehe oben>, mas_endpoint=http://[HA-IP]:8082 setzen"
+bashio::log.info "  ⚠️  In the Synapse add-on set: mas_enabled=true, mas_secret=<see above>, mas_endpoint=http://[HA-IP]:8082"
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

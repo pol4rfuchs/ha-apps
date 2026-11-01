@@ -1,70 +1,70 @@
-# Intiface Central für Home Assistant
+# Intiface Central for Home Assistant
 
-Vollwertiges Add-on mit eigener WebGUI, MQTT-Bridge und automatischen Home-Assistant-Entities.
+Full add-on with its own web GUI, MQTT bridge and automatic Home Assistant entities.
 
-## Zugriff
+## Access
 
-Nach dem Start → **Open Web UI** in der Add-on-Seite.
+After starting → **Open Web UI** on the add-on page.
 
-## Externe Clients (Spiele, Apps)
+## External clients (games, apps)
 
 Standard Buttplug WebSocket: `ws://homeassistant.local:12345`
 
 ## MQTT Bridge
 
-Wenn MQTT Host konfiguriert ist, werden Geräte automatisch als Topics verfügbar:
+If an MQTT host is configured, devices become available as topics automatically:
 
-| Topic | Beschreibung |
+| Topic | Description |
 |---|---|
-| `buttplug/{idx}/motor/{m}/set` | Vibrationsstärke setzen (0.0–1.0) |
-| `buttplug/{idx}/motor/{m}/state` | Aktueller Zustand |
-| `buttplug/{idx}/stop` | Gerät stoppen |
-| `buttplug/{idx}/vibrate` | JSON-Array mit Motorstärken |
+| `buttplug/{idx}/motor/{m}/set` | Set the vibration strength (0.0–1.0) |
+| `buttplug/{idx}/motor/{m}/state` | Current state |
+| `buttplug/{idx}/stop` | Stop the device |
+| `buttplug/{idx}/vibrate` | JSON array of motor strengths |
 | `buttplug/{idx}/availability` | `online`/`offline` |
-| `buttplug/scan/start` | Scan starten |
-| `buttplug/scan/stop` | Scan stoppen |
-| `buttplug/stop_all` | Alle stoppen |
+| `buttplug/scan/start` | Start a scan |
+| `buttplug/scan/stop` | Stop a scan |
+| `buttplug/stop_all` | Stop all |
 
-## Home Assistant Entities
+## Home Assistant entities
 
-Mit aktiviertem `ha_discovery` werden automatisch erstellt:
-- **Number-Entity** pro Vibrations-Motor (Slider 0.0–1.0)
-- **Button-Entity** zum Stoppen
-- **Binary Sensor** für Verbindungsstatus
+With `ha_discovery` enabled, the following are created automatically:
+- **Number entity** per vibration motor (slider 0.0–1.0)
+- **Button entity** to stop
+- **Binary sensor** for the connection status
 
-## Pattern Editor
+## Pattern editor
 
-Der eingebaute Pattern Editor erlaubt es, Vibrationsmuster zu erstellen:
-- Beliebig viele Schritte mit Dauer und Intensität pro Motor
-- Vorinstallierte Presets: Pulse, Eskalierend, Welle, Heartbeat, Zufall, Staccato
-- Patterns werden im Browser (localStorage) gespeichert
-- Server-seitiges Abspielen über REST API möglich
+The built-in pattern editor lets you create vibration patterns:
+- Any number of steps with duration and intensity per motor
+- Preinstalled presets: Pulse, Escalating, Wave, Heartbeat, Random, Staccato
+- Patterns are stored in the browser (localStorage)
+- Server-side playback via the REST API is possible
 
-## Optionen
+## Options
 
-| Option | Beschreibung |
+| Option | Description |
 |---|---|
-| `engine_ws_port` | WebSocket-Port (Standard: 12345) |
-| `use_bluetooth_le` | Bluetooth LE aktivieren |
-| `use_hid` | USB/HID aktivieren (Lovense-Dongle) |
-| `use_serial` | Seriell aktivieren |
-| `log_level` | Log-Stufe (error/warn/info/debug) |
-| `mqtt_host` | MQTT Broker IP/Hostname |
-| `mqtt_port` | MQTT Broker Port |
-| `mqtt_user` | MQTT Benutzername |
-| `mqtt_pass` | MQTT Passwort |
-| `mqtt_topic_prefix` | MQTT Topic-Präfix (Standard: buttplug) |
-| `ha_discovery` | HA MQTT Discovery aktivieren |
-| `ha_discovery_prefix` | HA Discovery Präfix (Standard: homeassistant) |
+| `engine_ws_port` | WebSocket port (default: 12345) |
+| `use_bluetooth_le` | Enable Bluetooth LE |
+| `use_hid` | Enable USB/HID (Lovense dongle) |
+| `use_serial` | Enable serial |
+| `log_level` | Log level (error/warn/info/debug) |
+| `mqtt_host` | MQTT broker IP/hostname |
+| `mqtt_port` | MQTT broker port |
+| `mqtt_user` | MQTT username |
+| `mqtt_pass` | MQTT password |
+| `mqtt_topic_prefix` | MQTT topic prefix (default: buttplug) |
+| `ha_discovery` | Enable HA MQTT discovery |
+| `ha_discovery_prefix` | HA discovery prefix (default: homeassistant) |
 
-## Persistenz
+## Persistence
 
-Einstellungen und intiface-engine-Daten werden unter `/data/home` gespeichert.
+Settings and intiface-engine data are stored under `/data/home`.
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die App läuft mit `host_network`. Die Weboberfläche (`8199`) und der Buttplug-WebSocket (`12345`) lauschen auf **allen Schnittstellen**, beide ohne Anmeldung. Für lokale Clients ist das gewollt.
+**Local (LAN):** The app runs with `host_network`. The web interface (`8199`) and the Buttplug WebSocket (`12345`) listen on **all interfaces**, both without login. This is intended for local clients.
 
-**Extern (Internet):** Empfehlung **nur LAN oder VPN, nie ins Internet.** Kein Port-Forward auf `8199` oder `12345`, auch nicht über einen Reverse Proxy, denn es gibt keine Authentifizierung. AppArmor ist derzeit deaktiviert (Hardware-/Bus-Zugriff).
+**External (internet):** Recommendation: **LAN or VPN only, never the internet.** No port forward to `8199` or `12345`, not even through a reverse proxy, because there is no authentication. AppArmor is currently disabled (hardware/bus access).
 
-**Status:** experimentell und eingefroren. Die App wird nicht mehr weiterentwickelt; sie bekommt keine Anmeldung. Nutze sie nur im LAN oder per VPN.
+**Status:** experimental and frozen. The app is no longer developed; it will not get a login. Use it only on the LAN or via VPN.

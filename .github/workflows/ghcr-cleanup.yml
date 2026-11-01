@@ -1,13 +1,13 @@
 ---
 name: GHCR Cleanup
 
-# Der Cron-Trigger ist bewusst deaktiviert (nur manuell ueber workflow_dispatch).
-# Grund: Die Multi-Arch-Images entstehen per "docker buildx imagetools create"
-# aus Einzel-Digests. Nach dem Loeschen der Zwischentags (:<version>-amd64/-arm64)
-# erscheinen diese Child-Manifests in GHCR als "untagged". delete-only-untagged-
-# versions loescht sie dann, und aeltere Versionen sind nicht mehr pullbar.
-# Vor dem Wieder-Aktivieren auf ein Multi-Arch-faehiges Cleanup umstellen oder
-# erst an einem Test-Package pruefen. (Package-Namen = image: aus config.yaml.)
+# The cron trigger is deliberately disabled (manual only via workflow_dispatch).
+# Reason: the multi-arch images are created with "docker buildx imagetools create"
+# from individual digests. After the intermediate tags (:<version>-amd64/-arm64)
+# are deleted, these child manifests show up in GHCR as "untagged". delete-only-untagged-
+# versions then deletes them, and older versions can no longer be pulled.
+# Before re-enabling, switch to a multi-arch-capable cleanup or
+# check it on a test package first. (Package names = image: from config.yaml.)
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:

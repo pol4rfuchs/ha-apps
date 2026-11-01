@@ -352,46 +352,46 @@
 
   <div class="search-box">
     <span>🔍</span>
-    <input type="search" placeholder="Section suchen…" id="sidebarSearch" autocomplete="off" />
+    <input type="search" placeholder="Search sections…" id="sidebarSearch" autocomplete="off" />
   </div>
 
-  <div class="nav-group-title">Inhalt</div>
+  <div class="nav-group-title">Contents</div>
   <nav class="nav" id="sidebarNav">
     <a class="nav-item active" href="#overview">
       <div class="nav-icon">📋</div>
-      <div><strong>Übersicht</strong><small>Was ist ntfy Manager?</small></div>
+      <div><strong>Overview</strong><small>What is ntfy Manager?</small></div>
     </a>
     <a class="nav-item" href="#features">
       <div class="nav-icon">✨</div>
-      <div><strong>Features</strong><small>Admin-Konsole Funktionen</small></div>
+      <div><strong>Features</strong><small>Admin console features</small></div>
     </a>
     <a class="nav-item" href="#install">
       <div class="nav-icon">📦</div>
-      <div><strong>Installation</strong><small>Add-on einrichten</small></div>
+      <div><strong>Installation</strong><small>Set up the add-on</small></div>
     </a>
     <a class="nav-item" href="#config">
       <div class="nav-icon">⚙️</div>
-      <div><strong>Konfiguration</strong><small>Options &amp; Schema</small></div>
+      <div><strong>Configuration</strong><small>Options &amp; Schema</small></div>
     </a>
     <a class="nav-item" href="#ui">
       <div class="nav-icon">🖥️</div>
-      <div><strong>Web UI</strong><small>Bedienung der Konsole</small></div>
+      <div><strong>Web UI</strong><small>Using the console</small></div>
     </a>
     <a class="nav-item" href="#acl">
       <div class="nav-icon">🔐</div>
-      <div><strong>ACL &amp; Tokens</strong><small>Zugangskontrolle</small></div>
+      <div><strong>ACL &amp; Tokens</strong><small>Access control</small></div>
     </a>
     <a class="nav-item" href="#sse">
       <div class="nav-icon">📡</div>
-      <div><strong>SSE Live-Monitor</strong><small>Echtzeit-Nachrichten</small></div>
+      <div><strong>SSE Live-Monitor</strong><small>Real-time messages</small></div>
     </a>
     <a class="nav-item" href="#troubleshoot">
       <div class="nav-icon">🔧</div>
-      <div><strong>Troubleshooting</strong><small>Häufige Probleme</small></div>
+      <div><strong>Troubleshooting</strong><small>Common problems</small></div>
     </a>
   </nav>
 
-  <div class="nav-group-title" style="margin-top:28px">Verwandte</div>
+  <div class="nav-group-title" style="margin-top:28px">Related</div>
   <nav class="nav">
     <a class="nav-item" href="../ntfy/">
       <div class="nav-icon">🔔</div>
@@ -399,7 +399,7 @@
     </a>
     <a class="nav-item" href="../">
       <div class="nav-icon">🏠</div>
-      <div><strong>Wiki Hub</strong><small>Alle Add-on Wikis</small></div>
+      <div><strong>Wiki Hub</strong><small>All add-on wikis</small></div>
     </a>
   </nav>
 
@@ -418,7 +418,7 @@
   <div class="hero" id="overview">
     <div class="hero-badge">🔔 ntfy Admin Console · HA Add-on</div>
     <h1>ntfy <span>Manager</span></h1>
-    <p>Web-basierte Admin-Konsole für den ntfy Add-on. Verwalte Topic Reservations, ACL-Regeln, Auth-Tokens und beobachte Nachrichten in Echtzeit über SSE — alles ohne CLI-Zugriff auf den Container.</p>
+    <p>Web-based admin console for the ntfy add-on. Manage topic reservations, ACL rules and auth tokens, and watch messages in real time via SSE — all without CLI access to the container.</p>
     <div class="meta-strip">
       <span class="chip">🏗️ Custom Add-on</span>
       <span class="chip">🌐 Web UI</span>
@@ -434,7 +434,7 @@
       <div class="icon">✨</div>
       <div>
         <h2>Features</h2>
-        <p>Vollständige Admin-Konsole für ntfy — single-page HTML served by Add-on</p>
+        <p>Complete admin console for ntfy — single-page HTML served by the add-on</p>
       </div>
     </div>
 
@@ -442,32 +442,32 @@
       <div class="card">
         <div class="card-icon">📌</div>
         <h3>Topic Reservations</h3>
-        <p>Erstelle und verwalte reservierte Topics mit Read/Write-Permissions für spezifische User.</p>
+        <p>Create and manage reserved topics with read/write permissions for specific users.</p>
       </div>
       <div class="card">
         <div class="card-icon">📬</div>
         <h3>Message Browser</h3>
-        <p>Durchsuche gecachte Nachrichten pro Topic. Zeigt Priority, Tags, Attachment-Links.</p>
+        <p>Browse cached messages per topic. Shows priority, tags, attachment links.</p>
       </div>
       <div class="card">
         <div class="card-icon">🔐</div>
         <h3>ACL Management</h3>
-        <p>Verwalte User-Access-Control-Listen: anlegen, bearbeiten, löschen — ohne ntfy CLI.</p>
+        <p>Manage user access control lists: create, edit, delete — without the ntfy CLI.</p>
       </div>
       <div class="card">
         <div class="card-icon">🪙</div>
         <h3>Token Management</h3>
-        <p>Auth-Tokens für ntfy anlegen, auflisten und widerrufen über die ntfy REST API.</p>
+        <p>Create, list and revoke auth tokens for ntfy via the ntfy REST API.</p>
       </div>
       <div class="card">
         <div class="card-icon">📡</div>
         <h3>SSE Live-Monitor</h3>
-        <p>Subscribe auf beliebige Topics per SSE-Stream und sieh Nachrichten in Echtzeit ankommen.</p>
+        <p>Subscribe to any topics via an SSE stream and watch messages arrive in real time.</p>
       </div>
       <div class="card">
         <div class="card-icon">💾</div>
         <h3>Topic Settings</h3>
-        <p>Persistente Topic-Einstellungen (Default-Prio, Labels) gespeichert im Add-on-Storage.</p>
+        <p>Persistent topic settings (default priority, labels) stored in the add-on storage.</p>
       </div>
     </div>
   </div>
@@ -478,7 +478,7 @@
       <div class="icon">📦</div>
       <div>
         <h2>Installation</h2>
-        <p>Add-on via custom Repository oder direktem GHCR-Image einbinden</p>
+        <p>Add the add-on via a custom repository or directly from the GHCR image</p>
       </div>
     </div>
 
@@ -486,8 +486,8 @@
       <div class="step">
         <div class="step-num">1</div>
         <div class="step-body">
-          <h4>Repository hinzufügen</h4>
-          <p>In HA → Einstellungen → Add-ons → Add-on Store → ⋮ → Repositories → URL einfügen:</p>
+          <h4>Add the repository</h4>
+          <p>In HA → Settings → Add-ons → Add-on Store → ⋮ → Repositories → paste the URL:</p>
           <div class="code-block" style="margin-top:10px">
             <pre>https://github.com/pol4rfuchs/ha-apps</pre>
           </div>
@@ -496,22 +496,22 @@
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <h4>Add-on installieren</h4>
-          <p>Im Store <strong>ntfy Manager</strong> suchen → Installieren. Das Image wird von GHCR gepullt (<code>ghcr.io/pol4rfuchs/ntfy_manager</code>).</p>
+          <h4>Install the add-on</h4>
+          <p>Search for <strong>ntfy Manager</strong> in the store → Install. The image is pulled from GHCR (<code>ghcr.io/pol4rfuchs/ntfy_manager</code>).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <h4>ntfy-Endpunkt konfigurieren</h4>
-          <p>Im Add-on die Options setzen — mindestens <code>ntfy_base_url</code>; bei Auth-geschützten Instanzen zusätzlich <code>ntfy_auth_type</code> mit <code>ntfy_username</code>/<code>ntfy_password</code> (basic) oder <code>ntfy_bearer_token</code> (bearer). Leer lassen funktioniert ebenfalls: dann meldest du dich im Panel an.</p>
+          <h4>Configure the ntfy endpoint</h4>
+          <p>Set the options in the add-on — at least <code>ntfy_base_url</code>; for auth-protected instances additionally <code>ntfy_auth_type</code> with <code>ntfy_username</code>/<code>ntfy_password</code> (basic) or <code>ntfy_bearer_token</code> (bearer). Leaving them empty works too: then you log in in the panel.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-body">
-          <h4>Add-on starten &amp; Web UI öffnen</h4>
-          <p>Starten → Panel über die HA-Seitenleiste (Ingress) öffnen. Optional direkt via <code>http://&lt;HA-Host&gt;:8099</code>.</p>
+          <h4>Start the add-on &amp; open the web UI</h4>
+          <p>Start → open the panel via the HA sidebar (ingress). Optionally directly via <code>http://&lt;HA-Host&gt;:8099</code>.</p>
         </div>
       </div>
     </div>
@@ -519,16 +519,16 @@
     <div class="alert info" style="margin-top:20px">
       <div class="alert-icon">ℹ️</div>
       <div class="alert-body">
-        <strong>Ingress und optionaler Direktzugriff</strong>
-        Das Panel läuft über HA Ingress (Seitenleiste, geschützt durch dein HA-Login). Der Host-Port <code>8099</code> ist optional und kann im Netzwerk-Tab des Add-ons entfernt werden. Die Zugangsdaten aus der Add-on-Konfiguration gelten nur über Ingress; auf dem direkten Port verlangt das Panel immer einen ntfy-Login.
+        <strong>Ingress and optional direct access</strong>
+        The panel runs through HA ingress (sidebar, protected by your HA login). The host port <code>8099</code> is optional and can be removed in the network tab of the add-on. The credentials from the add-on configuration only apply through ingress; on the direct port the panel always requires an ntfy login.
       </div>
     </div>
 
     <div class="alert warn" style="margin-top:12px">
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
-        <strong>Externer Zugriff</strong>
-        Empfehlung: <strong>nicht empfohlen, nur VPN.</strong> Das Panel verwaltet ntfy-Nutzer, Tokens und ACLs. Wenn es dennoch veröffentlicht werden muss: Reverse Proxy mit TLS plus zusätzliche Zugriffskontrolle. Das Sitzungs-Cookie trägt kein <code>Secure</code>-Flag.
+        <strong>External access</strong>
+        Recommendation: <strong>not recommended, VPN only.</strong> The panel manages ntfy users, tokens and ACLs. If it still has to be published: reverse proxy with TLS plus additional access control. The session cookie does not carry the <code>Secure</code> flag.
       </div>
     </div>
   </div>
@@ -538,58 +538,58 @@
     <div class="section-title">
       <div class="icon">⚙️</div>
       <div>
-        <h2>Konfiguration</h2>
-        <p>Options und Schema-Felder des Add-ons</p>
+        <h2>Configuration</h2>
+        <p>Options and schema fields of the add-on</p>
       </div>
     </div>
 
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Option</th><th>Typ</th><th>Default</th><th>Beschreibung</th></tr>
+          <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><code>ntfy_base_url</code></td>
             <td><code>url</code></td>
             <td><code>http://homeassistant.local:4280</code></td>
-            <td>Adresse des ntfy-Servers, z. B. die interne Adresse des ntfy-Add-ons oder eine externe URL.</td>
+            <td>Address of the ntfy server, e.g. the internal address of the ntfy add-on or an external URL.</td>
           </tr>
           <tr>
             <td><code>ntfy_auth_type</code></td>
             <td><code>list</code></td>
             <td><code>basic</code></td>
-            <td><code>none</code> / <code>basic</code> / <code>bearer</code>: Art der Anmeldung gegenüber ntfy.</td>
+            <td><code>none</code> / <code>basic</code> / <code>bearer</code>: type of authentication towards ntfy.</td>
           </tr>
           <tr>
             <td><code>ntfy_username</code></td>
             <td><code>str?</code></td>
             <td><code>""</code></td>
-            <td>Benutzername (bei <code>basic</code>).</td>
+            <td>Username (for <code>basic</code>).</td>
           </tr>
           <tr>
             <td><code>ntfy_password</code></td>
             <td><code>password?</code></td>
             <td><code>""</code></td>
-            <td>Passwort (bei <code>basic</code>).</td>
+            <td>Password (for <code>basic</code>).</td>
           </tr>
           <tr>
             <td><code>ntfy_bearer_token</code></td>
             <td><code>password?</code></td>
             <td><code>""</code></td>
-            <td>Zugriffstoken (bei <code>bearer</code>).</td>
+            <td>Access token (for <code>bearer</code>).</td>
           </tr>
           <tr>
             <td><code>default_topics</code></td>
             <td><code>list</code></td>
             <td><code>ha-alerts, ha-info, ha-notify, ha-system</code></td>
-            <td>Vorgeschlagene Topics im Panel.</td>
+            <td>Suggested topics in the panel.</td>
           </tr>
           <tr>
             <td><code>allow_login_override</code></td>
             <td><code>bool</code></td>
             <td><code>true</code></td>
-            <td>Erlaubt die Anmeldung mit anderen ntfy-Zugangsdaten im Panel. Für Kiosk-Setups auf <code>false</code> setzen.</td>
+            <td>Allows logging in with other ntfy credentials in the panel. Set to <code>false</code> for kiosk setups.</td>
           </tr>
           <tr>
             <td><code>log_level</code></td>
@@ -621,8 +621,8 @@
     <div class="alert warn">
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
-        <strong>Docker-interne URL (optional)</strong>
-        Laufen beide Add-ons auf demselben Supervisor, kann statt der externen URL die Docker-interne Adresse <code>http://a0d7b954-ntfy:80</code> genutzt werden — kein TLS-Overhead, kein NAT-Loopback. Der Standardwert <code>http://homeassistant.local:4280</code> funktioniert ebenfalls.
+        <strong>Docker-internal URL (optional)</strong>
+        If both add-ons run on the same Supervisor, the Docker-internal address <code>http://a0d7b954-ntfy:80</code> can be used instead of the external URL — no TLS overhead, no NAT loopback. The default value <code>http://homeassistant.local:4280</code> works as well.
       </div>
     </div>
   </div>
@@ -633,23 +633,23 @@
       <div class="icon">🖥️</div>
       <div>
         <h2>Web UI</h2>
-        <p>Aufbau und Bedienung der Admin-Konsole</p>
+        <p>Structure and use of the admin console</p>
       </div>
     </div>
 
-    <p>Die Admin-Konsole ist ein Single-Page HTML-Interface das direkt vom Add-on geserved wird. Alle Daten kommen live von der ntfy REST API.</p>
+    <p>The admin console is a single-page HTML interface served directly by the add-on. All data comes live from the ntfy REST API.</p>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Bereich</th><th>Funktion</th></tr></thead>
+        <thead><tr><th>Area</th><th>Function</th></tr></thead>
         <tbody>
-          <tr><td><strong>Dashboard</strong></td><td>Server-Version, User-Count, Nachrichten-Statistiken auf einen Blick.</td></tr>
-          <tr><td><strong>Topic Reservations</strong></td><td>Tabelle aller reservierten Topics. Anlegen / Bearbeiten / Löschen inline.</td></tr>
-          <tr><td><strong>Message Browser</strong></td><td>Topic auswählen → gecachte Nachrichten anzeigen mit Priority, Tags, Click-URL.</td></tr>
-          <tr><td><strong>ACL</strong></td><td>User-Access-Regeln verwalten: welcher User darf welches Topic lesen/schreiben.</td></tr>
-          <tr><td><strong>Token Manager</strong></td><td>Auth-Tokens anlegen (Label, Ablaufdatum) und widerrufen.</td></tr>
-          <tr><td><strong>Live Monitor</strong></td><td>SSE-Subscribe auf N Topics gleichzeitig — Nachrichten erscheinen in Echtzeit.</td></tr>
-          <tr><td><strong>Topic Settings</strong></td><td>Add-on-seitige Konfiguration pro Topic (Default-Prio, Label). Wird persistiert.</td></tr>
+          <tr><td><strong>Dashboard</strong></td><td>Server version, user count and message statistics at a glance.</td></tr>
+          <tr><td><strong>Topic Reservations</strong></td><td>Table of all reserved topics. Create / edit / delete inline.</td></tr>
+          <tr><td><strong>Message Browser</strong></td><td>Select a topic → show cached messages with priority, tags, click URL.</td></tr>
+          <tr><td><strong>ACL</strong></td><td>Manage user access rules: which user may read/write which topic.</td></tr>
+          <tr><td><strong>Token Manager</strong></td><td>Create (label, expiry date) and revoke auth tokens.</td></tr>
+          <tr><td><strong>Live Monitor</strong></td><td>SSE subscribe to N topics at the same time — messages appear in real time.</td></tr>
+          <tr><td><strong>Topic Settings</strong></td><td>Add-on-side configuration per topic (default priority, label). It is persisted.</td></tr>
         </tbody>
       </table>
     </div>
@@ -661,11 +661,11 @@
       <div class="icon">🔐</div>
       <div>
         <h2>ACL &amp; Token Management</h2>
-        <p>Zugangskontrolle für ntfy via Web UI statt CLI</p>
+        <p>Access control for ntfy via the web UI instead of the CLI</p>
       </div>
     </div>
 
-    <p>ntfy Manager ersetzt die direkte Nutzung von <code>ntfy user</code> und <code>ntfy access</code> CLI-Befehlen. Voraussetzung: ntfy läuft mit <code>auth-file</code> in seiner Konfiguration.</p>
+    <p>ntfy Manager replaces the direct use of the <code>ntfy user</code> and <code>ntfy access</code> CLI commands. Prerequisite: ntfy runs with <code>auth-file</code> in its configuration.</p>
 
     <div class="code-block">
       <div class="label">ntfy server.yml (Prerequisite)</div>
@@ -673,28 +673,28 @@
 auth-default-access: deny-all</pre>
     </div>
 
-    <p>Mit aktiver Auth gibt es den <strong>Admin-User</strong> (oder einen Token mit Admin-Rechten), den du im Add-on hinterlegen musst. Danach kannst du im UI:</p>
+    <p>With auth enabled there is the <strong>admin user</strong> (or a token with admin rights) that you have to store in the add-on. After that you can, in the UI:</p>
 
     <div class="step-list">
       <div class="step">
         <div class="step-num">→</div>
         <div class="step-body">
-          <h4>User anlegen</h4>
-          <p>ACL-Tab → "New User" → Username + Password → Role wählen (<code>user</code> oder <code>admin</code>).</p>
+          <h4>Create a user</h4>
+          <p>ACL tab → "New User" → username + password → choose a role (<code>user</code> or <code>admin</code>).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">→</div>
         <div class="step-body">
-          <h4>Topic-Zugriff setzen</h4>
-          <p>Topic Reservations → Topic auswählen → Owner + Permissions (read-write / read-only / deny) setzen.</p>
+          <h4>Set topic access</h4>
+          <p>Topic Reservations → select a topic → set owner + permissions (read-write / read-only / deny).</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">→</div>
         <div class="step-body">
-          <h4>Token generieren</h4>
-          <p>Token Manager → "New Token" → Label eingeben, optionales Ablaufdatum → Token kopieren für HA <code>rest_command</code>.</p>
+          <h4>Generate a token</h4>
+          <p>Token Manager → "New Token" → enter a label, optional expiry date → copy the token for the HA <code>rest_command</code>.</p>
         </div>
       </div>
     </div>
@@ -702,8 +702,8 @@ auth-default-access: deny-all</pre>
     <div class="alert ok">
       <div class="alert-icon">✅</div>
       <div class="alert-body">
-        <strong>Empfehlung: Token statt Passwort in HA</strong>
-        Erstelle einen dedizierten Token für HA-Automations (topic: <code>ha-*</code>, kein Ablauf) und hinterlege ihn in <code>secrets.yaml</code> — nicht den Admin-User direkt.
+        <strong>Recommendation: token instead of password in HA</strong>
+        Create a dedicated token for HA automations (topic: <code>ha-*</code>, no expiry) and store it in <code>secrets.yaml</code> — not the admin user directly.
       </div>
     </div>
   </div>
@@ -714,29 +714,29 @@ auth-default-access: deny-all</pre>
       <div class="icon">📡</div>
       <div>
         <h2>SSE Live-Monitor</h2>
-        <p>Nachrichten in Echtzeit beobachten</p>
+        <p>Watch messages in real time</p>
       </div>
     </div>
 
-    <p>Der Live-Monitor öffnet einen <strong>Server-Sent Events</strong>-Stream auf die ntfy-API, der über das Backend dieses Add-ons weitergereicht wird. Mehrere Topics können gleichzeitig abonniert werden.</p>
+    <p>The live monitor opens a <strong>Server-Sent Events</strong> stream to the ntfy API that is passed through the backend of this add-on. Several topics can be subscribed at the same time.</p>
 
     <div class="code-block">
-      <div class="label">ntfy SSE endpoint (intern)</div>
+      <div class="label">ntfy SSE endpoint (internal)</div>
       <pre>GET http://a0d7b954-ntfy:80/ha-alerts,ha-info,ha-system/sse
 Authorization: Bearer &lt;token&gt;</pre>
     </div>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Feld</th><th>Beschreibung</th></tr></thead>
+        <thead><tr><th>Field</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>id</code></td><td>Message-ID (12-char random)</td></tr>
-          <tr><td><code>topic</code></td><td>Welches Topic die Nachricht empfangen hat</td></tr>
-          <tr><td><code>title</code></td><td>Nachrichtentitel (optional)</td></tr>
-          <tr><td><code>message</code></td><td>Nachrichtentext</td></tr>
+          <tr><td><code>topic</code></td><td>Which topic received the message</td></tr>
+          <tr><td><code>title</code></td><td>Message title (optional)</td></tr>
+          <tr><td><code>message</code></td><td>Message text</td></tr>
           <tr><td><code>priority</code></td><td>1 (min) – 5 (max urgent)</td></tr>
-          <tr><td><code>tags</code></td><td>Emoji / Keyword Tags als Array</td></tr>
-          <tr><td><code>click</code></td><td>Click-Action URL (optional)</td></tr>
+          <tr><td><code>tags</code></td><td>Emoji / keyword tags as an array</td></tr>
+          <tr><td><code>click</code></td><td>Click action URL (optional)</td></tr>
         </tbody>
       </table>
     </div>
@@ -744,8 +744,8 @@ Authorization: Bearer &lt;token&gt;</pre>
     <div class="alert info">
       <div class="alert-icon">💡</div>
       <div class="alert-body">
-        <strong>Verbindung über das Add-on</strong>
-        Der SSE-Stream wird vom Backend des Add-ons an ntfy weitergereicht (<code>/sse</code>); die Zugangsdaten bleiben im verschlüsselten Cookie und gelangen nicht in den Browser. Das Add-on und ntfy müssen sich erreichen können, der Browser braucht nur Zugriff auf das Panel.
+        <strong>Connection through the add-on</strong>
+        The SSE stream is passed on to ntfy by the add-on's backend (<code>/sse</code>); the credentials stay in the encrypted cookie and do not reach the browser. The add-on and ntfy must be able to reach each other, the browser only needs access to the panel.
       </div>
     </div>
   </div>
@@ -756,45 +756,45 @@ Authorization: Bearer &lt;token&gt;</pre>
       <div class="icon">🔧</div>
       <div>
         <h2>Troubleshooting</h2>
-        <p>Häufige Probleme und Lösungen</p>
+        <p>Common problems and solutions</p>
       </div>
     </div>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Problem</th><th>Ursache</th><th>Fix</th></tr></thead>
+        <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
         <tbody>
           <tr>
             <td>"Cannot connect to ntfy"</td>
-            <td>Falsche <code>ntfy_base_url</code> oder ntfy-Add-on nicht gestartet</td>
-            <td>Docker-interne URL prüfen: <code>http://a0d7b954-ntfy:80</code>. Beide Add-ons müssen laufen.</td>
+            <td>Wrong <code>ntfy_base_url</code> or the ntfy add-on is not started</td>
+            <td>Check the Docker-internal URL: <code>http://a0d7b954-ntfy:80</code>. Both add-ons must be running.</td>
           </tr>
           <tr>
             <td>401 Unauthorized</td>
-            <td>ntfy läuft mit Auth, Token fehlt oder falsch</td>
-            <td><code>ntfy_auth_type</code> auf <code>bearer</code> stellen und das Token unter <code>ntfy_bearer_token</code> hinterlegen (oder basic mit Benutzer/Passwort), oder im Panel anmelden.</td>
+            <td>ntfy runs with auth, token is missing or wrong</td>
+            <td>Set <code>ntfy_auth_type</code> to <code>bearer</code> and store the token under <code>ntfy_bearer_token</code> (or basic with user/password), or log in in the panel.</td>
           </tr>
           <tr>
-            <td>ACL-Tab leer</td>
-            <td>ntfy ohne <code>auth-file</code> konfiguriert</td>
-            <td>In ntfy <code>server.yml</code> <code>auth-file: /data/user.db</code> setzen und ntfy neu starten.</td>
+            <td>ACL tab empty</td>
+            <td>ntfy configured without <code>auth-file</code></td>
+            <td>Set <code>auth-file: /data/user.db</code> in the ntfy <code>server.yml</code> and restart ntfy.</td>
           </tr>
           <tr>
-            <td>SSE-Stream bricht ab</td>
-            <td>NPM-Timeout oder Proxy-Pufferung</td>
-            <td>Im NPM Proxy Host: <code>proxy_read_timeout 3600;</code> und <code>proxy_buffering off;</code> als Custom Config setzen.</td>
+            <td>SSE stream breaks off</td>
+            <td>NPM timeout or proxy buffering</td>
+            <td>In the NPM proxy host: set <code>proxy_read_timeout 3600;</code> and <code>proxy_buffering off;</code> as custom config.</td>
           </tr>
           <tr>
-            <td>Web UI nicht erreichbar</td>
-            <td>Port-Konflikt oder Add-on nicht gestartet</td>
-            <td>Logs prüfen (<code>bashio::log.info</code>). Port-Mapping im Add-on kontrollieren.</td>
+            <td>Web UI not reachable</td>
+            <td>Port conflict or the add-on is not started</td>
+            <td>Check the logs (<code>bashio::log.info</code>). Check the port mapping in the add-on.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="code-block">
-      <div class="label">NPM Custom Config für SSE</div>
+      <div class="label">NPM custom config for SSE</div>
       <pre>proxy_read_timeout 3600s;
 proxy_buffering off;
 proxy_cache off;

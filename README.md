@@ -6,7 +6,7 @@
 ![amd64](https://img.shields.io/badge/amd64-supported-41BDF5?style=for-the-badge&logo=amd&logoColor=white)
 
 ![Unsupported architectures](https://img.shields.io/badge/no%20support-armhf%20%7C%20armv7%20%7C%20i386-lightgrey?style=for-the-badge&logo=homeassistant&logoColor=white)
-
+[![05 Release Please](https://github.com/pol4rfuchs/ha-apps/actions/workflows/05-release-please.yml/badge.svg?branch=main)](https://github.com/pol4rfuchs/ha-apps/actions/workflows/05-release-please.yml)
 
 Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`aarch64` + `amd64`).
 

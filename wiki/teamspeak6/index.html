@@ -467,7 +467,7 @@ query_admin_password: ""   # empty = generated, printed in the log on first star
       </div>
     </section>
 
-    <article id="home" class="doc-section glass-card" data-search="home overview, quick start, role split teamspeak 6 server home assistant app ist dein eigentlicher voice-server als home-assistant-add-on. diese seite ist die blaue ts6-server-wiki im gleichen stil wie die ts6-manager-wiki. wichtig: server und manager sind zwei verschiedene bausteine. der server stellt voice, filetransfer und query bereit. der ts6 manager verbindet sich danach über die http-webquery-schnittstelle mit diesem server. bereich wert ha add-on name teamspeak 6 server ha add-on slug teamspeak6 offizieller upstream teamspeak/teamspeak6-server docker image teamspeaksystems/teamspeak6-server target version 6.0.0-beta9 voice port 9987/udp filetransfer 30033/tcp http webquery 10080/tcp persistenz /data/teamspeak6 quick start repository: https://github.com/pol4rfuchs/ha-apps add-on: teamspeak 6 server voice: udp/9987 files: tcp/30033 webquery: tcp/10080 data: /data/teamspeak6 merksatz: extern freigeben nur 9987/udp und optional 30033/tcp . query-ports bleiben privat.">
+    <article id="home" class="doc-section glass-card" data-search="home quick start">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">HOME.md</p><h2>Home</h2></div></div>
         <a class="section-link" href="#home">#home</a>
@@ -502,7 +502,7 @@ Data:       /data/teamspeak6</code></pre>
       </div>
     </article>
 
-    <article id="sources-docker" class="doc-section glass-card" data-search="sources &amp; docker images official repo, docker tags, arm64 die seite ist auf die offizielle teamspeak-6-server-beta und dein home-assistant-add-on-repository zugeschnitten. source matrix quelle rolle link official ts6 server upstream-server, releases, readme, config.md github official docker image container-image für docker/ha-add-on-build docker hub docker tags architektur- und versionstags tags codeberg add-on repo dein home-assistant-add-on-repository codeberg github mirror github-repo-link aus readme github home assistant add-ons supervisor/add-on-plattform home assistant official image status teamspeaksystems/teamspeak6-server:latest zeigt auf die aktuelle beta. teamspeaksystems/teamspeak6-server:6.0.0-beta9 ist der versionierte beta-9-tag. docker hub listet für latest und 6.0.0-beta9 images für linux/amd64 und linux/arm64 . docker pull teamspeaksystems/teamspeak6-server:6.0.0-beta9 damit ist für dein ha-add-on nicht mehr zwingend ein alter community-arm-workaround nötig, solange dein build/config sauber auf das offizielle multi-arch-image zeigt.">
+    <article id="sources-docker" class="doc-section glass-card" data-search="sources &amp; docker images source matrix official image status">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🐳</span><div><p class="eyebrow">SOURCES.md</p><h2>Sources &amp; Docker Images</h2></div></div>
         <a class="section-link" href="#sources-docker">#sources-docker</a>
@@ -534,7 +534,7 @@ Data:       /data/teamspeak6</code></pre>
       </div>
     </article>
 
-    <article id="beta-status" class="doc-section glass-card" data-search="beta status &amp; limits beta9, license, migration limits teamspeak 6 server ist aktuell als beta veröffentlicht. für ein produktives home-assistant-add-on heißt das: updates sind wichtig, aber backup und rollback bleiben pflicht. wichtige beta-punkte thema praxisfolge beta-software features und verhalten können sich ändern; logs nach updates prüfen. ts3-lizenzen teamspeak-3-server-lizenzen sind nicht mit teamspeak 6 server kompatibel. migration offiziell gibt es derzeit keinen direkten migrationspfad von ts3 server zu ts6 server. beta-lizenz der server kommt mit einer beta-lizenz; größere ts6-lizenzen sind derzeit nicht allgemein upgradebar. v6.0.0-beta9 bringt native arm64-unterstützung und mehrere server-fixes. update-hinweis für dein add-on # sinnvoller pin im add-on, statt floating latest teamspeaksystems/teamspeak6-server:6.0.0-beta9 pinning ist sauberer: für ha-add-ons ist ein versionierter image-tag reproduzierbarer als latest .">
+    <article id="beta-status" class="doc-section glass-card" data-search="beta status &amp; limits key beta points update note for your add-on">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🧪</span><div><p class="eyebrow">BETA.md</p><h2>Beta Status &amp; Limits</h2></div></div>
         <a class="section-link" href="#beta-status">#beta-status</a>
@@ -559,7 +559,7 @@ Data:       /data/teamspeak6</code></pre>
       </div>
     </article>
 
-    <article id="installation" class="doc-section glass-card" data-search="installation repository adden, installieren, starten step 1 — repository in home assistant hinzufügen home assistant öffnen. einstellungen → add-ons → add-on store öffnen. oben rechts ⋮ → repositories wählen. diese url einfügen: https://github.com/pol4rfuchs/ha-apps add klicken und dialog schließen. one-click badge step 2 — add-on installieren nach teamspeak 6 server suchen. add-on öffnen. install klicken. warten, bis download/build abgeschlossen ist. step 3 — license akzeptieren im add-on-tab configuration muss die teamspeak-lizenz akzeptiert werden. license_accepted: true step 4 — starten save klicken. zurück auf info . start klicken. log öffnen und auf token, ports und fehler prüfen.">
+    <article id="installation" class="doc-section glass-card" data-search="installation step 1 — add repository to home assistant one-click badge step 2 — install the add-on step 3 — accept the license step 4 — start">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">INSTALLATION.md</p><h2>Installation</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
@@ -598,7 +598,7 @@ Data:       /data/teamspeak6</code></pre>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="add-on configuration options license accepted query admin password log level fixed ports">
+    <article id="configuration" class="doc-section glass-card" data-search="add-on configuration add-on options fixed ports">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">CONFIGURATION.md</p><h2>Add-on Configuration</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
@@ -631,7 +631,7 @@ Data:       /data/teamspeak6</code></pre>
       </div>
     </article>
 
-    <article id="ports-networking" class="doc-section glass-card" data-search="ports &amp; networking voice, files, query, forwarding default port matrix port protocol purpose extern freigeben? 9987 udp voice-port für teamspeak clients. ✅ ja 30033 tcp filetransfer. ✅ optional 10011 tcp raw serverquery. ⛔ nein 10022 tcp ssh serverquery. ⛔ nein 10080 tcp http webquery / manager-anbindung. ⛔ nein router port forwarding udp 9987 -&gt; &amp;lt;ha-ip&amp;gt;:9987 tcp 30033 -&gt; &amp;lt;ha-ip&amp;gt;:30033 # optional filetransfer ts6 manager verbindung ts6 manager web ui: http://&amp;lt;ha-ip&amp;gt;:8066 ts6 server webquery: http://&amp;lt;ha-ip&amp;gt;:10080 nicht öffentlich: 10080 ist der verwaltungszugang für webquery. der gehört nur ins lan/vlan beziehungsweise zu vertrauenswürdigen services wie ts6 manager. lan smoke tests # voice-port ist udp: extern sinnvoller per client testen. # http webquery lokal prüfen: curl -i http://&amp;lt;ha-ip&amp;gt;:10080">
+    <article id="ports-networking" class="doc-section glass-card" data-search="ports &amp; networking default port matrix router port forwarding ts6 manager connection lan smoke tests">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">NETWORKING.md</p><h2>Ports &amp; Networking</h2></div></div>
         <a class="section-link" href="#ports-networking">#ports-networking</a>
@@ -664,7 +664,7 @@ curl -I http://&lt;HA-IP&gt;:10080</code></pre>
       </div>
     </article>
 
-    <article id="first-start-token" class="doc-section glass-card" data-search="first start &amp; admin token privilege key, serveradmin, logs privilege key finden beim ersten start erzeugt der server einen einmaligen privilege key für server-admin-rechte im teamspeak client. teamspeak 6 server add-on → log tab → search for token= token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx privilege key verwenden mit dem teamspeak 6 client auf &amp;lt;ha-ip&amp;gt;:9987 verbinden. im client permissions → use privilege key öffnen. token einfügen und bestätigen. sofort sichern: der token ist einmalig und nur beim ersten start beziehungsweise bei neuerstellung sichtbar. serverquery admin für query/automatisierung gibt es den eingebauten account serveradmin . wenn kein passwort gesetzt wurde, muss das generierte passwort aus dem log gesichert werden. serveradmin password: &amp;lt;generated-password&amp;gt; neuen privilege key via serverquery erzeugen telnet &amp;lt;ha-ip&amp;gt; 10011 login serveradmin &amp;lt;query-password&amp;gt; use sid=1 tokenadd tokentype=0 tokenid1=6 tokenid2=0">
+    <article id="first-start-token" class="doc-section glass-card" data-search="first start &amp; admin token finding the privilege key using the privilege key serverquery admin generate a new privilege key via serverquery">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🔑</span><div><p class="eyebrow">FIRST-START.md</p><h2>First Start &amp; Admin Token</h2></div></div>
         <a class="section-link" href="#first-start-token">#first-start-token</a>
@@ -695,7 +695,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="manager-compatibility" class="doc-section glass-card" data-search="ts6 manager compatibility webquery api and pairing diese server-wiki passt direkt zur ts6-manager-wiki. der manager ist das admin-webpanel, dieser server ist der eigentliche voice-server. pairing matrix komponente port rolle teamspeak 6 server 9987/udp clients verbinden sich hier. teamspeak 6 server 10080/tcp http webquery api für ts6 manager. ts6 manager add-on 8066/tcp weboberfläche im browser. manager connection profil host: &amp;lt;ha-ip&amp;gt; oder &amp;lt;ts6-server-ip&amp;gt; webquery port: 10080 api/auth: serveradmin / api-key / webquery credentials typische fehler manager zeigt auf 8066 statt 10080 . webquery http ist nicht aktiviert. firewall/vlan blockiert manager → server. query-port wurde geändert, aber manager-profil nicht angepasst. query-admin-passwort wurde nach update/restore nicht mehr gefunden.">
+    <article id="manager-compatibility" class="doc-section glass-card" data-search="ts6 manager compatibility pairing matrix manager connection profile common errors">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🎛️</span><div><p class="eyebrow">MANAGER.md</p><h2>TS6 Manager Compatibility</h2></div></div>
         <a class="section-link" href="#manager-compatibility">#manager-compatibility</a>
@@ -728,7 +728,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="data-backup" class="doc-section glass-card" data-search="data persistence backup /data/teamspeak6 server tsserver sqlitedb every 5 minutes ha backups">
+    <article id="data-backup" class="doc-section glass-card" data-search="data persistence &amp; backup persistent data path what is critical? home assistant backup">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">💾</span><div><p class="eyebrow">BACKUP.md</p><h2>Data Persistence &amp; Backup</h2></div></div>
         <a class="section-link" href="#data-backup">#data-backup</a>
@@ -764,7 +764,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="project-structure" class="doc-section glass-card" data-search="project structure add-on folder file roles config yaml dockerfile run sh">
+    <article id="project-structure" class="doc-section glass-card" data-search="project structure add-on folder file roles">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📁</span><div><p class="eyebrow">PROJECT.md</p><h2>Project Structure</h2></div></div>
         <a class="section-link" href="#project-structure">#project-structure</a>
@@ -800,7 +800,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="security" class="doc-section glass-card" data-search="security notes ports, query, passwords, public exposure security baseline nur voice-port öffentlich: 9987/udp . filetransfer optional: 30033/tcp , nur wenn benötigt. query privat: 10011 , 10022 , 10080 niemals offen ins internet. query-admin-passwort sichern und nicht in git committen. privilege key sofort sichern und nach nutzung nicht öffentlich lagern. backups vor updates , weil beta-software und serverdaten kritisch sind. query allowlist wenn du query-zugriffe beschränkst, sollte der ha-host beziehungsweise der ts6-manager-container erreichbar bleiben. query_ip_allowlist.txt # beispiel 127.0.0.1 &amp;lt;ha-ip&amp;gt; &amp;lt;manager-ip&amp;gt; die allowlist schützt nicht vor falscher portfreigabe im router. router/nat/firewall bleiben die erste sicherheitsgrenze.">
+    <article id="security" class="doc-section glass-card" data-search="security notes security baseline query allowlist">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🔐</span><div><p class="eyebrow">SECURITY.md</p><h2>Security Notes</h2></div></div>
         <a class="section-link" href="#security">#security</a>
@@ -828,7 +828,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
       </div>
     </article>
 
-    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting startup, token, ports, clients server startet nicht symptom ursache fix license check failed lizenz nicht akzeptiert. license_accepted: true setzen und speichern. bind failed port bereits belegt. port ändern oder konfliktdienst stoppen. permission denied datenpfad nicht beschreibbar. /data/teamspeak6 und startscript prüfen. database -fehler sqlite-pfad, wal/shm oder rechteproblem. backup prüfen, add-on stoppen, db-dateien kontrollieren. privilege key verpasst log vollständig prüfen. falls token wirklich weg ist: per serverquery neu erzeugen. neuen token sofort im client verwenden. telnet &amp;lt;ha-ip&amp;gt; 10011 login serveradmin &amp;lt;query-password&amp;gt; use sid=1 tokenadd tokentype=0 tokenid1=6 tokenid2=0 clients verbinden extern nicht udp 9987 am router weitergeleitet? richtige öffentliche ip oder domain verwendet? keine doppelte nat-/firewall-regel im weg? host-port und container-port stimmen überein? teamspeak client nutzt wirklich domain:9987 beziehungsweise standardport? ts6 manager verbindet nicht http webquery auf 10080 aktiv? manager zeigt auf server-ip, nicht auf localhost im falschen container? query-admin/api-key korrekt? vlan/firewall zwischen ha und ts6 server offen?">
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting server does not start missed the privilege key clients cannot connect externally ts6 manager does not connect">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">TROUBLESHOOTING.md</p><h2>Troubleshooting</h2></div></div>
         <a class="section-link" href="#troubleshooting">#troubleshooting</a>
@@ -874,7 +874,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="maintenance" class="doc-section glass-card" data-search="update &amp; rollback runbook beta-safe update path vor update [ ] home assistant backup erstellt [ ] /data/teamspeak6 exists [ ] ts6server.sqlitedb exists [ ] query-admin-passwort gesichert [ ] privilege/admin-zugang im client funktioniert [ ] aktueller image-tag notiert [ ] ports/network-tab dokumentiert update add-on stoppen oder direkt ha-update durchführen. image auf neuen versionierten tag setzen, nicht blind latest erzwingen. add-on starten. log auf license, db-migration, port-bindings und query prüfen. mit client verbinden. ts6 manager gegen 10080 testen. rollback add-on stoppen. ha backup wiederherstellen. optional image-tag zurücksetzen. add-on starten. client-join, channel-struktur, rechte und query prüfen. bei serverdaten ist rollback nur sauber, wenn datenbank und image-version zusammenpassen. deshalb backup direkt vor update.">
+    <article id="maintenance" class="doc-section glass-card" data-search="update &amp; rollback runbook before update update rollback">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🧰</span><div><p class="eyebrow">MAINTENANCE.md</p><h2>Update &amp; Rollback Runbook</h2></div></div>
         <a class="section-link" href="#maintenance">#maintenance</a>
@@ -910,7 +910,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="changelog" class="doc-section glass-card" data-search="version notes v1.1.20 add-on and beta12.1 server home assistant app komponente version hinweis teamspeak6 v1.1.2 version aus deinem readme/badge. teamspeak 6 server 6.0.0-beta9 aktueller zielstand aus deinem readme und offiziellem upstream. docker image teamspeaksystems/teamspeak6-server:6.0.0-beta12.1 versionierter offizieller container-tag. v6.0.0-beta9 highlights native arm64-unterstützung. verbesserte server-migration-notifications für clients. crash-fix beim flush mit ungültigen datenbankverbindungen. s3-performance-optimierung. aktualisierte default-lizenz.">
+    <article id="changelog" class="doc-section glass-card" data-search="version notes home assistant app v6.0.0-beta9 highlights recent add-on fixes">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
         <a class="section-link" href="#changelog">#changelog</a>
@@ -951,7 +951,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="known-limitations" class="doc-section glass-card" data-search="known limitations ingress beta arm architecture webquery ports">
+    <article id="known-limitations" class="doc-section glass-card" data-search="known limitations no ha ingress support beta software no ts3 → ts6 migration no armhf / armv7 / i386 support single virtual server query ports must stay private">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚠️</span><div><p class="eyebrow">LIMITATIONS.md</p><h2>Known Limitations</h2></div></div>
         <a class="section-link" href="#known-limitations">#known-limitations</a>
@@ -977,7 +977,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
       </div>
     </article>
 
-    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer &amp; license unofficial wrapper and licenses disclaimer this is an unofficial, community-maintained home assistant add-on. not affiliated with or endorsed by teamspeak systems, inc. wrapper license apache license 2.0 dein readme nennt apache 2.0 für den add-on-wrapper. der teamspeak 6 server selbst unterliegt den teamspeak-lizenzbedingungen. useful links 🧊 codeberg repo pol4rfuchs/teamspeak6 🐙 github repo pol4rfuchs/teamspeak6 🎙️ official ts6 server teamspeak/teamspeak6-server 🐳 docker image teamspeaksystems/teamspeak6-server 💬 teamspeak community announcements and feedback 🏠 ha add-ons home assistant supervisor platform">
+    <article id="disclaimer-license" class="doc-section glass-card" data-search="disclaimer &amp; license disclaimer wrapper license useful links">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📜</span><div><p class="eyebrow">LEGAL.md</p><h2>Disclaimer &amp; License</h2></div></div>
         <a class="section-link" href="#disclaimer-license">#disclaimer-license</a>

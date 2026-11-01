@@ -2,9 +2,9 @@
 EXIT_CODE="$1"
 SIGNAL="$2"
 if [ "${EXIT_CODE}" = "256" ]; then
-    bashio::log.info "signal_bridge beendet durch Signal ${SIGNAL} (normal bei Container-Stop/-Neustart)"
+    bashio::log.info "signal_bridge terminated by signal ${SIGNAL} (normal on container stop/restart)"
 elif [ "${EXIT_CODE}" = "0" ]; then
-    bashio::log.info "signal_bridge sauber beendet (exit code: 0)"
+    bashio::log.info "signal_bridge exited cleanly (exit code: 0)"
 else
-    bashio::log.warning "signal_bridge unerwartet beendet (exit code: ${EXIT_CODE})"
+    bashio::log.warning "signal_bridge exited unexpectedly (exit code: ${EXIT_CODE})"
 fi

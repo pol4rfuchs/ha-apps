@@ -1,22 +1,22 @@
 #!/usr/bin/with-contenv bashio
 # ==============================================================================
-# Forgejo – s6 Run Script (Longrun Service)
-# Shebang with-contenv: lädt Container-Env, dann bashio (vom HA-Base-Image)
+# Forgejo – s6 run script (longrun service)
+# Shebang with-contenv: loads the container env, then bashio (from the HA base image)
 #
-# Ablauf:
-#   1. HA-Addon-Optionen via bashio lesen
-#   2. FORGEJO__-Umgebungsvariablen setzen
-#   3. Öffentliche URL (ROOT_URL) aus der Option domain ableiten
-#   4. setup-Skript sourcen (app.ini, SSH-Keys, Permissions)
-#   5. Forgejo als git-User starten (gosu für korrektes Privilege-Dropping)
+# Flow:
+#   1. Read the HA add-on options via bashio
+#   2. Set the FORGEJO__ environment variables
+#   3. Derive the public URL (ROOT_URL) from the domain option
+#   4. Source the setup script (app.ini, SSH keys, permissions)
+#   5. Start Forgejo as the git user (gosu for correct privilege dropping)
 # ==============================================================================
 set -e
 
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-bashio::log.info " Forgejo v16 – Home Assistant Addon"
+bashio::log.info " Forgejo v16 – Home Assistant add-on"
 bashio::log.info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# ── 1. HA-Konfiguration lesen ─────────────────────────────────────────────────
+# ── 1. Read the HA configuration ─────────────────────────────────────────────────
 APP_NAME="$(bashio::config 'app_name')"
 DOMAIN="$(bashio::config 'domain')"
 SSL="$(bashio::config 'ssl')"
@@ -26,7 +26,7 @@ SSH_ENABLED="$(bashio::config 'ssh_enabled')"
 SSH_PORT="$(bashio::config 'ssh_port')"
 LOG_LEVEL="$(bashio::config 'log_level')"
 
-# ── 2. Basis-Umgebungsvariablen ───────────────────────────────────────────────
+# ── 2. Base environment variables ───────────────────────────────────────────────
 export GITEA_CUSTOM="/config"
 export GITEA_WORK_DIR="/var/lib/gitea"
 export GITEA_TEMP="/tmp/gitea"
@@ -39,7 +39,7 @@ export HTTP_PORT=3000
 export DB_TYPE="sqlite3"
 export DB_PATH="/config/data/forgejo.db"
 
-# Forgejo Basis-Einstellungen via environment-to-ini Format
+# Forgejo base settings via the environment-to-ini format
 export FORGEJO__server__HTTP_PORT=3000
 export FORGEJO__server__APP_DATA_PATH="/config/data"
 export FORGEJO__repository__ROOT="/config/repositories"
@@ -55,9 +55,9 @@ export FORGEJO__queue__TYPE="level"
 export FORGEJO__queue__DATADIR="/config/data/queues"
 export FORGEJO____APP_NAME="${APP_NAME}"
 
-# ── 3. SSH-Konfiguration ──────────────────────────────────────────────────────
+# ── 3. SSH configuration ──────────────────────────────────────────────────────
 if [ "${SSH_ENABLED}" = "true" ]; then
-    bashio::log.info "SSH aktiviert auf Port ${SSH_PORT}"
+    bashio::log.info "SSH enabled on port ${SSH_PORT}"
     export DISABLE_SSH="false"
     export START_SSH_SERVER="true"
     export SSH_PORT
@@ -68,7 +68,7 @@ if [ "${SSH_ENABLED}" = "true" ]; then
     export FORGEJO__server__SSH_LISTEN_PORT="${SSH_PORT}"
     export FORGEJO__server__SSH_SERVER_HOST_KEYS="/config/ssh/forgejo_host_ed25519,/config/ssh/forgejo_host_rsa"
 else
-    bashio::log.info "SSH deaktiviert"
+    bashio::log.info "SSH disabled"
     export DISABLE_SSH="true"
     export START_SSH_SERVER="false"
     export FORGEJO__server__DISABLE_SSH="true"
@@ -76,12 +76,12 @@ fi
 
 # ── 4. Domain / ROOT_URL / SSL ────────────────────────────────────────────────
 if [ -n "${DOMAIN}" ] && [ "${DOMAIN}" != "null" ]; then
-    # Explizite Domain gesetzt → daraus ROOT_URL berechnen
+    # Explicit domain set → derive ROOT_URL from it
     export DOMAIN
     export FORGEJO__server__DOMAIN="${DOMAIN}"
 
     if [ "${SSL}" = "true" ]; then
-        bashio::log.info "SSL aktiviert für ${DOMAIN}"
+        bashio::log.info "SSL enabled for ${DOMAIN}"
         export FORGEJO__server__ROOT_URL="https://${DOMAIN}/"
         export FORGEJO__server__PROTOCOL="https"
         export FORGEJO__server__CERT_FILE="/ssl/${CERTFILE}"
@@ -94,33 +94,33 @@ if [ -n "${DOMAIN}" ] && [ "${DOMAIN}" != "null" ]; then
 
     bashio::log.info "ROOT_URL: ${ROOT_URL}"
 else
-    # Keine Domain gesetzt → Forgejo kennt seine Adresse nicht. Ingress gibt es seit
-    # 16.0.17 nicht mehr, daher bleibt nur der Fallback localhost. Links und
-    # Clone-URLs zeigen dann auf localhost, bis domain auf die genutzte Adresse
-    # (HA-Hostname oder LAN-IP) gesetzt ist.
+    # No domain set → Forgejo does not know its address. Ingress no longer exists
+    # since 16.0.17, so only the localhost fallback remains. Links and
+    # clone URLs then point to localhost until domain is set to the address in use
+    # (HA hostname or LAN IP).
     export FORGEJO__server__ROOT_URL="http://localhost:3000/"
     export ROOT_URL="http://localhost:3000/"
-    bashio::log.warning "Option 'domain' ist nicht gesetzt – ROOT_URL ist http://localhost:3000/."
-    bashio::log.warning "Setze 'domain' auf den Hostnamen oder die LAN-IP, über die du Forgejo aufrufst (z. B. die IP deines HA-Hosts), damit Links und Clone-URLs stimmen."
+    bashio::log.warning "Option 'domain' is not set – ROOT_URL is http://localhost:3000/."
+    bashio::log.warning "Set 'domain' to the hostname or LAN IP you use to reach Forgejo (e.g. the IP of your HA host) so links and clone URLs are correct."
 fi
 
-# ── 5. Setup ausführen (als root: Dirs, Keys, app.ini, Permissions) ──────────
-bashio::log.info "Führe Setup aus..."
+# ── 5. Run setup (as root: dirs, keys, app.ini, permissions) ──────────
+bashio::log.info "Running setup..."
 # shellcheck source=/etc/s6-overlay/s6-rc.d/forgejo/setup
 source /etc/s6-overlay/s6-rc.d/forgejo/setup
 
-# ── 6. Zusammenfassung ────────────────────────────────────────────────────────
-bashio::log.info "App-Name  : ${APP_NAME}"
-bashio::log.info "Root-URL  : ${ROOT_URL:-nicht gesetzt}"
+# ── 6. Summary ────────────────────────────────────────────────────────
+bashio::log.info "App name  : ${APP_NAME}"
+bashio::log.info "Root URL  : ${ROOT_URL:-not set}"
 bashio::log.info "SSH       : ${SSH_ENABLED} $([ "${SSH_ENABLED}" = "true" ] && echo "(Port ${SSH_PORT})" || echo "")"
 bashio::log.info "SSL       : ${SSL}"
-bashio::log.info "Log-Level : ${LOG_LEVEL}"
-bashio::log.info "Daten     : /config (addon_config)"
+bashio::log.info "Log level : ${LOG_LEVEL}"
+bashio::log.info "Data      : /config (addon_config)"
 
-# ── 7. Forgejo starten ────────────────────────────────────────────────────────
-# gosu: sicheres Privilege-Dropping auf git-User (kein sudo, kein su)
-# cd: Forgejo erwartet Work-Dir als CWD
-bashio::log.info "Starte Forgejo als git-User..."
+# ── 7. Start Forgejo ────────────────────────────────────────────────────────
+# gosu: safe privilege dropping to the git user (no sudo, no su)
+# cd: Forgejo expects the work dir as CWD
+bashio::log.info "Starting Forgejo as git user..."
 cd /var/lib/gitea
 exec gosu git /app/gitea/gitea web \
     --config "${GITEA_APP_INI}" \

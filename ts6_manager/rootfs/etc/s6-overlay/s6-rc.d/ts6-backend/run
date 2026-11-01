@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# set -a: alle folgenden Variablenzuweisungen automatisch exportieren
+# set -a: automatically export all following variable assignments
 set -a
 . /data/secrets.env
 set +a

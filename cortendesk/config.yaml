@@ -10,17 +10,17 @@ arch:
 image: "ghcr.io/pol4rfuchs/cortendesk"
 stage: experimental
 init: false
-# SQLite + hbbs-Datenbank liegen in /data: cold = App wird fuers Backup kurz
-# gestoppt, damit keine halb geschriebene DB im Backup landet.
+# SQLite + hbbs database live in /data: cold = the app is stopped briefly for the
+# backup so no half-written DB ends up in the backup.
 backup: cold
 webui: "http://[HOST]:[PORT:8080]"
 watchdog: "tcp://[HOST]:[PORT:8080]"
 
-# Ports: gegen die Port-Tabelle geprueft (21114-21117 frei, 17.10.2026).
-# Bridge-Modus mit Port-Mapping. 21118/21119 (WebSocket-Bridge hbbs/hbbr)
-# bleiben bewusst unmapped (null): sie lauschen im Container auf allen Adressen, sind
-# aber nicht auf den Host veroeffentlicht (nur im internen Docker-Netz erreichbar, getestet 17.10.2026).
-# hbbs/hbbr vertrauen dort ungeprueften X-Forwarded-For-Headern, daher nie mappen.
+# Ports: checked against the port table (21114-21117 free, 2026-10-17).
+# Bridge mode with port mapping. 21118/21119 (WebSocket bridge hbbs/hbbr)
+# deliberately stay unmapped (null): they listen on all addresses in the container, but
+# are not published to the host (only reachable in the internal Docker network, tested 2026-10-17).
+# hbbs/hbbr trust unchecked X-Forwarded-For headers there, so never map them.
 ports:
   8080/tcp: 21114
   21115/tcp: 21115
@@ -30,9 +30,9 @@ ports:
   21118/tcp: null
   21119/tcp: null
 
-# app_url und admin_password sind absichtlich leer (kein Default-Passwort): solange
-# eine der beiden Optionen leer ist, beendet sich die App mit einer Meldung im Log.
-# id_server und relay_server leer = Host aus app_url. downloads_max_mb 512 = Upstream-Standard.
+# app_url and admin_password are intentionally empty (no default password): as long as
+# one of the two options is empty, the app exits with a message in the log.
+# id_server and relay_server empty = host from app_url. downloads_max_mb 512 = upstream default.
 options:
   app_url: ""
   admin_user: "admin"
@@ -52,8 +52,8 @@ schema:
   downloads_max_mb: "int(1,4096)"
   log_level: "list(DEBUG|INFO|WARNING|ERROR)"
 
-# AppArmor ist aus: apparmor.txt ist ein ungetesteter Entwurf im COMPLAIN-Modus und wird
-# mit apparmor: false nicht geladen. Das Image laeuft nicht unter s6 (supervisord), die
-# s6-Baseline entfaellt. Nach einem Testlauf am Pi (apparmor: true, Log auswerten, Luecken
-# schliessen) "complain" aus den flags entfernen und hier auf true stellen.
+# AppArmor is off: apparmor.txt is an untested draft in COMPLAIN mode and is not
+# loaded with apparmor: false. The image does not run under s6 (supervisord), so the
+# s6 baseline does not apply. After a test run on the Pi (apparmor: true, evaluate the log,
+# close the gaps), remove "complain" from the flags and set this to true.
 apparmor: false

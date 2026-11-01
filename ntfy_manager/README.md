@@ -4,7 +4,7 @@
 
 # 🛠️ ntfy Manager — Home Assistant App
 
-Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on läuft.
+Full admin control panel for an ntfy server running as a HAOS add-on.
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![App Version](https://img.shields.io/badge/ntfy--manager-0.2.17-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
@@ -31,27 +31,27 @@ Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on lä
 ## Features
 
 ### Pages
-- **Overview** — Health, Version, Stats, Uptime, User-Count, System-Status-Indikatoren
-- **Send** — Topic + Title + Priority + Tags + Click + Live-Preview, Beispiel-Loader
-- **Users** — Liste + Create + Delete + Change Password
-- **Tokens** — Token erstellen mit optionalem Label & Expiry, Clipboard-Copy
-- **Access Control** — Permission-Matrix mit User-Selector, Topic + Permission, Delete
-- **Reservations** — Topic-Reservierung mit korrektem `{topic, everyone}`-Body
-- **Server** — Health/Version-Info + auto-generierter HA `rest_command` YAML-Snippet
-- **Messages** — Multi-Topic-Polling mit Stats, Since-/Limit-Filter, Topic-Settings via localStorage
-- **Debug** — SSE-Monitor (Connect/Reconnect/Disconnect-Counter, Live-Log) + In-Memory-Audit-Feed
+- **Overview** — health, version, stats, uptime, user count, system status indicators
+- **Send** — topic + title + priority + tags + click + live preview, example loader
+- **Users** — list + create + delete + change password
+- **Tokens** — create tokens with an optional label & expiry, clipboard copy
+- **Access Control** — permission matrix with user selector, topic + permission, delete
+- **Reservations** — topic reservation with the correct `{topic, everyone}` body
+- **Server** — health/version info + auto-generated HA `rest_command` YAML snippet
+- **Messages** — multi-topic polling with stats, since/limit filters, topic settings via localStorage
+- **Debug** — SSE monitor (connect/reconnect/disconnect counters, live log) + in-memory audit feed
 
-### Architektur
+### Architecture
 - **HA Add-on** — `ghcr.io/hassio-addons/base` (Alpine + s6-overlay + bashio)
-- **Ingress Sidebar Panel** auf Port 8099, optional direkter Zugriff
+- **Ingress sidebar panel** on port 8099, optional direct access
 - **Frontend** — React 18 + Vite + Tailwind, single-bundle SPA
-- **Backend** — Express 4 + Zod + AES-256-GCM für stateless Cookie-Sessions
-- **Auth** — Login-Form schreibt verschlüsselten Cookie mit ntfy-Credentials, oder lädt Defaults aus Add-on-Config
-- **Keine zweite User-DB** — ntfy `user.db` ist die alleinige Wahrheit
-- **Kein bcrypt, kein Prisma** — die einzige Persistenz ist `/data/jwt_secret`
-- **SSE-Bridge** durch nginx → Express → ntfy `/sse` (durchgeschleift, kein Buffering)
+- **Backend** — Express 4 + Zod + AES-256-GCM for stateless cookie sessions
+- **Auth** — the login form writes an encrypted cookie with the ntfy credentials, or loads defaults from the add-on config
+- **No second user DB** — the ntfy `user.db` is the single source of truth
+- **No bcrypt, no Prisma** — the only persistence is `/data/jwt_secret`
+- **SSE bridge** through nginx → Express → ntfy `/sse` (passed through, no buffering)
 
-## Architektur
+## Architecture
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -72,47 +72,47 @@ Vollwertiges Admin Control Panel für einen ntfy Server, der als HAOS Add-on lä
 
 ## Installation
 
-1. Repository zu Home Assistant hinzufügen: `https://github.com/pol4rfuchs/ha-apps`
-2. Add-on installieren.
-3. Konfigurieren — entweder ntfy-Credentials direkt im Add-on, oder leer lassen für interaktiven Login.
-4. Starten — Sidebar-Eintrag „ntfy Admin" erscheint.
+1. Add the repository to Home Assistant: `https://github.com/pol4rfuchs/ha-apps`
+2. Install the add-on.
+3. Configure — either enter the ntfy credentials directly in the add-on, or leave them empty for an interactive login.
+4. Start — the sidebar entry "ntfy Admin" appears.
 
 ## Add-on Configuration
 
-| Option | Default | Beschreibung |
+| Option | Default | Description |
 |--------|---------|--------------|
-| `ntfy_base_url` | `http://homeassistant.local:4280` | URL des ntfy-Servers |
-| `ntfy_auth_type` | `basic` | `none`, `basic` oder `bearer` |
-| `ntfy_username` | `""` | Default-Username (für `basic`) |
-| `ntfy_password` | `""` | Default-Passwort (für `basic`) |
-| `ntfy_bearer_token` | `""` | Default-Token (für `bearer`) |
-| `default_topics` | `[ha-alerts, ha-info, ha-notify, ha-system, ha-planty]` | Default-Topics für Messages/SSE |
-| `allow_login_override` | `true` | Erlaubt interaktiven Login zusätzlich zu Defaults |
+| `ntfy_base_url` | `http://homeassistant.local:4280` | URL of the ntfy server |
+| `ntfy_auth_type` | `basic` | `none`, `basic` or `bearer` |
+| `ntfy_username` | `""` | Default username (for `basic`) |
+| `ntfy_password` | `""` | Default password (for `basic`) |
+| `ntfy_bearer_token` | `""` | Default token (for `bearer`) |
+| `default_topics` | `[ha-alerts, ha-info, ha-notify, ha-system, ha-planty]` | Default topics for Messages/SSE |
+| `allow_login_override` | `true` | Allows an interactive login in addition to the defaults |
 
-## Auth-Flow
+## Auth flow
 
-1. Add-on startet → `/data/jwt_secret` wird einmal generiert.
-2. Browser öffnet Panel → ruft `/api/auth/status`.
-3. Wenn ntfy-Credentials in Add-on-Config gesetzt: automatisch eingeloggt.
-4. Wenn nicht: Login-Form — User gibt ntfy-Credentials ein.
-5. Backend validiert per `GET /v1/account` gegen ntfy.
-6. Bei Erfolg: AES-256-GCM-verschlüsselter Cookie mit ntfy-Authorization-Header.
-7. Alle weiteren Calls gehen über Backend-Proxy mit dem Cookie-Auth.
+1. The add-on starts → `/data/jwt_secret` is generated once.
+2. The browser opens the panel → calls `/api/auth/status`.
+3. If ntfy credentials are set in the add-on config: logged in automatically.
+4. If not: login form — the user enters the ntfy credentials.
+5. The backend validates against ntfy via `GET /v1/account`.
+6. On success: AES-256-GCM-encrypted cookie with the ntfy Authorization header.
+7. All further calls go through the backend proxy with the cookie auth.
 
 ## Security
 
-- Cookie ist `httpOnly`, `sameSite: lax`, AES-256-GCM-verschlüsselt mit AEAD-Tag.
-- `JWT_SECRET` wird einmal beim ersten Start in `/data/jwt_secret` generiert (Mode 0600).
-- ntfy-Credentials werden NIE im LocalStorage gespeichert.
-- Backend macht alle ntfy-Calls Server-zu-Server, das Frontend redet ausschließlich mit `/api/*`.
-- Audit-Log ist in-memory only (max 500 Einträge), wandert in Supervisor-Log per console.
+- The cookie is `httpOnly`, `sameSite: lax`, AES-256-GCM-encrypted with an AEAD tag.
+- `JWT_SECRET` is generated once on the first start in `/data/jwt_secret` (mode 0600).
+- ntfy credentials are NEVER stored in LocalStorage.
+- The backend makes all ntfy calls server-to-server; the frontend only talks to `/api/*`.
+- The audit log is in-memory only (max 500 entries), and goes to the Supervisor log via console.
 
 ## Architectural Notes
 
-- **Kein Prisma, kein SQLite, kein User-Store.** Wenn du Token-Auth willst — nutze ntfy direkt.
-- **Kein Setup-Wizard** wie im alten Skeleton — der war in v0.1 das Login-System für die nicht-existente eigene User-DB. Nicht mehr nötig.
-- **Reservation-Bug** vom alten HTML-Panel ist gefixt: POST `/v1/account/reservation` mit `{topic, everyone}` im Body, nicht im Pfad.
-- **SSE läuft über `EventSource`** auf der Browser-Seite + `fetch` mit Stream-Reader im Backend. nginx passt den Buffer an (`proxy_buffering off`, `chunked_transfer_encoding off`, `proxy_read_timeout 24h`).
+- **No Prisma, no SQLite, no user store.** If you want token auth — use ntfy directly.
+- **No setup wizard** like in the old skeleton — in v0.1 it was the login system for the non-existent own user DB. No longer needed.
+- **Reservation bug** of the old HTML panel is fixed: POST `/v1/account/reservation` with `{topic, everyone}` in the body, not in the path.
+- **SSE runs via `EventSource`** on the browser side + `fetch` with a stream reader in the backend. nginx adjusts the buffer (`proxy_buffering off`, `chunked_transfer_encoding off`, `proxy_read_timeout 24h`).
 
 
 ---
