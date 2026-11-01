@@ -14,7 +14,7 @@
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-2ECC71?style=for-the-badge)](LICENSE)
 
-**Web-based Management Interface für deinen TeamSpeak 6 Server — als sauber verpacktes Home Assistant App.**
+**Web-based management interface for your TeamSpeak 6 server — cleanly packaged as a Home Assistant app.**
 
 </div>
 
@@ -58,7 +58,7 @@ Run a web-based TeamSpeak 6 management panel directly as a Home Assistant App.
 ![Port](https://img.shields.io/badge/Port-8066-F39C12?style=for-the-badge)
 ![Database](https://img.shields.io/badge/Database-SQLite-2ECC71?style=for-the-badge)
 
-**Kurz gesagt: TS6 Manager ist die Web-Oberfläche für deinen TeamSpeak 6 Server — bequem über Home Assistant installiert, gestartet und gesichert.**
+**In short: TS6 Manager is the web interface for your TeamSpeak 6 server — conveniently installed, started and backed up through Home Assistant.**
 
 </div>
 
@@ -99,8 +99,8 @@ This repository contains a complete **Home Assistant App** that wraps [`clusterz
 | **Music Storage** | `/data/music` |
 | **Upstream Project** | [`clusterzx/ts6-manager`](https://github.com/clusterzx/ts6-manager) |
 
-> ℹ️ Der Manager ist **nicht** der TeamSpeak Server selbst.  
-> Er verbindet sich über die **WebQuery HTTP API** mit deinem vorhandenen TeamSpeak 6 Server.
+> ℹ️ The manager is **not** the TeamSpeak server itself.  
+> It connects to your existing TeamSpeak 6 server through the **WebQuery HTTP API**.
 
 ---
 
@@ -124,7 +124,7 @@ Before you start, make sure this is already working:
 | **API Key** | From TS6 server log |
 | **Protocol** | HTTP WebQuery |
 
-> 💡 Wenn TS6 Server und TS6 Manager beide auf demselben Home Assistant Host laufen, ist meistens die lokale Host/IP-Konfiguration der wichtigste Punkt.
+> 💡 If the TS6 server and TS6 Manager both run on the same Home Assistant host, the local host/IP configuration is usually the most important point.
 
 ---
 
