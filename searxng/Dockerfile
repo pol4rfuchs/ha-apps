@@ -15,7 +15,8 @@ RUN xbps-install -Sy xbps \
     && LD_TRACE_LOADED_OBJECTS=1 /usr/bin/tor \
         | awk '/=> \//{print $3}' \
         | grep -Ev '/(libc|libm|libdl|libpthread|librt|libresolv|libnss_[a-z]+|libutil|ld-linux[^/]*)\.so' \
-        | xargs -r -I{} cp -L {} /out/
+        > /tmp/libs \
+    && while read -r lib; do cp -L "$lib" /out/; done < /tmp/libs
 
 FROM searxng/searxng:${SEARXNG_VERSION}
 
