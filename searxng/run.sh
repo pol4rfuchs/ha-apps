@@ -112,6 +112,106 @@ if [ "${SET_URL}" = "true" ]; then
     fi
 fi
 
+# ── Tor (optional) ────────────────────────────────────────────────────────────
+# The onion engines (ahmia, torch) stay inactive in SearXNG unless they use a
+# Tor proxy. With `enable_tor` we start a local Tor client and write a runtime
+# copy of settings.yml in which only these two engines use it. The user's own
+# settings.yml is never modified.
+TOR_BOOTSTRAP_TIMEOUT=120
+RUNTIME_SETTINGS="/etc/searxng/.settings.runtime.yml"
+rm -f "${RUNTIME_SETTINGS}"
+
+start_tor() {
+    if ! command -v tor >/dev/null 2>&1; then
+        warn "Tor is not installed in this image — starting without Tor."
+        return 1
+    fi
+    mkdir -p /tmp/tor
+    chmod 700 /tmp/tor
+    chown tor:tor /tmp/tor 2>/dev/null || true
+    rm -f /tmp/tor/notice.log
+    cat > /tmp/torrc << 'ENDOFTORRC'
+User tor
+DataDirectory /tmp/tor
+ClientOnly 1
+SocksPort 127.0.0.1:9050
+Log notice file /tmp/tor/notice.log
+ENDOFTORRC
+    log "Starting Tor (waiting up to ${TOR_BOOTSTRAP_TIMEOUT}s for the connection)..."
+    tor -f /tmp/torrc > /dev/null 2>&1 &
+    TOR_PID=$!
+    waited=0
+    while [ "${waited}" -lt "${TOR_BOOTSTRAP_TIMEOUT}" ]; do
+        if grep -q "Bootstrapped 100%" /tmp/tor/notice.log 2>/dev/null; then
+            log "Tor is connected."
+            return 0
+        fi
+        if ! kill -0 "${TOR_PID}" 2>/dev/null; then
+            warn "Tor exited early — starting without Tor."
+            return 1
+        fi
+        sleep 1
+        waited=$((waited + 1))
+    done
+    warn "Tor did not connect within ${TOR_BOOTSTRAP_TIMEOUT}s — starting without Tor."
+    kill "${TOR_PID}" 2>/dev/null || true
+    return 1
+}
+
+write_tor_settings() {
+    /usr/local/searxng/.venv/bin/python3 - "${SETTINGS_FILE}" "${RUNTIME_SETTINGS}" << 'ENDOFPY'
+import os
+import sys
+
+import yaml
+
+src, dst = sys.argv[1], sys.argv[2]
+with open(src, encoding="utf-8") as fh:
+    cfg = yaml.safe_load(fh) or {}
+
+defaults = cfg.get("use_default_settings")
+if not defaults:
+    print("settings.yml does not set use_default_settings: the onion engines cannot be added", file=sys.stderr)
+    sys.exit(2)
+
+remove, keep_only = [], None
+if isinstance(defaults, dict):
+    eng = defaults.get("engines") or {}
+    if isinstance(eng, dict):
+        remove = eng.get("remove") or []
+        keep_only = eng.get("keep_only")
+
+engines = cfg.get("engines") or []
+for name in ("ahmia", "torch"):
+    if name in remove or (keep_only is not None and name not in keep_only):
+        continue
+    entry = next((e for e in engines if e.get("name") == name), None)
+    if entry is None:
+        entry = {"name": name}
+        engines.append(entry)
+    entry["using_tor_proxy"] = True
+    entry["proxies"] = {"all://": ["socks5h://127.0.0.1:9050"]}
+cfg["engines"] = engines
+
+fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+with os.fdopen(fd, "w", encoding="utf-8") as fh:
+    yaml.safe_dump(cfg, fh, default_flow_style=False, sort_keys=False, allow_unicode=True)
+ENDOFPY
+}
+
+ENABLE_TOR=$(python3 -c "import json; print(str(json.load(open('/data/options.json')).get('enable_tor', False)).lower())" 2>/dev/null) || ENABLE_TOR="false"
+if [ "${ENABLE_TOR}" = "true" ]; then
+    if start_tor; then
+        if write_tor_settings; then
+            export SEARXNG_SETTINGS_PATH="${RUNTIME_SETTINGS}"
+            log "Onion engines enabled (SEARXNG_SETTINGS_PATH=${RUNTIME_SETTINGS})."
+        else
+            warn "Could not add the onion engines to the settings — starting without them."
+            kill "${TOR_PID}" 2>/dev/null || true
+        fi
+    fi
+fi
+
 # ── Start ─────────────────────────────────────────────────────────────────────
 log "Starting SearXNG via custom.sh..."
 exec "${CUSTOM_SH}"

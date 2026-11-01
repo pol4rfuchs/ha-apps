@@ -6,6 +6,9 @@ ARG BUILD_ARCH
 ARG BUILD_VERSION
 ARG SEARXNG_VERSION
 
+# Tor is only started when the option `enable_tor` is on (needed by the ahmia and torch engines).
+RUN apk add --no-cache tor
+
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
 

@@ -6,3 +6,6 @@ configuration:
   log_level:
     name: Log-Level
     description: "SearXNG selbst kennt nur einen Debug-An/Aus-Schalter. 'debug' aktiviert ausführliches Logging (general.debug: true); info/warning/error führen alle zu Standard-Logging (nicht-Debug), da SearXNG unterhalb von Debug nicht weiter unterscheidet."
+  enable_tor:
+    name: Tor aktivieren (Onion-Suchmaschinen)
+    description: "Startet einen Tor-Client in der App und schaltet die Engines ahmia und torch ein, die .onion-Seiten durchsuchen. Deren Datenverkehr läuft über Tor, alle anderen Engines behalten ihre direkte Verbindung. Der Start wartet bis zu 2 Minuten auf die Tor-Verbindung; schlägt das fehl, startet SearXNG ohne Tor."
