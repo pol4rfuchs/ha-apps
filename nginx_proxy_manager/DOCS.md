@@ -1,30 +1,30 @@
-# Nginx Proxy Manager – Add-on Dokumentation
+# Nginx Proxy Manager – Add-on documentation
 
-Vollwertige HA-Integration des offiziellen [Nginx Proxy Managers](https://nginxproxymanager.com).
-
----
-
-## Erststart
-
-1. Add-on installieren und starten
-2. UI über `http://<HA-Host>:81` öffnen (Button „Web-UI öffnen“ der App; es gibt kein Ingress)
-3. Beim ersten Öffnen zeigt NPM den Einrichtungsassistenten („Welcome! Get started by creating your admin account.“). Dort Name, E-Mail und Passwort für das Admin-Konto festlegen. Ein Standard-Login (`admin@example.com` / `changeme`) gibt es seit NPM 2.13 nicht mehr.
-4. **Den Assistenten sofort abschließen.** Bis dahin kann jeder im LAN, der Port 81 erreicht, das Admin-Konto selbst anlegen und die Proxy-Konfiguration übernehmen. Bestehende Installationen behalten nach einem Update ihre Zugangsdaten.
-5. Port `81` **nie** am Router weiterleiten (nur `80` und `443`).
+Full HA integration of the official [Nginx Proxy Manager](https://nginxproxymanager.com).
 
 ---
 
-## Konfiguration
+## First start
 
-### SQLite (Standard)
+1. Install and start the add-on
+2. Open the UI at `http://<HA-Host>:81` ("Open Web UI" button of the app; there is no ingress)
+3. On the first visit NPM shows the setup wizard ("Welcome! Get started by creating your admin account."). Set the name, email and password for the admin account there. There has been no default login (`admin@example.com` / `changeme`) since NPM 2.13.
+4. **Finish the wizard immediately.** Until then anyone on the LAN who can reach port 81 can create the admin account themselves and take over the proxy configuration. Existing installations keep their credentials after an update.
+5. **Never** forward port `81` on the router (only `80` and `443`).
 
-Keine weiteren Einstellungen nötig. Daten liegen unter `/data/npm/`.
+---
 
-### MariaDB (empfohlen für Produktivbetrieb)
+## Configuration
 
-1. HA **MariaDB Add-on** installieren und starten
-2. Datenbank + User in MariaDB anlegen
-3. Add-on konfigurieren:
+### SQLite (default)
+
+No further settings needed. Data lives under `/data/npm/`.
+
+### MariaDB (recommended for production use)
+
+1. Install and start the HA **MariaDB add-on**
+2. Create a database + user in MariaDB
+3. Configure the add-on:
 
 ```yaml
 db_type: mariadb
@@ -32,91 +32,91 @@ mariadb_host: core-mariadb
 mariadb_port: 3306
 mariadb_name: npm
 mariadb_user: npm
-mariadb_password: "dein_passwort"
+mariadb_password: "your_password"
 ```
 
-Das Passwort ist als Passwortfeld deklariert und wird in der Oberfläche
-maskiert. Wer die Werte aus der HA-`secrets.yaml` beziehen will, trägt sie dort
-mit `!secret` ein, das löst der Supervisor beim Speichern auf.
+The password is declared as a password field and is masked in the UI.
+If you want to take the values from the HA `secrets.yaml`, enter them there
+with `!secret`; the Supervisor resolves that when saving.
 
-Die Sitzungsschlüssel (JWT) erzeugt NPM selbst und legt sie unter
-`/data/keys.json` ab. Dafür gibt es keine Option.
+NPM generates the session keys (JWT) itself and stores them under
+`/data/keys.json`. There is no option for this.
 
 ---
 
 ## Ports
 
-| Port | Funktion                  |
+| Port | Function                  |
 |------|---------------------------|
-| 80   | HTTP (Proxy-Traffic)      |
-| 443  | HTTPS (Proxy-Traffic)     |
-| 81   | NPM Admin-UI (direkt, nur LAN) |
+| 80   | HTTP (proxy traffic)      |
+| 443  | HTTPS (proxy traffic)     |
+| 81   | NPM admin UI (direct, LAN only) |
 
-> Port 81 ist auf dem Host gemappt und im LAN erreichbar (kein Ingress). Er darf **nie** ins Internet weitergeleitet werden, siehe *Lokaler und externer Zugriff*.
+> Port 81 is mapped on the host and reachable on the LAN (no ingress). It must **never** be forwarded to the internet, see *Local and external access*.
 
 ---
 
 ## SSL / Let's Encrypt
 
-NPM bringt Let's Encrypt vollständig mit. Unterstützte Challenge-Typen:
+NPM ships Let's Encrypt completely. Supported challenge types:
 
-- HTTP-01 (Standard)
-- DNS-01 (z. B. Cloudflare, erfordert API-Token)
-- Wildcard-Zertifikate via DNS-01
+- HTTP-01 (default)
+- DNS-01 (e.g. Cloudflare, requires an API token)
+- Wildcard certificates via DNS-01
 
-### Cloudflare DNS-01 einrichten
+### Set up Cloudflare DNS-01
 
-1. Cloudflare API-Token erstellen (Zone → DNS → Edit)
-2. In NPM unter **SSL Certificates → Add Certificate → DNS Challenge**
-3. Provider: Cloudflare, Token eingeben
+1. Create a Cloudflare API token (Zone → DNS → Edit)
+2. In NPM under **SSL Certificates → Add Certificate → DNS Challenge**
+3. Provider: Cloudflare, enter the token
 
 ---
 
 ## Backup & Restore
 
-Alle persistenten Daten liegen unter `/data/npm/`:
+All persistent data lives under `/data/npm/`:
 
 ```
 /data/npm/
-├── data/          # Datenbank, Konfiguration, Proxy-Hosts
-├── letsencrypt/   # Zertifikate
+├── data/          # database, configuration, proxy hosts
+├── letsencrypt/   # certificates
 └── logs/          # Access/Error Logs
-/data/keys.json    # Sitzungsschlüssel, wird von NPM selbst erzeugt
+/data/keys.json    # session keys, generated by NPM itself
 ```
 
-HA-Backups sichern das gesamte `/data` des Add-ons, also auch die Logs und `keys.json`. Es gibt keine Ausschlüsse.
+HA backups cover the whole `/data` of the add-on, including the logs and `keys.json`. There are no exclusions.
 
 ---
 
 ## Dark Mode
 
-NPM unterstützt Dark Mode nativ. Aktivierung in der UI:
+NPM supports dark mode natively. Enable it in the UI:
 **Account → Appearance → Dark**
 
 ---
 
-## Optionale Einstellungen
+## Optional settings
 
 ```yaml
-disable_ipv6: false   # IPv6 deaktivieren
+disable_ipv6: false   # disable IPv6
 log_level: info       # info | warning | error | debug
 ```
 
 ---
 
-## Problembehandlung
+## Troubleshooting
 
-**UI nicht erreichbar:**
-→ Add-on neu starten, Host-Port 81 in der Netzwerk-Konfiguration der App prüfen
+**UI not reachable:**
+→ Restart the add-on, check host port 81 in the network configuration of the app
 
-**MariaDB Verbindungsfehler:**
-→ MariaDB Add-on läuft? User/DB existiert? `mariadb_password` korrekt?
+**MariaDB connection error:**
+→ Is the MariaDB add-on running? Do the user/DB exist? Is `mariadb_password` correct?
 
-**Zertifikat-Erneuerung schlägt fehl:**
-→ Logs prüfen unter: **NPM UI → Logs → Access/Error**
+**Certificate renewal fails:**
+→ Check the logs under: **NPM UI → Logs → Access/Error**
 
-## Lokaler und externer Zugriff
+## Local and external access
 
-**Lokal (LAN):** Die Admin-Oberfläche läuft direkt auf Port `81` (`http://<HA-Host>:81`), nicht über Ingress. Der Port ist auf dem Host gemappt und im ganzen LAN erreichbar. Direkt nach dem ersten Start den Einrichtungsassistenten abschließen und das Admin-Konto anlegen, vorher ist die Oberfläche ungeschützt.
+**Local (LAN):** The admin interface runs directly on port `81` (`http://<HA-Host>:81`), not via ingress. The port is mapped on the host and reachable across the whole LAN. Finish the setup wizard and create the admin account right after the first start; before that the interface is unprotected.
 
-**Extern (Internet):** Die Ports `80` und `443` sind der Eingang für den Proxy-Traffic und dürfen am Router weitergeleitet werden, das ist der Zweck der App. Port `81` **nie** ins Internet, nur LAN oder VPN.
+**External (internet):** Ports `80` and `443` are the entry point for proxy traffic and may be forwarded on the router; that is the purpose of the app. **Never** expose port `81` to the internet, LAN or VPN only.
