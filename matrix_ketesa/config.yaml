@@ -1,6 +1,6 @@
 ---
 name: "Matrix Ketesa (Admin UI)"
-version: "0.2.0"
+version: "0.2.1"
 slug: "matrix_ketesa"
 description: "Ketesa (formerly Synapse Admin), the admin web UI for Matrix Synapse, behind a login"
 url: "https://github.com/pol4rfuchs/ha-apps"
