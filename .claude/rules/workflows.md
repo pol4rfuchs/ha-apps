@@ -3,16 +3,16 @@ paths:
   - ".github/workflows/**"
 ---
 
-# GitHub-Workflows
+# GitHub workflows
 
-- Runner `ubuntu-24.04`, nie `ubuntu-latest` (auch in der Matrix von `build-app.yaml`).
-- Actions per Commit-SHA pinnen, die Version im Kommentar dahinter (`# v7.0.1`).
-- Dateiname nummeriert (`NN-name.yml`); die Workflows 12 (hadolint), 13 (yamllint), 14 (actionlint) müssen grün sein.
-- YAML ohne Doppel-Leerzeichen und ohne Leerzeichen am Zeilenende (yamllint).
-- Jobs, die als Pflichtprüfung gedacht sind, bekommen keinen Pfad-Filter (so begründet es Workflow 29: sonst bleibt der Check „pending“).
-- Label-Sync (`15-labels.yml`) bleibt bei `prune: false`; sonst verschwinden `autorelease: pending`/`tagged` von den Release-PRs und
-  Release Please legt keinen Tag und kein Release an (Katalog §7).
-- Tags nie nachträglich für alte, überholte Versionen anlegen: das löst Builds für diese Versionen aus (Katalog §7).
-- Setzt ein Workflow ein Label, das nicht in `.github/labels.yml` steht, dort ergänzen.
-- `actionlint` läuft lokal nur über den Stop-Hook in Docker (wenn Docker Desktop läuft und das Image lokal vorhanden ist).
-  Meldet der Hook „übersprungen“, Änderungen sorgfältig gegenlesen und im PR sagen, dass nur die CI sie geprüft hat.
+- Runner `ubuntu-24.04`, never `ubuntu-latest` (also in the matrix of `build-app.yaml`).
+- Pin actions by commit SHA, with the version in a comment behind it (`# v7.0.1`).
+- Numbered file name (`NN-name.yml`); workflows 12 (hadolint), 13 (yamllint), 14 (actionlint) must be green.
+- YAML without double spaces and without trailing spaces (yamllint).
+- Jobs meant as required checks get no path filter (as workflow 29 explains: otherwise the check stays "pending").
+- The label sync (`15-labels.yml`) stays at `prune: false`; otherwise `autorelease: pending`/`tagged` disappear from the release PRs and
+  Release Please creates no tag and no release (catalog §7).
+- Never create tags retroactively for old, superseded versions: that triggers builds for those versions (catalog §7).
+- If a workflow sets a label that is not in `.github/labels.yml`, add it there.
+- `actionlint` only runs locally through the stop hook in Docker (if Docker Desktop is running and the image is present locally).
+  If the hook reports "skipped", proofread the changes carefully and say in the PR that only the CI checked them.
