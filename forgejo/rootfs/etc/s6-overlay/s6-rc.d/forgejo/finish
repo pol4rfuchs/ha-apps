@@ -2,16 +2,16 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Forgejo – s6 Finish Script
-# Wird aufgerufen wenn der run-Prozess endet (Absturz oder normales Beenden).
-# Gibt Exit-Code und Signal aus, fährt s6 herunter.
+# Called when the run process ends (crash or normal exit).
+# Prints the exit code and signal, shuts s6 down.
 # ==============================================================================
 readonly exit_code_service="${1}"
 readonly exit_code_signal="${2}"
 readonly service="forgejo"
 
 bashio::log.warning \
-    "Service ${service} beendet mit Code ${exit_code_service}" \
+    "Service ${service} exited with code ${exit_code_service}" \
     "(Signal ${exit_code_signal})"
 
-# s6-Supervision herunterfahren → Container endet → HA Supervisor startet neu
+# Shut down s6 supervision → container ends → HA Supervisor restarts it
 s6-svscanctl -t /run/s6/services
