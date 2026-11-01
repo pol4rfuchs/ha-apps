@@ -1,5 +1,5 @@
 # Ketesa version kept as its own ARG so Renovate can bump it
-ARG KETESA_VERSION=v1.5.1
+ARG KETESA_VERSION=v1.5.2
 ARG BUILD_ARCH
 # Multi-arch manifest (aarch64 + amd64), so no ${BUILD_ARCH} is needed in the tag (§16)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.8
