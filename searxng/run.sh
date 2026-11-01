@@ -117,10 +117,21 @@ fi
 # Tor proxy. With `enable_tor` we start a local Tor client and write a runtime
 # copy of settings.yml in which only these two engines use it. The user's own
 # settings.yml is never modified.
-TOR_BOOTSTRAP_TIMEOUT=120
+TOR_BOOTSTRAP_TIMEOUT="${TOR_BOOTSTRAP_TIMEOUT:-120}"
 TOR_BIN="${TOR_BIN:-/usr/local/lib/tor/tor}"
 RUNTIME_SETTINGS="/etc/searxng/.settings.runtime.yml"
 rm -f "${RUNTIME_SETTINGS}"
+
+# Shows the last lines of Tor's own logs, so a failed start can be diagnosed from the app log
+show_tor_log() {
+    for f in /tmp/tor/stdout.log /tmp/tor/notice.log; do
+        if [ -s "${f}" ]; then
+            tail -n 20 "${f}" | while IFS= read -r line; do
+                warn "tor (${f##*/}): ${line}"
+            done
+        fi
+    done
+}
 
 start_tor() {
     if [ ! -x "${TOR_BIN}" ]; then
@@ -130,7 +141,7 @@ start_tor() {
     mkdir -p /tmp/tor
     chmod 700 /tmp/tor
     chown _tor:_tor /tmp/tor 2>/dev/null || true
-    rm -f /tmp/tor/notice.log
+    rm -f /tmp/tor/notice.log /tmp/tor/stdout.log
     cat > /tmp/torrc << 'ENDOFTORRC'
 User _tor
 DataDirectory /tmp/tor
@@ -139,7 +150,7 @@ SocksPort 127.0.0.1:9050
 Log notice file /tmp/tor/notice.log
 ENDOFTORRC
     log "Starting Tor (waiting up to ${TOR_BOOTSTRAP_TIMEOUT}s for the connection)..."
-    LD_LIBRARY_PATH=/usr/local/lib/tor "${TOR_BIN}" -f /tmp/torrc > /dev/null 2>&1 &
+    LD_LIBRARY_PATH=/usr/local/lib/tor "${TOR_BIN}" -f /tmp/torrc > /tmp/tor/stdout.log 2>&1 &
     TOR_PID=$!
     waited=0
     while [ "${waited}" -lt "${TOR_BOOTSTRAP_TIMEOUT}" ]; do
@@ -149,12 +160,19 @@ ENDOFTORRC
         fi
         if ! kill -0 "${TOR_PID}" 2>/dev/null; then
             warn "Tor exited early — starting without Tor."
+            show_tor_log
             return 1
+        fi
+        # Progress every 20 s, so a stuck connection shows at which step it hangs
+        if [ "${waited}" -gt 0 ] && [ $((waited % 20)) -eq 0 ]; then
+            progress=$(grep "Bootstrapped" /tmp/tor/notice.log 2>/dev/null | tail -n 1) || progress=""
+            log "Tor is still connecting after ${waited}s: ${progress:-no progress yet}"
         fi
         sleep 1
         waited=$((waited + 1))
     done
     warn "Tor did not connect within ${TOR_BOOTSTRAP_TIMEOUT}s — starting without Tor."
+    show_tor_log
     kill "${TOR_PID}" 2>/dev/null || true
     return 1
 }
