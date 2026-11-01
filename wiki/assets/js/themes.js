@@ -1,7 +1,7 @@
 /*
   Theme switcher shared by the hub and all add-on wikis.
   Themes: bento (default) · docs
-    - hub / 404 (site.css pages): themes.css
+    - hub / 404 / hwinfo-thermalguard (site.css pages): themes.css
     - all other add-on wikis: addon-themes.css (docs = the page's original sidebar look)
   The choice is stored in localStorage (same key everywhere, so it follows you across pages)
   and can be forced with ?theme=docs. Loaded synchronously in <head> to avoid a flash.
