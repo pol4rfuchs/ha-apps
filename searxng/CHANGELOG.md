@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.1.0...searxng-v1.1.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* **searxng:** show Tor's own log when it does not connect ([#805](https://github.com/pol4rfuchs/ha-apps/issues/805)) ([801a8a7](https://github.com/pol4rfuchs/ha-apps/commit/801a8a79824187a44c1e76246bb80c580565a457))
+
 ## [1.1.0](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.44...searxng-v1.1.0) (2026-11-01)
 
 
