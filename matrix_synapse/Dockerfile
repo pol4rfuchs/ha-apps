@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && python3 -m venv /opt/synapse \
     && /opt/synapse/bin/pip install --no-cache-dir --upgrade pip wheel \
     && /opt/synapse/bin/pip install --no-cache-dir \
-        "matrix-synapse[all]>=1.163.0" \
+        "matrix-synapse[all]>=1.164.1" \
         "psycopg2-binary" \
         "pyOpenSSL>=24.0.0" \
     && apt-get purge -y python3-dev libffi-dev libssl-dev libjpeg-dev libwebp-dev \
