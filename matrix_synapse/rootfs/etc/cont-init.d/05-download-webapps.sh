@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # ============================================================================
-# 05-download-webapps.sh — Element Web, Ketesa (ehem. Synapse Admin), Element Call
+# 05-download-webapps.sh — Element Web, Element Call
 #
 # Each component tracks its installed version in its own .*_version file
 # under /data/matrix/. On every start, the current "latest" version is
@@ -16,7 +16,6 @@
 set +e
 
 EW_VERSION_FILE="/data/matrix/.element-web_version"
-ADMIN_VERSION_FILE="/data/matrix/.ketesa_version"
 EC_VERSION_FILE="/data/matrix/.element-call_version"
 mkdir -p /data/matrix
 
@@ -68,50 +67,6 @@ if [ "${EW_INSTALLED}" != "${EW_LATEST}" ]; then
     fi
 else
     bashio::log.info "✅ Element Web already up to date (${EW_INSTALLED})"
-fi
-
-# ── Ketesa (ehem. Synapse Admin) UI ──────────────────────────────────────
-ENABLE_ADMIN=$(bashio::config 'enable_synapse_admin')
-if [ "${ENABLE_ADMIN}" = "true" ]; then
-    bashio::log.info "🔍 Checking Ketesa version..."
-    ADMIN_LATEST=$(curl -sf \
-        "https://api.github.com/repos/etkecc/ketesa/releases/latest" \
-        | jq -r .tag_name 2>/dev/null)
-    ADMIN_INSTALLED=$(cat "${ADMIN_VERSION_FILE}" 2>/dev/null || echo "")
-    ADMIN_LATEST=$(pick_version "${ADMIN_LATEST}" "${ADMIN_INSTALLED}" "v1.5.1" "Ketesa")
-
-    if [ "${ADMIN_INSTALLED}" != "${ADMIN_LATEST}" ]; then
-        bashio::log.info "📥 Downloading Ketesa ${ADMIN_LATEST} (installed: ${ADMIN_INSTALLED:-none})..."
-        if wget -q "https://github.com/etkecc/ketesa/releases/download/${ADMIN_LATEST}/ketesa.tar.gz" \
-            -O /tmp/synapse-admin.tar.gz 2>/dev/null; then
-            mkdir -p /tmp/admin-extract /data/matrix/synapse-admin
-            tar -xzf /tmp/synapse-admin.tar.gz -C /tmp/admin-extract 2>/dev/null
-
-            # Ketesa is packaged sometimes flat, sometimes in a subfolder — search robustly
-            if [ -f /tmp/admin-extract/index.html ]; then
-                ADMINDIR="/tmp/admin-extract"
-            else
-                ADMINDIR=$(find /tmp/admin-extract -maxdepth 2 -name "index.html" | head -1 | xargs dirname 2>/dev/null)
-            fi
-
-            if [ -n "${ADMINDIR}" ] && [ -f "${ADMINDIR}/index.html" ]; then
-                rm -rf /data/matrix/synapse-admin/*
-                cp -r "${ADMINDIR}/." /data/matrix/synapse-admin/
-                echo "${ADMIN_LATEST}" > "${ADMIN_VERSION_FILE}"
-                COUNT=$(find /data/matrix/synapse-admin -type f | wc -l)
-                bashio::log.info "✅ Ketesa ${ADMIN_LATEST} installed (${COUNT} files)"
-            else
-                bashio::log.error "❌ Ketesa: index.html not found!"
-            fi
-            rm -f /tmp/synapse-admin.tar.gz && rm -rf /tmp/admin-extract
-        else
-            bashio::log.error "❌ Ketesa download failed!"
-        fi
-    else
-        bashio::log.info "✅ Ketesa already up to date (${ADMIN_INSTALLED})"
-    fi
-else
-    bashio::log.info "⏭️  Ketesa download skipped (enable_synapse_admin: false)"
 fi
 
 # ── Element Call (only if voice/video is enabled) ────────────────────────

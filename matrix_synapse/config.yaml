@@ -35,7 +35,6 @@ ports:
   8008/tcp: 8008
   8089/tcp: 8089
   8448/tcp: 8448
-  8090/tcp: 8090
   3478/udp: 3478
   5349/tcp: 5349
   30000/udp: 30000
@@ -67,7 +66,6 @@ ports_description:
   8008/tcp: Synapse Matrix API (NPM → here for HTTPS)
   8089/tcp: lk-jwt-service token bridge (NPM → here)
   8448/tcp: Matrix Federation Port
-  8090/tcp: Synapse Admin UI
   3478/udp: TURN UDP — only active if livekit_turn_enabled=true (direct, no NPM)
   5349/tcp: TURN TLS fallback — only active if livekit_turn_enabled=true (direct, no NPM)
   30000/udp: LiveKit media (direct SFU port or TURN relay, depending on livekit_turn_enabled)
@@ -104,7 +102,6 @@ options:
   signal_bridge_enabled: false
   telegram_bridge_enabled: false
   max_upload_size_mb: 50
-  enable_synapse_admin: true
   postgres_password: ''
   log_level: WARNING
   ntfy_url: ''
@@ -115,8 +112,6 @@ options:
   element_call_theme: original
   livekit_url: wss://livekit.example.org
   livekit_jwt_url: https://livekit-jwt.example.org
-  admin_ui_username: admin
-  admin_ui_password: ''
   media_retention_local_days: 0
   media_retention_remote_days: 30
   cache_max_memory_mb: 512
@@ -140,7 +135,6 @@ schema:
   signal_bridge_enabled: bool
   telegram_bridge_enabled: bool
   max_upload_size_mb: int(10,500)
-  enable_synapse_admin: bool
   postgres_password: password
   log_level: list(DEBUG|INFO|WARNING|ERROR)
   ntfy_url: str
@@ -151,8 +145,6 @@ schema:
   element_call_theme: list(original|bento)
   livekit_url: str
   livekit_jwt_url: str
-  admin_ui_username: str
-  admin_ui_password: password
   media_retention_local_days: int(0,3650)
   media_retention_remote_days: int(0,3650)
   cache_max_memory_mb: int(128,16384)

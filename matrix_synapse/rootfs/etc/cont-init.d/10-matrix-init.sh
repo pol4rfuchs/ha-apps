@@ -20,8 +20,6 @@ LIVEKIT_SECRET=$(bashio::config 'livekit_secret')
 ELEMENT_CALL_URL=$(bashio::config 'element_call_url' | sed 's|/$||')
 LIVEKIT_URL=$(bashio::config 'livekit_url' | sed 's|/$||')
 LIVEKIT_JWT_URL=$(bashio::config 'livekit_jwt_url' | sed 's|/$||')
-ADMIN_UI_USER=$(bashio::config 'admin_ui_username')
-ADMIN_UI_PASSWORD=$(bashio::config 'admin_ui_password')
 MEDIA_RETENTION_LOCAL=$(bashio::config 'media_retention_local_days')
 MEDIA_RETENTION_REMOTE=$(bashio::config 'media_retention_remote_days')
 CACHE_MAX_MB=$(bashio::config 'cache_max_memory_mb')
@@ -46,7 +44,6 @@ SIGNING_KEY="${SYNAPSE_DATA}/signing.key"
 PG_MARKER="${DATA_DIR}/.pg_initialized"
 LK_CONFIG="${DATA_DIR}/livekit.yaml"
 LK_SECRET_FILE="${DATA_DIR}/.livekit_secret"
-ADMIN_UI_AUTH_FILE="${DATA_DIR}/.admin_ui_auth"
 BACKUP_DIR="${DATA_DIR}/backups"
 
 # ── Placeholder guard ─────────────────────────────────────────────────────
@@ -181,20 +178,15 @@ if [ "${ENABLE_VOICE}" = "true" ]; then
     fi
 fi
 
-# ── Ketesa (Admin UI) basic-auth credentials ──────────────────────────────
-if [ -z "${ADMIN_UI_PASSWORD}" ]; then
-    if [ -f "${ADMIN_UI_AUTH_FILE}" ]; then
-        ADMIN_UI_PASSWORD=$(tail -n1 "${ADMIN_UI_AUTH_FILE}")
-        bashio::log.info "✅ Admin UI password loaded from storage"
-    else
-        ADMIN_UI_PASSWORD=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
-        bashio::log.info "✅ Admin UI password generated and stored"
-        bashio::log.info "   → Value: ${ADMIN_UI_AUTH_FILE} (not in the log, see the security note)"
-        bashio::log.info "   → Optionally enter it in the add-on config (admin_ui_password)"
+# ── Leftovers of the removed bundled Ketesa (now the matrix_ketesa app) ───
+# The old copy of the UI, its version marker and the basic-auth credentials file are
+# not used any more; remove them so no unused credentials stay in /data.
+for LEFTOVER in "${DATA_DIR}/synapse-admin" "${DATA_DIR}/.ketesa_version" "${DATA_DIR}/.admin_ui_auth"; do
+    if [ -e "${LEFTOVER}" ]; then
+        rm -rf "${LEFTOVER}"
+        bashio::log.info "🧹 Removed leftover of the bundled Ketesa: ${LEFTOVER} (use the matrix_ketesa app instead)"
     fi
-fi
-printf '%s\n%s\n' "${ADMIN_UI_USER}" "${ADMIN_UI_PASSWORD}" > "${ADMIN_UI_AUTH_FILE}"
-chmod 600 "${ADMIN_UI_AUTH_FILE}"
+done
 
 # ── Synapse homeserver.yaml ───────────────────────────────────────────────
 bashio::log.info "Writing Synapse homeserver.yaml..."
@@ -790,7 +782,7 @@ bashio::log.info "✅ Initialization complete!"
 bashio::log.info "  Server:      ${SERVER_NAME}"
 bashio::log.info "  Element Web: http://[HA-IP]:7080"
 bashio::log.info "  Synapse API: http://[HA-IP]:8008"
-bashio::log.info "  Admin UI:    http://[HA-IP]:8090 (basic auth: ${ADMIN_UI_USER}, see ${ADMIN_UI_AUTH_FILE})"
+bashio::log.info "  Admin UI:    install the matrix_ketesa app (port 8091)"
 if [ "${ENABLE_VOICE}" = "true" ]; then
 bashio::log.info "  Element Call: http://[HA-IP]:7081"
 bashio::log.info "  LiveKit API:  http://[HA-IP]:7880"

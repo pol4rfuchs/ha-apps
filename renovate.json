@@ -243,18 +243,6 @@
     },
     {
       "customType": "regex",
-      "description": "Track etkecc/ketesa (formerly Synapse Admin) releases. The script fetches the version live via the GitHub API at runtime; this fallback value is only used if the API call fails — Renovate still keeps it current as a reference/dashboard visibility.",
-      "managerFilePatterns": [
-        "/^matrix_synapse/rootfs/etc/cont-init\\.d/05-download-webapps\\.sh$/"
-      ],
-      "matchStrings": [
-        "ADMIN_LATEST=\"(?<currentValue>v.*?)\"\\n"
-      ],
-      "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "etkecc/ketesa"
-    },
-    {
-      "customType": "regex",
       "description": "Track matrix-synapse PyPI releases for the minimum version in matrix_synapse/Dockerfile. A pip install without a Renovate PR automatically gets the latest version >= this lower bound on the next image build, but without a trigger no rebuild happens at all. This manager creates PRs for new Synapse releases and thereby kicks off the rebuild.",
       "managerFilePatterns": [
         "/^matrix_synapse/Dockerfile$/"

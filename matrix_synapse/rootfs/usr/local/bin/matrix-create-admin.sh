@@ -27,6 +27,6 @@ echo "Creating admin user: @${USERNAME}:$(grep '^server_name:' ${SYNAPSE_CONFIG}
 echo ""
 echo "✅ Admin user created!"
 echo ""
-echo "Synapse Admin UI: http://[HA-IP]:8090"
-echo "Homeserver URL for Admin UI: http://localhost:8008"
+echo "Admin UI: install the matrix_ketesa app (http://[HA-IP]:8091)"
+echo "Homeserver URL for the admin UI: the public URL of your homeserver (your browser must reach it)"
 echo "Login: @${USERNAME}:$(grep '^server_name:' ${SYNAPSE_CONFIG} | awk '{print $2}' | tr -d '"')"
