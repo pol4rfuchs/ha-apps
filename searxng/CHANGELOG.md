@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.44...searxng-v1.1.0) (2026-11-01)
+
+
+### Features
+
+* **searxng:** add an optional Tor client for the onion engines ([#800](https://github.com/pol4rfuchs/ha-apps/issues/800)) ([d2a65a1](https://github.com/pol4rfuchs/ha-apps/commit/d2a65a11e7ad743b25fcf3bc8ffd11ed5c832b10))
+
 ## [1.0.44](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.0.43...searxng-v1.0.44) (2026-10-31)
 
 
