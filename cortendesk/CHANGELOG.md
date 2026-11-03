@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/pol4rfuchs/ha-apps/compare/cortendesk-v0.2.1...cortendesk-v0.2.2) (2026-11-03)
+
+
+### Bug Fixes
+
+* **cortendesk:** update upstream to 1.17.1 ([#810](https://github.com/pol4rfuchs/ha-apps/issues/810)) ([c3501ea](https://github.com/pol4rfuchs/ha-apps/commit/c3501ea5d29b9599b099b43fab7a37e607c4a3bf))
+
 ## [0.2.1](https://github.com/pol4rfuchs/ha-apps/compare/cortendesk-v0.2.0...cortendesk-v0.2.1) (2026-10-21)
 
 
