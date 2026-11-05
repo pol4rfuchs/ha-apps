@@ -91,10 +91,14 @@
     "2026-11-02": {
       "count": 4,
       "uniques": 3
+    },
+    "2026-11-03": {
+      "count": 0,
+      "uniques": 0
     }
   },
   "downloads": {
-    "cortendesk": 75,
+    "cortendesk": 84,
     "forgejo": 237,
     "intiface_central": 92,
     "matrix_auth_service": 132,
@@ -106,11 +110,11 @@
     "navidrome": 254,
     "nextcloud": 258,
     "nginx_proxy_manager": 59,
-    "ntfy": 803,
-    "ntfy_manager": 191,
+    "ntfy": 807,
+    "ntfy_manager": 195,
     "restic_backup": 80,
-    "searxng": 1554,
-    "teamspeak6": 479,
+    "searxng": 1583,
+    "teamspeak6": 483,
     "ts6_manager": 298,
     "unbound": 308,
     "unifi_os_control_center": 193,
