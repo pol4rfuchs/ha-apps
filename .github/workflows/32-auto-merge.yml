@@ -1,0 +1,96 @@
+---
+# Merges Release Please PRs and fast-lane upstream PRs (branches `auto/<app>-…`) once every check of the PR is green.
+# Polls instead of using GitHub's native auto-merge: native auto-merge only waits for the required checks of the
+# ruleset, and the path-filtered build test (02) is not one of them. Here a PR waits until no check is pending or failed.
+# The merge uses APP_TOKEN (not GITHUB_TOKEN), otherwise the push to main would not start workflow 05 / the image build.
+# Apps with a database/migrations are never merged automatically in the fast lane (no downgrade possible);
+# keep DB_APPS in sync with the exclusion rule in renovate.json.
+name: 32 Auto Merge
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-merge
+  cancel-in-progress: false
+
+jobs:
+  auto-merge:
+    name: Merge green bot PRs
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      GH_TOKEN: ${{ secrets.APP_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      # Checks that must be present and green (the required checks of the main ruleset).
+      REQUIRED_CHECKS: "Repository shape and monorepo contract|Validate squash-merge title|AppArmor profiles"
+      DB_APPS: "forgejo nextcloud matrix_synapse matrix_auth_service vaultwarden cortendesk restic_backup"
+      # Minutes since the last commit before a PR may be merged, so path-filtered checks (build test) have started.
+      MIN_AGE_MINUTES: "10"
+    steps:
+      - name: Merge PRs whose checks are all green
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          now="$(date +%s)"
+          mapfile -t prs < <(gh pr list --base main --state open --draft=false --limit 100 \
+            --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"')
+
+          for entry in "${prs[@]}"; do
+            number="${entry%% *}"
+            branch="${entry#* }"
+
+            case "${branch}" in
+              release-please--branches--main--components--*) kind="release" ; app="${branch##*--}" ;;
+              auto/*) kind="fastlane" ; app="${branch#auto/}" ; app="${app%-*}" ;;
+              *) continue ;;
+            esac
+
+            if [[ "${kind}" == "fastlane" && " ${DB_APPS} " == *" ${app} "* ]]; then
+              echo "#${number} (${branch}): ${app} has a database, merge manually."
+              continue
+            fi
+
+            info="$(gh pr view "${number}" --json mergeable,mergeStateStatus,commits \
+              --jq '[.mergeable, .mergeStateStatus, (.commits[-1].committedDate)] | @tsv')"
+            IFS=$'\t' read -r mergeable state committed <<<"${info}"
+            if [[ "${mergeable}" != "MERGEABLE" ]]; then
+              echo "#${number}: not mergeable (${mergeable}/${state}), skipping."
+              continue
+            fi
+            age=$(( (now - $(date -d "${committed}" +%s)) / 60 ))
+            if (( age < MIN_AGE_MINUTES )); then
+              echo "#${number}: last commit only ${age} min old, waiting for the path-filtered checks."
+              continue
+            fi
+
+            checks="$(gh pr checks "${number}" --json name,bucket 2>/dev/null || true)"
+            if [[ -z "${checks}" || "${checks}" == "[]" ]]; then
+              echo "#${number}: no checks reported yet, skipping."
+              continue
+            fi
+            if jq -e 'any(.[]; .bucket == "fail" or .bucket == "pending" or .bucket == "cancel")' <<<"${checks}" >/dev/null; then
+              echo "#${number}: checks pending or failed, skipping."
+              continue
+            fi
+            missing=0
+            IFS='|' read -ra required <<<"${REQUIRED_CHECKS}"
+            for name in "${required[@]}"; do
+              if ! jq -e --arg n "${name}" 'any(.[]; .name == $n and .bucket == "pass")' <<<"${checks}" >/dev/null; then
+                echo "#${number}: required check '${name}' is not green."
+                missing=1
+              fi
+            done
+            (( missing == 0 )) || continue
+
+            echo "#${number} (${kind}, ${app}): all checks green, merging."
+            gh pr merge "${number}" --squash
+          done
