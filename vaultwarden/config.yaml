@@ -1,6 +1,6 @@
 ---
 name: "Vaultwarden"
-version: "0.2.1"
+version: "0.2.2"
 slug: "vaultwarden"
 description: "Vaultwarden – lean, Bitwarden-compatible password manager server"
 url: "https://github.com/pol4rfuchs/ha-apps"
