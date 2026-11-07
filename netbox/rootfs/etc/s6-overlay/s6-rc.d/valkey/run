@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source /usr/local/lib/netbox-ha/common.sh
+nb_apply_log_level
+
+# NetBox keeps its task queue (no TTL) and its cache (with TTL) here. volatile-lru only evicts keys that
+# have a TTL, so the cache is bounded and queued jobs are never dropped.
+bashio::log.info "Starting Valkey (127.0.0.1 only)..."
+exec gosu valkey valkey-server \
+  --bind 127.0.0.1 \
+  --port 6379 \
+  --protected-mode yes \
+  --daemonize no \
+  --dir "${VALKEY_DIR}" \
+  --dbfilename dump.rdb \
+  --save "300 1" \
+  --appendonly no \
+  --maxmemory 256mb \
+  --maxmemory-policy volatile-lru \
+  --loglevel "${VALKEY_LOG_LEVEL}" \
+  2>&1

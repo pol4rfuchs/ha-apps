@@ -1,0 +1,47 @@
+---
+name: "NetBox"
+version: "0.0.1"
+slug: "netbox"
+description: "NetBox – IPAM and DCIM (network documentation) with built-in PostgreSQL and Valkey"
+url: "https://github.com/pol4rfuchs/ha-apps"
+arch:
+  - aarch64
+  - amd64
+image: "ghcr.io/pol4rfuchs/netbox"
+stage: experimental
+init: false
+ports:
+  8001/tcp: 8001
+ports_description:
+  8001/tcp: "NetBox web UI and REST API (login required)"
+webui: "http://[HOST]:[PORT:8001]"
+map:
+  - type: addon_config
+    read_only: false
+# Cold backup: the Supervisor stops the app, copies /data (PostgreSQL files are consistent) and starts it again.
+backup: cold
+# PostgreSQL and Valkey write their data on shutdown.
+timeout: 60
+apparmor: true
+
+options:
+  log_level: "info"
+  admin_username: "admin"
+  admin_password: ""
+  allowed_hosts: []
+  csrf_trusted_origins: []
+  time_zone: ""
+  workers: 2
+  plugins: []
+schema:
+  log_level: "list(debug|info|warning|error)"
+  admin_username: "str"
+  admin_password: "password"
+  admin_email: "email?"
+  allowed_hosts: ["str"]
+  csrf_trusted_origins: ["str"]
+  time_zone: "str"
+  workers: "int(1,4)"
+  plugins:
+    - module: "str"
+      pip: "str"

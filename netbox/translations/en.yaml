@@ -1,0 +1,60 @@
+---
+configuration:
+  log_level:
+    name: Log level
+    description: >-
+      Verbosity of the log output of NetBox, PostgreSQL and Valkey. Use debug
+      only for troubleshooting.
+  admin_username:
+    name: Admin user name
+    description: >-
+      Name of the first superuser. It is created once, if no user with this
+      name exists yet.
+  admin_password:
+    name: Admin password
+    description: >-
+      Password of the first superuser. Empty = a random password is generated
+      and written to initial_admin_password.txt in the app's configuration
+      folder. Only used while the user is created; changing it later does not
+      change the password.
+  admin_email:
+    name: Admin e-mail
+    description: >-
+      Optional e-mail address of the first superuser.
+  allowed_hosts:
+    name: Allowed host names
+    description: >-
+      Host names and addresses under which NetBox is opened (the Host header),
+      for example the IP of your Home Assistant host and the domain of your
+      reverse proxy. Empty = any host is accepted (a warning is logged).
+  csrf_trusted_origins:
+    name: Trusted origins (reverse proxy)
+    description: >-
+      Full origins including https:// from which NetBox is opened through a
+      reverse proxy, for example https://netbox.example.org. Needed for logins
+      behind a proxy.
+  time_zone:
+    name: Time zone
+    description: >-
+      Time zone of NetBox, for example Europe/Berlin. Empty = the time zone of
+      Home Assistant.
+  workers:
+    name: Web workers
+    description: >-
+      Number of web worker processes. Each one needs several hundred MB of RAM;
+      2 is enough for a few users.
+  plugins:
+    name: Plugins
+    description: >-
+      NetBox plugins from PyPI, each with an exactly pinned version. They are
+      downloaded from the Internet when the list changes. Plugin settings go
+      into extra.py in the configuration folder (see the documentation).
+    fields:
+      module:
+        name: Plugin module
+        description: Python module name of the plugin, for example netbox_qrcode.
+      pip:
+        name: Package and version
+        description: Pinned PyPI package, for example netbox-qrcode==1.0.0.
+network:
+  8001/tcp: NetBox web UI and REST API (login required)

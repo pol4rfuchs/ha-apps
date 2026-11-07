@@ -1,0 +1,62 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: >-
+      Ausführlichkeit der Log-Ausgabe von NetBox, PostgreSQL und Valkey. Debug
+      nur zur Fehlersuche verwenden.
+  admin_username:
+    name: Admin-Benutzername
+    description: >-
+      Name des ersten Superusers. Er wird einmalig angelegt, wenn noch kein
+      Benutzer mit diesem Namen existiert.
+  admin_password:
+    name: Admin-Passwort
+    description: >-
+      Passwort des ersten Superusers. Leer = es wird ein zufälliges Passwort
+      erzeugt und in initial_admin_password.txt im Konfigurationsordner der App
+      abgelegt. Wird nur beim Anlegen des Benutzers verwendet; eine spätere
+      Änderung ändert das Passwort nicht.
+  admin_email:
+    name: Admin-E-Mail
+    description: >-
+      Optionale E-Mail-Adresse des ersten Superusers.
+  allowed_hosts:
+    name: Erlaubte Hostnamen
+    description: >-
+      Hostnamen und Adressen, unter denen NetBox aufgerufen wird (Host-Header),
+      z. B. die IP deines Home-Assistant-Hosts und die Domain deines Reverse
+      Proxys. Leer = jeder Host wird akzeptiert (es wird eine Warnung
+      protokolliert).
+  csrf_trusted_origins:
+    name: Vertrauenswürdige Origins (Reverse Proxy)
+    description: >-
+      Vollständige Origins mit https://, unter denen NetBox über einen Reverse
+      Proxy aufgerufen wird, z. B. https://netbox.example.org. Für die Anmeldung
+      hinter einem Proxy nötig.
+  time_zone:
+    name: Zeitzone
+    description: >-
+      Zeitzone von NetBox, z. B. Europe/Berlin. Leer = Zeitzone von Home
+      Assistant.
+  workers:
+    name: Web-Worker
+    description: >-
+      Anzahl der Web-Worker-Prozesse. Jeder braucht einige hundert MB RAM; 2
+      genügen für wenige Benutzer.
+  plugins:
+    name: Plugins
+    description: >-
+      NetBox-Plugins von PyPI, jeweils mit exakt festgelegter Version. Sie
+      werden aus dem Internet geladen, wenn sich die Liste ändert.
+      Plugin-Einstellungen kommen in die Datei extra.py im Konfigurationsordner
+      (siehe Dokumentation).
+    fields:
+      module:
+        name: Plugin-Modul
+        description: Python-Modulname des Plugins, z. B. netbox_qrcode.
+      pip:
+        name: Paket und Version
+        description: PyPI-Paket mit fester Version, z. B. netbox-qrcode==1.0.0.
+network:
+  8001/tcp: NetBox-Weboberfläche und REST-API (Anmeldung erforderlich)
