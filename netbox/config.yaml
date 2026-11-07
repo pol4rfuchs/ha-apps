@@ -1,6 +1,6 @@
 ---
 name: "NetBox"
-version: "0.1.0"
+version: "0.1.1"
 slug: "netbox"
 description: "NetBox – IPAM and DCIM (network documentation) with built-in PostgreSQL and Valkey"
 url: "https://github.com/pol4rfuchs/ha-apps"
