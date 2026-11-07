@@ -22,7 +22,7 @@ map:
 backup: cold
 # PostgreSQL and Valkey write their data on shutdown.
 timeout: 60
-apparmor: true
+apparmor: false
 
 options:
   log_level: "info"
