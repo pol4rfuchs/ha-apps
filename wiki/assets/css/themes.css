@@ -2,7 +2,7 @@
   Wiki hub themes — loaded after site.css.
   html[data-theme] = bento (default, set by themes.js) | docs
   Without JS the plain site.css look is shown (accent-tinted cards).
-  Every card carries its add-on accent as --a (same colour as the add-on's own wiki).
+  Every card carries its app accent as --a (same colour as the app's own wiki).
   Rule: relative paths only, no external dependencies.
 */
 
@@ -87,7 +87,7 @@
 .card .badge { color: var(--muted); background: rgba(255, 255, 255, 0.06); border-color: transparent; }
 .card-link { color: var(--a); }
 
-/* ---------- DOCS: sidebar layout like the add-on wikis ---------- */
+/* ---------- DOCS: sidebar layout like the app wikis ---------- */
 
 html[data-theme="docs"] body.hub .shell {
   width: min(1480px, calc(100% - 24px));

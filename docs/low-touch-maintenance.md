@@ -13,10 +13,10 @@
   - Recurring checks (meta-validation, Dockerfile linting)
 
 - **Manual share (rare, roughly every 1–3 months):**
-  - New features / new add-ons
+  - New features / new apps
   - Architecture or workflow migrations (e.g. switching to Release Please)
   - Non-trivial bug fixes (e.g. logic errors, data corruption)
-  - Strategic decisions (e.g. which add-ons get added, versioning scheme)
+  - Strategic decisions (e.g. which apps get added, versioning scheme)
 
 ## Example: `ha-apps` Monorepo
 
@@ -26,7 +26,7 @@
 | Docker upstream bumps | ✅ Workflows `07` and `23` | – |
 | Build & publish (GHCR) | ✅ Workflow `03` | – |
 | Lint/meta-validation | ✅ Workflows `00`, `01`, `12` | – |
-| Integrating new add-ons | – | ✅ |
+| Integrating new apps | – | ✅ |
 | Release workflow migration | – | ✅ (Release Please) |
 | Critical bug fixes (e.g. WAL checkpoint) | – | ✅ |
 

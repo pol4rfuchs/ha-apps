@@ -4,7 +4,7 @@
 
 # 🛠️ ntfy Manager — Home Assistant App
 
-Full admin control panel for an ntfy server running as a HAOS add-on.
+Full admin control panel for an ntfy server running as a HAOS app.
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![App Version](https://img.shields.io/badge/ntfy--manager-0.2.17-2eb67d?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
@@ -20,10 +20,10 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 
 | Property | Value |
 |---|---|
-| **HA Add-on Slug** | `ntfy_manager` |
+| **HA App Slug** | `ntfy_manager` |
 | **App Version** | `0.2.17` |
 | **Web UI Port** | `8099` (Ingress) |
-| **Talks to** | `ntfy` add-on (same repo) |
+| **Talks to** | `ntfy` app (same repo) |
 | **Persistence** | `/data/jwt_secret` |
 
 ---
@@ -42,11 +42,11 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 - **Debug** — SSE monitor (connect/reconnect/disconnect counters, live log) + in-memory audit feed
 
 ### Architecture
-- **HA Add-on** — `ghcr.io/hassio-addons/base` (Alpine + s6-overlay + bashio)
+- **HA App** — `ghcr.io/hassio-addons/base` (Alpine + s6-overlay + bashio)
 - **Ingress sidebar panel** on port 8099, optional direct access
 - **Frontend** — React 18 + Vite + Tailwind, single-bundle SPA
 - **Backend** — Express 4 + Zod + AES-256-GCM for stateless cookie sessions
-- **Auth** — the login form writes an encrypted cookie with the ntfy credentials, or loads defaults from the add-on config
+- **Auth** — the login form writes an encrypted cookie with the ntfy credentials, or loads defaults from the app config
 - **No second user DB** — the ntfy `user.db` is the single source of truth
 - **No bcrypt, no Prisma** — the only persistence is `/data/jwt_secret`
 - **SSE bridge** through nginx → Express → ntfy `/sse` (passed through, no buffering)
@@ -55,7 +55,7 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│ HAOS Add-on Container (Alpine + s6)                  │
+│ HAOS App Container (Alpine + s6)                  │
 │                                                      │
 │  ┌──────────┐         ┌──────────────┐               │
 │  │  nginx   │ ─────►  │ Express API  │               │
@@ -65,7 +65,7 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 │       │                      │                       │
 │       │ Ingress               │ HTTP                 │
 │       ▼                      ▼                       │
-│   Browser              ntfy:4280 (other add-on)      │
+│   Browser              ntfy:4280 (other app)      │
 │                                                      │
 └──────────────────────────────────────────────────────┘
 ```
@@ -73,11 +73,11 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 ## Installation
 
 1. Add the repository to Home Assistant: `https://github.com/pol4rfuchs/ha-apps`
-2. Install the add-on.
-3. Configure — either enter the ntfy credentials directly in the add-on, or leave them empty for an interactive login.
+2. Install the app.
+3. Configure — either enter the ntfy credentials directly in the app, or leave them empty for an interactive login.
 4. Start — the sidebar entry "ntfy Admin" appears.
 
-## Add-on Configuration
+## App Configuration
 
 | Option | Default | Description |
 |--------|---------|--------------|
@@ -91,9 +91,9 @@ Full admin control panel for an ntfy server running as a HAOS add-on.
 
 ## Auth flow
 
-1. The add-on starts → `/data/jwt_secret` is generated once.
+1. The app starts → `/data/jwt_secret` is generated once.
 2. The browser opens the panel → calls `/api/auth/status`.
-3. If ntfy credentials are set in the add-on config: logged in automatically.
+3. If ntfy credentials are set in the app config: logged in automatically.
 4. If not: login form — the user enters the ntfy credentials.
 5. The backend validates against ntfy via `GET /v1/account`.
 6. On success: AES-256-GCM-encrypted cookie with the ntfy Authorization header.

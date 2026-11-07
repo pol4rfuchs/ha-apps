@@ -20,7 +20,7 @@
 | 5349 | **TCP** | Pi-IP | TURN TLS fallback — strict firewalls |
 | 30000-30020 | **UDP** | Pi-IP | TURN relay range — media (audio/video) |
 
-> These ports go **directly** to the Pi — NPM cannot proxy UDP or raw WebRTC media traffic. Without the 30000-30020 relay range forwarded, calls will connect (signaling works) but carry no audio/video at all — even between two devices on the same LAN, since LiveKit always routes media through TURN by design. This range is deliberately kept small (21 ports) rather than LiveKit's 10,000-port default, since Home Assistant's add-on port schema requires each port to be listed individually — see the add-on's `config.yaml`.
+> These ports go **directly** to the Pi — NPM cannot proxy UDP or raw WebRTC media traffic. Without the 30000-30020 relay range forwarded, calls will connect (signaling works) but carry no audio/video at all — even between two devices on the same LAN, since LiveKit always routes media through TURN by design. This range is deliberately kept small (21 ports) rather than LiveKit's 10,000-port default, since Home Assistant's app port schema requires each port to be listed individually — see the app's `config.yaml`.
 
 ---
 
@@ -105,7 +105,7 @@ block `/_synapse/admin`.
 
 ---
 
-## Add-on Config
+## App Config
 
 ```yaml
 server_name: "example.org"
@@ -129,7 +129,7 @@ LiveKit TURN TLS needs a certificate directly — not via NPM proxy. Copy after 
 mkdir -p /data/matrix/tls
 cp /ssl/livekit.example.org/fullchain.pem /data/matrix/tls/livekit.crt
 cp /ssl/livekit.example.org/privkey.pem   /data/matrix/tls/livekit.key
-# restart the add-on
+# restart the app
 ```
 
 > TURN UDP 3478 + relay range 30000-30020 work without TLS and cover home + mobile networks.

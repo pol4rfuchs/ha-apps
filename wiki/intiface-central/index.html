@@ -428,9 +428,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> INTIFACE CENTRAL · BUTTPLUG · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> INTIFACE CENTRAL · BUTTPLUG · HOME ASSISTANT APP</div>
         <h2>Intiface Central in <span class="accent">Rose Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Intiface Central Home Assistant Add-on: installation, MQTT bridge setup, device support and troubleshooting — no VNC, no X11.</p>
+        <p class="hero-copy">Operations wiki for the Intiface Central Home Assistant App: installation, MQTT bridge setup, device support and troubleshooting — no VNC, no X11.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#mqtt">📡 MQTT Setup</a>
@@ -438,7 +438,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>intiface_central</strong></div>
+          <div class="metric"><small>App Slug</small><strong>intiface_central</strong></div>
           <div class="metric"><small>WebGUI</small><strong>http://homeassistant.local:8199</strong></div>
           <div class="metric"><small>Engine Port</small><strong>:12345 (WebSocket)</strong></div>
           <div class="metric"><small>ARM Support</small><strong>native (aarch64)</strong></div>
@@ -468,7 +468,7 @@ ARM:  intiface-engine built natively</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Intiface Central</strong> is a device control server for Buttplug-compatible devices (vibrators, e-stim, toys). This add-on runs it with a browser WebGUI, MQTT bridge and Home Assistant MQTT Discovery — no VNC, no X11.</p>
+        <p><strong>Intiface Central</strong> is a device control server for Buttplug-compatible devices (vibrators, e-stim, toys). This app runs it with a browser WebGUI, MQTT bridge and Home Assistant MQTT Discovery — no VNC, no X11.</p>
         <blockquote>The engine is compiled from source for the target architecture, so Raspberry Pi (aarch64) and x86 (amd64) both run natively, without emulation. Status: <strong>experimental and frozen</strong>. The app has no login and is meant for your LAN or a VPN only.</blockquote>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
@@ -519,14 +519,14 @@ Bluetooth/USB  → Host kernel → intiface-engine</code></pre>
 
     <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github intiface central mqtt">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="inti-step-1"><a class="anchor" href="#inti-step-1">#</a>Step 1 — Add Repository</h2>
         <ol>
           <li>Open Home Assistant.</li>
-          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Go to <strong>Settings → Apps → App Store</strong>.</li>
           <li>Open <strong>⋮ → Repositories</strong>.</li>
           <li>Add:</li>
         </ol>
@@ -577,7 +577,7 @@ ha_discovery_prefix: "homeassistant"</code></pre>
         <pre><code># Example: set device 0, motor 0 to 50% intensity
 mosquitto_pub -t "buttplug/0/motor/0/set" -m "0.5"</code></pre>
         <h2 id="mqtt-ha"><a class="anchor" href="#mqtt-ha">#</a>Home Assistant MQTT Discovery</h2>
-        <p>When <code>ha_discovery: true</code>, Home Assistant creates a number entity per motor (slider 0.0–1.0), a stop button and a connection sensor automatically after the add-on starts and detects devices.</p>
+        <p>When <code>ha_discovery: true</code>, Home Assistant creates a number entity per motor (slider 0.0–1.0), a stop button and a connection sensor automatically after the app starts and detects devices.</p>
         <pre><code># Example HA automation
 action:
   - action: mqtt.publish
@@ -605,7 +605,7 @@ action:
           </tbody>
         </table>
         <h2 id="devices-host"><a class="anchor" href="#devices-host">#</a>Host Access</h2>
-        <p>Bluetooth and USB are accessed directly through the host kernel. The add-on runs with <code>host_network</code>, <code>host_dbus</code>, <code>udev</code> and <code>full_access</code> for this; Home Assistant configures that automatically.</p>
+        <p>Bluetooth and USB are accessed directly through the host kernel. The app runs with <code>host_network</code>, <code>host_dbus</code>, <code>udev</code> and <code>full_access</code> for this; Home Assistant configures that automatically.</p>
         <blockquote>On Raspberry Pi, ensure Bluetooth is enabled in the HA OS settings and that the host Bluetooth service is not blocking the adapter.</blockquote>
       </div>
     </article>
@@ -624,7 +624,7 @@ action:
           </tbody>
         </table>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
-        <p><strong>Local (LAN):</strong> the add-on runs with <code>host_network</code>. The web UI (<code>8199</code>) and the Buttplug WebSocket (<code>12345</code>) listen on <strong>all interfaces</strong>, both without a login. That is intended for local clients.</p>
+        <p><strong>Local (LAN):</strong> the app runs with <code>host_network</code>. The web UI (<code>8199</code>) and the Buttplug WebSocket (<code>12345</code>) listen on <strong>all interfaces</strong>, both without a login. That is intended for local clients.</p>
         <p><strong>External (internet):</strong> recommendation <strong>LAN or VPN only, never the internet.</strong> Do not port-forward <code>8199</code> or <code>12345</code>, not even through a reverse proxy, because there is no authentication. AppArmor is currently disabled (hardware/bus access).</p>
       </div>
     </article>
@@ -637,7 +637,7 @@ action:
       <div class="doc-content">
         <pre><code>/data/
 └── home/    # intiface-engine data</code></pre>
-        <p>HA backups include the add-on <code>/data</code> directory automatically. Vibration patterns are saved in your browser (localStorage), not on the server.</p>
+        <p>HA backups include the app <code>/data</code> directory automatically. Vibration patterns are saved in your browser (localStorage), not on the server.</p>
       </div>
     </article>
 
@@ -651,8 +651,8 @@ action:
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
             <tr><td>Web UI not opening</td><td>Port not mapped.</td><td>Check port <code>8199</code> in the Network tab.</td></tr>
-            <tr><td>Device not found</td><td>Bluetooth not enabled or blocked.</td><td>Ensure BT is enabled on HA host; restart add-on.</td></tr>
-            <tr><td>Engine does not start with <code>use_serial: true</code></td><td>Older add-on versions passed an argument the engine rejects.</td><td>Update the add-on to a version that passes <code>--use-serial</code>.</td></tr>
+            <tr><td>Device not found</td><td>Bluetooth not enabled or blocked.</td><td>Ensure BT is enabled on HA host; restart app.</td></tr>
+            <tr><td>Engine does not start with <code>use_serial: true</code></td><td>Older app versions passed an argument the engine rejects.</td><td>Update the app to a version that passes <code>--use-serial</code>.</td></tr>
             <tr><td>MQTT entities not appearing</td><td>No device connected or wrong broker.</td><td>Verify broker hostname, that the MQTT integration is configured in HA, and that <code>ha_discovery</code> is <code>true</code>.</td></tr>
             <tr><td>Need more detail in the log</td><td>Default level is <code>info</code>.</td><td>Set <code>log_level: debug</code> and restart.</td></tr>
           </tbody>
@@ -667,11 +667,11 @@ action:
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/intiface/intiface-engine"><span>🎮</span><strong>intiface-engine</strong><small>Official engine binary</small></a>
           <a class="source-chip" href="https://github.com/buttplugio/buttplug"><span>🔌</span><strong>Buttplug.io</strong><small>Device protocol library</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained add-on wrapper. intiface-engine is BSD-3-Clause. The add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>Unofficial, community-maintained app wrapper. intiface-engine is BSD-3-Clause. The app wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

@@ -399,7 +399,7 @@
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What it does</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Install the App</strong><small>Repository, requirements, first start</small></span></a>
       <a class="nav-item" href="#connect" data-target="connect"><span class="nav-icon">🔌</span><span><strong>Controller URL &amp; API Key</strong><small>Reachability, API key creation</small></span></a>
-      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Add-on Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>App Options</strong><small>All options with defaults</small></span></a>
       <a class="nav-item" href="#safety" data-target="safety"><span class="nav-icon">🛡️</span><span><strong>Safety</strong><small>Mutation safety controls</small></span></a>
       <a class="nav-item" href="#notifications" data-target="notifications"><span class="nav-icon">🔔</span><span><strong>Alerts</strong><small>Notifications and monitoring</small></span></a>
       <a class="nav-item" href="#security" data-target="security"><span class="nav-icon">🔒</span><span><strong>Security &amp; Privacy</strong><small>Ingress only, no external requests</small></span></a>
@@ -426,7 +426,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>unifi_os_control_center</strong></div>
+          <div class="metric"><small>App Slug</small><strong>unifi_os_control_center</strong></div>
           <div class="metric"><small>Version</small><strong>0.7.7</strong></div>
           <div class="metric"><small>Access</small><strong>Home Assistant Ingress only</strong></div>
           <div class="metric"><small>Status</small><strong>experimental</strong></div>
@@ -479,13 +479,13 @@ read_only: true</code></pre>
       <div class="doc-content">
         <h2 id="un-req"><a class="anchor" href="#un-req">#</a>Requirements</h2>
         <ul>
-          <li>Home Assistant OS with Apps/Add-ons, on <code>aarch64</code> or <code>amd64</code></li>
+          <li>Home Assistant OS with Apps, on <code>aarch64</code> or <code>amd64</code></li>
           <li>A UniFi OS console or UniFi Network Server reachable from the Home Assistant host over HTTPS</li>
           <li>A dedicated UniFi API key</li>
         </ul>
         <h2 id="un-install"><a class="anchor" href="#un-install">#</a>Install</h2>
         <ol>
-          <li>Open <strong>Settings → Apps/Add-ons → Store</strong> and add the repository:</li>
+          <li>Open <strong>Settings → Apps → Store</strong> and add the repository:</li>
         </ol>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
         <ol start="2">
@@ -520,7 +520,7 @@ read_only: true</code></pre>
 
     <article id="configuration" class="doc-section glass-card" data-search="configuration options controller url api key verify tls read only polling interval retention max history rows log level ntfy notify cooldown grace polls">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
@@ -659,7 +659,7 @@ device_offline_grace_polls: 2</code></pre>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/unifi_os_control_center"><span>🐙</span><strong>Add-on source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/unifi_os_control_center"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/unifi_os_control_center/DOCS.md"><span>📖</span><strong>DOCS.md</strong><small>Full documentation</small></a>
           <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/unifi_os_control_center/CHANGELOG.md"><span>📝</span><strong>Changelog</strong><small>Release history</small></a>
         </div>

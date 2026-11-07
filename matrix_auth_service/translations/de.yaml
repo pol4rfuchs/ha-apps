@@ -5,13 +5,13 @@ configuration:
     description: "Öffentliche URL der Account-UI (z.B. account.example.org)."
   synapse_server_name:
     name: Synapse Servername
-    description: "Muss exakt dem server_name im Synapse-Add-on entsprechen."
+    description: "Muss exakt dem server_name in der Synapse-App entsprechen."
   synapse_endpoint:
     name: Synapse Endpoint
-    description: "Intern erreichbare URL des Synapse-Add-ons (z.B. http://xxxxx-matrix-server:8008)."
+    description: "Intern erreichbare URL der Synapse-App (z.B. http://xxxxx-matrix-server:8008)."
   synapse_secret:
     name: Synapse Shared Secret
-    description: "Secret für die Kopplung mit Synapse. Leer lassen zur automatischen Generierung — Wert danach ins Synapse-Add-on übertragen."
+    description: "Secret für die Kopplung mit Synapse. Leer lassen zur automatischen Generierung — Wert danach in die Synapse-App übertragen."
   postgres_password:
     name: PostgreSQL-Passwort
     description: "Passwort des internen MAS-Datenbankbenutzers. Leer lassen: es wird eines erzeugt (gespeichert in /data/mas/.pg_password). Ein hier gesetzter Wert wird bei jedem Start in der Datenbank übernommen."

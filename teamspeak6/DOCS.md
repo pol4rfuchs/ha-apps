@@ -8,7 +8,7 @@
 4. Check the **Log** tab for the first-time admin **privilege key (token)**
 5. Connect with your TeamSpeak 6 client to `<your-ha-ip>:9987`
 
-Server name, server password and slot count are not add-on options; set them in the TeamSpeak client or through ServerQuery.
+Server name, server password and slot count are not app options; set them in the TeamSpeak client or through ServerQuery.
 
 ## Finding the Privilege Key
 
@@ -34,8 +34,8 @@ In your TeamSpeak client: **Permissions → Use Privilege Key** → paste the to
 
 ## Ports
 
-The ports are fixed in the add-on. If a host port is already in use, change the host-side mapping in the add-on's **Network** tab; the clients then connect to that host port.
+The ports are fixed in the app. If a host port is already in use, change the host-side mapping in the app's **Network** tab; the clients then connect to that host port.
 
 ## Backup
 
-The add-on stores all data in `/data/teamspeak6`, which is included in Home Assistant backups. The running server works on a copy inside the container; the add-on writes it back to `/data/teamspeak6/server` every 5 minutes and when it stops cleanly, so a crash or power loss costs at most the last 5 minutes. The server logs in `/data/teamspeak6/logs` are left out of backups; they are cleared on every start anyway.
+The app stores all data in `/data/teamspeak6`, which is included in Home Assistant backups. The running server works on a copy inside the container; the app writes it back to `/data/teamspeak6/server` every 5 minutes and when it stops cleanly, so a crash or power loss costs at most the last 5 minutes. The server logs in `/data/teamspeak6/logs` are left out of backups; they are cleared on every start anyway.

@@ -421,9 +421,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> UNBOUND · RECURSIVE DNS RESOLVER · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> UNBOUND · RECURSIVE DNS RESOLVER · HOME ASSISTANT APP</div>
         <h2>Unbound in <span class="accent">Teal Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Unbound DNS resolver add-on: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (built from upstream source, currently 1.26.1).</p>
+        <p class="hero-copy">Operations wiki for the Unbound DNS resolver app: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (built from upstream source, currently 1.26.1).</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#webui">📊 Web UI Tour</a>
@@ -431,7 +431,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>unbound</strong></div>
+          <div class="metric"><small>App Slug</small><strong>unbound</strong></div>
           <div class="metric"><small>Web UI</small><strong>HA sidebar (Ingress only)</strong></div>
           <div class="metric"><small>DNS Port</small><strong>5053/tcp+udp → 53</strong></div>
           <div class="metric"><small>Upstream</small><strong>nlnetlabs/unbound 1.26.1</strong></div>
@@ -450,7 +450,7 @@ DNS:    5053/tcp + 5053/udp (mapped from container 53)</code></pre>
         <h3>🛡️ Source-Built Hardening</h3>
         <p>Built from upstream source instead of Alpine's package. Since 1.25.1 this fixed 11 CVEs compared with Alpine's 3.24 package (1.24.2), including CVE-2026-33278 (RCE).</p>
         <pre><code>unbound version: 1.26.1
-add-on version:  1.26.1-ha3-pol4r1</code></pre>
+app version:  1.26.1-ha3-pol4r1</code></pre>
       </div>
     </section>
 
@@ -460,7 +460,7 @@ add-on version:  1.26.1-ha3-pol4r1</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Unbound</strong> is a validating, recursive, caching DNS resolver from NLnet Labs. This add-on wraps it in a self-managed web UI — every setting (blocklists, whitelist, local records, network/performance/cache/security tuning) is configured through the dashboard, not YAML.</p>
+        <p><strong>Unbound</strong> is a validating, recursive, caching DNS resolver from NLnet Labs. This app wraps it in a self-managed web UI — every setting (blocklists, whitelist, local records, network/performance/cache/security tuning) is configured through the dashboard, not YAML.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
@@ -483,21 +483,21 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
 
     <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github unbound port 5053 change router dns">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="ub-step-1"><a class="anchor" href="#ub-step-1">#</a>Step 1 — Add Repository</h2>
         <ol>
           <li>Open Home Assistant.</li>
-          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Go to <strong>Settings → Apps → App Store</strong>.</li>
           <li>Open <strong>⋮ → Repositories</strong>.</li>
           <li>Add:</li>
         </ol>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
         <h2 id="ub-step-2"><a class="anchor" href="#ub-step-2">#</a>Step 2 — Install</h2>
         <ol>
-          <li>Search for <strong>Unbound</strong> in the Add-on Store.</li>
+          <li>Search for <strong>Unbound</strong> in the App Store.</li>
           <li>Click <strong>Install</strong>.</li>
         </ol>
         <h2 id="ub-step-3"><a class="anchor" href="#ub-step-3">#</a>Step 3 — Start</h2>
@@ -508,7 +508,7 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
         </ol>
         <h2 id="ub-step-4"><a class="anchor" href="#ub-step-4">#</a>Step 4 — Point Clients at It</h2>
         <p>DNS itself listens on <strong>5053</strong> (not the standard 53), so point your router/DHCP or individual clients at the HA host's IP on port <strong>5053</strong>. Some routers only support port 53 for upstream DNS forwarding — in that case set Unbound as a forwarder behind another resolver, or NAT-redirect 53→5053 at the firewall.</p>
-        <blockquote>Port 5053 was chosen deliberately to avoid clashing with a host that already runs something on 53 (e.g. systemd-resolved, another DNS add-on).</blockquote>
+        <blockquote>Port 5053 was chosen deliberately to avoid clashing with a host that already runs something on 53 (e.g. systemd-resolved, another DNS app).</blockquote>
       </div>
     </article>
 
@@ -531,7 +531,7 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
             <tr><td>Query Log</td><td>Recent-queries viewer, top-domains chart, filter by domain/client.</td></tr>
           </tbody>
         </table>
-        <blockquote>Query logging in the web UI is controlled separately from the add-on's <code>log_level</code> option — see <a href="#configuration">Configuration</a>.</blockquote>
+        <blockquote>Query logging in the web UI is controlled separately from the app's <code>log_level</code> option — see <a href="#configuration">Configuration</a>.</blockquote>
       </div>
     </article>
 
@@ -541,7 +541,7 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
-        <p>All tabs below apply without restarting the add-on:</p>
+        <p>All tabs below apply without restarting the app:</p>
         <table>
           <thead><tr><th>Tab</th><th>Covers</th></tr></thead>
           <tbody>
@@ -552,8 +552,8 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
             <tr><td><strong>Logging</strong></td><td>Verbosity, query logging toggle.</td></tr>
           </tbody>
         </table>
-        <h2 id="ub-loglevel"><a class="anchor" href="#ub-loglevel">#</a>Add-on <code>log_level</code> Option</h2>
-        <p>The only option in the HA add-on panel controls the <strong>supervisor process log</strong> verbosity only — it does not touch the web UI's query log, which has its own Logging tab.</p>
+        <h2 id="ub-loglevel"><a class="anchor" href="#ub-loglevel">#</a>App <code>log_level</code> Option</h2>
+        <p>The only option in the HA app panel controls the <strong>supervisor process log</strong> verbosity only — it does not touch the web UI's query log, which has its own Logging tab.</p>
         <pre><code>options:
   log_level: info   # trace|debug|info|notice|warning|error|fatal</code></pre>
       </div>
@@ -573,7 +573,7 @@ HA Ingress → Web UI :2137 → /data/config.json (blocklists, records, settings
         <pre><code>addon_configs/&lt;slug&gt;_unbound/unbound-overlay.conf   # extra server: directives
 addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sections</code></pre>
         <h2 id="ub-validate"><a class="anchor" href="#ub-validate">#</a>Validation & Safe Fallback</h2>
-        <p>Every combined configuration is checked with <code>unbound-checkconf</code> before use. If it fails, the add-on <strong>automatically falls back to GUI-only settings</strong> and surfaces the validation error in the Advanced tab — a bad snippet never takes DNS resolution down.</p>
+        <p>Every combined configuration is checked with <code>unbound-checkconf</code> before use. If it fails, the app <strong>automatically falls back to GUI-only settings</strong> and surfaces the validation error in the Advanced tab — a bad snippet never takes DNS resolution down.</p>
       </div>
     </article>
 
@@ -584,8 +584,8 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
       <div class="doc-content">
         <p>All runtime configuration lives in <code>/data/config.json</code>, managed exclusively through the web UI — blocklists, whitelist entries, local DNS records, server settings, query log data.</p>
-        <pre><code>/data/config.json   # add-on's own persistent storage — survives restarts, updates, container recreation automatically</code></pre>
-        <blockquote>No extra <code>map:</code> entry is required for <code>/data</code> — it's the add-on's own storage. A Home Assistant full backup already includes it, and there are no secrets to manage: Unbound needs no credentials, and the web UI relies on Ingress/HA auth rather than a separate login. The only generated secrets are the unbound-control keys in <code>/data/unbound-control</code>.</blockquote>
+        <pre><code>/data/config.json   # app's own persistent storage — survives restarts, updates, container recreation automatically</code></pre>
+        <blockquote>No extra <code>map:</code> entry is required for <code>/data</code> — it's the app's own storage. A Home Assistant full backup already includes it, and there are no secrets to manage: Unbound needs no credentials, and the web UI relies on Ingress/HA auth rather than a separate login. The only generated secrets are the unbound-control keys in <code>/data/unbound-control</code>.</blockquote>
       </div>
     </article>
 
@@ -596,7 +596,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
       <div class="doc-content">
         <h2 id="ub-sourcebuild"><a class="anchor" href="#ub-sourcebuild">#</a>Why Source-Built</h2>
-        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This add-on builds Unbound from upstream source instead (currently <strong>1.26.1</strong>, checksum-verified against NLnet Labs' published SHA256). Moving from Alpine's package to 1.25.1 fixed 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
+        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This app builds Unbound from upstream source instead (currently <strong>1.26.1</strong>, checksum-verified against NLnet Labs' published SHA256). Moving from Alpine's package to 1.25.1 fixed 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
         <h2 id="ub-fixes"><a class="anchor" href="#ub-fixes">#</a>Stability & Hardening Fixes</h2>
         <table>
           <thead><tr><th>Area</th><th>Fix</th></tr></thead>
@@ -606,7 +606,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
             <tr><td>Base image</td><td><code>hassio-addons/base:21.0.7</code>.</td></tr>
             <tr><td>Web UI access</td><td>The web UI has no login of its own, so the app rejects every request that does not come from the Home Assistant Ingress gateway (<code>172.30.32.2</code>) or loopback. Before this, other containers on the Supervisor network could reach it.</td></tr>
             <tr><td>Blocklists after a restart</td><td>The start now builds the blocklist with the same code as the web UI refresh, so plain domain lists (not only the hosts format) stay active after a restart.</td></tr>
-            <tr><td>Crash recovery</td><td>If <code>unbound</code> exits unexpectedly it is started again (up to 5 times within 5 minutes); before, the whole add-on stayed down until it was started by hand.</td></tr>
+            <tr><td>Crash recovery</td><td>If <code>unbound</code> exits unexpectedly it is started again (up to 5 times within 5 minutes); before, the whole app stayed down until it was started by hand.</td></tr>
             <tr><td>unbound-control keys</td><td>No longer baked into the image (they would be identical for everyone). They are generated on the first start and kept in <code>/data/unbound-control</code>.</td></tr>
             <tr><td>Query-log permissions</td><td>Corrected file ownership so the web UI can read/write logs under the drop-privileges user.</td></tr>
             <tr><td>AppArmor</td><td>Profile tightened; <code>harden-algo</code> / <code>harden-below-nxdomain</code> enabled.</td></tr>
@@ -636,7 +636,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
             <tr><td>Unbound (upstream)</td><td><code>1.26.1</code></td><td>Source-built, not the Alpine package.</td></tr>
           </tbody>
         </table>
-        <blockquote>This add-on has its own manual version scheme rather than Conventional Commits + Release Please, because upstream releases (source tarballs) don't map cleanly onto semantic-release automation.</blockquote>
+        <blockquote>This app has its own manual version scheme rather than Conventional Commits + Release Please, because upstream releases (source tarballs) don't map cleanly onto semantic-release automation.</blockquote>
       </div>
     </article>
 
@@ -662,9 +662,9 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
           <tbody>
             <tr><td>Clients get no DNS resolution</td><td>Clients still pointed at port 53, not 5053.</td><td>Update client/router DNS target to <code>&lt;HA-IP&gt;:5053</code>, or NAT-redirect 53→5053.</td></tr>
             <tr><td>DNSSEC validation failures</td><td>Upstream forward server doesn't support DNSSEC, or system clock is wrong.</td><td>Check NTP sync; try a DNSSEC-capable forwarder or pure recursive mode.</td></tr>
-            <tr><td>Port 5053 already in use</td><td>Another service (e.g. another DNS add-on) bound the port first.</td><td>Change the add-on's port mapping in <strong>Network</strong> settings.</td></tr>
+            <tr><td>Port 5053 already in use</td><td>Another service (e.g. another DNS app) bound the port first.</td><td>Change the app's port mapping in <strong>Network</strong> settings.</td></tr>
             <tr><td>Blocklist changes not applying</td><td>Refresh not triggered after edit.</td><td>Use the one-click <strong>refresh &amp; apply</strong> button in the web UI.</td></tr>
-            <tr><td>Custom config rejected</td><td><code>unbound-checkconf</code> validation failed.</td><td>Check the error shown in the Advanced tab; the add-on falls back to GUI-only settings automatically.</td></tr>
+            <tr><td>Custom config rejected</td><td><code>unbound-checkconf</code> validation failed.</td><td>Check the error shown in the Advanced tab; the app falls back to GUI-only settings automatically.</td></tr>
           </tbody>
         </table>
       </div>
@@ -677,11 +677,11 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://nlnetlabs.nl/projects/unbound/about/"><span>🛡️</span><strong>Unbound Upstream</strong><small>NLnet Labs</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Unbound is licensed under the BSD 3-Clause license. The add-on wrapper is MIT, because it is a hardened fork of the MIT-licensed fenio/ha-addons.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Unbound is licensed under the BSD 3-Clause license. The app wrapper is MIT, because it is a hardened fork of the MIT-licensed fenio/ha-addons.</blockquote>
       </div>
     </article>
 

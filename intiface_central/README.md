@@ -63,7 +63,7 @@ External clients (games, etc.) ────────────────�
 ### Step 1 — Add the repository
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Add:
@@ -149,8 +149,8 @@ Vibration patterns are saved in your browser (localStorage), not on the server.
 | Problem | Fix |
 |---|---|
 | Web UI not opening | Check port `8199` in the Network tab |
-| Device not found | Ensure Bluetooth is enabled on the host; restart the add-on |
-| Engine does not start with `use_serial: true` | Update to a version of the add-on that passes `--use-serial` (older versions passed an argument the engine rejects) |
+| Device not found | Ensure Bluetooth is enabled on the host; restart the app |
+| Engine does not start with `use_serial: true` | Update to a version of the app that passes `--use-serial` (older versions passed an argument the engine rejects) |
 | MQTT entities not appearing | Verify broker hostname, that the MQTT integration is configured in HA, and that `ha_discovery` is `true` |
 | Need more detail in the log | Set `log_level: debug` |
 

@@ -68,9 +68,9 @@
 
    [![Add repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/pol4rfuchs/ha-apps)
 
-   Or manually: **Settings** > **Add-ons** > **Add-on Store** > **⋮** > **Repositories** > Add `https://github.com/pol4rfuchs/ha-apps`
+   Or manually: **Settings** > **Apps** > **App Store** > **⋮** > **Repositories** > Add `https://github.com/pol4rfuchs/ha-apps`
 
-2. Find "Unbound DNS" in the add-on store and click **Install**
+2. Find "Unbound DNS" in the app store and click **Install**
 3. Start the addon and open the **Web UI** to configure everything
 
 ## Configuration
@@ -123,11 +123,11 @@ On first startup, the addon creates a default configuration. After that, all set
 
 ## Network Configuration
 
-The add-on listens on port **5053** by default (mapped from container port 53).
+The app listens on port **5053** by default (mapped from container port 53).
 
 To use as your network's DNS server:
 1. Configure your router's DHCP to distribute your Home Assistant's IP as the DNS server
-2. Ensure clients query port 5053, or change the port mapping to 53 in the add-on configuration
+2. Ensure clients query port 5053, or change the port mapping to 53 in the app configuration
 
 ## Troubleshooting
 
@@ -137,12 +137,12 @@ To use as your network's DNS server:
 dig @<homeassistant-ip> -p 5053 google.com
 ```
 
-### Check Add-on Logs
+### Check App Logs
 
-View logs in Home Assistant: **Settings** > **Add-ons** > **Unbound DNS** > **Log**
+View logs in Home Assistant: **Settings** > **Apps** > **Unbound DNS** > **Log**
 
 ## License
 
-MIT License. This add-on is a hardened fork of [fenio/ha-addons](https://github.com/fenio/ha-addons), which is MIT-licensed.
+MIT License. This app is a hardened fork of [fenio/ha-addons](https://github.com/fenio/ha-addons), which is MIT-licensed.
 
 Unbound itself (NLnet Labs) is licensed under the BSD 3-Clause License, see [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).

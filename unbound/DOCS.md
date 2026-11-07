@@ -6,14 +6,14 @@ details beyond the installation/quickstart steps in the README.
 ## Persistent Data
 
 All runtime configuration lives in `/data/config.json`, managed exclusively
-through the add-on's web UI. This includes:
+through the app's web UI. This includes:
 
 - Blocklists, whitelist entries, local DNS records
 - The last successful download of each blocklist (`/data/blocklist_cache/`, used when a refresh fails; excluded from backups because it is downloaded again)
 - Server settings (network, performance, cache, security tabs)
 - Query log data
 
-`/data` is the add-on's own persistent storage and survives add-on
+`/data` is the app's own persistent storage and survives app
 restarts, updates, and container recreation automatically — no extra `map:`
 entry is required for it.
 
@@ -21,10 +21,10 @@ entry is required for it.
 
 Back up `/data/config.json` if you want to restore your DNS configuration
 (blocklists, local records, server settings) onto a fresh install. A
-Home Assistant full backup (which includes add-on data by default) already
+Home Assistant full backup (which includes app data by default) already
 covers this — no addon-specific backup hooks are configured.
 
-There are no secrets to manage for this add-on: Unbound itself doesn't
+There are no secrets to manage for this app: Unbound itself doesn't
 require credentials, and the web UI has no separate authentication beyond
 what Ingress/HA already provides.
 
@@ -42,14 +42,14 @@ full mechanism (`unbound-overlay.conf` / `unbound-extra.conf` under
   that the GUI doesn't expose.
 
 If the combined configuration fails `unbound-checkconf` validation, the
-add-on automatically falls back to GUI-only settings and surfaces the
+app automatically falls back to GUI-only settings and surfaces the
 validation error in the **Advanced** tab, so a bad snippet never takes DNS
 resolution down.
 
 ## Log Level
 
-The only option exposed in the HA add-on panel (`log_level`) controls the
-verbosity of the add-on's own supervisor process log — it does not affect
+The only option exposed in the HA app panel (`log_level`) controls the
+verbosity of the app's own supervisor process log — it does not affect
 what's recorded in the web UI's query log, which is controlled separately
 via the **Logging** section in the web UI's Server Settings.
 

@@ -8,8 +8,8 @@
 
 </div>
 
-Home Assistant add-on for the [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
-by Element HQ. Runs standalone next to the `matrix_synapse` add-on and,
+Home Assistant app for the [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
+by Element HQ. Runs standalone next to the `matrix_synapse` app and,
 if wanted, takes over the complete auth delegation (OIDC/OAuth2), including
 the prerequisite for Element X QR code login and MFA.
 

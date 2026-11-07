@@ -36,7 +36,7 @@
    ```
    https://github.com/pol4rfuchs/ha-apps
    ```
-2. **Install the add-on** (search for "Forgejo")
+2. **Install the app** (search for "Forgejo")
 3. **Start it** – on the first visit the setup wizard appears
 
 ## Configuration
@@ -67,14 +67,14 @@ All data lives in `addon_config` – it survives updates and restarts:
 ```
 
 `app.ini` can be edited directly with the HA file editor
-(Settings → Add-ons → Forgejo → Configuration, or the File editor add-on).
+(Settings → Apps → Forgejo → Configuration, or the File editor app).
 Advanced Forgejo settings that are not in the HA UI → directly in app.ini.
 
 ## Local testing (before the first GHCR push)
 
-The add-on uses a prebuilt image from GHCR (`ghcr.io/pol4rfuchs/forgejo`).
+The app uses a prebuilt image from GHCR (`ghcr.io/pol4rfuchs/forgejo`).
 `build.yaml` no longer exists in the repo (the central CI/CD pipeline even
-aborts hard if one is present in the add-on folder) — local testing runs
+aborts hard if one is present in the app folder) — local testing runs
 directly through the Dockerfile instead:
 
 ```bash
@@ -85,7 +85,7 @@ docker buildx build \
 ```
 
 Or: open a PR with the change — `02-build-test.yml` automatically builds only
-the changed add-on (path filtering) for amd64+arm64 in CI.
+the changed app (path filtering) for amd64+arm64 in CI.
 
 ## Advanced configuration (directly in app.ini)
 
@@ -111,9 +111,9 @@ FORGEJO__packages__ENABLED=true
 ## 📜 License
 
 ```text
-Apache-2.0 (add-on wrapper)  /  GPL-3.0-or-later (Forgejo)
+Apache-2.0 (app wrapper)  /  GPL-3.0-or-later (Forgejo)
 ```
 
-The add-on wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
+The app wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
 
 Forgejo itself is licensed under the [GPL version 3.0 or any later version](https://codeberg.org/forgejo/forgejo/src/branch/forgejo/LICENSE); versions before 9.0 were MIT.

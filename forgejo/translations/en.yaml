@@ -29,7 +29,7 @@ configuration:
     name: "Enable SSH Git Access"
     description: >-
       Allows Git access via SSH (git clone/push/pull over ssh://).
-      Port 22/tcp must be mapped in the add-on's network settings.
+      Port 22/tcp must be mapped in the app's network settings.
 
   ssh_port:
     name: "SSH Port"

@@ -45,7 +45,7 @@ configuration:
       original keeps the upstream look. bento switches the Element Call web app to the
       Bento look (calm background, tile cards, matching colors). In Element Web the
       Bento themes are always available under Settings → Appearance, independent of
-      this option. Applied at the next add-on start.
+      this option. Applied at the next app start.
   livekit_url:
     name: LiveKit URL
     description: "External WSS URL for the LiveKit SFU (e.g. wss://livekit.your-domain.tld)."
@@ -54,22 +54,22 @@ configuration:
     description: "External HTTPS URL for the lk-jwt-service token bridge."
   mas_enabled:
     name: Enable MAS Delegation
-    description: "Delegates login/registration entirely to the matrix-auth-service add-on (required for Element X QR-code login). Disables native Synapse auth."
+    description: "Delegates login/registration entirely to the matrix-auth-service app (required for Element X QR-code login). Disables native Synapse auth."
   mas_endpoint:
     name: MAS Endpoint
-    description: "Internally reachable URL of the matrix-auth-service add-on (e.g. http://homeassistant.local:8082)."
+    description: "Internally reachable URL of the matrix-auth-service app (e.g. http://homeassistant.local:8082)."
   mas_secret:
     name: MAS Shared Secret
-    description: "Must exactly match the value generated/set in the matrix-auth-service add-on."
+    description: "Must exactly match the value generated/set in the matrix-auth-service app."
   whatsapp_bridge_enabled:
     name: Enable WhatsApp Bridge
-    description: "Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge add-on running with its registration.yaml present in /share)."
+    description: "Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge app running with its registration.yaml present in /share)."
   signal_bridge_enabled:
     name: Enable Signal Bridge
-    description: "Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge add-on running with its registration.yaml present in /share)."
+    description: "Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge app running with its registration.yaml present in /share)."
   telegram_bridge_enabled:
     name: Enable Telegram Bridge
-    description: "Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge add-on running with its registration.yaml present in /share)."
+    description: "Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge app running with its registration.yaml present in /share)."
   media_retention_local_days:
     name: Media Retention — Local (days)
     description: "Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever)."

@@ -398,7 +398,7 @@
     <nav class="nav" id="navList">
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What this bridge does</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Install &amp; Link Synapse</strong><small>Step by step</small></span></a>
-      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Add-on Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>App Options</strong><small>All options with defaults</small></span></a>
       <a class="nav-item" href="#login" data-target="login"><span class="nav-icon">🔗</span><span><strong>Link via QR code</strong><small>How to connect your account</small></span></a>
       <a class="nav-item" href="#secrets" data-target="secrets"><span class="nav-icon">🔐</span><span><strong>Tokens &amp; Registration</strong><small>Appservice registration</small></span></a>
       <a class="nav-item" href="#backup" data-target="backup"><span class="nav-icon">💾</span><span><strong>What to Back Up</strong><small>State and registration</small></span></a>
@@ -416,7 +416,7 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> MAUTRIX WHATSAPP · APPLICATION-SERVICE BRIDGE · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> MAUTRIX WHATSAPP · APPLICATION-SERVICE BRIDGE · HOME ASSISTANT APP</div>
         <h2>WhatsApp in <span class="accent">Matrix</span>.</h2>
         <p class="hero-copy">Operations wiki for the WhatsApp Bridge: mautrix-whatsapp as an isolated application-service bridge for your self-hosted Synapse homeserver.</p>
         <div class="hero-actions">
@@ -426,7 +426,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>matrix_whatsapp_bridge</strong></div>
+          <div class="metric"><small>App Slug</small><strong>matrix_whatsapp_bridge</strong></div>
           <div class="metric"><small>Version</small><strong>0.2609.0-ha1-pol4r1</strong></div>
           <div class="metric"><small>Bot</small><strong>@whatsappbot:&lt;domain&gt;</strong></div>
           <div class="metric"><small>Status</small><strong>experimental</strong></div>
@@ -438,7 +438,7 @@
       <div class="quick-card glass-card">
         <h3>⚡ Enable in Synapse</h3>
         <p>Without this switch Synapse ignores the bridge registration.</p>
-        <pre><code>whatsapp_bridge_enabled: true   # in the Matrix Synapse add-on, then restart Synapse</code></pre>
+        <pre><code>whatsapp_bridge_enabled: true   # in the Matrix Synapse app, then restart Synapse</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>⚠️ Never Change the Tokens</h3>
@@ -447,14 +447,14 @@
       </div>
     </section>
 
-    <article id="home" class="doc-section glass-card" data-search="home overview mautrix whatsapp bridge appservice synapse isolated add-on">
+    <article id="home" class="doc-section glass-card" data-search="home overview mautrix whatsapp bridge appservice synapse isolated app">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>WhatsApp Bridge</strong> connects WhatsApp to your self-hosted Matrix Synapse homeserver via <a href="https://github.com/mautrix/whatsapp">mautrix-whatsapp</a> as an application-service bridge. It runs as a standalone, isolated add-on — no shared container with other bridges.</p>
-        <blockquote><strong>Experimental.</strong> The add-on is marked <code>stage: experimental</code>. Documented upstream at <a href="https://docs.mau.fi/bridges/go/whatsapp/index.html">docs.mau.fi</a>.</blockquote>
+        <p><strong>WhatsApp Bridge</strong> connects WhatsApp to your self-hosted Matrix Synapse homeserver via <a href="https://github.com/mautrix/whatsapp">mautrix-whatsapp</a> as an application-service bridge. It runs as a standalone, isolated app — no shared container with other bridges.</p>
+        <blockquote><strong>Experimental.</strong> The app is marked <code>stage: experimental</code>. Documented upstream at <a href="https://docs.mau.fi/bridges/go/whatsapp/index.html">docs.mau.fi</a>.</blockquote>
       </div>
     </article>
 
@@ -465,10 +465,10 @@
       </div>
       <div class="doc-content">
         <ol>
-          <li>Install and start the add-on.</li>
-          <li>Set <code>homeserver_address</code> / <code>homeserver_domain</code> (address of the Matrix Synapse add-on) and <code>db_type</code> (SQLite or Postgres).</li>
+          <li>Install and start the app.</li>
+          <li>Set <code>homeserver_address</code> / <code>homeserver_domain</code> (address of the Matrix Synapse app) and <code>db_type</code> (SQLite or Postgres).</li>
           <li>On first start the bridge generates <code>config.yaml</code> (from your options) and <code>registration.yaml</code>, which is copied to <code>/share/whatsapp_bridge_registration.yaml</code>.</li>
-          <li>In the <strong>Matrix Synapse add-on</strong> enable <code>whatsapp_bridge_enabled</code> and restart Synapse — it only reads the appservice registration then.</li>
+          <li>In the <strong>Matrix Synapse app</strong> enable <code>whatsapp_bridge_enabled</code> and restart Synapse — it only reads the appservice registration then.</li>
           <li>From any Matrix client, DM <code>@whatsappbot:&lt;your-domain&gt;</code> and send <code>login</code>.</li>
         </ol>
       </div>
@@ -476,14 +476,14 @@
 
     <article id="configuration" class="doc-section glass-card" data-search="configuration options homeserver appservice db type postgres encryption log level whatsapp linked devices qr sqlite postgres migration">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>homeserver_address</code></td><td><code>http://xxxxx-matrix-server:8008</code></td><td>URL of the Matrix Synapse add-on (internal address).</td></tr>
+            <tr><td><code>homeserver_address</code></td><td><code>http://xxxxx-matrix-server:8008</code></td><td>URL of the Matrix Synapse app (internal address).</td></tr>
             <tr><td><code>homeserver_domain</code></td><td><em>(empty)</em></td><td>Server name of your Matrix homeserver.</td></tr>
             <tr><td><code>appservice_address</code></td><td><code>http://xxxxx-matrix-whatsapp-bridge:29318</code></td><td>Address under which Synapse reaches this bridge.</td></tr>
             <tr><td><code>appservice_id</code></td><td><code>whatsapp</code></td><td>Appservice ID. Changing it requires regenerating <code>registration.yaml</code>.</td></tr>
@@ -496,7 +496,7 @@
             <tr><td><code>encryption</code></td><td><code>true</code></td><td>Bridge-side end-to-end encryption (Megolm); the Matrix client must enable it too.</td></tr>
             <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code> or <code>fatal</code>.</td></tr>
             </tbody>
-        </table><blockquote>The <code>xxxxx-…</code> hostnames in the defaults are placeholders — replace them with the real hostnames of your Synapse add-on and this bridge.</blockquote>
+        </table><blockquote>The <code>xxxxx-…</code> hostnames in the defaults are placeholders — replace them with the real hostnames of your Synapse app and this bridge.</blockquote>
       </div>
     </article>
 
@@ -519,7 +519,7 @@
         <p><code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code> are generated automatically on first registration. <strong>Do not change them afterwards</strong> — otherwise Synapse loses its link to the appservice and all bridged rooms and users break.</p>
         <p>The bridge writes <code>registration.yaml</code> to <code>/share/whatsapp_bridge_registration.yaml</code>. Synapse reads it only when <code>whatsapp_bridge_enabled</code> is enabled (restart required).</p>
         <h2 id="br-access"><a class="anchor" href="#br-access">#</a>Local and external access</h2>
-        <p><strong>Local (LAN):</strong> the bridge has no web interface and publishes no host port. The appservice port <code>29318</code> is reachable only inside Home Assistant's internal network, so the Matrix Synapse add-on can talk to the bridge (<code>appservice_address</code>). The link is protected by <code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code>; treat <code>/data</code> and <code>/share/whatsapp_bridge_registration.yaml</code> as secrets.</p>
+        <p><strong>Local (LAN):</strong> the bridge has no web interface and publishes no host port. The appservice port <code>29318</code> is reachable only inside Home Assistant's internal network, so the Matrix Synapse app can talk to the bridge (<code>appservice_address</code>). The link is protected by <code>as_token</code> / <code>hs_token</code> in <code>/data/registration.yaml</code>; treat <code>/data</code> and <code>/share/whatsapp_bridge_registration.yaml</code> as secrets.</p>
         <p><strong>External (internet):</strong> recommendation <strong>forward nothing.</strong> The bridge connects outward to WhatsApp. Only Synapse has to be reachable from outside (see its documentation), never the bridge itself.</p>
       </div>
     </article>
@@ -564,12 +564,12 @@
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/matrix_whatsapp_bridge"><span>🐙</span><strong>Add-on source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/matrix_whatsapp_bridge"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/mautrix/whatsapp"><span>🌉</span><strong>mautrix-whatsapp</strong><small>Upstream</small></a>
           <a class="source-chip" href="https://docs.mau.fi/bridges/go/whatsapp/index.html"><span>📖</span><strong>Upstream docs</strong><small>docs.mau.fi</small></a>
-          <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver add-on</small></a>
+          <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver app</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper around the upstream mautrix bridge. The add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper around the upstream mautrix bridge. The app wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

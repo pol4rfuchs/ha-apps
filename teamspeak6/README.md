@@ -4,7 +4,7 @@
 
 # 🎙️ TeamSpeak 6 Server — Home Assistant App
 
-**TeamSpeak 6 voice server as a Home Assistant add-on, built on the official `teamspeaksystems/teamspeak6-server` image.**
+**TeamSpeak 6 voice server as a Home Assistant app, built on the official `teamspeaksystems/teamspeak6-server` image.**
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![TeamSpeak Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0--beta13.1-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://teamspeak.com)
@@ -33,7 +33,7 @@
 1. Add the repository in Home Assistant:
 
    ```text
-   Settings → Add-ons → Add-on Store → ⋮ → Repositories
+   Settings → Apps → App Store → ⋮ → Repositories
    ```
 
    ```text
@@ -41,8 +41,8 @@
    ```
 
 2. Install **TeamSpeak 6 Server**.
-3. In the Configuration tab set **Accept TeamSpeak License** (`license_accepted`) to `true`. The add-on refuses to start otherwise.
-4. Start the add-on and open the **Log** tab (see *First start* below).
+3. In the Configuration tab set **Accept TeamSpeak License** (`license_accepted`) to `true`. The app refuses to start otherwise.
+4. Start the app and open the **Log** tab (see *First start* below).
 5. Connect with your TeamSpeak 6 client to `<ha-host>:9987`.
 
 ---
@@ -55,7 +55,7 @@
 | `query_admin_password` | — | Password of the ServerQuery login `serveradmin`. If empty, TeamSpeak generates one on the first start and prints it in the log. |
 | `log_level` | `3` | TeamSpeak log level, `0`–`4` (higher is more verbose). |
 
-The ports are fixed. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the add-on options.
+The ports are fixed. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the app options.
 
 ---
 
@@ -105,7 +105,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0
 └── .token_was_shown    ← marker: the token was already printed
 ```
 
-TeamSpeak works on a copy in `/var/tsserver` inside the container. The add-on restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the add-on is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes. The Home Assistant backup contains `/data` except the log files in `logs/`.
+TeamSpeak works on a copy in `/var/tsserver` inside the container. The app restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the app is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes. The Home Assistant backup contains `/data` except the log files in `logs/`.
 
 ---
 
@@ -113,16 +113,16 @@ TeamSpeak works on a copy in `/var/tsserver` inside the container. The add-on re
 
 | Problem | Fix |
 |---|---|
-| Add-on stops right after start | `license_accepted` is `false`. |
+| App stops right after start | `license_accepted` is `false`. |
 | Token missed | Create a new one through ServerQuery (see above). |
 | Clients outside the LAN cannot connect | Forward `9987/udp` (and `30033/tcp`) to the Home Assistant host. |
-| Port already in use | Another service uses the port; change the host port in the add-on's **Network** tab. |
+| Port already in use | Another service uses the port; change the host port in the app's **Network** tab. |
 
 ---
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 

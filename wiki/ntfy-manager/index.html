@@ -367,7 +367,7 @@
     </a>
     <a class="nav-item" href="#install">
       <div class="nav-icon">📦</div>
-      <div><strong>Installation</strong><small>Set up the add-on</small></div>
+      <div><strong>Installation</strong><small>Set up the app</small></div>
     </a>
     <a class="nav-item" href="#config">
       <div class="nav-icon">⚙️</div>
@@ -395,11 +395,11 @@
   <nav class="nav">
     <a class="nav-item" href="../ntfy/">
       <div class="nav-icon">🔔</div>
-      <div><strong>ntfy</strong><small>ntfy Server Add-on</small></div>
+      <div><strong>ntfy</strong><small>ntfy Server App</small></div>
     </a>
     <a class="nav-item" href="../">
       <div class="nav-icon">🏠</div>
-      <div><strong>Wiki Hub</strong><small>All add-on wikis</small></div>
+      <div><strong>Wiki Hub</strong><small>All app wikis</small></div>
     </a>
   </nav>
 
@@ -416,11 +416,11 @@
 
   <!-- HERO -->
   <div class="hero" id="overview">
-    <div class="hero-badge">🔔 ntfy Admin Console · HA Add-on</div>
+    <div class="hero-badge">🔔 ntfy Admin Console · HA App</div>
     <h1>ntfy <span>Manager</span></h1>
-    <p>Web-based admin console for the ntfy add-on. Manage topic reservations, ACL rules and auth tokens, and watch messages in real time via SSE — all without CLI access to the container.</p>
+    <p>Web-based admin console for the ntfy app. Manage topic reservations, ACL rules and auth tokens, and watch messages in real time via SSE — all without CLI access to the container.</p>
     <div class="meta-strip">
-      <span class="chip">🏗️ Custom Add-on</span>
+      <span class="chip">🏗️ Custom App</span>
       <span class="chip">🌐 Web UI</span>
       <span class="chip">🔐 ACL / Token Mgmt</span>
       <span class="chip">📡 SSE Live-Stream</span>
@@ -434,7 +434,7 @@
       <div class="icon">✨</div>
       <div>
         <h2>Features</h2>
-        <p>Complete admin console for ntfy — single-page HTML served by the add-on</p>
+        <p>Complete admin console for ntfy — single-page HTML served by the app</p>
       </div>
     </div>
 
@@ -467,7 +467,7 @@
       <div class="card">
         <div class="card-icon">💾</div>
         <h3>Topic Settings</h3>
-        <p>Persistent topic settings (default priority, labels) stored in the add-on storage.</p>
+        <p>Persistent topic settings (default priority, labels) stored in the app storage.</p>
       </div>
     </div>
   </div>
@@ -478,7 +478,7 @@
       <div class="icon">📦</div>
       <div>
         <h2>Installation</h2>
-        <p>Add the add-on via a custom repository or directly from the GHCR image</p>
+        <p>Add the app via a custom repository or directly from the GHCR image</p>
       </div>
     </div>
 
@@ -487,7 +487,7 @@
         <div class="step-num">1</div>
         <div class="step-body">
           <h4>Add the repository</h4>
-          <p>In HA → Settings → Add-ons → Add-on Store → ⋮ → Repositories → paste the URL:</p>
+          <p>In HA → Settings → Apps → App Store → ⋮ → Repositories → paste the URL:</p>
           <div class="code-block" style="margin-top:10px">
             <pre>https://github.com/pol4rfuchs/ha-apps</pre>
           </div>
@@ -496,7 +496,7 @@
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <h4>Install the add-on</h4>
+          <h4>Install the app</h4>
           <p>Search for <strong>ntfy Manager</strong> in the store → Install. The image is pulled from GHCR (<code>ghcr.io/pol4rfuchs/ntfy_manager</code>).</p>
         </div>
       </div>
@@ -504,13 +504,13 @@
         <div class="step-num">3</div>
         <div class="step-body">
           <h4>Configure the ntfy endpoint</h4>
-          <p>Set the options in the add-on — at least <code>ntfy_base_url</code>; for auth-protected instances additionally <code>ntfy_auth_type</code> with <code>ntfy_username</code>/<code>ntfy_password</code> (basic) or <code>ntfy_bearer_token</code> (bearer). Leaving them empty works too: then you log in in the panel.</p>
+          <p>Set the options in the app — at least <code>ntfy_base_url</code>; for auth-protected instances additionally <code>ntfy_auth_type</code> with <code>ntfy_username</code>/<code>ntfy_password</code> (basic) or <code>ntfy_bearer_token</code> (bearer). Leaving them empty works too: then you log in in the panel.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-body">
-          <h4>Start the add-on &amp; open the web UI</h4>
+          <h4>Start the app &amp; open the web UI</h4>
           <p>Start → open the panel via the HA sidebar (ingress). Optionally directly via <code>http://&lt;HA-Host&gt;:8099</code>.</p>
         </div>
       </div>
@@ -520,7 +520,7 @@
       <div class="alert-icon">ℹ️</div>
       <div class="alert-body">
         <strong>Ingress and optional direct access</strong>
-        The panel runs through HA ingress (sidebar, protected by your HA login). The host port <code>8099</code> is optional and can be removed in the network tab of the add-on. The credentials from the add-on configuration only apply through ingress; on the direct port the panel always requires an ntfy login.
+        The panel runs through HA ingress (sidebar, protected by your HA login). The host port <code>8099</code> is optional and can be removed in the network tab of the app. The credentials from the app configuration only apply through ingress; on the direct port the panel always requires an ntfy login.
       </div>
     </div>
 
@@ -539,7 +539,7 @@
       <div class="icon">⚙️</div>
       <div>
         <h2>Configuration</h2>
-        <p>Options and schema fields of the add-on</p>
+        <p>Options and schema fields of the app</p>
       </div>
     </div>
 
@@ -553,7 +553,7 @@
             <td><code>ntfy_base_url</code></td>
             <td><code>url</code></td>
             <td><code>http://homeassistant.local:4280</code></td>
-            <td>Address of the ntfy server, e.g. the internal address of the ntfy add-on or an external URL.</td>
+            <td>Address of the ntfy server, e.g. the internal address of the ntfy app or an external URL.</td>
           </tr>
           <tr>
             <td><code>ntfy_auth_type</code></td>
@@ -622,7 +622,7 @@
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
         <strong>Docker-internal URL (optional)</strong>
-        If both add-ons run on the same Supervisor, the Docker-internal address <code>http://a0d7b954-ntfy:80</code> can be used instead of the external URL — no TLS overhead, no NAT loopback. The default value <code>http://homeassistant.local:4280</code> works as well.
+        If both apps run on the same Supervisor, the Docker-internal address <code>http://a0d7b954-ntfy:80</code> can be used instead of the external URL — no TLS overhead, no NAT loopback. The default value <code>http://homeassistant.local:4280</code> works as well.
       </div>
     </div>
   </div>
@@ -637,7 +637,7 @@
       </div>
     </div>
 
-    <p>The admin console is a single-page HTML interface served directly by the add-on. All data comes live from the ntfy REST API.</p>
+    <p>The admin console is a single-page HTML interface served directly by the app. All data comes live from the ntfy REST API.</p>
 
     <div class="table-wrap">
       <table>
@@ -649,7 +649,7 @@
           <tr><td><strong>ACL</strong></td><td>Manage user access rules: which user may read/write which topic.</td></tr>
           <tr><td><strong>Token Manager</strong></td><td>Create (label, expiry date) and revoke auth tokens.</td></tr>
           <tr><td><strong>Live Monitor</strong></td><td>SSE subscribe to N topics at the same time — messages appear in real time.</td></tr>
-          <tr><td><strong>Topic Settings</strong></td><td>Add-on-side configuration per topic (default priority, label). It is persisted.</td></tr>
+          <tr><td><strong>Topic Settings</strong></td><td>App-side configuration per topic (default priority, label). It is persisted.</td></tr>
         </tbody>
       </table>
     </div>
@@ -673,7 +673,7 @@
 auth-default-access: deny-all</pre>
     </div>
 
-    <p>With auth enabled there is the <strong>admin user</strong> (or a token with admin rights) that you have to store in the add-on. After that you can, in the UI:</p>
+    <p>With auth enabled there is the <strong>admin user</strong> (or a token with admin rights) that you have to store in the app. After that you can, in the UI:</p>
 
     <div class="step-list">
       <div class="step">
@@ -718,7 +718,7 @@ auth-default-access: deny-all</pre>
       </div>
     </div>
 
-    <p>The live monitor opens a <strong>Server-Sent Events</strong> stream to the ntfy API that is passed through the backend of this add-on. Several topics can be subscribed at the same time.</p>
+    <p>The live monitor opens a <strong>Server-Sent Events</strong> stream to the ntfy API that is passed through the backend of this app. Several topics can be subscribed at the same time.</p>
 
     <div class="code-block">
       <div class="label">ntfy SSE endpoint (internal)</div>
@@ -744,8 +744,8 @@ Authorization: Bearer &lt;token&gt;</pre>
     <div class="alert info">
       <div class="alert-icon">💡</div>
       <div class="alert-body">
-        <strong>Connection through the add-on</strong>
-        The SSE stream is passed on to ntfy by the add-on's backend (<code>/sse</code>); the credentials stay in the encrypted cookie and do not reach the browser. The add-on and ntfy must be able to reach each other, the browser only needs access to the panel.
+        <strong>Connection through the app</strong>
+        The SSE stream is passed on to ntfy by the app's backend (<code>/sse</code>); the credentials stay in the encrypted cookie and do not reach the browser. The app and ntfy must be able to reach each other, the browser only needs access to the panel.
       </div>
     </div>
   </div>
@@ -766,8 +766,8 @@ Authorization: Bearer &lt;token&gt;</pre>
         <tbody>
           <tr>
             <td>"Cannot connect to ntfy"</td>
-            <td>Wrong <code>ntfy_base_url</code> or the ntfy add-on is not started</td>
-            <td>Check the Docker-internal URL: <code>http://a0d7b954-ntfy:80</code>. Both add-ons must be running.</td>
+            <td>Wrong <code>ntfy_base_url</code> or the ntfy app is not started</td>
+            <td>Check the Docker-internal URL: <code>http://a0d7b954-ntfy:80</code>. Both apps must be running.</td>
           </tr>
           <tr>
             <td>401 Unauthorized</td>
@@ -786,8 +786,8 @@ Authorization: Bearer &lt;token&gt;</pre>
           </tr>
           <tr>
             <td>Web UI not reachable</td>
-            <td>Port conflict or the add-on is not started</td>
-            <td>Check the logs (<code>bashio::log.info</code>). Check the port mapping in the add-on.</td>
+            <td>Port conflict or the app is not started</td>
+            <td>Check the logs (<code>bashio::log.info</code>). Check the port mapping in the app.</td>
           </tr>
         </tbody>
       </table>

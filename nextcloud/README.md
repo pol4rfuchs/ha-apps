@@ -33,7 +33,7 @@
 
 ## Key differences from community alternatives
 
-| | This add-on | alexbelgium | enricodeleo |
+| | This app | alexbelgium | enricodeleo |
 |---|---|---|---|
 | Base image | `nextcloud:apache` (official) | `linuxserver/nextcloud` | `nextcloud` (official, outdated) |
 | App store | ✅ unrestricted | ❌ restricted | ✅ |
@@ -42,15 +42,15 @@
 
 ## Prerequisites
 
-- **MariaDB add-on** (recommended): configure with a `nextcloud` database and user before first start
-- Port **8280** must be free on the host (or change it in the add-on config)
+- **MariaDB app** (recommended): configure with a `nextcloud` database and user before first start
+- Port **8280** must be free on the host (or change it in the app config)
 
 ## Installation
 
 1. Add the `pol4rfuchs/ha-apps` repository to Home Assistant
 2. Install **Nextcloud**
 3. Configure options (see below)
-4. Start the add-on
+4. Start the app
 5. Open the Web UI — on first boot Nextcloud installs itself (~1–2 min)
 
 ## Configuration
@@ -72,7 +72,7 @@
 
 ## Data persistence
 
-All data is stored under `/data/nextcloud/` in the add-on's persistent volume:
+All data is stored under `/data/nextcloud/` in the app's persistent volume:
 
 ```
 /data/nextcloud/
@@ -83,17 +83,17 @@ All data is stored under `/data/nextcloud/` in the add-on's persistent volume:
 └── version.php   # Version of the installed code (used for updates)
 ```
 
-The Nextcloud code itself is not stored: it comes from the add-on image and is
+The Nextcloud code itself is not stored: it comes from the app image and is
 restored on every start.
 
-On add-on updates only the app code changes. Nextcloud's own `occ upgrade` runs automatically when the new version is newer; user files in `data/` are never touched. Downgrades and skipping a major version are refused.
+On app updates only the app code changes. Nextcloud's own `occ upgrade` runs automatically when the new version is newer; user files in `data/` are never touched. Downgrades and skipping a major version are refused.
 
 ## Trusted domains
 
 Add your domain and/or IP to `trusted_domains` **before** first access, or Nextcloud will refuse the connection. After initial setup you can also run:
 
 ```bash
-# Inside the add-on shell:
+# Inside the app shell:
 php /var/www/html/occ config:system:set trusted_domains 1 --value="nextcloud.example.com"
 ```
 
@@ -116,9 +116,9 @@ php /var/www/html/occ config:system:set overwrite.cli.url --value="https://nextc
 ## 📜 License
 
 ```text
-Apache-2.0 (add-on wrapper)  /  AGPL-3.0 (Nextcloud Server)
+Apache-2.0 (app wrapper)  /  AGPL-3.0 (Nextcloud Server)
 ```
 
-The add-on wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
+The app wrapper (metadata, Dockerfile, scripts and documentation in this directory) is licensed under the Apache License 2.0, see [`../LICENSE`](../LICENSE).
 
 Nextcloud Server is licensed under [AGPL-3.0](https://github.com/nextcloud/server/blob/master/COPYING).

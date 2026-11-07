@@ -5,7 +5,7 @@ configuration:
     description: "Speicher-Backend. 'sqlite' für einfache Setups. 'mariadb' für bessere Performance bei vielen Proxy-Hosts."
   mariadb_host:
     name: MariaDB-Host
-    description: "Hostname des MariaDB-Add-ons. Typischerweise 'core-mariadb'."
+    description: "Hostname der MariaDB-App. Typischerweise 'core-mariadb'."
   mariadb_port:
     name: MariaDB-Port
     description: "MariaDB-Port. Standard: 3306."

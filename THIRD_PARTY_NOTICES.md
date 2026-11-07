@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-This repository contains Home Assistant add-on wrappers and integration
+This repository contains Home Assistant app wrappers and integration
 metadata for third-party applications.
 
 The code, Dockerfiles, scripts, workflows and documentation maintained
@@ -12,7 +12,7 @@ remain under their respective upstream licenses.
 
 ## Included / Referenced Upstream Projects
 
-| Add-on | Upstream Project | Upstream Source | License |
+| App | Upstream Project | Upstream Source | License |
 |---|---|---|---|
 | TeamSpeak 6 Server | TeamSpeak 6 Server | https://www.teamspeak.com/ | See upstream/vendor terms |
 | TS6 Manager | TS6 Manager | https://github.com/clusterzx/ts6-manager | See upstream license |
@@ -52,7 +52,7 @@ compatibility and documentation purposes only.
 
 The Apache License 2.0 applies to repository-owned material such as:
 
-- Home Assistant add-on metadata
+- Home Assistant app metadata
 - Dockerfiles
 - shell scripts
 - helper scripts

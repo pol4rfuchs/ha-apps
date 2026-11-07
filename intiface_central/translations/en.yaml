@@ -14,7 +14,7 @@ configuration:
     description: "Enable serial port device support."
   log_level:
     name: Log Level
-    description: "Verbosity of the add-on log output."
+    description: "Verbosity of the app log output."
   mqtt_host:
     name: MQTT Host
     description: "Hostname or IP of your MQTT broker. Leave empty to disable the MQTT bridge."

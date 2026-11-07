@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ntfy HA Add-on · Green Glass Wiki</title>
+<title>ntfy HA App · Green Glass Wiki</title>
 <style>
   :root {
     --ntfy: #3fca6b;
@@ -803,7 +803,7 @@
     <div class="brand">
       <div class="brand-logo">🔔</div>
       <div>
-        <h1>ntfy HA Add-on</h1>
+        <h1>ntfy HA App</h1>
         <p>GREEN GLASS WIKI</p>
       </div>
     </div>
@@ -844,7 +844,7 @@
         <div class="hero-kicker"><span class="pulse"></span> SELF-HOSTED PUSH · HOME ASSISTANT · NTFY GREEN</div>
         <h2>Operations Wiki in <span class="green">Green Glass</span>.</h2>
         <p class="hero-copy">
-          A single-file, offline-capable documentation dashboard for the ntfy Home Assistant Add-on.
+          A single-file, offline-capable documentation dashboard for the ntfy Home Assistant App.
           Built from your uploaded wiki pages with sticky navigation, search, copy buttons and DevOps-style runbook sections.
         </p>
         <div class="hero-actions">
@@ -855,7 +855,7 @@
 
         <div class="metric-grid">
           <div class="metric"><small>ntfy Server</small><strong>http://homeassistant.local:4280</strong></div>
-          <div class="metric"><small>Admin Console</small><strong>ntfy_manager add-on</strong></div>
+          <div class="metric"><small>Admin Console</small><strong>ntfy_manager app</strong></div>
           <div class="metric"><small>Auth DB</small><strong>/data/ntfy/user.db</strong></div>
           <div class="metric"><small>Generated</small><strong>2026-10-17</strong></div>
         </div>
@@ -905,7 +905,7 @@ admin_password: your-secure-password</code></pre>
 <tbody>
 <tr>
   <td><a href="#installation">Installation</a></td>
-  <td>How to add the repository and install the add-on</td>
+  <td>How to add the repository and install the app</td>
 </tr>
 <tr>
   <td><a href="#configuration">Configuration</a></td>
@@ -937,7 +937,7 @@ admin_password: your-secure-password</code></pre>
 </tr>
 <tr>
   <td><a href="#known-limitations">Known-Limitations</a></td>
-  <td>What the add-on cannot do and why</td>
+  <td>What the app cannot do and why</td>
 </tr>
 <tr>
   <td><a href="#backup-and-restore">Backup-and-Restore</a></td>
@@ -993,17 +993,17 @@ admin_password: your-secure-password
         <h2 id="installation--step-1-add-the-repository"><a class="anchor" href="#installation--step-1-add-the-repository" aria-label="Permalink">#</a>Step 1 — Add the Repository</h2>
 <ol>
 <li>Open Home Assistant</li>
-<li>Go to <strong>Settings → Add-ons → Add-on Store</strong></li>
+<li>Go to <strong>Settings → Apps → App Store</strong></li>
 <li>Click <strong>⋮</strong> (top right) → <strong>Repositories</strong></li>
 <li>Add:<pre><code>https://github.com/pol4rfuchs/ha-apps
 </code></pre>
 </li>
 <li>Click <strong>Add</strong> → <strong>Close</strong></li>
 </ol>
-<h2 id="installation--step-2-install-the-add-on"><a class="anchor" href="#installation--step-2-install-the-add-on" aria-label="Permalink">#</a>Step 2 — Install the Add-on</h2>
+<h2 id="installation--step-2-install-the-app"><a class="anchor" href="#installation--step-2-install-the-app" aria-label="Permalink">#</a>Step 2 — Install the App</h2>
 <ol>
-<li>Search for <strong>ntfy</strong> in the add-on store</li>
-<li>Click the add-on → <strong>Install</strong></li>
+<li>Search for <strong>ntfy</strong> in the app store</li>
+<li>Click the app → <strong>Install</strong></li>
 <li>Wait for the installation to complete</li>
 </ol>
 <h2 id="installation--step-3-configure"><a class="anchor" href="#installation--step-3-configure" aria-label="Permalink">#</a>Step 3 — Configure</h2>
@@ -1014,7 +1014,7 @@ admin_password: your-secure-password
 <p>See <a href="#configuration">Configuration</a> for all available options.</p>
 <h2 id="installation--step-4-start"><a class="anchor" href="#installation--step-4-start" aria-label="Permalink">#</a>Step 4 — Start</h2>
 <p>Click <strong>Start</strong>. Check the <strong>Log</strong> tab and confirm you see:</p>
-<pre><code>Starting ntfy add-on …
+<pre><code>Starting ntfy app …
 Admin user 'admin' ready
 Starting ntfy → http://homeassistant.local:4280
 </code></pre>
@@ -1027,8 +1027,8 @@ Starting ntfy → http://homeassistant.local:4280
 <p>Log in with the <code>admin_username</code> and <code>admin_password</code> you configured.</p>
 <hr />
 <h2 id="installation--updating"><a class="anchor" href="#installation--updating" aria-label="Permalink">#</a>Updating</h2>
-<p>When a new version of the add-on is available, HA will show an update notification in the add-on page. Click <strong>Update</strong> to install it.</p>
-<p>Renovate tracks new ntfy releases and opens a pull request in the repository. The add-on update then appears in Home Assistant once that pull request is merged and released.</p>
+<p>When a new version of the app is available, HA will show an update notification in the app page. Click <strong>Update</strong> to install it.</p>
+<p>Renovate tracks new ntfy releases and opens a pull request in the repository. The app update then appears in Home Assistant once that pull request is merged and released.</p>
 
       </div>
     </article>
@@ -1044,7 +1044,7 @@ Starting ntfy → http://homeassistant.local:4280
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
-        <p>All options are set in the add-on <strong>Configuration</strong> tab in Home Assistant.</p>
+        <p>All options are set in the app <strong>Configuration</strong> tab in Home Assistant.</p>
 <hr />
 <h2 id="configuration--required"><a class="anchor" href="#configuration--required" aria-label="Permalink">#</a>Required</h2>
 <table>
@@ -1237,7 +1237,7 @@ Starting ntfy → http://homeassistant.local:4280
 <p>See <a href="#ios-push-notifications">iOS-Push-Notifications</a> for details.</p>
 <hr />
 <h2 id="configuration--admin-panel"><a class="anchor" href="#configuration--admin-panel" aria-label="Permalink">#</a>Admin Panel</h2>
-<p>The built-in admin panel (port <code>4281</code>) has been <strong>removed</strong> from this add-on. Its functionality — user/token management, dashboard, send tests — now lives in the separate <a href="../ntfy-manager/">ntfy_manager</a> add-on. Install that add-on if you want a web-based admin console.</p>
+<p>The built-in admin panel (port <code>4281</code>) has been <strong>removed</strong> from this app. Its functionality — user/token management, dashboard, send tests — now lives in the separate <a href="../ntfy-manager/">ntfy_manager</a> app. Install that app if you want a web-based admin console.</p>
 <hr />
 <h2 id="configuration--example-full-configuration"><a class="anchor" href="#configuration--example-full-configuration" aria-label="Permalink">#</a>Example: Full Configuration</h2>
 <pre><code class="language-yaml">log_level: INFO
@@ -1260,10 +1260,10 @@ admin_password: &quot;super-secret-password&quot;
 </code></pre>
 <hr />
 <h2 id="configuration--creating-a-second-admin"><a class="anchor" href="#configuration--creating-a-second-admin" aria-label="Permalink">#</a>Creating a Second Admin</h2>
-<p>The add-on supports one <code>admin_username</code> at a time in config. To bootstrap a second admin:</p>
+<p>The app supports one <code>admin_username</code> at a time in config. To bootstrap a second admin:</p>
 <ol>
 <li>Change <code>admin_username</code> to the new username and <code>admin_password</code> to their password</li>
-<li><strong>Restart</strong> the add-on — the new account is created</li>
+<li><strong>Restart</strong> the app — the new account is created</li>
 <li>Set <code>admin_username</code> back to your primary admin and restart again</li>
 </ol>
 <p>Both accounts now exist in the database with the admin role.</p>
@@ -1283,14 +1283,14 @@ admin_password: &quot;super-secret-password&quot;
       </div>
       <div class="doc-content">
         <h2 id="first-start--1-set-your-admin-account"><a class="anchor" href="#first-start--1-set-your-admin-account" aria-label="Permalink">#</a>1. Set Your Admin Account</h2>
-<p>In the add-on <strong>Configuration</strong> tab:</p>
+<p>In the app <strong>Configuration</strong> tab:</p>
 <pre><code class="language-yaml">admin_username: admin
 admin_password: your-secure-password
 </code></pre>
 <p>Click <strong>Save</strong>, then <strong>Start</strong>.</p>
 <h2 id="first-start--2-check-the-logs"><a class="anchor" href="#first-start--2-check-the-logs" aria-label="Permalink">#</a>2. Check the Logs</h2>
 <p>Go to the <strong>Log</strong> tab. You should see:</p>
-<pre><code>Starting ntfy add-on …
+<pre><code>Starting ntfy app …
 Admin user 'admin' ready
 Starting ntfy → http://homeassistant.local:4280
 </code></pre>
@@ -1329,7 +1329,7 @@ Starting ntfy → http://homeassistant.local:4280
 </ul>
 <p>In the app, add your server: <code>http://homeassistant.local:4280</code> and subscribe to your topics.</p>
 <h2 id="first-start--7-enable-the-admin-panel-optional"><a class="anchor" href="#first-start--7-enable-the-admin-panel-optional" aria-label="Permalink">#</a>7. Web-Based Admin Console (Optional)</h2>
-<p>The built-in admin panel was removed from this add-on. If you want a web UI for managing users, tokens and sending test messages, install the separate <strong>ntfy_manager</strong> add-on and point it at this ntfy server.</p>
+<p>The built-in admin panel was removed from this app. If you want a web UI for managing users, tokens and sending test messages, install the separate <strong>ntfy_manager</strong> app and point it at this ntfy server.</p>
 <p>See <a href="#admin-panel">Admin Panel</a> for details.</p>
 
       </div>
@@ -1372,13 +1372,13 @@ Starting ntfy → http://homeassistant.local:4280
 <hr />
 <h2 id="home-assistant-integration--option-b-rest-command-manual"><a class="anchor" href="#home-assistant-integration--option-b-rest-command-manual" aria-label="Permalink">#</a>Option B — rest_command (Manual)</h2>
 <h3 id="home-assistant-integration--step-1-create-an-access-token"><a class="anchor" href="#home-assistant-integration--step-1-create-an-access-token" aria-label="Permalink">#</a>Step 1: Create an Access Token</h3>
-<p>On the first start the add-on already creates a token for the admin user. The log shows only its beginning (<code>tk_ab12cd34…</code>). The full token is stored in <code>/data/ntfy/ha_token.txt</code>, and a readable copy is placed on every start in the add-on config folder <code>/addon_configs/&lt;slug&gt;_ntfy/ha_token.txt</code> (open it via Samba, the SSH add-on or the File editor). If you prefer your own token, create one as follows:</p>
+<p>On the first start the app already creates a token for the admin user. The log shows only its beginning (<code>tk_ab12cd34…</code>). The full token is stored in <code>/data/ntfy/ha_token.txt</code>, and a readable copy is placed on every start in the app config folder <code>/addon_configs/&lt;slug&gt;_ntfy/ha_token.txt</code> (open it via Samba, the SSH app or the File editor). If you prefer your own token, create one as follows:</p>
 <ol>
 <li>Open <code>http://homeassistant.local:4280</code></li>
 <li>Log in → <strong>Account → Access Tokens → Create token</strong></li>
 <li>Label it <code>Home Assistant</code> and copy the token</li>
 </ol>
-<p>Or use the ntfy_manager add-on's Tokens tab — see <a href="#admin-panel">Admin Panel</a>.</p>
+<p>Or use the ntfy_manager app's Tokens tab — see <a href="#admin-panel">Admin Panel</a>.</p>
 <h3 id="home-assistant-integration--step-2-add-to-configuration-yaml"><a class="anchor" href="#home-assistant-integration--step-2-add-to-configuration-yaml" aria-label="Permalink">#</a>Step 2: Add to configuration.yaml</h3>
 <pre><code class="language-yaml">rest_command:
   ntfy_send:
@@ -1495,7 +1495,7 @@ Starting ntfy → http://homeassistant.local:4280
 </code></pre>
 <hr />
 <h2 id="home-assistant-integration--advanced-sending-images-as-attachments"><a class="anchor" href="#home-assistant-integration--advanced-sending-images-as-attachments" aria-label="Permalink">#</a>Advanced: Sending Images as Attachments</h2>
-<p>Requires <code>base_url</code> to be configured in the add-on.</p>
+<p>Requires <code>base_url</code> to be configured in the app.</p>
 <pre><code class="language-bash">curl -H &quot;Authorization: Bearer tk_YOUR_TOKEN&quot; \
      -H &quot;Title: Camera snapshot&quot; \
      -T /config/www/snapshot.jpg \
@@ -1504,7 +1504,7 @@ Starting ntfy → http://homeassistant.local:4280
 
       </div>
     </article>
-<article id="admin-panel" class="doc-section glass-card" data-search="admin panel removed moved to ntfy_manager add-on">
+<article id="admin-panel" class="doc-section glass-card" data-search="admin panel removed moved to ntfy_manager app">
       <div class="section-topline">
         <div class="section-title-wrap">
           <span class="section-icon">🧩</span>
@@ -1516,7 +1516,7 @@ Starting ntfy → http://homeassistant.local:4280
         <a class="section-link" href="#admin-panel">#admin-panel</a>
       </div>
       <div class="doc-content">
-        <p><strong>Removed.</strong> The built-in admin panel (port <code>4281</code>) was removed from the ntfy add-on. Its Dashboard, Users, Tokens, Send and Info tabs now live in the separate <strong>ntfy_manager</strong> add-on, which talks to this ntfy server over its API. Install and configure ntfy_manager if you need a web-based admin console — see its wiki page for the full walkthrough.</p>
+        <p><strong>Removed.</strong> The built-in admin panel (port <code>4281</code>) was removed from the ntfy app. Its Dashboard, Users, Tokens, Send and Info tabs now live in the separate <strong>ntfy_manager</strong> app, which talks to this ntfy server over its API. Install and configure ntfy_manager if you need a web-based admin console — see its wiki page for the full walkthrough.</p>
       </div>
     </article>
 <article id="ios-push-notifications" class="doc-section glass-card" data-search="ios push notifications native ios push via upstream signal relay ios push notifications by default, the ntfy ios app polls your server for new messages background fetch . for instant push notifications without polling, you need to route through ntfy.sh&#x27;s firebase/apns infrastructure. requirements a publicly accessible server url base url a ntfy.sh https://ntfy.sh account free tier is sufficient configuration yaml base url: &quot;https://ntfy.your domain.com&quot; upstream base url: &quot;https://ntfy.sh&quot; restart the add on after saving. how it works when a message is published to your self hosted ntfy server, it sends a lightweight &quot;poll request&quot; to ntfy.sh. ntfy.sh then triggers an apns push to the ios device, which wakes the ntfy app. the app then fetches the actual message content from your server — ntfy.sh never sees the message body. this means: ✅ instant push without polling ✅ message content stays on your server ✅ free uses ntfy.sh only as a signal relay ios app setup 1. install the ntfy ios app https://apps.apple.com/us/app/ntfy/id1625396347 2. open the app → settings → default server → enter your server url 3. subscribe to your topics 4. notifications will now arrive instantly troubleshooting notifications not arriving instantly: confirm base url is publicly accessible test from outside your network confirm upstream base url: &quot;https://ntfy.sh&quot; is set and the add on has been restarted check the add on log for upstream base url confirmation notifications delayed: the ios app may fall back to polling if push is not configured correctly check if the ntfy.sh servers are reachable from your server">
@@ -1541,7 +1541,7 @@ Starting ntfy → http://homeassistant.local:4280
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 upstream_base_url: &quot;https://ntfy.sh&quot;
 </code></pre>
-<p>Restart the add-on after saving.</p>
+<p>Restart the app after saving.</p>
 <h2 id="ios-push-notifications--how-it-works"><a class="anchor" href="#ios-push-notifications--how-it-works" aria-label="Permalink">#</a>How It Works</h2>
 <p>When a message is published to your self-hosted ntfy server, it sends a lightweight &quot;poll request&quot; to ntfy.sh. ntfy.sh then triggers an APNs push to the iOS device, which wakes the ntfy app. The app then fetches the actual message content <strong>from your server</strong> — ntfy.sh never sees the message body.</p>
 <p>This means:</p>
@@ -1561,8 +1561,8 @@ upstream_base_url: &quot;https://ntfy.sh&quot;
 <p><strong>Notifications not arriving instantly:</strong></p>
 <ul>
 <li>Confirm <code>base_url</code> is publicly accessible (test from outside your network)</li>
-<li>Confirm <code>upstream_base_url: &quot;https://ntfy.sh&quot;</code> is set and the add-on has been restarted</li>
-<li>Check the add-on log for <code>upstream-base-url</code> confirmation</li>
+<li>Confirm <code>upstream_base_url: &quot;https://ntfy.sh&quot;</code> is set and the app has been restarted</li>
+<li>Check the app log for <code>upstream-base-url</code> confirmation</li>
 </ul>
 <p><strong>Notifications delayed:</strong></p>
 <ul>
@@ -1605,7 +1605,7 @@ upstream_base_url: &quot;https://ntfy.sh&quot;
         <a class="section-link" href="#reverse-proxy">#reverse-proxy</a>
       </div>
       <div class="doc-content">
-        <p>To access ntfy from outside your local network you need a reverse proxy with SSL/TLS. Set <code>base_url</code> and <code>behind_proxy: true</code> in the add-on configuration when using any of these setups.</p>
+        <p>To access ntfy from outside your local network you need a reverse proxy with SSL/TLS. Set <code>base_url</code> and <code>behind_proxy: true</code> in the app configuration when using any of these setups.</p>
 <hr />
 <h2 id="reverse-proxy--nginx"><a class="anchor" href="#reverse-proxy--nginx" aria-label="Permalink">#</a>Nginx</h2>
 <pre><code class="language-nginx">server {
@@ -1629,7 +1629,7 @@ upstream_base_url: &quot;https://ntfy.sh&quot;
     }
 }
 </code></pre>
-<p>Required add-on config:</p>
+<p>Required app config:</p>
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 behind_proxy: true
 </code></pre>
@@ -1642,7 +1642,7 @@ behind_proxy: true
   - &quot;traefik.http.routers.ntfy.tls.certresolver=letsencrypt&quot;
   - &quot;traefik.http.services.ntfy.loadbalancer.server.port=4280&quot;
 </code></pre>
-<p>Required add-on config:</p>
+<p>Required app config:</p>
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 behind_proxy: true
 </code></pre>
@@ -1652,12 +1652,12 @@ behind_proxy: true
     reverse_proxy localhost:4280
 }
 </code></pre>
-<p>Caddy handles SSL automatically. Required add-on config:</p>
+<p>Caddy handles SSL automatically. Required app config:</p>
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 behind_proxy: true
 </code></pre>
 <hr />
-<h2 id="reverse-proxy--nginx-proxy-manager-ha-add-on"><a class="anchor" href="#reverse-proxy--nginx-proxy-manager-ha-add-on" aria-label="Permalink">#</a>Nginx Proxy Manager (HA Add-on)</h2>
+<h2 id="reverse-proxy--nginx-proxy-manager-ha-app"><a class="anchor" href="#reverse-proxy--nginx-proxy-manager-ha-app" aria-label="Permalink">#</a>Nginx Proxy Manager (HA App)</h2>
 <ol>
 <li>Open Nginx Proxy Manager → <strong>Proxy Hosts → Add Proxy Host</strong></li>
 <li><strong>Domain Names:</strong> <code>ntfy.your-domain.com</code></li>
@@ -1674,7 +1674,7 @@ proxy_set_header X-Real-IP $remote_addr;
 proxy_buffering off;
 proxy_read_timeout 3600s;
 </code></pre>
-<p>Required add-on config:</p>
+<p>Required app config:</p>
 <pre><code class="language-yaml">base_url: &quot;https://ntfy.your-domain.com&quot;
 behind_proxy: true
 </code></pre>
@@ -1701,7 +1701,7 @@ behind_proxy: true
       </div>
       <div class="doc-content">
         <h2 id="backup-and-restore--what-gets-backed-up"><a class="anchor" href="#backup-and-restore--what-gets-backed-up" aria-label="Permalink">#</a>What Gets Backed Up</h2>
-<p>All ntfy data is stored in <code>/data/ntfy/</code> inside the add-on container. This directory is automatically included in <strong>Home Assistant backups</strong>.</p>
+<p>All ntfy data is stored in <code>/data/ntfy/</code> inside the app container. This directory is automatically included in <strong>Home Assistant backups</strong>.</p>
 <table>
 <thead>
 <tr>
@@ -1728,14 +1728,14 @@ behind_proxy: true
 <ol>
 <li>Go to <strong>Settings → System → Backups</strong></li>
 <li>Click <strong>Create backup</strong></li>
-<li>Choose <strong>Full backup</strong> or select the ntfy add-on in a <strong>Partial backup</strong></li>
+<li>Choose <strong>Full backup</strong> or select the ntfy app in a <strong>Partial backup</strong></li>
 </ol>
 <p>The backup includes all three data directories above.</p>
 <h2 id="backup-and-restore--restoring"><a class="anchor" href="#backup-and-restore--restoring" aria-label="Permalink">#</a>Restoring</h2>
 <ol>
 <li>Go to <strong>Settings → System → Backups</strong></li>
 <li>Select the backup you want to restore from</li>
-<li>Restore either the full backup or just the ntfy add-on</li>
+<li>Restore either the full backup or just the ntfy app</li>
 </ol>
 <p>After restore:</p>
 <ul>
@@ -1748,12 +1748,12 @@ behind_proxy: true
 <li>Create a backup on the old system</li>
 <li>Copy the backup file to the new HA instance</li>
 <li>Restore from that backup</li>
-<li>Install and configure the ntfy add-on with the same <code>admin_username</code>/<code>admin_password</code></li>
-<li>Start the add-on — all data is available</li>
+<li>Install and configure the ntfy app with the same <code>admin_username</code>/<code>admin_password</code></li>
+<li>Start the app — all data is available</li>
 </ol>
 <h2 id="backup-and-restore--manual-backup-advanced"><a class="anchor" href="#backup-and-restore--manual-backup-advanced" aria-label="Permalink">#</a>Manual Backup (Advanced)</h2>
 <p>If you want to back up just the ntfy data manually:</p>
-<p>The add-on data directory <code>/data/ntfy/</code> lives inside the add-on and is not reachable from the SSH add-on. Use a Home Assistant backup (partial backup of this add-on, then download it) to copy the data. Only the token copy <code>ha_token.txt</code> is also available in <code>/addon_configs/&lt;slug&gt;_ntfy/</code>.</p>
+<p>The app data directory <code>/data/ntfy/</code> lives inside the app and is not reachable from the SSH app. Use a Home Assistant backup (partial backup of this app, then download it) to copy the data. Only the token copy <code>ha_token.txt</code> is also available in <code>/addon_configs/&lt;slug&gt;_ntfy/</code>.</p>
 <h2 id="backup-and-restore--notes"><a class="anchor" href="#backup-and-restore--notes" aria-label="Permalink">#</a>Notes</h2>
 <ul>
 <li>The <code>user.db</code> contains <strong>bcrypt-hashed</strong> passwords — they cannot be recovered, but they restore correctly to a new installation</li>
@@ -1776,11 +1776,11 @@ behind_proxy: true
       </div>
       <div class="doc-content">
         <blockquote>
-<p>All ntfy CLI commands require shell access <strong>inside the add-on container</strong>.</p>
+<p>All ntfy CLI commands require shell access <strong>inside the app container</strong>.</p>
 </blockquote>
 <hr />
 <h2 id="cli-reference--container-access"><a class="anchor" href="#cli-reference--container-access" aria-label="Permalink">#</a>Container Access</h2>
-<p>Use the HA SSH add-on to enter the container:</p>
+<p>Use the HA SSH app to enter the container:</p>
 <pre><code class="language-bash"># Enter the ntfy container
 docker exec -it $(docker ps | grep ntfy | awk '{print $1}') sh
 
@@ -1955,7 +1955,7 @@ ntfy access '*' HAOS deny
 # → Only 'haos' user can read/write the HAOS topic
 </code></pre>
 <blockquote>
-<p>✅ Changes via CLI take effect immediately — no add-on restart required.</p>
+<p>✅ Changes via CLI take effect immediately — no app restart required.</p>
 </blockquote>
 
       </div>
@@ -1972,7 +1972,7 @@ ntfy access '*' HAOS deny
         <a class="section-link" href="#troubleshooting">#troubleshooting</a>
       </div>
       <div class="doc-content">
-        <h2 id="troubleshooting--add-on-won-t-start"><a class="anchor" href="#troubleshooting--add-on-won-t-start" aria-label="Permalink">#</a>Add-on won't start</h2>
+        <h2 id="troubleshooting--app-won-t-start"><a class="anchor" href="#troubleshooting--app-won-t-start" aria-label="Permalink">#</a>App won't start</h2>
 <p><strong>Check the Log tab first.</strong> Common causes:</p>
 <table>
 <thead>
@@ -1990,13 +1990,13 @@ ntfy access '*' HAOS deny
 </tr>
 <tr>
   <td><code>address already in use :4280</code></td>
-  <td>Port 4280 is used by another add-on</td>
-  <td>Change the port or stop the conflicting add-on</td>
+  <td>Port 4280 is used by another app</td>
+  <td>Change the port or stop the conflicting app</td>
 </tr>
 <tr>
   <td>No log output at all</td>
-  <td>Add-on crashed immediately</td>
-  <td>Try reinstalling the add-on</td>
+  <td>App crashed immediately</td>
+  <td>Try reinstalling the app</td>
 </tr>
 </tbody>
 </table>
@@ -2052,7 +2052,7 @@ ntfy access '*' HAOS deny
 <h2 id="troubleshooting--notifications-not-arriving-on-phone"><a class="anchor" href="#troubleshooting--notifications-not-arriving-on-phone" aria-label="Permalink">#</a>Notifications not arriving on phone</h2>
 <ol>
 <li>Confirm the ntfy app is subscribed to the correct topic on the correct server</li>
-<li>Send a test message via the ntfy web UI, curl, or the ntfy_manager add-on's Send tab — see <a href="#admin-panel">Admin Panel</a></li>
+<li>Send a test message via the ntfy web UI, curl, or the ntfy_manager app's Send tab — see <a href="#admin-panel">Admin Panel</a></li>
 <li>Check if the message appears in the ntfy <strong>web UI</strong> — if yes, the server is working and the issue is with the app/subscription</li>
 <li>For iOS: confirm <a href="#ios-push-notifications">iOS Push</a> is configured correctly</li>
 </ol>
@@ -2084,12 +2084,12 @@ ntfy access '*' HAOS deny
       </div>
       <div class="doc-content">
         <h2 id="known-limitations--ntfy-web-ui-white-screen-via-ha-sidebar"><a class="anchor" href="#known-limitations--ntfy-web-ui-white-screen-via-ha-sidebar" aria-label="Permalink">#</a>ntfy Web UI — White Screen via HA Sidebar</h2>
-<p><strong>Symptom:</strong> Clicking the add-on in the HA sidebar shows a white/blank screen.</p>
+<p><strong>Symptom:</strong> Clicking the app in the HA sidebar shows a white/blank screen.</p>
 <p><strong>Cause:</strong> ntfy's web app is a React Single-Page Application that loads all assets using <strong>absolute paths</strong> (e.g. <code>/static/js/app.js</code>). When served through HA Ingress, the browser requests these assets from the HA root path instead of the ntfy path — resulting in 404 errors and a broken app.</p>
 <p><strong>Workaround:</strong> Always access ntfy directly:</p>
 <pre><code>http://homeassistant.local:4280
 </code></pre>
-<p><strong>Fix status:</strong> Cannot be fixed in this add-on without a change in ntfy upstream to support a configurable <code>base-path</code>. This is a <a href="https://github.com/binwiederhier/ntfy/issues">known ntfy issue</a>.</p>
+<p><strong>Fix status:</strong> Cannot be fixed in this app without a change in ntfy upstream to support a configurable <code>base-path</code>. This is a <a href="https://github.com/binwiederhier/ntfy/issues">known ntfy issue</a>.</p>
 <hr />
 <h2 id="known-limitations--only-one-admin-account-in-config"><a class="anchor" href="#known-limitations--only-one-admin-account-in-config" aria-label="Permalink">#</a>Only One Admin Account in Config</h2>
 <p><strong>Symptom:</strong> There is only one <code>admin_username</code> / <code>admin_password</code> field in the configuration.</p>
@@ -2097,10 +2097,10 @@ ntfy access '*' HAOS deny
 <p><strong>Workaround:</strong> To create multiple admin accounts, change <code>admin_username</code> to the second admin, restart, then set it back and restart again. See <a href="#configuration">Configuration</a> for step-by-step instructions.</p>
 <hr />
 <h2 id="known-limitations--no-multi-architecture-support-for-armhf-armv7-i386"><a class="anchor" href="#known-limitations--no-multi-architecture-support-for-armhf-armv7-i386" aria-label="Permalink">#</a>No Multi-Architecture Support for armhf / armv7 / i386</h2>
-<p>The add-on only supports <code>amd64</code> and <code>aarch64</code>. Home Assistant has dropped official support for armhf, armv7 and i386 hardware. If you are running one of these architectures, it is recommended to migrate to a supported platform.</p>
+<p>The app only supports <code>amd64</code> and <code>aarch64</code>. Home Assistant has dropped official support for armhf, armv7 and i386 hardware. If you are running one of these architectures, it is recommended to migrate to a supported platform.</p>
 <hr />
 <h2 id="known-limitations--cli-requires-container-access"><a class="anchor" href="#known-limitations--cli-requires-container-access" aria-label="Permalink">#</a>ntfy CLI Requires Container Access</h2>
-<p>There is no shell or terminal exposed by the add-on itself. CLI commands (user/token/ACL management) require <code>docker exec</code> via the HA SSH add-on, and <code>NTFY_AUTH_FILE=/data/ntfy/user.db</code> must be exported manually in each session. See <a href="#cli-reference">CLI Reference</a> for the exact commands.</p>
+<p>There is no shell or terminal exposed by the app itself. CLI commands (user/token/ACL management) require <code>docker exec</code> via the HA SSH app, and <code>NTFY_AUTH_FILE=/data/ntfy/user.db</code> must be exported manually in each session. See <a href="#cli-reference">CLI Reference</a> for the exact commands.</p>
 
       </div>
     </article>
@@ -2140,16 +2140,16 @@ ntfy access '*' HAOS deny
       </div>
       <div class="doc-content">
 <h2>Disclaimer</h2>
-<blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <a href="https://github.com/binwiederhier/ntfy">binwiederhier/ntfy</a>. It is not affiliated with or endorsed by the ntfy project maintainer.</blockquote>
+<blockquote>This is an unofficial, community-maintained Home Assistant app wrapper for <a href="https://github.com/binwiederhier/ntfy">binwiederhier/ntfy</a>. It is not affiliated with or endorsed by the ntfy project maintainer.</blockquote>
 <h2>Wrapper License</h2>
 <pre><code>Apache License 2.0</code></pre>
 <p>The ntfy server itself is dual-licensed under Apache 2.0 and GPLv2 by its upstream author.</p>
 <h2>Useful Links</h2>
 <div class="source-grid">
-<a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+<a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
 <a class="source-chip" href="https://github.com/binwiederhier/ntfy"><span>⬆️</span><strong>Upstream Project</strong><small>binwiederhier/ntfy</small></a>
 <a class="source-chip" href="https://docs.ntfy.sh/"><span>📖</span><strong>ntfy Docs</strong><small>Official documentation</small></a>
-<a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>HA Add-ons</strong><small>Home Assistant Supervisor platform</small></a>
+<a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>HA Apps</strong><small>Home Assistant Supervisor platform</small></a>
 </div>
       </div>
     </article>
@@ -2161,7 +2161,7 @@ ntfy access '*' HAOS deny
         <a href="https://github.com/pol4rfuchs/ha-apps/releases">📦 Releases</a>
         <a href="https://docs.ntfy.sh">📖 ntfy Docs</a>
       </div>
-      <div>ntfy Home Assistant Add-on · Green Glass Wiki · standalone HTML · no external CSS/JS required</div>
+      <div>ntfy Home Assistant App · Green Glass Wiki · standalone HTML · no external CSS/JS required</div>
     </footer>
   </main>
 </div>

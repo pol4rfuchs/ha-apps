@@ -18,7 +18,7 @@ configuration:
       Default: /config/addons_config/navidrome
   log_level:
     name: Log level
-    description: "Log verbosity of Navidrome and the add-on: trace, debug, info, warning, error."
+    description: "Log verbosity of Navidrome and the app: trace, debug, info, warning, error."
 
   ND_ENABLESTARRATING:
     name: Enable Star Ratings

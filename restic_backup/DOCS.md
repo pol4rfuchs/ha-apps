@@ -8,8 +8,8 @@ beyond the quick-start steps in the README.
 - **`restic_password`** is the encryption password for the entire restic
   repository. There is no recovery mechanism if it's lost — restic
   repositories cannot be decrypted without it. Store a copy somewhere
-  outside this add-on (a password manager, printed and stored physically,
-  etc.) before relying on this add-on for real backups.
+  outside this app (a password manager, printed and stored physically,
+  etc.) before relying on this app for real backups.
 - **`aws_secret_access_key`** / **`aws_access_key_id`** are only needed for
   S3/MinIO/B2-compatible remote repositories. Leave both empty for the
   default local repository.
@@ -21,13 +21,13 @@ masks them.
 
 ## Backup and Restore
 
-This add-on only performs the **backup** side of the restic workflow.
+This app only performs the **backup** side of the restic workflow.
 Restoring is intentionally a manual, out-of-band step — there is no
 one-click restore button, to avoid an accidental data-loss action.
 
 To restore, open a shell with access to the same repository and run restic
 directly, using the same repository location and password configured in
-this add-on:
+this app:
 
 ```bash
 export RESTIC_REPOSITORY=/share/restic-backup/repo   # or your configured repository
@@ -38,22 +38,22 @@ restic restore latest --target /path/to/restore/to
 
 For remote (S3/MinIO/B2) repositories, also export the same
 `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_DEFAULT_REGION` used by
-the add-on.
+the app.
 
 ## backup_paths vs. map
 
 `backup_paths` only lists which mounted folders restic should walk — it
 does not mount anything itself. Each path listed here must already be
-exposed via the add-on's own `map:` block in `config.yaml` (currently:
+exposed via the app's own `map:` block in `config.yaml` (currently:
 `homeassistant_config:ro`, `all_addon_configs:ro`, `media:ro`, `share:rw`,
 `ssl:ro`). Adding a path to `backup_paths` that isn't mapped does nothing —
 the directory simply won't exist inside the container.
 
 ## Local and external access
 
-**Local (LAN):** the add-on has no web interface and publishes no ports. It only runs `restic` on a schedule; control it through the add-on options and read the result in the Log tab or in the ntfy notification.
+**Local (LAN):** the app has no web interface and publishes no ports. It only runs `restic` on a schedule; control it through the app options and read the result in the Log tab or in the ntfy notification.
 
-**External (internet):** there is nothing to forward and nothing should be. The add-on only makes outgoing connections: to your S3/B2/MinIO-compatible repository (if you set `aws_*`) and to your ntfy server. Keep the repository itself private; a local repository under `/share` is part of Home Assistant's file shares, so do not expose that share to the internet either. The restic repository is encrypted with `restic_password` — store that password somewhere safe, without it the backups cannot be restored.
+**External (internet):** there is nothing to forward and nothing should be. The app only makes outgoing connections: to your S3/B2/MinIO-compatible repository (if you set `aws_*`) and to your ntfy server. Keep the repository itself private; a local repository under `/share` is part of Home Assistant's file shares, so do not expose that share to the internet either. The restic repository is encrypted with `restic_password` — store that password somewhere safe, without it the backups cannot be restored.
 
 ## AppArmor
 

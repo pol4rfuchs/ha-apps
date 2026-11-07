@@ -35,7 +35,7 @@
 ### Step 1 — Add the repository
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Add:
@@ -54,7 +54,7 @@ ND_MUSICFOLDER: "/media/music"
 
 ### Step 3 — Start
 
-Open the Web UI via the button in the add-on Info tab (port `4533`).  
+Open the Web UI via the button in the app Info tab (port `4533`).  
 On first start, create your admin account.
 
 ---
@@ -68,16 +68,16 @@ All options map 1:1 to [Navidrome environment variables](https://www.navidrome.o
 | `ND_MUSICFOLDER` | `/media/music` | **Required.** Path to your music library. |
 | `ND_DATAFOLDER` | `/data` | Database and cache location. |
 | `ND_SCANNER_SCHEDULE` | `@every 24h` | Cron or duration. `0` = disabled. |
-| `log_level` | `info` | `trace / debug / info / warning / error`. Sets Navidrome's `ND_LOGLEVEL` (`warning` → `warn`) and the add-on's own log output. Replaces the former `ND_LOGLEVEL` option. |
+| `log_level` | `info` | `trace / debug / info / warning / error`. Sets Navidrome's `ND_LOGLEVEL` (`warning` → `warn`) and the app's own log output. Replaces the former `ND_LOGLEVEL` option. |
 | `ND_ENABLEDOWNLOADS` | `true` | Allow downloading tracks from the UI. |
 | `ND_EXTRA_MUSIC_FOLDERS` | — | Comma-separated extra music folders; each is linked into `ND_MUSICFOLDER`. |
 | `ND_JUKEBOX_ENABLED` | `false` | Play audio on server hardware. Needs jukebox devices, which are not configurable here. |
 | `ND_LASTFM_ENABLED` | `false` | Last.fm scrobbling and metadata. The API key and secret cannot be set here, see below. |
 | `ND_LISTENBRAINZ_ENABLED` | `false` | ListenBrainz scrobbling. |
 
-Only the options listed in the add-on configuration exist; the Supervisor rejects anything else. Not available as options: Last.fm API key and secret, Spotify credentials, external authentication (reverse-proxy SSO header) and jukebox devices.
+Only the options listed in the app configuration exist; the Supervisor rejects anything else. Not available as options: Last.fm API key and secret, Spotify credentials, external authentication (reverse-proxy SSO header) and jukebox devices.
 
-The add-on runs Navidrome as root. There is no `PUID`/`PGID` setting; files that Navidrome writes into your music folder belong to root.
+The app runs Navidrome as root. There is no `PUID`/`PGID` setting; files that Navidrome writes into your music folder belong to root.
 
 Full option reference: <https://www.navidrome.org/docs/usage/configuration-options/>
 
@@ -96,7 +96,7 @@ Full option reference: <https://www.navidrome.org/docs/usage/configuration-optio
 | Source | Typical path |
 |---|---|
 | USB / HDD via HA | `/media/...` |
-| SMB share (Samba add-on) | `/share/...` |
+| SMB share (Samba app) | `/share/...` |
 | NFS mount | `/share/...` |
 
 ---
@@ -109,7 +109,7 @@ Full option reference: <https://www.navidrome.org/docs/usage/configuration-optio
 └── cache/            ← Transcoding cache, artwork
 ```
 
-HA backups include the add-on `/data` directory automatically.
+HA backups include the app `/data` directory automatically.
 
 ---
 
@@ -126,7 +126,7 @@ HA backups include the add-on `/data` directory automatically.
 
 ## 📜 License
 
-The Home Assistant add-on wrapper, metadata, Dockerfile, scripts,
+The Home Assistant app wrapper, metadata, Dockerfile, scripts,
 workflows and documentation in this directory are licensed under the
 Apache License 2.0.
 

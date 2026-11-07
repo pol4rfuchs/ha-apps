@@ -1,12 +1,12 @@
-# Matrix Server (ESS CE) — Home Assistant Add-on
+# Matrix Server (ESS CE) — Home Assistant App
 
-Full Matrix homeserver stack: Synapse + Element Web + Element Call (Voice/Video) — as a single Home Assistant Add-on. The admin UI (Ketesa) is the separate `matrix_ketesa` app.
+Full Matrix homeserver stack: Synapse + Element Web + Element Call (Voice/Video) — as a single Home Assistant App. The admin UI (Ketesa) is the separate `matrix_ketesa` app.
 
 ---
 
 ## Quick Start
 
-1. **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
+1. **Settings → Apps → App Store → ⋮ → Repositories**
 2. Add: `https://github.com/pol4rfuchs/ha-apps`
 3. Install **Matrix Server (ESS CE)** and configure at minimum:
 
@@ -63,7 +63,7 @@ See the [NPM_SETUP.md](https://github.com/pol4rfuchs/ha-apps/blob/main/matrix_sy
 └── .element-call_version   ← Installed Element Call version (if voice enabled)
 ```
 
-Element Web and Element Call each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch.
+Element Web and Element Call each compare their installed version against upstream `latest` on every app start and re-download automatically on mismatch.
 
 ---
 
@@ -86,7 +86,7 @@ The files live in the image (`/usr/share/matrix-themes`) and are re-applied afte
 | Element Web / Element Call not loading | Delete the relevant `.{app}_version` file in `/data/matrix/` and restart |
 | Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (direct, not via NPM); with `livekit_turn_enabled` also UDP 3478 / TCP 5349 |
 | Login stuck loading via `http://<LAN-IP>:7080` | Plain HTTP has no secure context — browsers disable WebCrypto. Use the HTTPS domain instead, even from the LAN |
-| Calls fail for IPv4-only clients behind a router without NAT hairpin | LiveKit runs with `skip_external_ip_validation: true`: it uses the public IPv4 found via STUN without the self-ping that such routers never answer. If your LiveKit version does not know this option, the add-on logs a warning and starts without it |
+| Calls fail for IPv4-only clients behind a router without NAT hairpin | LiveKit runs with `skip_external_ip_validation: true`: it uses the public IPv4 found via STUN without the self-ping that such routers never answer. If your LiveKit version does not know this option, the app logs a warning and starts without it |
 
 ## Admin UI (Ketesa)
 

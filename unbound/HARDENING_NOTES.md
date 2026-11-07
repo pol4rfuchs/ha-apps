@@ -11,7 +11,7 @@
   upstream CVEs, including a remote-code-execution risk during DNSSEC
   validation (CVE-2026-33278). Build-args/configure flags
   (`--enable-subnet`, `--with-username=unbound`) preserve existing
-  add-on features (EDNS Client Subnet); verified working post-build.
+  app features (EDNS Client Subnet); verified working post-build.
 - Added SHA256 checksum verification of the downloaded Unbound source
   tarball against NLnet Labs' official `.sha256` sidecar file before
   extracting/compiling it. Build fails on mismatch.
@@ -41,7 +41,7 @@
 
 - Unbound 1.25.1 starts cleanly, no crash loop, no permission errors.
 - DNS resolution confirmed end to end (`nslookup`/`drill` against the
-  add-on from a client on the network, both A and AAAA records).
+  app from a client on the network, both A and AAAA records).
 - EDNS Client Subnet (`subnetcache` module) loads correctly under the
   source-built binary — `--enable-subnet` was carried over correctly.
 - No more `403`/`deprecated bashio::addon.*` noise in the logs.
@@ -85,7 +85,7 @@ dig @<HA-IP> -p 5053 dnssec-failed.org
 
 ## Rollback
 
-1. Disable this add-on.
+1. Disable this app.
 2. Remove it from AdGuard upstreams.
 3. Restore the previous upstream resolver.
 4. Restart AdGuard Home.

@@ -11,10 +11,10 @@ configuration:
     description: "Restic repository location. Local path (e.g. /share/restic-backup/repo), or a remote URI (e.g. s3:https://minio.local/bucket, sftp:user@host:/path). See restic docs for supported backends."
   restic_password:
     name: Restic Password
-    description: "Encryption password for the restic repository. Required — losing this means losing access to all backups. Store it somewhere safe outside this add-on."
+    description: "Encryption password for the restic repository. Required — losing this means losing access to all backups. Store it somewhere safe outside this app."
   backup_paths:
     name: Backup Paths
-    description: "Which mapped folders to back up. Defaults to /homeassistant, /addon_configs, /ssl. Add /media or /share if needed (must be mapped in the add-on's 'map' config)."
+    description: "Which mapped folders to back up. Defaults to /homeassistant, /addon_configs, /ssl. Add /media or /share if needed (must be mapped in the app's 'map' config)."
   exclude_patterns:
     name: Exclude Patterns
     description: "Glob patterns passed to restic --exclude, e.g. '*.log' or '**/__pycache__'."
@@ -29,7 +29,7 @@ configuration:
     description: "Number of monthly snapshots to keep after pruning."
   run_on_start:
     name: Run On Start
-    description: "Run one backup immediately when the add-on starts, in addition to the cron schedule. Useful for testing a new configuration."
+    description: "Run one backup immediately when the app starts, in addition to the cron schedule. Useful for testing a new configuration."
   aws_access_key_id:
     name: S3 Access Key ID
     description: "Only needed for S3/MinIO/B2-compatible repositories. Leave empty for a local repository."

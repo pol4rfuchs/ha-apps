@@ -418,9 +418,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> FORGEJO · SELF-HOSTED GIT PLATFORM · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> FORGEJO · SELF-HOSTED GIT PLATFORM · HOME ASSISTANT APP</div>
         <h2>Forgejo in <span class="accent">Amber Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Forgejo add-on: the free GitHub alternative running rootless on Home Assistant OS — repositories, issues, pull requests, CI/CD actions, package registry, and optional SSH git access.</p>
+        <p class="hero-copy">Operations wiki for the Forgejo app: the free GitHub alternative running rootless on Home Assistant OS — repositories, issues, pull requests, CI/CD actions, package registry, and optional SSH git access.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#advanced">🧩 app.ini Reference</a>
@@ -428,7 +428,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>forgejo</strong></div>
+          <div class="metric"><small>App Slug</small><strong>forgejo</strong></div>
           <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:3000</strong></div>
           <div class="metric"><small>Upstream Image</small><strong>codeberg.org/forgejo/forgejo (rootless)</strong></div>
           <div class="metric"><small>SSH Git</small><strong>optional, port 22</strong></div>
@@ -456,13 +456,13 @@ Config: /addon_configs/local_forgejo/conf/app.ini</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This add-on runs the official <code>codeberg.org/forgejo/forgejo</code> rootless image, exposed on port 3000 (no HA Ingress, assets break behind it) with optional SSH access for git clone/push.</p>
+        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This app runs the official <code>codeberg.org/forgejo/forgejo</code> rootless image, exposed on port 3000 (no HA Ingress, assets break behind it) with optional SSH access for git clone/push.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><a href="#installation">Installation</a></td><td>Add repository, install, start, first-run wizard.</td></tr>
-            <tr><td><a href="#configuration">Configuration</a></td><td>Add-on options, SSL, SSH access.</td></tr>
+            <tr><td><a href="#configuration">Configuration</a></td><td>App options, SSL, SSH access.</td></tr>
             <tr><td><a href="#advanced">Advanced (app.ini)</a></td><td>Settings not exposed in the HA options UI.</td></tr>
             <tr><td><a href="#persistence">Persistence</a></td><td>What's under <code>addon_configs</code>, backup strategy.</td></tr>
             <tr><td><a href="#security">Security</a></td><td>AppArmor profile, SSH host keys, secrets.</td></tr>
@@ -478,35 +478,35 @@ Optional SSH :22     → git clone/push
 
     <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github forgejo setup wizard first start admin account">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="fj-step-1"><a class="anchor" href="#fj-step-1">#</a>Step 1 — Add Repository</h2>
         <ol>
           <li>Open Home Assistant.</li>
-          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Go to <strong>Settings → Apps → App Store</strong>.</li>
           <li>Open <strong>⋮ → Repositories</strong>.</li>
           <li>Add:</li>
         </ol>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
         <h2 id="fj-step-2"><a class="anchor" href="#fj-step-2">#</a>Step 2 — Install</h2>
         <ol>
-          <li>Search for <strong>Forgejo</strong> in the Add-on Store.</li>
+          <li>Search for <strong>Forgejo</strong> in the App Store.</li>
           <li>Click <strong>Install</strong>.</li>
         </ol>
         <h2 id="fj-step-3"><a class="anchor" href="#fj-step-3">#</a>Step 3 — Start & First-Run Wizard</h2>
         <ol>
-          <li>Start the add-on and open the Web UI with the <strong>Open Web UI</strong> button (or <code>http://&lt;ha-host&gt;:3000</code>). There is no sidebar panel, because Ingress is not used.</li>
+          <li>Start the app and open the Web UI with the <strong>Open Web UI</strong> button (or <code>http://&lt;ha-host&gt;:3000</code>). There is no sidebar panel, because Ingress is not used.</li>
           <li>On first visit, Forgejo's own setup wizard runs — create the admin account there (not in HA options).</li>
         </ol>
-        <blockquote>Forgejo manages its own admin account and users internally, created via its setup wizard, not through HA add-on options.</blockquote>
+        <blockquote>Forgejo manages its own admin account and users internally, created via its setup wizard, not through HA app options.</blockquote>
       </div>
     </article>
 
     <article id="configuration" class="doc-section glass-card" data-search="configuration options app name domain ssl certfile keyfile ssh enabled ssh port log level table">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
@@ -573,9 +573,9 @@ FORGEJO__packages__ENABLED=true</code></pre>
       </div>
       <div class="doc-content">
         <h2 id="fj-apparmor"><a class="anchor" href="#fj-apparmor">#</a>AppArmor</h2>
-        <p>A profile covering the s6-overlay baseline plus Forgejo's own runtime paths (<code>/config</code>, SSH host keys, git binaries) ships with the add-on, but AppArmor is currently <strong>disabled</strong> (<code>apparmor: false</code>) until the profile is re-tested on the Pi. Custom <code>app.ini</code> settings that make Forgejo read/write outside <code>/config</code> will need a matching rule once it is enabled again.</p>
+        <p>A profile covering the s6-overlay baseline plus Forgejo's own runtime paths (<code>/config</code>, SSH host keys, git binaries) ships with the app, but AppArmor is currently <strong>disabled</strong> (<code>apparmor: false</code>) until the profile is re-tested on the Pi. Custom <code>app.ini</code> settings that make Forgejo read/write outside <code>/config</code> will need a matching rule once it is enabled again.</p>
         <h2 id="fj-secrets"><a class="anchor" href="#fj-secrets">#</a>Secrets</h2>
-        <p>There's no dedicated <code>password</code>-type secret in this add-on's own options/schema — Forgejo manages its admin account and user credentials internally (created via its setup wizard, stored in <code>data/</code>). SSH host keys under <code>ssh/</code> are generated on first start; treat them as sensitive if the <code>/config/</code> folder is ever copied elsewhere.</p>
+        <p>There's no dedicated <code>password</code>-type secret in this app's own options/schema — Forgejo manages its admin account and user credentials internally (created via its setup wizard, stored in <code>data/</code>). SSH host keys under <code>ssh/</code> are generated on first start; treat them as sensitive if the <code>/config/</code> folder is ever copied elsewhere.</p>
         <h2 id="fj-external"><a class="anchor" href="#fj-external">#</a>Local and external access</h2>
         <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:3000</code> and set <code>domain</code> to the hostname or IP you use. For HTTPS inside the app set <code>ssl: true</code> (certificate and key from <code>/ssl</code>); the root URL is then <code>https://&lt;domain&gt;/</code> without a port, so forward 443 to 3000 or use a reverse proxy.</p>
         <p><strong>External (internet):</strong> recommendation <strong>ok, but only through a reverse proxy with TLS</strong>. Never forward port <code>3000</code> or the SSH port directly. Registration is <strong>open by default</strong>, so set <code>DISABLE_REGISTRATION = true</code> before exposing the instance, and keep <code>ssh_enabled</code> off unless you need git over SSH.</p>
@@ -606,12 +606,12 @@ FORGEJO__packages__ENABLED=true</code></pre>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://codeberg.org/forgejo/forgejo"><span>🦊</span><strong>Forgejo Upstream</strong><small>codeberg.org/forgejo/forgejo</small></a>
           <a class="source-chip" href="https://forgejo.org/docs/latest/admin/config-cheat-sheet/"><span>📖</span><strong>Config Cheat Sheet</strong><small>forgejo.org/docs</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Forgejo is licensed under the GPL version 3.0 or any later version (versions before 9.0 were MIT). The add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Forgejo is licensed under the GPL version 3.0 or any later version (versions before 9.0 were MIT). The app wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

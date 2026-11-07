@@ -20,14 +20,14 @@ Scheduled [restic](https://restic.net/) backups for Home Assistant, with [ntfy](
 
 ## Quick start
 
-1. Set `restic_password` to something strong and **back it up somewhere outside this add-on**. Without it, the repository is unrecoverable.
+1. Set `restic_password` to something strong and **back it up somewhere outside this app**. Without it, the repository is unrecoverable.
 2. Leave `repository` as the local default, or point it at a remote (e.g. `s3:https://minio.local/bucket-name`) and fill in `aws_access_key_id` / `aws_secret_access_key` if required.
 3. Optionally set `ntfy_url` + `ntfy_topic` to get notified. Fits naturally into an existing `ha-system`-style topic.
-4. Start the add-on. Check the log for `Repository initialized.` on first run.
+4. Start the app. Check the log for `Repository initialized.` on first run.
 5. Enable `run_on_start` once to verify the config, then turn it back off and let `cron_schedule` handle it.
 
 ## Notes
 
-- `backup_paths` must be covered by the add-on's `map:` config — adding a path here without also mapping it (e.g. `backup:ro`) does nothing.
-- This add-on only handles the backup side. Restoring is a manual `restic restore` from a shell with the same `RESTIC_REPOSITORY` / `RESTIC_PASSWORD` — intentionally not automated inside the add-on to avoid an accidental one-click data-loss button.
+- `backup_paths` must be covered by the app's `map:` config — adding a path here without also mapping it (e.g. `backup:ro`) does nothing.
+- This app only handles the backup side. Restoring is a manual `restic restore` from a shell with the same `RESTIC_REPOSITORY` / `RESTIC_PASSWORD` — intentionally not automated inside the app to avoid an accidental one-click data-loss button.
 - `apparmor: true` is enabled with a dedicated `apparmor.txt` profile covering the mapped backup folders, cron, and the s6-overlay baseline.

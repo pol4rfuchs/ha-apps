@@ -5,7 +5,7 @@ configuration beyond the quick-start steps in the README.
 
 ## Persistent Data / Backup
 
-Everything lives under the add-on's own config mount:
+Everything lives under the app's own config mount:
 
 ```
 /addon_configs/local_forgejo/   (host path)
@@ -18,13 +18,13 @@ Everything lives under the add-on's own config mount:
 ```
 
 A Home Assistant full backup (which includes `addon_configs` by default)
-already covers all of this — no add-on-specific backup hooks are
+already covers all of this — no app-specific backup hooks are
 configured. If you only want to back up Forgejo on its own, back up the
 entire `/addon_configs/local_forgejo/` folder.
 
 ## Secrets
 
-There's no dedicated `password`-type secret in this add-on's own
+There's no dedicated `password`-type secret in this app's own
 `options`/`schema` — Forgejo manages its own admin account and user
 credentials internally (created via its own setup wizard on first start,
 stored in `data/`, not exposed through the HA options UI). SSH host keys
@@ -58,7 +58,7 @@ for the full list of sections and keys.
 
 ## AppArmor
 
-The add-on ships an `apparmor.txt` profile (s6-overlay baseline plus Forgejo's
+The app ships an `apparmor.txt` profile (s6-overlay baseline plus Forgejo's
 own runtime paths), but `apparmor: false` is set in `config.yaml`, so the
 profile is **not enforced** at the moment. If AppArmor is enabled later and you
 use custom `app.ini` settings that make Forgejo read/write paths outside

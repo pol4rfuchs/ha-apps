@@ -14,7 +14,7 @@ configuration:
     description: "Unterstützung für serielle Schnittstellen aktivieren."
   log_level:
     name: Log-Level
-    description: "Detailgrad der Add-on-Log-Ausgabe."
+    description: "Detailgrad der App-Log-Ausgabe."
   mqtt_host:
     name: MQTT-Host
     description: "Hostname oder IP deines MQTT-Brokers. Leer lassen, um die MQTT-Bridge zu deaktivieren."

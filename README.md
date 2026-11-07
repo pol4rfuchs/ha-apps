@@ -8,7 +8,7 @@
 ![Unsupported architectures](https://img.shields.io/badge/no%20support-armhf%20%7C%20armv7%20%7C%20i386-lightgrey?style=for-the-badge&logo=homeassistant&logoColor=white)
 [![05 Release Please](https://github.com/pol4rfuchs/ha-apps/actions/workflows/05-release-please.yml/badge.svg?branch=main)](https://github.com/pol4rfuchs/ha-apps/actions/workflows/05-release-please.yml)
 
-Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`aarch64` + `amd64`).
+Custom Home Assistant apps (apps), prebuilt as multi-arch container images (`aarch64` + `amd64`).
 
 ![Visitors](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpol4rfuchs%2Fha-apps%2Fstats%2Fvisitors.json&style=for-the-badge&logo=github&logoColor=white)
 ![Page views](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpol4rfuchs%2Fha-apps%2Fstats%2Fviews.json&style=for-the-badge&logo=github&logoColor=white)
@@ -39,7 +39,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 | [Intiface Central](intiface_central/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | GUI | Intiface Central GUI application for device control |
 | [Forgejo](forgejo/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `forgejo/forgejo` [![Codeberg Release](https://img.shields.io/gitea/v/release/forgejo/forgejo?gitea_url=https%3A%2F%2Fcodeberg.org&style=flat-square&label=)](https://codeberg.org/forgejo/forgejo/releases) <!-- forge-check:allow: legitimate Forgejo upstream is hosted on Codeberg --> | Git | Self-hosted Git platform — free GitHub alternative with repos, issues, CI/CD and package registry |
 | [Unbound](unbound/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | DNS | Validating, recursive DNS resolver with DNSSEC support |
-| [Restic Backup](restic_backup/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `custom build` | Backup | Scheduled restic backups of HA config/media/add-on data with ntfy alerting on failure |
+| [Restic Backup](restic_backup/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `custom build` | Backup | Scheduled restic backups of HA config/media/app data with ntfy alerting on failure |
 | [UniFi OS Control Center](unifi_os_control_center/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `custom build` | Network | Local-first UniFi OS monitoring and management for Home Assistant |
 | [UniFi Toolkit](unifi_toolkit/) | ![experimental](https://img.shields.io/badge/-experimental-9B59B6?style=flat-square) | `Crosstalk-Solutions/unifi-toolkit` (Ingress wrapper, upstream unmodified) [![GitHub Release](https://img.shields.io/github/v/release/Crosstalk-Solutions/unifi-toolkit?style=flat-square&logo=github&label=)](https://github.com/Crosstalk-Solutions/unifi-toolkit/releases) | Network | UniFi dashboard with Wi-Fi Stalker, Threat Watch, Network Pulse and House Arrest; runs next to UniFi OS Control Center. MIT, upstream: [Crosstalk-Solutions/unifi-toolkit](https://github.com/Crosstalk-Solutions/unifi-toolkit) |
 | [Vaultwarden](vaultwarden/) | ![wip](https://img.shields.io/badge/-wip-FFA500?style=flat-square) | `dani-garcia/vaultwarden` [![GitHub Release](https://img.shields.io/github/v/release/dani-garcia/vaultwarden?style=flat-square&logo=github&label=)](https://github.com/dani-garcia/vaultwarden/releases) | Security | Lightweight Bitwarden-compatible password manager server (needs HTTPS reverse proxy) |
@@ -48,7 +48,7 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
 
 ## Pipeline
 
-> Planned add-ons currently in the pipeline — not yet released.
+> Planned apps currently in the pipeline — not yet released.
 
 | App | Status | Runtime / Upstream | Category | Description |
 |---|---|---|---|---|
@@ -78,11 +78,11 @@ Custom Home Assistant apps (add-ons), prebuilt as multi-arch container images (`
    ```
    https://github.com/pol4rfuchs/ha-apps
    ```
-4. Reload the store — all available add-ons appear automatically
+4. Reload the store — all available apps appear automatically
 
 ## Architecture
 
-All add-ons are built for:
+All apps are built for:
 
 - `aarch64` (Raspberry Pi 4, etc.)
 - `amd64` (x86-64 systems)
@@ -91,7 +91,7 @@ No `armhf`, `armv7`, or `i386` builds.
 
 ## Prebuilt Images
 
-Add-ons are distributed as prebuilt multi-arch container images via the GitHub Container Registry (GHCR).
+Apps are distributed as prebuilt multi-arch container images via the GitHub Container Registry (GHCR).
 Home Assistant pulls the finished image — no local build required on your device.
 
 ```
@@ -101,4 +101,4 @@ GHCR (ghcr.io)         ← images live here
 
 ## License
 
-Each add-on may have its own license terms — see the respective add-on folder.
+Each app may have its own license terms — see the respective app folder.

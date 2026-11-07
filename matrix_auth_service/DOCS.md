@@ -11,21 +11,21 @@ is set.
 
 ## Requirements
 
-- An already running Matrix Synapse add-on with **Simplified Sliding
+- An already running Matrix Synapse app with **Simplified Sliding
   Sync** support (natively available since Synapse 1.114)
 - Own subdomain for the account UI (e.g. `account.example.org`)
 - A fresh start is recommended: existing accounts are **not** migrated
-  automatically (no `syn2mas` step is built into this add-on)
+  automatically (no `syn2mas` step is built into this app)
 
 ## Setup
 
-1. Install the add-on, set `mas_domain`, `synapse_server_name`,
+1. Install the app, set `mas_domain`, `synapse_server_name`,
    `synapse_endpoint`
 2. Leave `synapse_secret` empty → it is generated automatically on the first
    start (the value appears in the log and under `/data/mas/.synapse_secret`)
-3. Copy the generated secret value into the Synapse add-on:
+3. Copy the generated secret value into the Synapse app:
    `mas_enabled: true`, `mas_secret: <value>`, `mas_endpoint: http://[HA-IP]:8082`
-4. Restart both add-ons
+4. Restart both apps
 
 ## Open items (before production use)
 

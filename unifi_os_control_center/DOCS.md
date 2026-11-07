@@ -8,7 +8,7 @@ This guide starts from zero and explains how to install, configure, connect, and
 
 Before installation, make sure you have:
 
-- Home Assistant OS with access to the Apps/Add-ons section.
+- Home Assistant OS with access to the Apps section.
 - A supported `aarch64` or `amd64` host.
 - A UniFi OS console or UniFi Network Server reachable from the Home Assistant host.
 - The local HTTPS address of the UniFi console.
@@ -23,7 +23,7 @@ Typical supported UniFi OS devices include Cloud Gateways such as UDM Pro/SE, UC
 
 After the app has been published in the repository:
 
-1. Open **Settings → Apps/Add-ons → App Store/Add-on Store**.
+1. Open **Settings → Apps → App Store/App Store**.
 2. Add the `pol4rfuchs/ha-apps` repository if it is not already installed.
 3. Reload the store.
 4. Open **UniFi OS Control Center**.
@@ -64,10 +64,10 @@ With `image:` enabled, Home Assistant expects a prebuilt image from GHCR. Withou
 
 After copying the files:
 
-1. Open the App/Add-on Store.
+1. Open the App Store.
 2. Open the three-dot menu.
 3. Select **Check for updates** or reload the store.
-4. Find **UniFi OS Control Center** under local apps/add-ons.
+4. Find **UniFi OS Control Center** under local apps.
 5. Select **Install**.
 
 The frontend is shipped as a committed, prebuilt `frontend/dist/` artifact. The local HAOS build installs only the pinned Python runtime dependencies and copies the prepared frontend; it does not run npm on the HAOS host.
@@ -152,7 +152,7 @@ Do not use your UniFi account password in the `api_key` field.
 Open:
 
 ```text
-Settings → Apps/Add-ons → UniFi OS Control Center → Configuration
+Settings → Apps → UniFi OS Control Center → Configuration
 ```
 
 A safe initial configuration is:
@@ -362,7 +362,7 @@ These endpoints are consumed by the local web interface. They are not intended t
 
 ## 10. Storage and backups
 
-Telemetry is stored in SQLite using WAL mode. The persistent app data is located in the Home Assistant app/add-on configuration data area mapped into the container.
+Telemetry is stored in SQLite using WAL mode. The persistent app data is located in the Home Assistant app configuration data area mapped into the container.
 
 The app declares hot-backup support. Home Assistant backups should include the persistent app data without requiring the app to be permanently stopped.
 
@@ -395,7 +395,7 @@ When using a hostname, the app container must also be able to resolve it through
 
 ## 12. Troubleshooting
 
-### App does not appear under local apps/add-ons
+### App does not appear under local apps
 
 Check:
 
@@ -403,7 +403,7 @@ Check:
 - `config.yaml` is directly inside that directory.
 - The folder is not nested twice.
 - The `image:` line was removed or commented for a local source build.
-- The App/Add-on Store was reloaded.
+- The App Store was reloaded.
 - The architecture is `aarch64` or `amd64`.
 
 ### Local installation tries to pull from GHCR

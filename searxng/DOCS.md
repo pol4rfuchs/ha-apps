@@ -1,4 +1,4 @@
-# SearXNG — Home Assistant Add-on
+# SearXNG — Home Assistant App
 
 Privacy-respecting metasearch engine. No tracking, no profiles, fully self-hosted.
 
@@ -6,7 +6,7 @@ Privacy-respecting metasearch engine. No tracking, no profiles, fully self-hoste
 
 ## Quick Start
 
-1. **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
+1. **Settings → Apps → App Store → ⋮ → Repositories**
 2. Add: `https://github.com/pol4rfuchs/ha-apps`
 3. Install **SearXNG** and click **Start**
 4. Open via the **Open Web UI** button or the HA sidebar
@@ -32,7 +32,7 @@ After the first start, the settings file is created at:
 addon_configs/<SLUG>_searxng/settings.yml
 ```
 
-Edit with the HA File Editor add-on. Restart the add-on after changes.
+Edit with the HA File Editor app. Restart the app after changes.
 
 Full reference: <https://docs.searxng.org/admin/settings/index.html>
 
@@ -68,12 +68,12 @@ http://homeassistant.local:8080/search?q=your+query&format=json
 | Problem | Fix |
 |---------|-----|
 | Sidebar shows blank page | Use direct URL: `http://[HA-IP]:8080` |
-| Settings not applied | Restart the add-on after editing `settings.yml` |
+| Settings not applied | Restart the app after editing `settings.yml` |
 | Log shows `ahmia` / `torch` `can't register engine` | Expected without Tor. Turn on `enable_tor` or ignore it |
 | Search returns no results | Check engine list in `settings.yml` — some engines may be rate-limited |
 
 ## Local and external access
 
-**Local (LAN):** open it from the sidebar (Ingress) or on `http://<ha-host>:8080`. Neither has a login: a search engine used as the browser's default search cannot sit behind a login (exception class "no login by design"). Ingress and the host port share port 8080, so the app cannot restrict the port to the Ingress gateway. If you only want the sidebar, clear the host port under the add-on's **Network** tab.
+**Local (LAN):** open it from the sidebar (Ingress) or on `http://<ha-host>:8080`. Neither has a login: a search engine used as the browser's default search cannot sit behind a login (exception class "no login by design"). Ingress and the host port share port 8080, so the app cannot restrict the port to the Ingress gateway. If you only want the sidebar, clear the host port under the app's **Network** tab.
 
 **External (internet):** recommendation **not recommended, VPN only.** A public SearXNG without authentication turns into an open search proxy that others can abuse in your name. If you publish it anyway, add authentication at the reverse proxy and set `set_base_url_for_ingress` to `false`. Your search queries leave the network to the search engines by design (exception).

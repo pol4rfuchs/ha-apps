@@ -9,7 +9,7 @@ link to the appservice and all rooms/users that have already been bridged break.
 ## Appservice registration (shared volume)
 
 This bridge writes its `registration.yaml` to `/share/signal_bridge_registration.yaml`.
-The Matrix Synapse add-on only reads this file if the option
+The Matrix Synapse app only reads this file if the option
 `signal_bridge_enabled` is enabled there (a Synapse restart is needed afterwards).
 
 ## Backup
@@ -38,7 +38,7 @@ context in Matrix.
 
 ## Local and external access
 
-**Local (LAN):** The bridge has no web interface and publishes no host port. The appservice port `29328` is only reachable in Home Assistant's internal network, so that the Matrix Synapse add-on can reach the bridge (`appservice_address`). The link is protected by `as_token`/`hs_token` in `/data/registration.yaml`; treat `/data` and `/share/signal_bridge_registration.yaml` like a secret.
+**Local (LAN):** The bridge has no web interface and publishes no host port. The appservice port `29328` is only reachable in Home Assistant's internal network, so that the Matrix Synapse app can reach the bridge (`appservice_address`). The link is protected by `as_token`/`hs_token` in `/data/registration.yaml`; treat `/data` and `/share/signal_bridge_registration.yaml` like a secret.
 
 **External (internet):** Recommendation: **forward nothing.** The bridge connects outbound to Signal; only Synapse needs to be reachable from outside (see its documentation), never the bridge itself.
 
