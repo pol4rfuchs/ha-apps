@@ -50,6 +50,7 @@ jobs:
           - unifi_os_control_center
           - vaultwarden
           - cortendesk
+          - netbox
     steps:
       - name: Delete old untagged versions
         continue-on-error: true

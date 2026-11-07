@@ -123,6 +123,12 @@
     },
     {
       "matchFileNames": [
+        "netbox/**"
+      ],
+      "semanticCommitScope": "netbox"
+    },
+    {
+      "matchFileNames": [
         "matrix_ketesa/**"
       ],
       "semanticCommitScope": "matrix_ketesa"
@@ -212,6 +218,7 @@
         "matrix_auth_service/**",
         "vaultwarden/**",
         "cortendesk/**",
+        "netbox/**",
         "restic_backup/**"
       ],
       "automerge": false

@@ -91,6 +91,13 @@ jobs:
             mode: noop
             tag_prefix: ntfy-manager
             reason: "Internal app add-on; no external upstream version/ref is declared in-repo."
+          - addon: netbox
+            mode: noop
+            tag_prefix: netbox
+            reason: >-
+              The upstream image tag combines two versions (v<netbox>-<netbox-docker>, ARGs
+              NETBOX_VERSION and NETBOX_DOCKER_VERSION) and the bundled PostgreSQL/Valkey
+              majors must be checked by hand, so there is no safe automatic bump.
           - addon: searxng
             mode: dockerhub_arg_tag
             dockerhub_repo: searxng/searxng

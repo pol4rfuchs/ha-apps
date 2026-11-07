@@ -116,6 +116,13 @@
       "include-component-in-tag": true,
       "tag-separator": "-",
       "prerelease": true
+    },
+    "netbox": {
+      "release-type": "simple",
+      "component": "netbox",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "prerelease": true
     }
   }
 }

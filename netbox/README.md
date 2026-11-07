@@ -4,6 +4,13 @@
 
 **Status:** wip
 
+| Property | Value |
+|---|---|
+| **Upstream image** | `ghcr.io/netbox-community/netbox` |
+| **NetBox version** | `4.7.4` |
+| **Default port** | `8001` |
+| **Arch** | `amd64`, `aarch64` |
+
 Important: the first start applies the database migrations and takes several minutes on a Raspberry Pi. The first admin password is written to the app's configuration folder, see [DOCS.md](DOCS.md).
 
 ## Installation
