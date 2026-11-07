@@ -6,8 +6,9 @@
 
 **TeamSpeak 6 voice server as a Home Assistant add-on, built on the official `teamspeaksystems/teamspeak6-server` image.**
 
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=flat-square&logo=home-assistant&logoColor=white)](https://www.home-assistant.io)
-[![TeamSpeak](https://img.shields.io/badge/TeamSpeak-6-blue?style=flat-square&logo=teamspeak&logoColor=white)](https://teamspeak.com)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![TeamSpeak Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0--beta13.1-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://teamspeak.com)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 </div>
 
@@ -19,6 +20,7 @@
 |---|---|
 | **Server** | TeamSpeak 6 Server (`teamspeaksystems/teamspeak6-server`, version pinned in the Dockerfile) |
 | **Architectures** | `amd64`, `aarch64` |
+| **App version** | `1.1.25` |
 | **Voice port** | `9987/udp` |
 | **File transfer** | `30033/tcp` |
 | **ServerQuery** | `10011/tcp` (raw), `10022/tcp` (SSH), `10080/tcp` (HTTP) |

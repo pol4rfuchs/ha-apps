@@ -1,5 +1,13 @@
 # NetBox
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![NetBox Version](https://img.shields.io/badge/NetBox-4.7.4-1E88E5?style=for-the-badge&logo=github&logoColor=white)](https://github.com/netbox-community/netbox)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 [NetBox](https://github.com/netbox-community/netbox) as a Home Assistant app – the open source IPAM and DCIM tool to document your network: IP addresses, prefixes, VLANs, racks, devices, cables. PostgreSQL and Valkey are built in, nothing else has to be set up.
 
 **Status:** wip

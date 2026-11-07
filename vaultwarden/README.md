@@ -1,5 +1,13 @@
 # Vaultwarden
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Vaultwarden Version](https://img.shields.io/badge/Vaultwarden-1.37.5-175DDC?style=for-the-badge&logo=bitwarden&logoColor=white)](https://github.com/dani-garcia/vaultwarden)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 Lean, Bitwarden-compatible password manager server (Vaultwarden) as a Home Assistant app – with all upstream features: organizations, sends, emergency access, 2FA (TOTP, WebAuthn, Duo, YubiKey), SSO (OpenID Connect), push, SMTP.
 
 **Status:** wip

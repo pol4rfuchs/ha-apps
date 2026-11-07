@@ -90,7 +90,7 @@ This repository contains a complete **Home Assistant App** that wraps [`clusterz
 |---|---|
 | **HA Add-on Name** | `TS6 Manager` |
 | **HA Add-on Slug** | `ts6_manager` |
-| **Add-on Version** | `1.1.10` |
+| **App version** | `1.1.10` |
 | **Default Web UI Port** | `8066` |
 | **Backend Target** | TeamSpeak 6 WebQuery HTTP API |
 | **TS6 WebQuery Port** | `10080` |

@@ -9,7 +9,6 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![ha-apps Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![ntfy Version](https://img.shields.io/badge/based%20on%20ntfy-v2.37.2-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)](https://github.com/binwiederhier/ntfy)
 [![App Version](https://img.shields.io/badge/ntfy-v1.2.19-2ECC71?style=for-the-badge&logo=homeassistant&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
@@ -75,7 +74,7 @@ http://homeassistant.local:4280
 
 ![ntfy](https://img.shields.io/badge/ntfy-Self--Hosted%20Push-2ECC71?style=for-the-badge&logo=ntfy&logoColor=white)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)
-![Admin UI](https://img.shields.io/badge/Admin%20UI-ntfy__manager%20add--on-F39C12?style=for-the-badge)
+![Admin UI](https://img.shields.io/badge/Admin%20UI-ntfy__manager%20app-F39C12?style=for-the-badge)
 ![API](https://img.shields.io/badge/API-HTTP%20Publish-8E44AD?style=for-the-badge)
 
 **In short: ntfy is your own push server for Home Assistant — fast, locally controllable and ideal for automations, alerts and system messages.**

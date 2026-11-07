@@ -168,7 +168,7 @@ jobs:
                 r'(\*\*Unbound version\*\*\s*\|\s*`)[0-9]+\.[0-9]+\.[0-9]+(`)',
                 rf'\g<1>{new_version}\g<2>')
           patch(addon / "README.md",
-                r'(\*\*Add-on version\*\*\s*\|\s*`)[^`]+(`)',
+                r'(\*\*App version\*\*\s*\|\s*`)[^`]+(`)',
                 rf'\g<1>{new_full}\g<2>')
 
           # Dockerfile

@@ -1,5 +1,13 @@
 # UniFi Toolkit
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![UniFi Toolkit Version](https://img.shields.io/badge/UniFi%20Toolkit-1.13.3-0559C9?style=for-the-badge&logo=ubiquiti&logoColor=white)](https://github.com/Crosstalk-Solutions/unifi-toolkit)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 Experimental Home Assistant app that packages the open-source
 [UniFi Toolkit](https://github.com/Crosstalk-Solutions/unifi-toolkit) by Crosstalk Solutions (MIT).
 
