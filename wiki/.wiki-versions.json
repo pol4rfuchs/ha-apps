@@ -19,5 +19,6 @@
   "unifi_os_control_center": "0.7.7",
   "unifi_toolkit": "0.2.0",
   "vaultwarden": "0.2.0",
-  "cortendesk": "0.2.1"
+  "cortendesk": "0.2.1",
+  "netbox": "0.0.1"
 }
