@@ -28,14 +28,14 @@
 | **HTTP port** | `80` |
 | **HTTPS port** | `443` |
 | **Arch** | `amd64`, `aarch64` |
-| **Database** | SQLite (default) or MariaDB add-on |
+| **Database** | SQLite (default) or MariaDB app |
 
 ---
 
 ## ✨ Features
 
 - Official `jc21/nginx-proxy-manager` image — upstream updates apply directly
-- SQLite (default) or MariaDB add-on integration
+- SQLite (default) or MariaDB app integration
 - Web UI on port `81`
 - Dark mode (native NPM UI)
 - AppArmor profile shipped in the repository (currently not enforced: `apparmor: false`)
@@ -50,7 +50,7 @@
 ### Step 1 — Add the repository
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Add:
@@ -93,7 +93,7 @@ On first start NPM shows a setup wizard ("Welcome! Get started by creating your 
 | Option | Default | Description |
 |---|---|---|
 | `db_type` | `sqlite` | `sqlite` or `mariadb`. |
-| `mariadb_host` | `""` | MariaDB hostname (HA add-on: `core-mariadb`). |
+| `mariadb_host` | `""` | MariaDB hostname (HA app: `core-mariadb`). |
 | `mariadb_port` | `3306` | MariaDB port. |
 | `mariadb_name` | `npm` | Database name. |
 | `mariadb_user` | `npm` | MariaDB username. |
@@ -140,7 +140,7 @@ For DuckDNS: use the DuckDNS provider and enter your token.
 └── keys.json          ← Session key pair, created by NPM
 ```
 
-HA backups include the add-on `/data` directory automatically.
+HA backups include the app `/data` directory automatically.
 
 ---
 
@@ -151,7 +151,7 @@ HA backups include the add-on `/data` directory automatically.
 | Port `81` not accessible | Check Network tab — port must be mapped |
 | Port `80` / `443` conflict | Stop another service using these ports |
 | Let's Encrypt fails | Ensure ports `80`/`443` are port-forwarded on your router |
-| MariaDB connection refused | Verify MariaDB add-on is running and credentials are correct |
+| MariaDB connection refused | Verify MariaDB app is running and credentials are correct |
 | White screen on UI open | Clear browser cache; try direct URL `http://[HA-IP]:81` |
 
 ---

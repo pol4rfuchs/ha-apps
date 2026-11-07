@@ -1,10 +1,10 @@
 # Intiface Central for Home Assistant
 
-Full add-on with its own web GUI, MQTT bridge and automatic Home Assistant entities.
+Full app with its own web GUI, MQTT bridge and automatic Home Assistant entities.
 
 ## Access
 
-After starting → **Open Web UI** on the add-on page.
+After starting → **Open Web UI** on the app page.
 
 ## External clients (games, apps)
 

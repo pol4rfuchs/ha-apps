@@ -14,7 +14,7 @@ body:
     id: addon
     attributes:
       label: Affected app
-      description: Which add-on in the monorepo is affected?
+      description: Which app in the monorepo is affected?
       options:
         - forgejo
         - intiface_central

@@ -2,7 +2,7 @@
 configuration:
   homeserver_address:
     name: Homeserver Address
-    description: "URL of the Matrix Synapse add-on (internal, e.g. http://xxxxx-matrix-server:8008)."
+    description: "URL of the Matrix Synapse app (internal, e.g. http://xxxxx-matrix-server:8008)."
   homeserver_domain:
     name: Homeserver Domain
     description: "Your Matrix server_name / domain used for MXIDs."

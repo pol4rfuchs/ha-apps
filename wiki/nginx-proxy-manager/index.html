@@ -428,9 +428,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> NGINX PROXY MANAGER · SSL · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> NGINX PROXY MANAGER · SSL · HOME ASSISTANT APP</div>
         <h2>Nginx Proxy Manager in <span class="accent">Cyan Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Nginx Proxy Manager Home Assistant Add-on: installation, SSL setup, DNS-01 challenges, MariaDB integration and troubleshooting.</p>
+        <p class="hero-copy">Operations wiki for the Nginx Proxy Manager Home Assistant App: installation, SSL setup, DNS-01 challenges, MariaDB integration and troubleshooting.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#ssl">🔐 SSL Setup</a>
@@ -438,7 +438,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>nginx_proxy_manager</strong></div>
+          <div class="metric"><small>App Slug</small><strong>nginx_proxy_manager</strong></div>
           <div class="metric"><small>Admin UI</small><strong>http://homeassistant.local:81</strong></div>
           <div class="metric"><small>HTTP/HTTPS</small><strong>:80 / :443</strong></div>
           <div class="metric"><small>Upstream Image</small><strong>jc21/nginx-proxy-manager</strong></div>
@@ -467,7 +467,7 @@ HTTPS:     :443 (public proxy)</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Nginx Proxy Manager</strong> is a reverse proxy management UI with SSL automation. This add-on wraps the official <code>jc21/nginx-proxy-manager</code> image with HA Supervisor integration and an optional MariaDB backend.</p>
+        <p><strong>Nginx Proxy Manager</strong> is a reverse proxy management UI with SSL automation. This app wraps the official <code>jc21/nginx-proxy-manager</code> image with HA Supervisor integration and an optional MariaDB backend.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
@@ -488,14 +488,14 @@ nginx   → proxies :80/:443 to internal services</code></pre>
 
     <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github nginx proxy manager">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="npm-step-1"><a class="anchor" href="#npm-step-1">#</a>Step 1 — Add Repository</h2>
         <ol>
           <li>Open Home Assistant.</li>
-          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Go to <strong>Settings → Apps → App Store</strong>.</li>
           <li>Open <strong>⋮ → Repositories</strong>.</li>
           <li>Add:</li>
         </ol>
@@ -524,7 +524,7 @@ nginx   → proxies :80/:443 to internal services</code></pre>
         <h2 id="config-sqlite"><a class="anchor" href="#config-sqlite">#</a>SQLite (Default)</h2>
         <p>No configuration required. NPM creates its own SQLite database under <code>/data/npm/</code> on first start.</p>
         <h2 id="config-mariadb"><a class="anchor" href="#config-mariadb">#</a>MariaDB Backend</h2>
-        <p>Install and start the HA <strong>MariaDB</strong> add-on, then create the database and user before enabling this option.</p>
+        <p>Install and start the HA <strong>MariaDB</strong> app, then create the database and user before enabling this option.</p>
         <pre><code>db_type: mariadb
 mariadb_host: core-mariadb
 mariadb_port: 3306
@@ -538,7 +538,7 @@ mariadb_password: "your_password"</code></pre>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>db_type</code></td><td><code>sqlite</code></td><td><code>sqlite</code> or <code>mariadb</code>. (Replaces the old <code>use_mariadb</code> boolean.)</td></tr>
-            <tr><td><code>mariadb_host</code></td><td><em>empty</em></td><td>MariaDB add-on hostname, e.g. <code>core-mariadb</code>.</td></tr>
+            <tr><td><code>mariadb_host</code></td><td><em>empty</em></td><td>MariaDB app hostname, e.g. <code>core-mariadb</code>.</td></tr>
             <tr><td><code>mariadb_port</code></td><td><code>3306</code></td><td>MariaDB port.</td></tr>
             <tr><td><code>mariadb_name</code></td><td><code>npm</code></td><td>Database name. (Renamed from <code>mariadb_database</code>.)</td></tr>
             <tr><td><code>mariadb_user</code></td><td><code>npm</code></td><td>MariaDB user. (Renamed from <code>mariadb_username</code>.)</td></tr>
@@ -547,7 +547,7 @@ mariadb_password: "your_password"</code></pre>
             <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>info / warning / error / debug</code>.</td></tr>
           </tbody>
         </table>
-        <p>The ports are fixed in the add-on (<code>80</code>, <code>81</code>, <code>443</code>). To change the host side, use the Network tab of the add-on.</p>
+        <p>The ports are fixed in the app (<code>80</code>, <code>81</code>, <code>443</code>). To change the host side, use the Network tab of the app.</p>
       </div>
     </article>
 
@@ -615,7 +615,7 @@ Domain:       your-subdomain.duckdns.org</code></pre>
         <blockquote>Never expose the Admin UI (port <code>81</code>) to the internet. Keep it behind your LAN or VPN.</blockquote>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
         <p><strong>Local (LAN):</strong> the admin UI runs directly on port <code>81</code> (<code>http://&lt;ha-host&gt;:81</code>), not through Ingress. The port is mapped on the host and reachable across your LAN. Finish the setup wizard and create the admin account right after the first start, the UI is unprotected until then.</p>
-        <p><strong>External (internet):</strong> ports <code>80</code> and <code>443</code> are the entrance for proxy traffic and may be forwarded on your router; that is the purpose of this add-on. Never expose port <code>81</code> to the internet, LAN or VPN only.</p>
+        <p><strong>External (internet):</strong> ports <code>80</code> and <code>443</code> are the entrance for proxy traffic and may be forwarded on your router; that is the purpose of this app. Never expose port <code>81</code> to the internet, LAN or VPN only.</p>
       </div>
     </article>
 
@@ -636,7 +636,7 @@ Domain:       your-subdomain.duckdns.org</code></pre>
         <ol>
           <li>Settings → System → Backups → Create Backup.</li>
           <li>This captures NPM config, certificates and (if SQLite) the database.</li>
-          <li>For MariaDB: also back up the MariaDB add-on data.</li>
+          <li>For MariaDB: also back up the MariaDB app data.</li>
         </ol>
       </div>
     </article>
@@ -650,10 +650,10 @@ Domain:       your-subdomain.duckdns.org</code></pre>
         <table>
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
-            <tr><td>Port 81 not accessible</td><td>Port not mapped in Network tab.</td><td>Add port mapping in add-on Network settings.</td></tr>
+            <tr><td>Port 81 not accessible</td><td>Port not mapped in Network tab.</td><td>Add port mapping in app Network settings.</td></tr>
             <tr><td>Port 80/443 conflict</td><td>Another service uses these ports.</td><td>Stop conflicting service or change its port.</td></tr>
             <tr><td>Let's Encrypt fails</td><td>Port 80 not forwarded (HTTP-01).</td><td>Use DNS-01 challenge or forward port 80 on router.</td></tr>
-            <tr><td>MariaDB connection refused</td><td>Wrong credentials or MariaDB not running.</td><td>Verify MariaDB add-on is running and credentials match.</td></tr>
+            <tr><td>MariaDB connection refused</td><td>Wrong credentials or MariaDB not running.</td><td>Verify MariaDB app is running and credentials match.</td></tr>
             <tr><td>White screen on UI</td><td>Browser cache issue.</td><td>Clear cache and try direct URL: <code>http://HA-IP:81</code></td></tr>
             <tr><td>Proxy host returns 502</td><td>Upstream service not running or wrong port.</td><td>Verify the forwarded service is running and the port is correct.</td></tr>
           </tbody>
@@ -668,12 +668,12 @@ Domain:       your-subdomain.duckdns.org</code></pre>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/NginxProxyManager/nginx-proxy-manager"><span>🔀</span><strong>NPM Upstream</strong><small>NginxProxyManager/nginx-proxy-manager</small></a>
           <a class="source-chip" href="https://nginxproxymanager.com/guide/"><span>📖</span><strong>NPM Docs</strong><small>nginxproxymanager.com</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper for <code>jc21/nginx-proxy-manager</code>. NPM is MIT licensed. The add-on wrapper is Apache-2.0 licensed.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper for <code>jc21/nginx-proxy-manager</code>. NPM is MIT licensed. The app wrapper is Apache-2.0 licensed.</blockquote>
       </div>
     </article>
 

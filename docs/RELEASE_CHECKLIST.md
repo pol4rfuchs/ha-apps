@@ -20,7 +20,7 @@
 
 ## Runtime
 
-- [ ] Add-on starts
+- [ ] App starts
 - [ ] DNS resolves on 5053
 - [ ] DNSSEC behavior is verified
 - [ ] Blocklists work

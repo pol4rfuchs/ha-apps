@@ -1,8 +1,8 @@
 /*
-  Theme switcher shared by the hub and all add-on wikis.
+  Theme switcher shared by the hub and all app wikis.
   Themes: bento (default) · docs
     - hub / 404 / hwinfo-thermalguard (site.css pages): themes.css
-    - all other add-on wikis: addon-themes.css (docs = the page's original sidebar look)
+    - all other app wikis: addon-themes.css (docs = the page's original sidebar look)
   The choice is stored in localStorage (same key everywhere, so it follows you across pages)
   and can be forced with ?theme=docs. Loaded synchronously in <head> to avoid a flash.
   Without JavaScript the pages render in their original look.
@@ -60,7 +60,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     let switchers = document.querySelectorAll('[data-theme-switch]');
 
-    // Add-on wikis have no placeholder: put the switcher under the sidebar brand, else float it.
+    // App wikis have no placeholder: put the switcher under the sidebar brand, else float it.
     if (!switchers.length) {
       const box = document.createElement('div');
       box.setAttribute('data-theme-switch', '');
@@ -82,7 +82,7 @@
     if (groups.length && topbar) {
       const nav = document.createElement('nav');
       nav.className = 'side-nav';
-      nav.setAttribute('aria-label', 'Add-ons');
+      nav.setAttribute('aria-label', 'Apps');
       // Built with DOM APIs (textContent / setAttribute), never innerHTML, so page text can't be re-parsed as markup.
       groups.forEach((g) => {
         const title = document.createElement('div');

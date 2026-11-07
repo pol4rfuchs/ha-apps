@@ -14,7 +14,7 @@ configuration:
     description: "Database backend to use. 'sqlite' is fine for testing only; 'mysql' (MariaDB) or 'pgsql' are recommended for production."
   db_host:
     name: Database Host
-    description: "Hostname of the database server (e.g. the MariaDB/Postgres add-on's hostname)."
+    description: "Hostname of the database server (e.g. the MariaDB/Postgres app's hostname)."
   db_port:
     name: Database Port
     description: "Port of the database server."

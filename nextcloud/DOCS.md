@@ -6,9 +6,9 @@ installation/quickstart steps in the README.
 ## Secrets
 
 - **`admin_password`** has no default and is **required for the first
-  start** — the add-on stops with an error while it is empty. It's only
+  start** — the app stops with an error while it is empty. It's only
   applied during the initial Nextcloud install; changing it afterwards in
-  the add-on options does **not** change the actual account password (use
+  the app options does **not** change the actual account password (use
   the Nextcloud UI or `occ user:resetpassword` for that once it's running).
 - **`db_password`** is the database user's password — must match whatever
   you configured on the MariaDB/Postgres side.
@@ -18,13 +18,13 @@ them.
 
 ## Versions and updates
 
-The add-on version (for example `33.0.x`) is a release counter of this repository, **not** the Nextcloud version. The Nextcloud version is the one in the image (see the `NEXTCLOUD_TAG` build argument and the badge in the README).
+The app version (for example `33.0.x`) is a release counter of this repository, **not** the Nextcloud version. The Nextcloud version is the one in the image (see the `NEXTCLOUD_TAG` build argument and the badge in the README).
 
-Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the add-on runs `occ upgrade` when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version.
+Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the app runs `occ upgrade` when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version.
 
 ## Backup
 
-All persistent state lives under `/data/nextcloud/` in the add-on's own
+All persistent state lives under `/data/nextcloud/` in the app's own
 data volume:
 
 ```
@@ -36,10 +36,10 @@ data volume:
 └── version.php   # Version of the installed code (used for updates)
 ```
 
-The Nextcloud code itself is not stored: it comes from the add-on image and is
+The Nextcloud code itself is not stored: it comes from the app image and is
 restored on every start.
 
-A Home Assistant full backup (which includes add-on data by default)
+A Home Assistant full backup (which includes app data by default)
 already covers this. If you back up manually, back up the entire
 `/data/nextcloud/` folder as a unit — `config.php` and the user data
 directory reference each other and should be restored together.
@@ -59,15 +59,15 @@ via the official image's `docker-entrypoint-hooks.d` mechanism:
 
 ## Background jobs and resources
 
-Background jobs (trash and version expiry, preview cleanup, file scans) run through cron every 5 minutes; the add-on starts cron itself and sets Nextcloud to the "Cron" mode on every start. Nextcloud's admin overview should therefore show "Cron" with a recent last run.
+Background jobs (trash and version expiry, preview cleanup, file scans) run through cron every 5 minutes; the app starts cron itself and sets Nextcloud to the "Cron" mode on every start. Nextcloud's admin overview should therefore show "Cron" with a recent last run.
 
 Apache is sized for a home server: 2 processes at start, at most 30 at the same time. That keeps memory bounded on small hosts; 30 parallel requests are enough for a household including sync clients.
 
 ## Shell / occ Access
 
-For anything not exposed in the HA options UI, use the add-on's own shell
-(Settings → Add-ons → Nextcloud → three-dot menu, or the Terminal & SSH
-add-on's `docker exec`) and run `occ` directly:
+For anything not exposed in the HA options UI, use the app's own shell
+(Settings → Apps → Nextcloud → three-dot menu, or the Terminal & SSH
+app's `docker exec`) and run `occ` directly:
 
 ```bash
 php /var/www/html/occ config:system:set trusted_domains 1 --value="nextcloud.example.com"
@@ -77,7 +77,7 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"
 ## AppArmor
 
 `apparmor.txt` is included but **intentionally not yet enforced**
-(`apparmor: false`) — this add-on runs on the official Nextcloud/Apache
+(`apparmor: false`) — this app runs on the official Nextcloud/Apache
 vendor image rather than the HA base image, and the profile's exact paths
 weren't verified against the real filesystem. See the profile's own header
 comment for the manual test steps to run before flipping it to `true`.

@@ -428,9 +428,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> NAVIDROME · SUBSONIC API · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> NAVIDROME · SUBSONIC API · HOME ASSISTANT APP</div>
         <h2>Navidrome in <span class="accent">Orange Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Navidrome Home Assistant Add-on: installation, music folder setup, Subsonic client configuration, persistence and troubleshooting.</p>
+        <p class="hero-copy">Operations wiki for the Navidrome Home Assistant App: installation, music folder setup, Subsonic client configuration, persistence and troubleshooting.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#configuration">⚙️ Configuration</a>
@@ -438,7 +438,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>navidrome</strong></div>
+          <div class="metric"><small>App Slug</small><strong>navidrome</strong></div>
           <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:4533</strong></div>
           <div class="metric"><small>Subsonic API</small><strong>:4533</strong></div>
           <div class="metric"><small>Upstream Image</small><strong>deluan/navidrome</strong></div>
@@ -449,7 +449,7 @@
     <section class="control-strip">
       <div class="quick-card glass-card">
         <h3>⚡ Minimum Run Path</h3>
-        <p>Set your music folder, start the add-on, create an admin account, connect your Subsonic client.</p>
+        <p>Set your music folder, start the app, create an admin account, connect your Subsonic client.</p>
         <pre><code>ND_MUSICFOLDER: "/media/music"
 Web UI: http://homeassistant.local:4533</code></pre>
       </div>
@@ -467,7 +467,7 @@ foobar2000 · Strawberry · Clementine</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Navidrome</strong> is a self-hosted music server and streamer, compatible with the Subsonic/Airsonic API. This Home Assistant Add-on wraps the official <code>deluan/navidrome</code> Docker image and adds HA Supervisor integration.</p>
+        <p><strong>Navidrome</strong> is a self-hosted music server and streamer, compatible with the Subsonic/Airsonic API. This Home Assistant App wraps the official <code>deluan/navidrome</code> Docker image and adds HA Supervisor integration.</p>
         <blockquote>Any Subsonic client works out of the box: DSub, Symfonium, Ultrasonic, Feishin and more.</blockquote>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
@@ -481,7 +481,7 @@ foobar2000 · Strawberry · Clementine</code></pre>
           </tbody>
         </table>
         <h2 id="home-minimum"><a class="anchor" href="#home-minimum">#</a>Minimum Operating Model</h2>
-        <pre><code>HA Add-on → Navidrome Web UI + Subsonic API :4533
+        <pre><code>HA App → Navidrome Web UI + Subsonic API :4533
 Navidrome  → music folder (ND_MUSICFOLDER)
 Data       → /data (database, cache)</code></pre>
       </div>
@@ -489,21 +489,21 @@ Data       → /data (database, cache)</code></pre>
 
     <article id="installation" class="doc-section glass-card" data-search="installation add repository install start home assistant addon store github navidrome">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="installation-step-1"><a class="anchor" href="#installation-step-1">#</a>Step 1 — Add Repository</h2>
         <ol>
           <li>Open Home Assistant.</li>
-          <li>Go to <strong>Settings → Add-ons → Add-on Store</strong>.</li>
+          <li>Go to <strong>Settings → Apps → App Store</strong>.</li>
           <li>Open <strong>⋮ → Repositories</strong>.</li>
           <li>Add:</li>
         </ol>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
         <h2 id="installation-step-2"><a class="anchor" href="#installation-step-2">#</a>Step 2 — Install</h2>
         <ol>
-          <li>Search for <strong>Navidrome</strong> in the Add-on Store.</li>
+          <li>Search for <strong>Navidrome</strong> in the App Store.</li>
           <li>Click <strong>Install</strong> and wait for the image download.</li>
         </ol>
         <h2 id="installation-step-3"><a class="anchor" href="#installation-step-3">#</a>Step 3 — Configure</h2>
@@ -604,12 +604,12 @@ Data       → /data (database, cache)</code></pre>
             <tr><td><code>ND_LISTENBRAINZ_ENABLED</code></td><td><code>false</code></td><td>ListenBrainz scrobbling.</td></tr>
           </tbody>
         </table>
-        <p><strong>Removed:</strong> Spotify integration (<code>ND_SPOTIFY_ID</code> / <code>ND_SPOTIFY_SECRET</code>) and the reverse-proxy SSO options (<code>ND_REVERSEPROXYUSERHEADER</code> / <code>ND_REVERSEPROXYWHITELIST</code>) are no longer exposed as add-on options. Navidrome runs as root: there is no <code>PUID</code>/<code>PGID</code> option, and files Navidrome writes into your music folder belong to root.</p>
+        <p><strong>Removed:</strong> Spotify integration (<code>ND_SPOTIFY_ID</code> / <code>ND_SPOTIFY_SECRET</code>) and the reverse-proxy SSO options (<code>ND_REVERSEPROXYUSERHEADER</code> / <code>ND_REVERSEPROXYWHITELIST</code>) are no longer exposed as app options. Navidrome runs as root: there is no <code>PUID</code>/<code>PGID</code> option, and files Navidrome writes into your music folder belong to root.</p>
         <h2 id="config-jukebox"><a class="anchor" href="#config-jukebox">#</a>Jukebox</h2>
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio on the server's sound hardware. Needs jukebox devices, which are not configurable through the add-on options.</td></tr>
+            <tr><td><code>ND_JUKEBOX_ENABLED</code></td><td><code>false</code></td><td>Play audio on the server's sound hardware. Needs jukebox devices, which are not configurable through the app options.</td></tr>
           </tbody>
         </table>
         <h2 id="config-playlists"><a class="anchor" href="#config-playlists">#</a>Playlists</h2>
@@ -669,7 +669,7 @@ Data       → /data (database, cache)</code></pre>
           <thead><tr><th>Source</th><th>Typical path</th><th>Notes</th></tr></thead>
           <tbody>
             <tr><td>USB / HDD via HA</td><td><code>/media/music</code></td><td>HA mounts external drives here.</td></tr>
-            <tr><td>SMB (Samba add-on)</td><td><code>/share/music</code></td><td>Shared network drives.</td></tr>
+            <tr><td>SMB (Samba app)</td><td><code>/share/music</code></td><td>Shared network drives.</td></tr>
             <tr><td>NFS mount</td><td><code>/share/nfs</code></td><td>Network file system mounts.</td></tr>
           </tbody>
         </table>
@@ -687,11 +687,11 @@ Data       → /data (database, cache)</code></pre>
 ├── navidrome.db    # Library database (artists, albums, tracks, ratings)
 └── cache/          # Transcoding cache and artwork cache</code></pre>
         <h2 id="persistence-backup"><a class="anchor" href="#persistence-backup">#</a>Backup</h2>
-        <p>Home Assistant backups include the add-on <code>/data</code> directory automatically. The music files themselves are not backed up — they live outside <code>/data</code> in your media folder.</p>
+        <p>Home Assistant backups include the app <code>/data</code> directory automatically. The music files themselves are not backed up — they live outside <code>/data</code> in your media folder.</p>
         <ol>
           <li>Settings → System → Backups → Create Backup.</li>
-          <li>For rollback, restore the Navidrome add-on data partition.</li>
-          <li>After restore, restart the add-on and verify library access.</li>
+          <li>For rollback, restore the Navidrome app data partition.</li>
+          <li>After restore, restart the app and verify library access.</li>
         </ol>
       </div>
     </article>
@@ -734,13 +734,13 @@ Data       → /data (database, cache)</code></pre>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/navidrome/navidrome"><span>🎵</span><strong>Navidrome Upstream</strong><small>navidrome/navidrome</small></a>
           <a class="source-chip" href="https://www.navidrome.org/docs/"><span>📖</span><strong>Navidrome Docs</strong><small>navidrome.org</small></a>
-          <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant Add-ons</strong><small>Supervisor platform</small></a>
+          <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant Apps</strong><small>Supervisor platform</small></a>
         </div>
         <h2 id="sources-license"><a class="anchor" href="#sources-license">#</a>License</h2>
-        <blockquote>This is an unofficial, community-maintained Home Assistant add-on wrapper for <code>deluan/navidrome</code>. Navidrome is licensed under GPL-3.0. The add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>This is an unofficial, community-maintained Home Assistant app wrapper for <code>deluan/navidrome</code>. Navidrome is licensed under GPL-3.0. The app wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

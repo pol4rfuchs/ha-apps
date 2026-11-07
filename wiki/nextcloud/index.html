@@ -411,7 +411,7 @@
       <strong style="color:var(--accent-3)">Quick reference</strong><br>
       Web UI: <code>:8280</code><br>
       Data: <code>/data/nextcloud/</code><br>
-      Recommended DB: <strong>MariaDB add-on</strong><br>
+      Recommended DB: <strong>MariaDB app</strong><br>
       App store: unrestricted ✅
     </div>
   </aside>
@@ -419,9 +419,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> NEXTCLOUD · SELF-HOSTED CLOUD · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> NEXTCLOUD · SELF-HOSTED CLOUD · HOME ASSISTANT APP</div>
         <h2>Nextcloud in <span class="accent">Nextcloud Blue</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Nextcloud add-on: a full instance based on the official <code>nextcloud:apache</code> image, with unrestricted access to the official app store — no linuxserver-style restrictions.</p>
+        <p class="hero-copy">Operations wiki for the Nextcloud app: a full instance based on the official <code>nextcloud:apache</code> image, with unrestricted access to the official app store — no linuxserver-style restrictions.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#comparison">📊 vs. Alternatives</a>
@@ -429,7 +429,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>nextcloud</strong></div>
+          <div class="metric"><small>App Slug</small><strong>nextcloud</strong></div>
           <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:8280</strong></div>
           <div class="metric"><small>Base Image</small><strong>nextcloud:apache (official)</strong></div>
           <div class="metric"><small>App Store</small><strong>unrestricted</strong></div>
@@ -446,8 +446,8 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>⚠️ Set the Admin Password First</h3>
-        <p><code>admin_password</code> has no default: the add-on refuses to start while it is empty (or <code>changeme</code>). It only applies on the very first install.</p>
-        <pre><code>Set it in add-on options BEFORE the first start.</code></pre>
+        <p><code>admin_password</code> has no default: the app refuses to start while it is empty (or <code>changeme</code>). It only applies on the very first install.</p>
+        <pre><code>Set it in app options BEFORE the first start.</code></pre>
       </div>
     </section>
 
@@ -457,14 +457,14 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Nextcloud</strong> is "a safe home for all your data" — this add-on wraps the official <code>nextcloud:apache</code> Docker image for Home Assistant OS, with no restrictions on installing apps from <a href="https://apps.nextcloud.com/">apps.nextcloud.com</a>, unlike some community alternatives.</p>
+        <p><strong>Nextcloud</strong> is "a safe home for all your data" — this app wraps the official <code>nextcloud:apache</code> Docker image for Home Assistant OS, with no restrictions on installing apps from <a href="https://apps.nextcloud.com/">apps.nextcloud.com</a>, unlike some community alternatives.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
           <tbody>
             <tr><td><a href="#installation">Installation</a></td><td>Prerequisites (MariaDB), install, first boot.</td></tr>
             <tr><td><a href="#configuration">Configuration</a></td><td>Database, PHP limits, log level.</td></tr>
-            <tr><td><a href="#comparison">Alternatives</a></td><td>How this compares to other community add-ons.</td></tr>
+            <tr><td><a href="#comparison">Alternatives</a></td><td>How this compares to other community apps.</td></tr>
             <tr><td><a href="#occ">Shell &amp; occ</a></td><td>Settings not exposed in the options UI.</td></tr>
             <tr><td><a href="#persistence">Persistence</a></td><td><code>/data/nextcloud/</code>, backup.</td></tr>
             <tr><td><a href="#security">Security</a></td><td>Secrets, current AppArmor status.</td></tr>
@@ -480,14 +480,14 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
 
     <article id="installation" class="doc-section glass-card" data-search="installation prerequisites mariadb addon database user port 8280 free host install add repository first boot auto install one two minutes">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the Add-on</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">Installation</p><h2>Install the App</h2></div></div>
         <a class="section-link" href="#installation">#installation</a>
       </div>
       <div class="doc-content">
         <h2 id="nc-prereq"><a class="anchor" href="#nc-prereq">#</a>Prerequisites</h2>
         <ul>
-          <li><strong>MariaDB add-on</strong> (recommended): configure with a <code>nextcloud</code> database and user before the first start.</li>
-          <li>Port <strong>8280</strong> must be free on the host (or change it in the add-on config).</li>
+          <li><strong>MariaDB app</strong> (recommended): configure with a <code>nextcloud</code> database and user before the first start.</li>
+          <li>Port <strong>8280</strong> must be free on the host (or change it in the app config).</li>
         </ul>
         <h2 id="nc-step-1"><a class="anchor" href="#nc-step-1">#</a>Step 1 — Add Repository</h2>
         <pre><code>https://github.com/pol4rfuchs/ha-apps</code></pre>
@@ -499,7 +499,7 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
         </ol>
         <h2 id="nc-step-3"><a class="anchor" href="#nc-step-3">#</a>Step 3 — Start</h2>
         <ol>
-          <li>Start the add-on.</li>
+          <li>Start the app.</li>
           <li>Open the Web UI — on first boot Nextcloud installs itself (~1–2 minutes).</li>
         </ol>
       </div>
@@ -507,7 +507,7 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
 
     <article id="configuration" class="doc-section glass-card" data-search="configuration options admin user admin password trusted domains db type db host port name user password php memory limit max upload size max execution time log level table">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
@@ -518,7 +518,7 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
             <tr><td><code>admin_password</code></td><td><em>(empty)</em></td><td><strong>Required.</strong> The first start fails while it is empty. Only applied on initial install.</td></tr>
             <tr><td><code>trusted_domains</code></td><td><code>homeassistant.local homeassistant</code></td><td>Hostnames Nextcloud will accept requests for (space-separated). Only applied on the first install; afterwards use <code>occ</code>.</td></tr>
             <tr><td><code>db_type</code></td><td><code>mysql</code></td><td>sqlite|mysql|pgsql</td></tr>
-            <tr><td><code>db_host</code></td><td><code>core-mariadb</code></td><td>Database host (the HA MariaDB add-on's hostname by default).</td></tr>
+            <tr><td><code>db_host</code></td><td><code>core-mariadb</code></td><td>Database host (the HA MariaDB app's hostname by default).</td></tr>
             <tr><td><code>db_port</code></td><td><code>3306</code></td><td>Database port.</td></tr>
             <tr><td><code>db_name</code></td><td><code>nextcloud</code></td><td>Database name.</td></tr>
             <tr><td><code>db_user</code></td><td><code>nextcloud</code></td><td>Database user.</td></tr>
@@ -539,7 +539,7 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
       </div>
       <div class="doc-content">
         <table>
-          <thead><tr><th></th><th>This add-on</th><th>alexbelgium</th><th>enricodeleo</th></tr></thead>
+          <thead><tr><th></th><th>This app</th><th>alexbelgium</th><th>enricodeleo</th></tr></thead>
           <tbody>
             <tr><td>Base image</td><td><code>nextcloud:apache</code> (official)</td><td><code>linuxserver/nextcloud</code></td><td><code>nextcloud</code> (official, outdated)</td></tr>
             <tr><td>App store</td><td>✅ unrestricted</td><td>❌ restricted</td><td>✅</td></tr>
@@ -556,7 +556,7 @@ Data:   /data/nextcloud/{config,custom_apps,themes,data}</code></pre>
         <a class="section-link" href="#occ">#occ</a>
       </div>
       <div class="doc-content">
-        <p>For anything not exposed in the HA options UI, use the add-on's own shell (Settings → Add-ons → Nextcloud → three-dot menu, or the Terminal &amp; SSH add-on's <code>docker exec</code>) and run <code>occ</code> directly:</p>
+        <p>For anything not exposed in the HA options UI, use the app's own shell (Settings → Apps → Nextcloud → three-dot menu, or the Terminal &amp; SSH app's <code>docker exec</code>) and run <code>occ</code> directly:</p>
         <pre><code>php /var/www/html/occ config:system:set trusted_domains 1 --value="nextcloud.example.com"
 php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code></pre>
         <h2 id="nc-loglevel"><a class="anchor" href="#nc-loglevel">#</a>How log_level Is Applied</h2>
@@ -580,11 +580,11 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
 ├── themes/
 ├── data/         # User files (NEXTCLOUD_DATA_DIR)
 └── version.php   # Version of the installed code (used for updates)</code></pre>
-        <p>The Nextcloud code itself is not stored there: it comes from the add-on image and is restored on every start.</p>
+        <p>The Nextcloud code itself is not stored there: it comes from the app image and is restored on every start.</p>
         <h2 id="nc-versions"><a class="anchor" href="#nc-versions">#</a>Versions and updates</h2>
-        <p>The add-on version (for example <code>33.0.x</code>) is a release counter of this repository, <strong>not</strong> the Nextcloud version. The Nextcloud version is the one in the image (<code>NEXTCLOUD_TAG</code> build argument).</p>
-        <p>Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the add-on runs <code>occ upgrade</code> when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version. Take a backup before every major upgrade.</p>
-        <blockquote>A Home Assistant full backup (includes add-on data by default) already covers this. If backing up manually, back up the entire <code>/data/nextcloud/</code> folder as a unit — <code>config.php</code> and the user data directory reference each other and should be restored together.</blockquote>
+        <p>The app version (for example <code>33.0.x</code>) is a release counter of this repository, <strong>not</strong> the Nextcloud version. The Nextcloud version is the one in the image (<code>NEXTCLOUD_TAG</code> build argument).</p>
+        <p>Nextcloud can only be updated one major version at a time. The automatic upstream bump is therefore limited to the current major version; moving to the next major is a deliberate, manual change. On start the app runs <code>occ upgrade</code> when the image is newer than the data, refuses to start on a downgrade and refuses to skip a major version. Take a backup before every major upgrade.</p>
+        <blockquote>A Home Assistant full backup (includes app data by default) already covers this. If backing up manually, back up the entire <code>/data/nextcloud/</code> folder as a unit — <code>config.php</code> and the user data directory reference each other and should be restored together.</blockquote>
       </div>
     </article>
 
@@ -598,13 +598,13 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
         <table>
           <thead><tr><th>Option</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td><code>admin_password</code></td><td>No default and required: the first start fails while it is empty. Only applied during initial install; changing it afterwards in add-on options does <strong>not</strong> change the actual account password (use the Nextcloud UI or <code>occ user:resetpassword</code>).</td></tr>
+            <tr><td><code>admin_password</code></td><td>No default and required: the first start fails while it is empty. Only applied during initial install; changing it afterwards in app options does <strong>not</strong> change the actual account password (use the Nextcloud UI or <code>occ user:resetpassword</code>).</td></tr>
             <tr><td><code>db_password</code></td><td>Must match whatever is configured on the MariaDB/Postgres side.</td></tr>
           </tbody>
         </table>
         <p>Both are declared as <code>password</code> schema types, so the Supervisor UI masks them.</p>
         <h2 id="nc-apparmor"><a class="anchor" href="#nc-apparmor">#</a>AppArmor — Not Yet Enforced</h2>
-        <blockquote><code>apparmor.txt</code> is included but <strong>intentionally not yet enforced</strong> (<code>apparmor: false</code>) — this add-on runs on the official Nextcloud/Apache vendor image rather than the HA base image, and the profile's exact paths weren't verified against the real filesystem. See the profile's own header comment for the manual test steps before flipping it to <code>true</code>.</blockquote>
+        <blockquote><code>apparmor.txt</code> is included but <strong>intentionally not yet enforced</strong> (<code>apparmor: false</code>) — this app runs on the official Nextcloud/Apache vendor image rather than the HA base image, and the profile's exact paths weren't verified against the real filesystem. See the profile's own header comment for the manual test steps before flipping it to <code>true</code>.</blockquote>
         <h2 id="ext-access"><a class="anchor" href="#ext-access">#</a>Local and external access</h2>
         <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:8280</code>. Nextcloud only answers for hostnames in <code>trusted_domains</code>; anything else shows "Access through untrusted domain". The default covers <code>homeassistant.local</code> and <code>homeassistant</code>. If you open Nextcloud by IP, add the IP <strong>before the first start</strong> (the option is only applied on the first install; afterwards use <code>occ</code>). There is no <code>ssl</code> option, so use a reverse proxy for HTTPS.</p>
         <p><strong>External (internet):</strong> recommendation <strong>ok, but only through a reverse proxy with TLS.</strong> Never forward port <code>8280</code> directly. Add the public domain via <code>occ config:system:set trusted_domains</code>, set <code>overwriteprotocol</code> to <code>https</code>, and enable two-factor authentication for all accounts.</p>
@@ -621,8 +621,8 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
             <tr><td>"Access through untrusted domain" error</td><td>Accessing via a hostname/IP not in <code>trusted_domains</code>.</td><td>Add it to <code>trusted_domains</code>, or use <code>occ config:system:set trusted_domains</code>.</td></tr>
-            <tr><td>Database connection failed on first boot</td><td><code>db_host</code>/<code>db_password</code> don't match the MariaDB add-on.</td><td>Verify the MariaDB add-on's database/user/password match the Nextcloud options exactly.</td></tr>
-            <tr><td>Install spins forever on first boot</td><td>DB not reachable yet, or PHP memory too low.</td><td>Confirm MariaDB add-on is running first; raise <code>php_memory_limit</code> if needed.</td></tr>
+            <tr><td>Database connection failed on first boot</td><td><code>db_host</code>/<code>db_password</code> don't match the MariaDB app.</td><td>Verify the MariaDB app's database/user/password match the Nextcloud options exactly.</td></tr>
+            <tr><td>Install spins forever on first boot</td><td>DB not reachable yet, or PHP memory too low.</td><td>Confirm MariaDB app is running first; raise <code>php_memory_limit</code> if needed.</td></tr>
             <tr><td>Upload fails on large files</td><td><code>max_upload_size</code> too low for the file.</td><td>Increase <code>max_upload_size</code> (and check any reverse proxy's own upload limit too).</td></tr>
             <tr><td>Changed <code>admin_password</code> option, login still fails</td><td>Option only applies on the very first install.</td><td>Reset the password via the Nextcloud UI or <code>occ user:resetpassword</code> instead.</td></tr>
           </tbody>
@@ -637,12 +637,12 @@ php /var/www/html/occ config:system:set overwriteprotocol --value="https"</code>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub Add-on Repo</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps"><span>🐙</span><strong>GitHub App Repo</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/nextcloud/server"><span>☁️</span><strong>Nextcloud Upstream</strong><small>nextcloud/server</small></a>
           <a class="source-chip" href="https://apps.nextcloud.com/"><span>🧩</span><strong>App Store</strong><small>apps.nextcloud.com</small></a>
           <a class="source-chip" href="https://www.home-assistant.io/addons/"><span>🏠</span><strong>Home Assistant</strong><small>Supervisor platform</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper. Nextcloud is licensed under AGPL-3.0. Add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper. Nextcloud is licensed under AGPL-3.0. App wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

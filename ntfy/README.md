@@ -25,14 +25,14 @@
 
 ## Installation
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
+[![Open your Home Assistant instance and show the add app repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
 > **DISCLAIMER:** This is an unofficial, community-maintained Home Assistant app.  
 > Not affiliated with or endorsed by the ntfy project or Binwiederhier.
 
 ---
 
-## Add-ons in this repository
+## Apps in this repository
 
 ### [ntfy](./ntfy)
 
@@ -41,7 +41,7 @@ Run a self-hosted ntfy server directly inside Home Assistant.
 - Push notifications to phone, desktop and browser
 - HTTP publish API
 - Authentication with users, passwords, tokens and ACL rules
-- Companion **ntfy_manager** add-on available for a full web admin UI
+- Companion **ntfy_manager** app available for a full web admin UI
 - HA integration token auto-provisioning
 - Persistent data under `/data/ntfy`
 - Multi-arch support: `amd64`, `aarch64`
@@ -49,13 +49,13 @@ Run a self-hosted ntfy server directly inside Home Assistant.
 ## How to use
 
 1. Click the badge above **or** manually add the repository URL in Home Assistant:  
-   `Settings → Add-ons → Add-on Store → ⋮ → Repositories`
+   `Settings → Apps → App Store → ⋮ → Repositories`
 
-2. Install the **ntfy** add-on.
+2. Install the **ntfy** app.
 
 3. Set your admin credentials in the **Configuration** tab.
 
-4. Start the add-on and copy the generated HA integration token from the log.
+4. Start the app and copy the generated HA integration token from the log.
 
 5. Open ntfy directly at:
 
@@ -113,8 +113,8 @@ This repository contains a complete **Home Assistant App** that runs a self-host
 
 | Property | Value |
 |---|---|
-| **HA Add-on Name** | `ntfy` |
-| **HA Add-on Slug** | `ntfy` |
+| **HA App Name** | `ntfy` |
+| **HA App Slug** | `ntfy` |
 | **Based on** | `ntfy v2.37.2` |
 | **App Version** | `v1.2.19` |
 | **Web UI Port** | `4280` |
@@ -158,7 +158,7 @@ Recommended:
 
 ### 🔐 Authentication
 
-- Admin user from add-on config
+- Admin user from app config
 - User management
 - Password changes
 - API tokens
@@ -167,8 +167,8 @@ Recommended:
 
 ### 🛠️ Admin / Management UI
 
-- This add-on no longer ships its own admin panel
-- Install the separate **ntfy_manager** add-on for a full web UI: live KPIs, send with preview, users/tokens/ACLs/reservations, message browser, SSE debug monitor
+- This app no longer ships its own admin panel
+- Install the separate **ntfy_manager** app for a full web UI: live KPIs, send with preview, users/tokens/ACLs/reservations, message browser, SSE debug monitor
 - Generates Home Assistant `rest_command` examples
 
 ### 💾 Persistence
@@ -194,7 +194,7 @@ Recommended:
 Navigate in Home Assistant to:
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Paste this repository URL:
@@ -205,13 +205,13 @@ https://github.com/pol4rfuchs/ha-apps
 
 or use the one-click badge:
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
+[![Open your Home Assistant instance and show the add app repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fpol4rfuchs%2Fha-apps)
 
 ---
 
-### Step 2 — Install the add-on
+### Step 2 — Install the app
 
-1. Open the **Add-on Store**
+1. Open the **App Store**
 2. Search for **ntfy**
 3. Click **Install**
 4. Wait until the image is downloaded and prepared
@@ -223,7 +223,7 @@ or use the one-click badge:
 Open:
 
 ```text
-Settings → Add-ons → ntfy → Configuration
+Settings → Apps → ntfy → Configuration
 ```
 
 Set at minimum:
@@ -240,7 +240,7 @@ enable_login: true
 
 ---
 
-### Step 4 — Start the add-on
+### Step 4 — Start the app
 
 1. Go to the **Info** tab
 2. Enable **Start on boot** if ntfy should run permanently
@@ -255,7 +255,7 @@ HA integration token created: tk_ab12cd34…
 The full token is not printed to the log.
 ```
 
-The full token is stored in `/data/ntfy/ha_token.txt`. A readable copy is placed in the add-on config folder (`/addon_configs/<slug>_ntfy/ha_token.txt`, reachable through Samba or the SSH add-on).
+The full token is stored in `/data/ntfy/ha_token.txt`. A readable copy is placed in the app config folder (`/addon_configs/<slug>_ntfy/ha_token.txt`, reachable through Samba or the SSH app).
 
 ---
 
@@ -307,15 +307,15 @@ enable_signup: true
 enable_login: true
 ```
 
-> 💡 For a private HAOS setup, this is the clean starting point: login enabled and tokens managed properly. Install the **ntfy_manager** add-on alongside this one for a web admin UI.
+> 💡 For a private HAOS setup, this is the clean starting point: login enabled and tokens managed properly. Install the **ntfy_manager** app alongside this one for a web admin UI.
 
 ---
 
 ## 🛠️ Admin / Management UI
 
-This add-on no longer ships its own management UI. Install the separate **ntfy_manager** add-on (same repository) for a full web admin interface.
+This app no longer ships its own management UI. Install the separate **ntfy_manager** app (same repository) for a full web admin interface.
 
-`ntfy_manager` talks to this add-on's API directly — no extra configuration needed here once both are running.
+`ntfy_manager` talks to this app's API directly — no extra configuration needed here once both are running.
 
 ### What's in ntfy_manager?
 
@@ -331,7 +331,7 @@ This add-on no longer ships its own management UI. Install the separate **ntfy_m
 | **Server** | Live config display and generated Home Assistant YAML |
 | **Debug** | SSE live monitor |
 
-> ℹ️ See the **ntfy_manager** add-on's own documentation for installation, login and a page-by-page walkthrough.
+> ℹ️ See the **ntfy_manager** app's own documentation for installation, login and a page-by-page walkthrough.
 
 ---
 
@@ -350,7 +350,7 @@ Recommended path:
 http://homeassistant.local:4280
 ```
 
-5. Token: use the token from the add-on config folder:
+5. Token: use the token from the app config folder:
 
 ```text
 /addon_configs/<slug>_ntfy/ha_token.txt
@@ -435,9 +435,9 @@ If you expose ntfy outside your LAN:
 
 ## 🧰 CLI Reference
 
-Shell access requires the Home Assistant SSH add-on.
+Shell access requires the Home Assistant SSH app.
 
-`NTFY_AUTH_FILE` is set automatically in the add-on shell, so normally no manual export is needed.
+`NTFY_AUTH_FILE` is set automatically in the app shell, so normally no manual export is needed.
 
 ### Container access
 
@@ -507,7 +507,7 @@ ntfy_token <username> "Label"
 | `ntfy access <username> <topic> deny` | Deny access |
 | `ntfy access --reset` | Remove all ACL rules |
 
-> ACL rules can also be managed via the **ntfy_manager** add-on under Access Control.
+> ACL rules can also be managed via the **ntfy_manager** app under Access Control.
 
 ---
 
@@ -519,7 +519,7 @@ ntfy_token <username> "Label"
 | `ntfy publish --title="Alert" <topic> <message>` | Send with title |
 | `ntfy publish --priority=5 <topic> <message>` | Send with max priority |
 
-> CLI changes take effect immediately. No add-on restart required.
+> CLI changes take effect immediately. No app restart required.
 
 ---
 
@@ -553,7 +553,7 @@ All important data lives in:
 
 ### Home Assistant Backup
 
-Home Assistant backups include the add-on `/data` directory.
+Home Assistant backups include the app `/data` directory.
 
 ```text
 Settings → System → Backups → Create Backup
@@ -631,7 +631,7 @@ ntfy publish ha-alerts "Hello from HAOS ntfy"
 ntfy publish --title="HA Alert" --priority=5 ha-alerts "Something needs attention"
 ```
 
-> Changes via CLI take effect immediately. No add-on restart required.
+> Changes via CLI take effect immediately. No app restart required.
 
 ---
 
@@ -660,11 +660,11 @@ ha-apps/
 | File | Role |
 |---|---|
 | `repository.yaml` | Identifies the repository as a Home Assistant app repository |
-| `ntfy/config.yaml` | Add-on metadata, ports, schema, options and UI settings |
+| `ntfy/config.yaml` | App metadata, ports, schema, options and UI settings |
 | `ntfy/build.yaml` | Build configuration per architecture |
-| `ntfy/Dockerfile` | Builds the ntfy add-on image |
-| `ntfy/rootfs/run.sh` | Startup script inside the add-on |
-| `ntfy/DOCS.md` | Add-on Store documentation |
+| `ntfy/Dockerfile` | Builds the ntfy app image |
+| `ntfy/rootfs/run.sh` | Startup script inside the app |
+| `ntfy/DOCS.md` | App Store documentation |
 | `ntfy/CHANGELOG.md` | Version history |
 
 ---
@@ -691,7 +691,7 @@ Check the token file:
 /data/ntfy/ha_token.txt
 ```
 
-Also check the add-on log for:
+Also check the app log for:
 
 ```text
 HA integration token created

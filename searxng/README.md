@@ -37,7 +37,7 @@ SearXNG aggregates results from 70+ search engines without tracking users or bui
 ### Step 1 — Add the repository
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Add:
@@ -73,7 +73,7 @@ After the first start, the settings file is written to:
 addon_configs/<SLUG>_searxng/settings.yml
 ```
 
-Edit it via the HA File Editor add-on. Changes apply after restarting the add-on.
+Edit it via the HA File Editor app. Changes apply after restarting the app.
 
 Full reference: <https://docs.searxng.org/admin/settings/index.html>
 
@@ -149,9 +149,9 @@ addon_configs/<SLUG>_searxng/
 | Problem | Fix |
 |---|---|
 | Sidebar shows blank page | Use the direct URL: `http://[HA-IP]:8080` |
-| Settings not applied | Restart the add-on after editing `settings.yml` |
+| Settings not applied | Restart the app after editing `settings.yml` |
 | Search returns no results | Check engine list in `settings.yml` — some engines may be rate-limited |
-| Ingress URL wrong | Set `set_base_url_for_ingress: true` in add-on options |
+| Ingress URL wrong | Set `set_base_url_for_ingress: true` in app options |
 
 ---
 

@@ -1,7 +1,7 @@
-# TS6 Manager — Home Assistant Add-on
+# TS6 Manager — Home Assistant App
 
 Web-based management interface for TeamSpeak 6 servers.  
-Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) as a single-image HA add-on.
+Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) as a single-image HA app.
 
 ## Features
 
@@ -21,13 +21,13 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) as a sin
 
 ## Installation
 
-1. Add the repository to the add-on store:  
-   **Settings → Add-ons → Add-on Store → ⋮ → Repositories**  
+1. Add the repository to the app store:  
+   **Settings → Apps → App Store → ⋮ → Repositories**  
    URL: `https://github.com/pol4rfuchs/ha-apps`
 
 2. Install "TS6 Manager"
 
-3. Start the add-on
+3. Start the app
 
 4. Open the web interface (`http://<ha-host>:8066`, "Open Web UI" button) → `/setup` → create the admin account
 

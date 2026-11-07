@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is a monorepo of Home Assistant apps (add-ons). Each app lives in its own
+This repository is a monorepo of Home Assistant apps (apps). Each app lives in its own
 top-level folder and is built, versioned and released independently.
 
 ## Layout of an app folder

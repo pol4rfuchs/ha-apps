@@ -1,5 +1,5 @@
 /*
-  Add-on wiki themes (shared by all add-on pages) — loaded after each page's own inline <style>.
+  App wiki themes (shared by all app pages) — loaded after each page's own inline <style>.
   Themes: bento (default, neutral light/dark tiles) | docs (= the page's original glass look, no overrides here).
   Every page keeps its own --accent, so each wiki stays recognisable.
   Rule: relative paths only, no external dependencies.

@@ -1,4 +1,4 @@
-# Home Assistant Add-on: ntfy
+# Home Assistant App: ntfy
 
 Self-hosted push notification service. Send notifications to your phone, desktop or browser via a simple HTTP POST — no third-party servers, fully under your control.
 
@@ -6,15 +6,15 @@ Self-hosted push notification service. Send notifications to your phone, desktop
 
 ## Quick Start
 
-### Step 1 — Install the add-on
+### Step 1 — Install the app
 
-1. **Settings → Add-ons → Add-on Store** → ⋮ (top right) → **Repositories**
+1. **Settings → Apps → App Store** → ⋮ (top right) → **Repositories**
 2. Add: `https://github.com/pol4rfuchs/ha-apps`
 3. Search for **ntfy**, click **Install**
 
 ### Step 2 — Configure
 
-Go to the add-on **Configuration** tab and set at minimum:
+Go to the app **Configuration** tab and set at minimum:
 
 ```yaml
 admin_username: admin
@@ -28,7 +28,7 @@ This creates an admin account automatically on first start. All other settings a
 Click **Start**. Check the **Log** tab — you should see:
 
 ```
-Starting ntfy add-on …
+Starting ntfy app …
 Admin user 'admin' ready
 HA integration token created:
   tk_XXXXXXXXXXXXXXXX
@@ -38,7 +38,7 @@ Starting ntfy → http://homeassistant.local:4280
 
 ### Step 4 — Open the web UI
 
-> ⚠️ **Ingress is not supported** — ntfy's web app uses absolute asset paths and shows a white screen inside Home Assistant's Ingress frame. Open ntfy directly (the *Open Web UI* button of the add-on does this):
+> ⚠️ **Ingress is not supported** — ntfy's web app uses absolute asset paths and shows a white screen inside Home Assistant's Ingress frame. Open ntfy directly (the *Open Web UI* button of the app does this):
 
 ```
 http://homeassistant.local:4280
@@ -50,19 +50,19 @@ Log in with the `admin_username` / `admin_password` you configured.
 
 ## Token Auto-Provisioning
 
-On first startup, the add-on automatically creates a persistent API token for the admin user and saves it to:
+On first startup, the app automatically creates a persistent API token for the admin user and saves it to:
 
 ```
 /data/ntfy/ha_token.txt
 ```
 
-The **Log** tab shows only the start of the token (`tk_ab12cd34…`). The full token is not printed. A readable copy is placed in the add-on config folder on every start:
+The **Log** tab shows only the start of the token (`tk_ab12cd34…`). The full token is not printed. A readable copy is placed in the app config folder on every start:
 
 ```
 /addon_configs/<slug>_ntfy/ha_token.txt
 ```
 
-Open it through Samba, the SSH add-on or the File editor and store the token in `secrets.yaml`:
+Open it through Samba, the SSH app or the File editor and store the token in `secrets.yaml`:
 
 ```yaml
 ntfy_token: tk_XXXXXXXXXXXXXXXX
@@ -71,15 +71,15 @@ ntfy_auth_header: "Bearer tk_XXXXXXXXXXXXXXXX"
 
 On subsequent restarts the file already exists — no duplicate token is created.
 
-If the token is lost or exposed, revoke it in the ntfy Web UI (Account → Access Tokens), delete `/data/ntfy/ha_token.txt` and restart the add-on to generate a new one. Deleting the file alone does not invalidate the old token.
+If the token is lost or exposed, revoke it in the ntfy Web UI (Account → Access Tokens), delete `/data/ntfy/ha_token.txt` and restart the app to generate a new one. Deleting the file alone does not invalidate the old token.
 
 ---
 
 ## Admin / Management UI
 
-This add-on no longer ships its own management UI. For a full web-based admin interface, install the separate **ntfy_manager** add-on (same repository).
+This app no longer ships its own management UI. For a full web-based admin interface, install the separate **ntfy_manager** app (same repository).
 
-`ntfy_manager` talks to this add-on's API directly — no extra configuration needed here once both are running. It covers:
+`ntfy_manager` talks to this app's API directly — no extra configuration needed here once both are running. It covers:
 
 - **Overview** — health, version, stats, uptime, user count
 - **Send** — compose and send test notifications, with live preview
@@ -91,7 +91,7 @@ This add-on no longer ships its own management UI. For a full web-based admin in
 - **Server** — connection info + auto-generated `rest_command` snippet for `configuration.yaml`
 - **Debug** — live SSE connection monitor
 
-See the ntfy_manager add-on's own documentation for setup, login, and a page-by-page walkthrough.
+See the ntfy_manager app's own documentation for setup, login, and a page-by-page walkthrough.
 
 ---
 
@@ -105,7 +105,7 @@ See the ntfy_manager add-on's own documentation for setup, login, and a page-by-
 
 ### Option B — rest\_command (manual)
 
-The **ntfy_manager** add-on's Server tab generates this snippet automatically with your actual base URL. Add to `configuration.yaml`:
+The **ntfy_manager** app's Server tab generates this snippet automatically with your actual base URL. Add to `configuration.yaml`:
 
 ```yaml
 rest_command:
@@ -247,7 +247,7 @@ No Google, no Firebase, no external service.
 
 ### Step-by-step setup
 
-**1. ntfy add-on:** set `base_url` to your external ntfy URL and restart the add-on. The log shows:
+**1. ntfy app:** set `base_url` to your external ntfy URL and restart the app. The log shows:
 ```
 UnifiedPush / Matrix Push Gateway active:
   https://ntfy.your-domain.tld/_matrix/push/v1/notify
@@ -311,7 +311,7 @@ All data is stored in `/data/ntfy/` and included in HA backups automatically:
 |-------|-------------|
 | **White screen inside Home Assistant** | ntfy's SPA uses absolute asset paths — incompatible with HA Ingress. Use the direct URL `:4280` or the *Open Web UI* button. |
 | **Token listing not available via API** | ntfy's REST API has no endpoint to list a user's existing tokens. Create tokens via ntfy_manager's Tokens tab; view/revoke existing ones in the ntfy Web UI → Account → Access Tokens. |
-| **Cannot change a user's role after creation** | ntfy's API has no endpoint for role changes on existing users. Workaround: set `admin_username` in this add-on's config for admin accounts. |
-| **Cannot delete/modify admin accounts via the API** | ntfy returns 401 for admin-role accounts on these endpoints. Manage admin accounts via this add-on's configuration only. |
+| **Cannot change a user's role after creation** | ntfy's API has no endpoint for role changes on existing users. Workaround: set `admin_username` in this app's config for admin accounts. |
+| **Cannot delete/modify admin accounts via the API** | ntfy returns 401 for admin-role accounts on these endpoints. Manage admin accounts via this app's configuration only. |
 | **`hijacked connection` in logs** | Harmless — appears when a client drops a WebSocket/SSE connection unexpectedly. No action needed. |
 | **Interactive password prompt in raw CLI** | `ntfy user add` and `ntfy user change-pass` prompt for a password when called directly. Use the `ntfy_adduser` / `ntfy_passwd` wrapper functions instead. |

@@ -399,7 +399,7 @@
       <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What is MAS?</small></span></a>
       <a class="nav-item" href="#prerequisites" data-target="prerequisites"><span class="nav-icon">📋</span><span><strong>Before You Start</strong><small>Synapse, subdomain, fresh start</small></span></a>
       <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>Setup</strong><small>Link MAS and Synapse</small></span></a>
-      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>Add-on Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>App Options</strong><small>All options with defaults</small></span></a>
       <a class="nav-item" href="#ports" data-target="ports"><span class="nav-icon">🌐</span><span><strong>Ports &amp; Reverse Proxy</strong><small>8082 public, 8083 internal</small></span></a>
       <a class="nav-item" href="#backup" data-target="backup"><span class="nav-icon">💾</span><span><strong>Database Backup</strong><small>Dumps and exclusions</small></span></a>
       <a class="nav-item" href="#open-items" data-target="open-items"><span class="nav-icon">🧭</span><span><strong>Open Items</strong><small>Before production use</small></span></a>
@@ -415,9 +415,9 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <div class="hero-kicker"><span class="pulse"></span> MATRIX AUTHENTICATION SERVICE · OIDC/OAUTH2 · HOME ASSISTANT ADD-ON</div>
+        <div class="hero-kicker"><span class="pulse"></span> MATRIX AUTHENTICATION SERVICE · OIDC/OAUTH2 · HOME ASSISTANT APP</div>
         <h2>Matrix Login, <span class="accent">Delegated</span>.</h2>
-        <p class="hero-copy">Wiki for the Matrix Auth Service add-on: OIDC/OAuth2 authentication for Synapse, required for Element X QR login and MFA. Status: experimental.</p>
+        <p class="hero-copy">Wiki for the Matrix Auth Service app: OIDC/OAuth2 authentication for Synapse, required for Element X QR login and MFA. Status: experimental.</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Setup</a>
           <a class="btn secondary" href="#configuration">⚙️ Options</a>
@@ -425,7 +425,7 @@
         </div>
 
         <div class="metric-grid">
-          <div class="metric"><small>Add-on Slug</small><strong>matrix_auth_service</strong></div>
+          <div class="metric"><small>App Slug</small><strong>matrix_auth_service</strong></div>
           <div class="metric"><small>Version</small><strong>1.0.6</strong></div>
           <div class="metric"><small>Public Port</small><strong>8082/tcp</strong></div>
           <div class="metric"><small>Status</small><strong>experimental</strong></div>
@@ -436,7 +436,7 @@
     <section class="control-strip">
       <div class="quick-card glass-card">
         <h3>⚡ Link to Synapse</h3>
-        <p>Copy the generated secret into the Synapse add-on and restart both.</p>
+        <p>Copy the generated secret into the Synapse app and restart both.</p>
         <pre><code>mas_enabled: true
 mas_secret: &lt;generated value&gt;
 mas_endpoint: http://[HA-IP]:8082</code></pre>
@@ -454,8 +454,8 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Matrix Authentication Service (MAS)</strong> by Element HQ delegates authentication of your Synapse homeserver via OIDC/OAuth2. It is the prerequisite for Element X QR-code login, MFA and further “Matrix 2.0” client features. This add-on runs it standalone next to <a href="../matrix-synapse/">matrix-synapse</a> with a bundled PostgreSQL.</p>
-        <blockquote><strong>Status: experimental.</strong> The add-on is built and published (<code>stage: experimental</code>). A first real-world test run (PostgreSQL init, <code>mas-cli database migrate</code>, <code>mas-cli config sync</code>) is still an open item in the add-on documentation, and there is no AppArmor profile yet. Do not rely on it in production yet.</blockquote>
+        <p><strong>Matrix Authentication Service (MAS)</strong> by Element HQ delegates authentication of your Synapse homeserver via OIDC/OAuth2. It is the prerequisite for Element X QR-code login, MFA and further “Matrix 2.0” client features. This app runs it standalone next to <a href="../matrix-synapse/">matrix-synapse</a> with a bundled PostgreSQL.</p>
+        <blockquote><strong>Status: experimental.</strong> The app is built and published (<code>stage: experimental</code>). A first real-world test run (PostgreSQL init, <code>mas-cli database migrate</code>, <code>mas-cli config sync</code>) is still an open item in the app documentation, and there is no AppArmor profile yet. Do not rely on it in production yet.</blockquote>
       </div>
     </article>
 
@@ -466,9 +466,9 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
       </div>
       <div class="doc-content">
         <ul>
-          <li>A running Matrix Synapse add-on with <strong>Simplified Sliding Sync</strong> support (native since Synapse 1.114)</li>
+          <li>A running Matrix Synapse app with <strong>Simplified Sliding Sync</strong> support (native since Synapse 1.114)</li>
           <li>An own subdomain for the account UI (<code>mas_domain</code>)</li>
-          <li><strong>Fresh start recommended:</strong> existing accounts are <em>not</em> migrated automatically — there is no <code>syn2mas</code> step in this add-on</li>
+          <li><strong>Fresh start recommended:</strong> existing accounts are <em>not</em> migrated automatically — there is no <code>syn2mas</code> step in this app</li>
         </ul>
       </div>
     </article>
@@ -480,20 +480,20 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
       </div>
       <div class="doc-content">
         <ol>
-          <li>Install the add-on and set <code>mas_domain</code>, <code>synapse_server_name</code> and <code>synapse_endpoint</code>.</li>
+          <li>Install the app and set <code>mas_domain</code>, <code>synapse_server_name</code> and <code>synapse_endpoint</code>.</li>
           <li>Leave <code>synapse_secret</code> empty. It is generated on first start (shown in the log and stored in <code>/data/mas/.synapse_secret</code>).</li>
-          <li>In the Synapse add-on set:</li>
+          <li>In the Synapse app set:</li>
         </ol>
         <pre><code>mas_enabled: true
 mas_secret: &lt;generated value&gt;
 mas_endpoint: http://[HA-IP]:8082</code></pre>
-        <ol start="4"><li>Restart both add-ons.</li></ol>
+        <ol start="4"><li>Restart both apps.</li></ol>
       </div>
     </article>
 
     <article id="configuration" class="doc-section glass-card" data-search="configuration options mas domain synapse secret postgres password admin users registration login deactivation log level backup interval retention">
       <div class="section-topline">
-        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>Add-on Options</h2></div></div>
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
       </div>
       <div class="doc-content">
@@ -502,7 +502,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
           <tbody>
             <tr><td><code>mas_domain</code></td><td><code>account.example.org</code></td><td>Public domain of the account UI (own subdomain, e.g. <code>account.example.org</code>).</td></tr>
             <tr><td><code>synapse_server_name</code></td><td><code>example.org</code></td><td>Server name of your Matrix homeserver.</td></tr>
-            <tr><td><code>synapse_endpoint</code></td><td><code>http://homeassistant.local:8008</code></td><td>URL of the Synapse add-on's API.</td></tr>
+            <tr><td><code>synapse_endpoint</code></td><td><code>http://homeassistant.local:8008</code></td><td>URL of the Synapse app's API.</td></tr>
             <tr><td><code>synapse_secret</code></td><td><em>(empty)</em></td><td>Shared secret with Synapse. Leave empty — generated on first start (log and <code>/data/mas/.synapse_secret</code>).</td></tr>
             <tr><td><code>postgres_password</code></td><td>—</td><td>Password of the internal MAS database user. Leave empty to generate one (stored in <code>/data/mas/.pg_password</code>). A value set here is applied to the database on every start.</td></tr>
             <tr><td><code>admin_users</code></td><td><em>(empty)</em></td><td>Comma-separated list of admin usernames.</td></tr>
@@ -544,7 +544,7 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
         <a class="section-link" href="#backup">#backup</a>
       </div>
       <div class="doc-content">
-        <p>With <code>backup_enabled</code> the add-on periodically runs <code>pg_dump</code> on its bundled PostgreSQL database (own instance on port 5433, database <code>mas</code>) every <code>backup_interval_hours</code>, writes compressed dumps to <code>/data/mas/backups</code> and keeps <code>backup_retention_days</code> days of them. The first run starts about two minutes after add-on start. The live <code>mas/postgresql/pg_wal</code> directory is excluded from Home Assistant backups.</p>
+        <p>With <code>backup_enabled</code> the app periodically runs <code>pg_dump</code> on its bundled PostgreSQL database (own instance on port 5433, database <code>mas</code>) every <code>backup_interval_hours</code>, writes compressed dumps to <code>/data/mas/backups</code> and keeps <code>backup_retention_days</code> days of them. The first run starts about two minutes after app start. The live <code>mas/postgresql/pg_wal</code> directory is excluded from Home Assistant backups.</p>
       </div>
     </article>
 
@@ -569,11 +569,11 @@ mas_endpoint: http://[HA-IP]:8082</code></pre>
       </div>
       <div class="doc-content">
         <div class="source-grid">
-          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/matrix_auth_service"><span>🐙</span><strong>Add-on source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/matrix_auth_service"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
           <a class="source-chip" href="https://github.com/element-hq/matrix-authentication-service"><span>🛡️</span><strong>MAS upstream</strong><small>element-hq/matrix-authentication-service</small></a>
-          <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver add-on</small></a>
+          <a class="source-chip" href="../matrix-synapse/"><span>💬</span><strong>matrix-synapse wiki</strong><small>Homeserver app</small></a>
         </div>
-        <blockquote>Unofficial, community-maintained wrapper around the upstream Element HQ container image. The add-on wrapper is Apache-2.0.</blockquote>
+        <blockquote>Unofficial, community-maintained wrapper around the upstream Element HQ container image. The app wrapper is Apache-2.0.</blockquote>
       </div>
     </article>
 

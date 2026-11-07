@@ -40,7 +40,7 @@
 ### Step 1 — Add the repository
 
 ```text
-Settings → Add-ons → Add-on Store → ⋮ → Repositories
+Settings → Apps → App Store → ⋮ → Repositories
 ```
 
 Add:
@@ -71,7 +71,7 @@ First start takes 2–3 minutes. Element Web is downloaded at runtime (HA blocks
 |---|---|---|
 | `server_name` | — | Your Matrix domain. **No trailing slash.** |
 | `element_web_url` | `https://example.org:7080` | External HTTPS URL for Element Web. |
-| `postgres_password` | — | Password of the internal database user. Leave empty: the add-on generates one and stores it in `/data/matrix/.pg_password`. If you set a value, it is applied to the database on every start. |
+| `postgres_password` | — | Password of the internal database user. Leave empty: the app generates one and stores it in `/data/matrix/.pg_password`. If you set a value, it is applied to the database on every start. |
 | `enable_registration` | `false` | Allow public registration. |
 | `enable_federation` | `true` | Connect to the Matrix federation. |
 | `max_upload_size_mb` | `50` | Max media upload size in MB. |
@@ -83,12 +83,12 @@ First start takes 2–3 minutes. Element Web is downloaded at runtime (HA blocks
 | `livekit_url` | — | WebSocket URL for LiveKit SFU (`wss://...`). Only used if `enable_voice_calls` is `true`. |
 | `livekit_jwt_url` | — | HTTPS URL for the LiveKit JWT bridge. Only used if `enable_voice_calls` is `true`. |
 | `registration_shared_secret` | — | Secret for admin-controlled user registration. Leave empty to auto-generate. |
-| `mas_enabled` | `false` | Delegates login/registration entirely to the matrix-auth-service add-on (required for Element X QR-code login). Disables native Synapse auth. |
-| `mas_endpoint` | `http://homeassistant.local:8082` | Internally reachable URL of the matrix-auth-service add-on (e.g. http://homeassistant.local:8082). |
-| `mas_secret` | — | Must exactly match the value generated/set in the matrix-auth-service add-on. |
-| `whatsapp_bridge_enabled` | `false` | Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge add-on running with its registration.yaml present in /share). |
-| `signal_bridge_enabled` | `false` | Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge add-on running with its registration.yaml present in /share). |
-| `telegram_bridge_enabled` | `false` | Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge add-on running with its registration.yaml present in /share). |
+| `mas_enabled` | `false` | Delegates login/registration entirely to the matrix-auth-service app (required for Element X QR-code login). Disables native Synapse auth. |
+| `mas_endpoint` | `http://homeassistant.local:8082` | Internally reachable URL of the matrix-auth-service app (e.g. http://homeassistant.local:8082). |
+| `mas_secret` | — | Must exactly match the value generated/set in the matrix-auth-service app. |
+| `whatsapp_bridge_enabled` | `false` | Registers the mautrix-whatsapp bridge's appservice with Synapse (requires the WhatsApp Bridge app running with its registration.yaml present in /share). |
+| `signal_bridge_enabled` | `false` | Registers the mautrix-signal bridge's appservice with Synapse (requires the Signal Bridge app running with its registration.yaml present in /share). |
+| `telegram_bridge_enabled` | `false` | Registers the mautrix-telegram bridge's appservice with Synapse (requires the Telegram Bridge app running with its registration.yaml present in /share). |
 | `livekit_turn_enabled` | `false` | Off by default: calls use direct SFU UDP ports (30000-30020), which is more reliable on normal home/mobile networks. Only enable this if you're on a very restrictive network that only allows HTTPS/port 443 (the internal TURN server then uses that fallback path). |
 | `media_retention_local_days` | `0` | Auto-purge locally uploaded media older than this many days. 0 = disabled (keep forever). |
 | `media_retention_remote_days` | `30` | Auto-purge cached remote (federated) media older than this many days. 0 = disabled (keep forever). 30 is a sensible default. |
@@ -135,7 +135,7 @@ docker exec -it addon_local_matrix_server \
   http://localhost:8008
 ```
 
-Or use the helper script included in the add-on:
+Or use the helper script included in the app:
 
 ```bash
 docker exec -it addon_local_matrix_server matrix-create-admin.sh
@@ -172,20 +172,20 @@ docker exec -it addon_local_matrix_server matrix-create-admin.sh
 └── .registration_secret            ← Auto-generated registration_shared_secret
 ```
 
-Element Web, Element Call, and (if voice is enabled) the LiveKit/lk-jwt-service binaries each compare their installed version against upstream `latest` on every add-on start and re-download automatically on mismatch — no manual action needed.
+Element Web, Element Call, and (if voice is enabled) the LiveKit/lk-jwt-service binaries each compare their installed version against upstream `latest` on every app start and re-download automatically on mismatch — no manual action needed.
 
 To force a re-download of a specific component (e.g. after a corrupted extraction):
 
 ```bash
 docker exec addon_local_matrix_server rm /data/matrix/.element-web_version
-# then restart the add-on — it will detect the missing version file and re-fetch
+# then restart the app — it will detect the missing version file and re-fetch
 ```
 
 ---
 
 ## 📱 UnifiedPush (Android push via ntfy)
 
-This add-on integrates with the [ntfy add-on](../ntfy) for privacy-friendly push notifications on Element Android — no Google Firebase, no external servers.
+This app integrates with the [ntfy app](../ntfy) for privacy-friendly push notifications on Element Android — no Google Firebase, no external servers.
 
 ```
 Element Android
@@ -199,7 +199,7 @@ Element Android
 Synapse does not need the ntfy URL in its config — the client registers the gateway automatically.
 
 **Setup:**
-1. Set `ntfy_url` in the add-on config
+1. Set `ntfy_url` in the app config
 2. Install ntfy from F-Droid (Play Store version has no UnifiedPush)
 3. In Element Android: Settings → Notifications → UnifiedPush → select ntfy
 
@@ -250,8 +250,8 @@ https://federationtester.matrix.org/#example.org
 | Admin Panel "Something went wrong" | Stale browser cache | F12 → Application → Clear Site Data |
 | Admin Panel 401 | NPM Access List active | Set Access List to "Publicly Accessible" |
 | Element Web wrong server | Wrong config.json loaded | Clear browser cache |
-| Web apps not loading | Extraction failed | Delete the relevant `.{app}_version` file in `/data/matrix/` + restart add-on |
-| Synapse token invalid | Add-on reinstalled, DB empty | Re-create admin user |
+| Web apps not loading | Extraction failed | Delete the relevant `.{app}_version` file in `/data/matrix/` + restart app |
+| Synapse token invalid | App reinstalled, DB empty | Re-create admin user |
 | Federation broken | Port 8448 not forwarded | Router: 8448 → HA-IP:8448 |
 | Call connects but no audio/video | UDP range 30000-30020 not forwarded on the router (and UDP 3478 / TCP 5349 if `livekit_turn_enabled` is `true`) | Forward them directly (not via NPM) to the HA host. Needed even for calls between devices on the same LAN. |
 | Login stuck loading / blank screen via `http://<LAN-IP>:7080` | Plain HTTP has no "secure context" — browsers disable WebCrypto (needed for E2E encryption) on anything that isn't HTTPS or `localhost` | Use the HTTPS domain (e.g. `https://element.your-domain`) instead, even from the LAN — most routers support NAT hairpinning so this works without leaving the network. Direct `:7080` IP access is a convenience fallback only and won't fully work by design. |

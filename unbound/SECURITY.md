@@ -2,7 +2,7 @@
 
 ## Scope
 
-This fork focuses on hardening the Unbound Home Assistant OS add-on.
+This fork focuses on hardening the Unbound Home Assistant OS app.
 
 Primary goals:
 
@@ -56,7 +56,7 @@ The AppArmor profile intentionally does **not** grant `CAP_CHOWN` or
   pidfile rather than working around the permission gap).
 - Do not add `capability chown` or `capability dac_override` to work
   around a permissions issue without a documented reason — it
-  re-opens exactly the privilege-escalation surface this add-on is
+  re-opens exactly the privilege-escalation surface this app is
   trying to close.
 
 ## Source Build Rule
