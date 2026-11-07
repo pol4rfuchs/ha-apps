@@ -8,7 +8,7 @@
 # The upstream version is its own ARG so that 07-update-upstream-candidate can patch it.
 
 ARG BUILD_ARCH
-ARG CORTENDESK_VERSION=1.17.1
+ARG CORTENDESK_VERSION=1.22.0
 ARG BUILD_FROM=ghcr.io/marcpope/cortendesk:${CORTENDESK_VERSION}
 FROM ${BUILD_FROM}
 
