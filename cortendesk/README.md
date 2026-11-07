@@ -1,5 +1,13 @@
 # CortenDesk
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![CortenDesk Version](https://img.shields.io/badge/CortenDesk-1.22.0-E67E22?style=for-the-badge&logo=github&logoColor=white)](https://github.com/marcpope/cortendesk)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 RustDesk console with built-in ID server (hbbs) and relay (hbbr) in one container.
 Thin Home Assistant wrapper around the upstream image `ghcr.io/marcpope/cortendesk`.
 

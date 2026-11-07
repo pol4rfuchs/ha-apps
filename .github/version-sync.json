@@ -78,7 +78,8 @@
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG NETBOX_VERSION=(\\S+)" },
         "table_row_label": "NetBox version",
-        "table_value_format": "`{value}`"
+        "table_value_format": "`{value}`",
+        "badge": { "label": "NetBox", "color": "1E88E5" }
       }
     ]
   },
@@ -152,7 +153,8 @@
       {
         "value_from": { "file": "Dockerfile", "regex": "ARG KETESA_VERSION=(\\S+)" },
         "table_row_label": "Ketesa version",
-        "table_value_format": "`{value}`"
+        "table_value_format": "`{value}`",
+        "badge": { "label": "Ketesa", "color": "0DBD8B" }
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
@@ -168,6 +170,87 @@
         "value_from": { "file": "Dockerfile", "regex": "\"matrix-synapse\\[all\\]>=([^\"]+)\"" },
         "value_prefix": "%3E%3D",
         "badge": { "label": "Synapse", "color": "0DBD8B" }
+      }
+    ]
+  },
+  "cortendesk": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG CORTENDESK_VERSION=(\\S+)" },
+        "badge": { "label": "CortenDesk", "color": "E67E22" }
+      }
+    ]
+  },
+  "matrix_auth_service": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG MAS_VERSION=(\\S+)" },
+        "badge": { "label": "MAS", "color": "0DBD8B" }
+      }
+    ]
+  },
+  "matrix_signal_bridge": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG SIGNAL_VERSION=(\\S+)" },
+        "badge": { "label": "mautrix--signal", "color": "3A76F0" }
+      }
+    ]
+  },
+  "matrix_telegram_bridge": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG TELEGRAM_VERSION=(\\S+)" },
+        "badge": { "label": "mautrix--telegram", "color": "26A5E4" }
+      }
+    ]
+  },
+  "matrix_whatsapp_bridge": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG WHATSAPP_VERSION=(\\S+)" },
+        "badge": { "label": "mautrix--whatsapp", "color": "25D366" }
+      }
+    ]
+  },
+  "restic_backup": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "badge": { "label": "restic--backup", "color": "2980B9" }
+      }
+    ]
+  },
+  "unifi_os_control_center": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
+        "badge": { "label": "UniFi%20OS%20Control%20Center", "color": "0559C9" }
+      }
+    ]
+  },
+  "unifi_toolkit": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG UNIFI_TOOLKIT_VERSION=(\\S+)" },
+        "badge": { "label": "UniFi%20Toolkit", "color": "0559C9" }
+      }
+    ]
+  },
+  "vaultwarden": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG VAULTWARDEN_VERSION=(\\S+)" },
+        "badge": { "label": "Vaultwarden", "color": "175DDC" }
       }
     ]
   }

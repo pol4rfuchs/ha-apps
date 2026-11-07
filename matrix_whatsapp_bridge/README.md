@@ -1,5 +1,13 @@
 # WhatsApp Bridge (mautrix)
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![mautrix-whatsapp Version](https://img.shields.io/badge/mautrix--whatsapp-v0.2610.0-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/mautrix/whatsapp)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 Application service bridge that connects WhatsApp to a self-hosted Matrix Synapse homeserver via
 [mautrix-whatsapp](https://github.com/mautrix/whatsapp). Runs as a standalone,
 isolated add-on (no shared container with other bridges — see the isolation philosophy).

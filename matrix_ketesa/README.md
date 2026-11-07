@@ -1,5 +1,13 @@
 # Matrix Ketesa (Admin UI)
 
+<div align="center">
+
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![Ketesa Version](https://img.shields.io/badge/Ketesa-v1.5.2-0DBD8B?style=for-the-badge&logo=matrix&logoColor=white)](https://github.com/etkecc/ketesa)
+[![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
+
+</div>
+
 Home Assistant app for [Ketesa](https://github.com/etkecc/ketesa) (formerly Synapse Admin), the admin web UI for a
 Matrix Synapse homeserver. It serves the pinned Ketesa release behind its own login. It runs standalone next to the
 `matrix_synapse` app and does not need access to it: the UI runs in your browser and talks to your homeserver directly.
