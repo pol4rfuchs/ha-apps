@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![Upstream](https://img.shields.io/github/v/release/navidrome/navidrome?label=Upstream&style=for-the-badge&logo=github&logoColor=white)](https://github.com/navidrome/navidrome/releases/latest)
+[![Navidrome Version](https://img.shields.io/badge/Navidrome-0.64.2-0B7FFF?style=for-the-badge&logo=navidrome&logoColor=white)](https://github.com/navidrome/navidrome)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Self-hosted music server and streamer — Subsonic/Airsonic API compatible, works with any Subsonic client.**

@@ -9,9 +9,6 @@ in the respective README.md / readme.md in line with the real source
 (Dockerfile ARG, config.yaml version, or a shell script).
 
 Deliberate limits (see the comment in .github/version-sync.json):
-  - navidrome uses a dynamic shields.io endpoint badge
-    (img.shields.io/github/v/release/...) -> it updates itself and is
-    deliberately not listed here.
   - matrix_synapse: only the Synapse pip floor ("matrix-synapse[all]>=...")
     in the Dockerfile is a static value, so only that badge is synchronized.
     Element Web / Element Call / LiveKit / Ketesa are resolved at RUNTIME

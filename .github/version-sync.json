@@ -27,6 +27,15 @@
       }
     ]
   },
+  "navidrome": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG NAVIDROME_VERSION=(\\S+)" },
+        "badge": { "label": "Navidrome", "color": "0B7FFF" }
+      }
+    ]
+  },
   "nextcloud": {
     "readme": "README.md",
     "items": [
