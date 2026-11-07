@@ -1,5 +1,5 @@
 # Upstream version kept separate so the update workflow (07-update-upstream-candidate) can detect it
-ARG VAULTWARDEN_VERSION=1.37.4
+ARG VAULTWARDEN_VERSION=1.37.5
 ARG BUILD_ARCH
 # Official multi-arch manifest (aarch64 + amd64), so no ${BUILD_ARCH} is needed in the tag (§16)
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.8
