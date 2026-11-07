@@ -11,7 +11,7 @@
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version",
+        "table_row_label": "App version",
         "table_value_format": "`{value}`"
       }
     ]
@@ -38,7 +38,7 @@
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version",
+        "table_row_label": "App version",
         "table_value_format": "`{value}`"
       }
     ]
@@ -104,7 +104,7 @@
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version",
+        "table_row_label": "App version",
         "table_value_format": "`{value}`"
       }
     ]
@@ -115,7 +115,7 @@
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
         "badge": { "label": "ts6--manager", "color": "F39C12" },
-        "table_row_label": "Add-on Version",
+        "table_row_label": "App version",
         "table_value_format": "`{value}`"
       }
     ]
@@ -142,7 +142,7 @@
       },
       {
         "value_from": { "file": "config.yaml", "regex": "^version:\\s*\"?([^\"\\n]+)\"?" },
-        "table_row_label": "Add-on version",
+        "table_row_label": "App version",
         "table_value_format": "`{value}`"
       }
     ]
