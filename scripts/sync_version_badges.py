@@ -118,6 +118,10 @@ def process_addon(slug: str, spec: dict) -> bool:
 
 
 def main() -> None:
+    # The log lines contain emojis; a Windows console (cp1252) cannot print them and the script would crash.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     changed = []
 

@@ -1,0 +1,112 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source /usr/local/lib/netbox-ha/common.sh
+nb_apply_log_level
+nb_export_env
+cd "${NB_APP_DIR}"
+
+nb_manage() {
+  gosu netbox "${NB_PYTHON}" "${NB_APP_DIR}/manage.py" "$@"
+}
+
+wait_for() {
+  local what="$1" limit="$2" waited=0
+  shift 2
+  until "$@" > /dev/null 2>&1; do
+    waited=$((waited + 1))
+    if [ "${waited}" -gt "${limit}" ]; then
+      bashio::log.error "Timeout while waiting for ${what}."
+      exit 1
+    fi
+    sleep 1
+  done
+}
+
+wait_for PostgreSQL 120 "${PG_BIN}/pg_isready" -q -h 127.0.0.1 -p 5432
+wait_for Valkey 60 valkey-cli -h 127.0.0.1 -p 6379 ping
+
+# While the database is migrated (minutes on a first start) the port answers 503 and the health check
+# (Dockerfile) accepts the marker file, so the app is not reported as unhealthy.
+touch /tmp/netbox-migrating
+gosu netbox "${NB_PYTHON}" "${NB_LIB}/starting_page.py" &
+starting_pid=$!
+
+if ! nb_manage migrate --check > /dev/null 2>&1; then
+  bashio::log.info "Applying database migrations (the first start can take several minutes)..."
+  nb_manage migrate --no-input
+  bashio::log.info "Running housekeeping after the migration..."
+  nb_manage trace_paths --no-input
+  nb_manage remove_stale_contenttypes --no-input
+  nb_manage clearsessions
+  nb_manage reindex --lazy
+fi
+
+# ------------------------------------------------------- first superuser
+# No default account: the user is created once (if it does not exist). Without admin_password a random
+# password is generated, printed once in the log and also written to the app's configuration folder.
+admin_name="$(bashio::config 'admin_username')"
+admin_email=""
+if bashio::config.has_value 'admin_email'; then
+  admin_email="$(bashio::config 'admin_email')"
+fi
+admin_password="$(bashio::config 'admin_password')"
+generated=""
+if [ -z "${admin_password}" ]; then
+  # 18 random bytes as URL-safe base64 (24 characters). Only used if the user does not exist yet.
+  generated="$(openssl rand -base64 18 | tr '+/' '-_')"
+  admin_password="${generated}"
+fi
+admin_out="$(env HA_ADMIN_USERNAME="${admin_name}" HA_ADMIN_EMAIL="${admin_email}" \
+  HA_ADMIN_PASSWORD="${admin_password}" \
+  gosu netbox "${NB_PYTHON}" "${NB_APP_DIR}/manage.py" shell --no-startup --no-imports --interface python \
+  < "${NB_LIB}/admin_bootstrap.py")" || {
+  bashio::log.error "Could not create or check the admin user '${admin_name}'."
+  exit 1
+}
+case "${admin_out}" in
+  *HA_ADMIN_STATE=created*)
+    if [ -n "${generated}" ]; then
+      ( umask 077; printf 'Initial NetBox login\nUser:     %s\nPassword: %s\n\nChange the password after the first login and delete this file.\n' \
+          "${admin_name}" "${generated}" > /config/initial_admin_password.txt )
+      # Deliberate exception to the "no secrets in the log" rule (catalog §11): the maintainer wants the
+      # generated first-login password printed once. It is logged only at creation, never on later starts.
+      bashio::log.warning "Created the admin user '${admin_name}' with a generated password: ${generated}"
+      bashio::log.warning "The password is also saved in the app's configuration folder: initial_admin_password.txt"
+    else
+      bashio::log.info "Created the admin user '${admin_name}' with the password from the options."
+    fi
+    ;;
+  *HA_ADMIN_STATE=exists*)
+    bashio::log.debug "Admin user '${admin_name}' already exists."
+    ;;
+  *)
+    bashio::log.error "Unexpected answer while creating the admin user."
+    exit 1
+    ;;
+esac
+
+# --------------------------------------------------------------- web app
+kill "${starting_pid}" 2> /dev/null || true
+wait "${starting_pid}" 2> /dev/null || true
+rm -f /tmp/netbox-migrating
+
+args=(
+  --host 0.0.0.0 --port "${NB_PORT}"
+  --interface wsgi --no-ws
+  --workers "$(bashio::config 'workers')" --blocking-threads 8
+  --respawn-failed-workers --loop uvloop
+  --log-level "${GRANIAN_LOG_LEVEL}"
+  --working-dir "${NB_APP_DIR}"
+  --static-path-route /static --static-path-mount "${NB_APP_DIR}/static"
+  --static-path-dir-to-file index.html
+  --pid-file /tmp/granian.pid
+)
+if [ "${NB_LOG_LEVEL}" = "debug" ]; then
+  args+=(--access-log)
+fi
+
+bashio::log.info "Starting NetBox on port ${NB_PORT}..."
+exec gosu netbox /opt/netbox/venv/bin/granian "${args[@]}" netbox.granian:application

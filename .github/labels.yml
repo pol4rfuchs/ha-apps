@@ -99,6 +99,9 @@
 - name: "addon/cortendesk"
   color: "c2410c"
   description: "Affects the CortenDesk add-on"
+- name: "addon/netbox"
+  color: "0b5ea8"
+  description: "Affects the NetBox add-on"
 # ── Wiki ───────────────────────────────────────────────────────────────────────
 - name: "wiki-drift"
   color: "fbca04"

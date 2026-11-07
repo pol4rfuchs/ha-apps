@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source /usr/local/lib/netbox-ha/common.sh
+nb_apply_log_level
+
+bashio::log.info "Starting PostgreSQL ${PG_MAJOR} (127.0.0.1 only)..."
+exec gosu postgres "${PG_BIN}/postgres" \
+  -D "${PG_DATA}" \
+  -c listen_addresses=127.0.0.1 \
+  -c port=5432 \
+  -c unix_socket_directories="${PG_RUN_DIR}" \
+  -c log_min_messages="${PG_LOG_LEVEL}" \
+  -c max_connections=100 \
+  2>&1

@@ -72,6 +72,16 @@
       }
     ]
   },
+  "netbox": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG NETBOX_VERSION=(\\S+)" },
+        "table_row_label": "NetBox version",
+        "table_value_format": "`{value}`"
+      }
+    ]
+  },
   "searxng": {
     "readme": "README.md",
     "items": [
