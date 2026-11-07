@@ -28,6 +28,7 @@ options:
   log_level: "info"
   admin_username: "admin"
   admin_password: ""
+  admin_email: ""
   allowed_hosts: []
   csrf_trusted_origins: []
   time_zone: ""
@@ -37,7 +38,7 @@ schema:
   log_level: "list(debug|info|warning|error)"
   admin_username: "str"
   admin_password: "password"
-  admin_email: "email?"
+  admin_email: "str?"
   allowed_hosts: ["str"]
   csrf_trusted_origins: ["str"]
   time_zone: "str"

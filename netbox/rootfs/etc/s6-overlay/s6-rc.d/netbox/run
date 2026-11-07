@@ -52,8 +52,15 @@ admin_email=""
 if bashio::config.has_value 'admin_email'; then
   admin_email="$(bashio::config 'admin_email')"
 fi
+admin_password="$(bashio::config 'admin_password')"
+generated=""
+if [ -z "${admin_password}" ]; then
+  # 18 random bytes as URL-safe base64 (24 characters). Only used if the user does not exist yet.
+  generated="$(openssl rand -base64 18 | tr '+/' '-_')"
+  admin_password="${generated}"
+fi
 admin_out="$(env HA_ADMIN_USERNAME="${admin_name}" HA_ADMIN_EMAIL="${admin_email}" \
-  HA_ADMIN_PASSWORD="$(bashio::config 'admin_password')" \
+  HA_ADMIN_PASSWORD="${admin_password}" \
   gosu netbox "${NB_PYTHON}" "${NB_APP_DIR}/manage.py" shell --no-startup --no-imports --interface python \
   < "${NB_LIB}/admin_bootstrap.py")" || {
   bashio::log.error "Could not create or check the admin user '${admin_name}'."
@@ -61,7 +68,6 @@ admin_out="$(env HA_ADMIN_USERNAME="${admin_name}" HA_ADMIN_EMAIL="${admin_email
 }
 case "${admin_out}" in
   *HA_ADMIN_STATE=created*)
-    generated="$(printf '%s\n' "${admin_out}" | sed -n 's/^HA_ADMIN_PASSWORD=//p')"
     if [ -n "${generated}" ]; then
       ( umask 077; printf 'Initial NetBox login\nUser:     %s\nPassword: %s\n\nChange the password after the first login and delete this file.\n' \
           "${admin_name}" "${generated}" > /config/initial_admin_password.txt )
