@@ -99,25 +99,29 @@
     "2026-11-04": {
       "count": 1,
       "uniques": 1
+    },
+    "2026-11-05": {
+      "count": 0,
+      "uniques": 0
     }
   },
   "downloads": {
     "cortendesk": 84,
     "forgejo": 237,
     "intiface_central": 92,
-    "matrix_auth_service": 132,
-    "matrix_ketesa": 47,
+    "matrix_auth_service": 155,
+    "matrix_ketesa": 58,
     "matrix_signal_bridge": 209,
-    "matrix_synapse": 697,
+    "matrix_synapse": 715,
     "matrix_telegram_bridge": 223,
     "matrix_whatsapp_bridge": 232,
     "navidrome": 254,
     "nextcloud": 258,
     "nginx_proxy_manager": 59,
-    "ntfy": 811,
+    "ntfy": 859,
     "ntfy_manager": 195,
     "restic_backup": 80,
-    "searxng": 1637,
+    "searxng": 1674,
     "teamspeak6": 483,
     "ts6_manager": 298,
     "unbound": 308,
