@@ -13,9 +13,9 @@ configuration:
   admin_password:
     name: Admin password
     description: >-
-      Password of the first superuser. Empty = a random password is generated
-      and written to initial_admin_password.txt in the app's configuration
-      folder. Only used while the user is created; changing it later does not
+      Password of the first superuser. Empty = a random password is generated,
+      printed once in the log and written to initial_admin_password.txt in the
+      app's configuration folder. Only used while the user is created; changing it later does not
       change the password.
   admin_email:
     name: Admin e-mail

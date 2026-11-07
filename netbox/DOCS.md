@@ -14,7 +14,7 @@ NetBox is an IP address management (IPAM) and data center infrastructure managem
 2. Start the app and wait for `Starting NetBox on port 8001` in the log.
 3. There is **no default account.** Either:
    - set `admin_password` before the first start, or
-   - leave it empty: the app creates the user from `admin_username` with a random password and writes it to `initial_admin_password.txt` in the app's configuration folder (on the Home Assistant host: `/addon_configs/<id>_netbox/`, reachable with the File editor, Samba or SSH app). The log only shows the first four characters.
+   - leave it empty: the app creates the user from `admin_username` with a random password and writes it to `initial_admin_password.txt` in the app's configuration folder (on the Home Assistant host: `/addon_configs/<id>_netbox/`, reachable with the File editor, Samba or SSH app). The generated password is also printed once in the app log, at the moment the user is created. Anyone who can read the app log can see it, so change it after the first login.
 4. Open `http://<ha-host>:8001`, log in, change the password and delete `initial_admin_password.txt`.
 
 The user is only created if it does not exist yet. Changing `admin_password` later does not change an existing password; do that in the NetBox UI (or reset it with `manage.py changepassword` inside the container).

@@ -14,8 +14,8 @@ configuration:
     name: Admin-Passwort
     description: >-
       Passwort des ersten Superusers. Leer = es wird ein zufälliges Passwort
-      erzeugt und in initial_admin_password.txt im Konfigurationsordner der App
-      abgelegt. Wird nur beim Anlegen des Benutzers verwendet; eine spätere
+      erzeugt, einmalig im Log ausgegeben und in initial_admin_password.txt im
+      Konfigurationsordner der App abgelegt. Wird nur beim Anlegen des Benutzers verwendet; eine spätere
       Änderung ändert das Passwort nicht.
   admin_email:
     name: Admin-E-Mail

@@ -46,7 +46,7 @@ fi
 
 # ------------------------------------------------------- first superuser
 # No default account: the user is created once (if it does not exist). Without admin_password a random
-# password is generated and written to the app's configuration folder; the log only shows its start.
+# password is generated, printed once in the log and also written to the app's configuration folder.
 admin_name="$(bashio::config 'admin_username')"
 admin_email=""
 if bashio::config.has_value 'admin_email'; then
@@ -65,8 +65,10 @@ case "${admin_out}" in
     if [ -n "${generated}" ]; then
       ( umask 077; printf 'Initial NetBox login\nUser:     %s\nPassword: %s\n\nChange the password after the first login and delete this file.\n' \
           "${admin_name}" "${generated}" > /config/initial_admin_password.txt )
-      bashio::log.warning "Created the admin user '${admin_name}' with a generated password: ${generated:0:4}..."
-      bashio::log.warning "The full password is in the app's configuration folder: initial_admin_password.txt"
+      # Deliberate exception to the "no secrets in the log" rule (catalog §11): the maintainer wants the
+      # generated first-login password printed once. It is logged only at creation, never on later starts.
+      bashio::log.warning "Created the admin user '${admin_name}' with a generated password: ${generated}"
+      bashio::log.warning "The password is also saved in the app's configuration folder: initial_admin_password.txt"
     else
       bashio::log.info "Created the admin user '${admin_name}' with the password from the options."
     fi
