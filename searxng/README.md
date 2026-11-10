@@ -9,7 +9,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![SearXNG Version](https://img.shields.io/badge/SearXNG-2026.11.6--a3013ef11-3498DB?style=for-the-badge&logo=searxng&logoColor=white)](https://github.com/searxng/searxng)
+[![SearXNG Version](https://img.shields.io/badge/SearXNG-2026.11.9--57ff753ad-3498DB?style=for-the-badge&logo=searxng&logoColor=white)](https://github.com/searxng/searxng)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 **Privacy-respecting metasearch engine — no tracking, no profiles, self-hosted.**
@@ -23,7 +23,7 @@
 | Property | Value |
 |---|---|
 | **Upstream image** | `searxng/searxng` |
-| **SearXNG version** | `2026.11.6-a3013ef11` |
+| **SearXNG version** | `2026.11.9-57ff753ad` |
 | **Default port** | `8080` (Ingress) |
 | **Arch** | `amd64`, `aarch64` |
 | **Access** | HA Ingress (sidebar) |
