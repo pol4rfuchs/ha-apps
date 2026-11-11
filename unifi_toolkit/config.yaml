@@ -16,7 +16,7 @@ panel_icon: mdi:access-point-network
 panel_title: UniFi Toolkit
 watchdog: "http://[HOST]:[PORT:8000]/health"
 backup: cold
-apparmor: true
+apparmor: false  # temporary: profile blocks /init start (exit 2), see PR
 options:
   log_level: "INFO"
   stalker_refresh_interval: 60
