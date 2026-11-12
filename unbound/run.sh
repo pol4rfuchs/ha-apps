@@ -190,7 +190,7 @@ WEBUI_PID=$!
 # but its own signal-exit status isn't guaranteed to be 0, and the base
 # image's legacy-services wrapper judges "crashed vs. stopped cleanly" by
 # that exit code alone, regardless of what the log actually says. Result:
-# a perfectly healthy stop gets shown as add-on status "Error".
+# a perfectly healthy stop gets shown as app status "Error".
 start_unbound() {
     unbound -d -c /etc/unbound/unbound.conf &
     UNBOUND_PID=$!
@@ -208,11 +208,11 @@ shutdown() {
 }
 trap shutdown TERM INT
 
-# A DNS resolver that dies must come back by itself: without this the whole add-on
+# A DNS resolver that dies must come back by itself: without this the whole app
 # exits and stays down (state "Error") until someone starts it again, because the
 # Supervisor only restarts add-ons when its Watchdog switch is on. After an
 # unexpected exit Unbound is started again. If it keeps dying (more than
-# MAX_RESTARTS times within RESTART_WINDOW seconds) the add-on gives up and exits
+# MAX_RESTARTS times within RESTART_WINDOW seconds) the app gives up and exits
 # with Unbound's exit code, so a broken configuration does not loop forever.
 MAX_RESTARTS=5
 RESTART_WINDOW=300

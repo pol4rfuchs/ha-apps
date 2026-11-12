@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.2-ha4-pol4r1] - 2026-11-12
+
+- Feature: new hardening settings in the Security tab: DNS rebinding protection (off by default, stub zones are exempt), refuse `ANY` queries (off), `harden-large-queries` and `harden-short-bufsize` (on), per-zone and per-client rate limits (0 = off) and the unwanted-reply threshold (10,000,000, was Unbound's default of off). The defaults change no resolving behaviour.
+- Feature: optional IPv6 listener (`::0`) in the Network tab, off by default, restart required.
+- Change: the "restart required" note now also covers the IPv6 listener.
+- Docs/UI: "add-on" and "addon" in descriptions, tooltips and docs are now "app" (folders, slugs, `addon_config` and `/addon_configs/` stay as they are).
+
 ## [1.26.2-ha3-pol4r1] - 2026-11-12
 
 - Fix: an invalid entry in the saved local DNS records (a value that is not an IP address, a TTL outside 30-86400, hand-edited or left by an older version) was copied into the Unbound config at every add-on start. `unbound-checkconf` then rejected the config and the add-on did not start, so DNS stayed down. The start now uses the same code as "Add record" and skips invalid entries with a log line.

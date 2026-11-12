@@ -926,6 +926,13 @@
                 </div>
                 <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-prefer_ip4"><span class="toggle-slider"></span></label></div>
             </div>
+            <div class="setting-row">
+                <div class="setting-label">Listen on IPv6
+                    <span class="tooltip-icon">?<span class="tooltip-text">Also accept queries on all IPv6 addresses (<code>::0</code>). Leave off unless the app's container network has IPv6; otherwise Unbound cannot bind the address and does not start. </span></span>
+                    <span class="restart-badge">restart required</span>
+                </div>
+                <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-listen_ipv6"><span class="toggle-slider"></span></label></div>
+            </div>
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
@@ -1105,6 +1112,48 @@
                 </div>
                 <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-enable_ecs"><span class="toggle-slider"></span></label></div>
             </div>
+            <div class="setting-row">
+                <div class="setting-label">Rebinding Protection
+                    <span class="tooltip-icon">?<span class="tooltip-text">Remove private addresses (10.x, 172.16-31.x, 192.168.x, ...) from answers for public names, which blocks DNS rebinding attacks. Stub zones are exempt automatically. Names you forward to a resolver or serve from Local Records are not affected; internal names that live in public DNS and point to a private address stop resolving.</span></span>
+                </div>
+                <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-private_address_protection"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Refuse ANY Queries
+                    <span class="tooltip-icon">?<span class="tooltip-text">Answer queries of type ANY with a minimal reply. ANY is mostly used for amplification attacks.</span></span>
+                </div>
+                <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-deny_any"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Harden Large Queries
+                    <span class="tooltip-icon">?<span class="tooltip-text">Refuse very large queries (over 1 MB total size); they are almost always abuse.</span></span>
+                </div>
+                <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-harden_large_queries"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Harden Short Buffer Size
+                    <span class="tooltip-icon">?<span class="tooltip-text">Ignore answers and queries that announce an EDNS buffer shorter than 512 bytes.</span></span>
+                </div>
+                <div class="setting-input"><label class="toggle"><input type="checkbox" id="cfg-harden_short_bufsize"><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Rate Limit (per zone)
+                    <span class="tooltip-icon">?<span class="tooltip-text">Maximum queries per second Unbound sends to the servers of one zone. 0 = no limit. Protects the upstream servers if a client floods the resolver.</span></span>
+                </div>
+                <div class="setting-input"><input type="number" id="cfg-ratelimit" min="0" max="1000000" class="setting-number"></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Rate Limit (per client IP)
+                    <span class="tooltip-icon">?<span class="tooltip-text">Maximum queries per second accepted from one client address. 0 = no limit. Clients over the limit get no answer, so keep it well above normal use, and note that a forwarder such as AdGuard Home sends all queries from one address.</span></span>
+                </div>
+                <div class="setting-input"><input type="number" id="cfg-ip_ratelimit" min="0" max="1000000" class="setting-number"></div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">Unwanted Reply Threshold
+                    <span class="tooltip-icon">?<span class="tooltip-text">Number of unsolicited replies after which Unbound flushes its cache, as protection against cache poisoning attempts. 0 = off.</span></span>
+                </div>
+                <div class="setting-input"><input type="number" id="cfg-unwanted_reply_threshold" min="0" max="1000000000" class="setting-number"></div>
+            </div>
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
@@ -1122,7 +1171,7 @@
                 <div class="setting-label">Use custom unbound.conf<span class="restart-badge">restart required</span></div>
                 <div class="setting-input">
                     <label class="toggle"><input type="checkbox" id="cfg-custom_config"><span class="toggle-slider"></span></label>
-                    <p class="text-muted" style="margin-top:6px">When enabled, place your config at the addon's <code>/config</code> mount (host path: <code>/addon_configs/&lt;slug&gt;_unbound/unbound.conf</code>). All other settings are ignored.</p>
+                    <p class="text-muted" style="margin-top:6px">When enabled, place your config at the app's <code>/config</code> mount (host path: <code>/addon_configs/&lt;slug&gt;_unbound/unbound.conf</code>). All other settings are ignored.</p>
                     <button class="btn-primary btn-sm" style="margin-top:8px" id="validate-custom-config-btn">Validate Custom Config</button>
                     <div id="custom-config-validate-result" class="status-msg" style="margin-top:8px"></div>
                 </div>
@@ -1133,7 +1182,7 @@
         <div class="section">
             <h2>Overlay Files</h2>
             <div id="overlay-warning" class="status-msg" style="display:none;background:var(--status-warning-bg);color:var(--status-warning-text);border:1px solid var(--status-warning-border);white-space:pre-wrap;"></div>
-            <p class="text-muted">Optional snippet files that augment the generated config without taking over fully. Active only when <em>Use custom unbound.conf</em> is off. If <code>unbound-checkconf</code> rejects the combined config, overlays are dropped and the addon falls back to the GUI-only config.</p>
+            <p class="text-muted">Optional snippet files that augment the generated config without taking over fully. Active only when <em>Use custom unbound.conf</em> is off. If <code>unbound-checkconf</code> rejects the combined config, overlays are dropped and the app falls back to the GUI-only config.</p>
             <div class="setting-row">
                 <div class="setting-label"><code>unbound-overlay.conf</code>
                     <span class="tooltip-icon">?<span class="tooltip-text">Lines are injected at the end of the generated server: block. Use it to add or override server: directives like local-zone, private-address, access-control-tag. Do NOT wrap contents in a server: header.</span></span>
@@ -1946,6 +1995,9 @@
                             "enable_dnssec", "qname_minimisation",
                             "hide_identity", "hide_version", "use_caps_for_id",
                             "enable_ecs",
+                            "private_address_protection", "deny_any",
+                            "harden_large_queries", "harden_short_bufsize",
+                            "listen_ipv6",
                             "log_queries", "log_replies"];
             boolKeys.forEach(function(key) {
                 var el = document.getElementById("cfg-" + key);
@@ -1956,7 +2008,8 @@
             var intKeys = ["num_threads", "fast_server_permil", "fast_server_num",
                            "edns_buffer_size", "msg_cache_size", "rrset_cache_size",
                            "neg_cache_size", "cache_min_ttl", "cache_max_ttl",
-                           "cache_max_negative_ttl", "serve_expired_ttl", "verbosity"];
+                           "cache_max_negative_ttl", "serve_expired_ttl", "verbosity",
+                           "ratelimit", "ip_ratelimit", "unwanted_reply_threshold"];
             intKeys.forEach(function(key) {
                 var el = document.getElementById("cfg-" + key);
                 if (el) el.value = config[key];
@@ -2016,6 +2069,9 @@
              "enable_dnssec", "qname_minimisation",
              "hide_identity", "hide_version", "use_caps_for_id",
              "enable_ecs",
+             "private_address_protection", "deny_any",
+             "harden_large_queries", "harden_short_bufsize",
+             "listen_ipv6",
              "log_queries", "log_replies"].forEach(function(key) {
                 var el = document.getElementById("cfg-" + key);
                 if (el) config[key] = el.checked;
@@ -2024,7 +2080,8 @@
             ["num_threads", "fast_server_permil", "fast_server_num",
              "edns_buffer_size", "msg_cache_size", "rrset_cache_size",
              "neg_cache_size", "cache_min_ttl", "cache_max_ttl",
-             "cache_max_negative_ttl", "serve_expired_ttl", "verbosity"].forEach(function(key) {
+             "cache_max_negative_ttl", "serve_expired_ttl", "verbosity",
+             "ratelimit", "ip_ratelimit", "unwanted_reply_threshold"].forEach(function(key) {
                 var el = document.getElementById("cfg-" + key);
                 if (el) config[key] = parseInt(el.value, 10);
             });
@@ -2037,7 +2094,7 @@
         async function saveSettings() {
             var config = collectSettings();
             if (Array.isArray(config.access_control) && config.access_control.length === 0 &&
-                !confirm("Access control is empty: Unbound will refuse queries from every client except the add-on itself. Save anyway?")) {
+                !confirm("Access control is empty: Unbound will refuse queries from every client except the app itself. Save anyway?")) {
                 return;
             }
             showToast("Saving and applying...", "success");

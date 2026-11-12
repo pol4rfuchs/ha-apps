@@ -2,7 +2,7 @@
 configuration:
   log_level:
     name: Log Level
-    description: Controls the logging verbosity of the addon supervisor process.
+    description: Controls the logging verbosity of the app supervisor process.
 
 network:
   53/tcp: DNS queries over TCP

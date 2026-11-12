@@ -181,6 +181,48 @@ CONFIG_SCHEMA = {
         "type": "bool",
         "default": False,
     },
+    # Hardening / abuse protection. 0 turns a limit off.
+    "ratelimit": {
+        "type": "int",
+        "default": 0,
+        "min": 0,
+        "max": 1000000,
+    },
+    "ip_ratelimit": {
+        "type": "int",
+        "default": 0,
+        "min": 0,
+        "max": 1000000,
+    },
+    "deny_any": {
+        "type": "bool",
+        "default": False,
+    },
+    "harden_large_queries": {
+        "type": "bool",
+        "default": True,
+    },
+    "harden_short_bufsize": {
+        "type": "bool",
+        "default": True,
+    },
+    "unwanted_reply_threshold": {
+        "type": "int",
+        "default": 10000000,
+        "min": 0,
+        "max": 1000000000,
+    },
+    # DNS rebinding protection: strip private addresses from answers of public names.
+    "private_address_protection": {
+        "type": "bool",
+        "default": False,
+    },
+    # Also listen on all IPv6 addresses (needs IPv6 in the app's container network).
+    "listen_ipv6": {
+        "type": "bool",
+        "default": False,
+        "restart_required": True,
+    },
     # EDNS Client Subnet (ECS) — forward client subnet info to authoritative
     # servers so CDNs can pick a geographically appropriate edge.
     "enable_ecs": {
@@ -396,6 +438,32 @@ def clear_overlay_warning():
         pass
 
 
+PRIVATE_ADDRESS_RANGES = (
+    "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "169.254.0.0/16",
+    "fd00::/8", "fe80::/10",
+)
+
+
+def load_stub_zones():
+    """Return the valid saved stub zones as (name, addr); invalid entries are skipped."""
+    zones = []
+    if not os.path.exists(STUB_ZONES_FILE):
+        return zones
+    try:
+        with open(STUB_ZONES_FILE, "r") as f:
+            saved = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return zones
+    for sz in saved:
+        # Entries saved before input validation existed may be invalid; skip them
+        # instead of producing a config that never starts.
+        try:
+            zones.append(normalize_stub_zone(sz.get("name", ""), sz.get("addr", "")))
+        except (ValueError, AttributeError) as e:
+            print(f"Skipping invalid stub zone {sz!r}: {e}", file=sys.stderr)
+    return zones
+
+
 def generate_unbound_conf(config, include_overlays=True):
     """Generate unbound.conf content from config dict.
 
@@ -426,6 +494,8 @@ def generate_unbound_conf(config, include_overlays=True):
     lines.append("")
     lines.append("    # Network settings")
     lines.append("    interface: 0.0.0.0")
+    if config.get("listen_ipv6", False):
+        lines.append("    interface: ::0")
     lines.append("    port: 53")
     lines.append(f"    do-ip4: {_bool_to_yesno(config['do_ip4'])}")
     lines.append(f"    do-ip6: {_bool_to_yesno(config['do_ip6'])}")
@@ -475,6 +545,18 @@ def generate_unbound_conf(config, include_overlays=True):
     lines.append("    harden-referral-path: yes")
     lines.append("    harden-algo-downgrade: yes")
     lines.append("    harden-below-nxdomain: yes")
+    lines.append(f"    harden-large-queries: {_bool_to_yesno(config.get('harden_large_queries', True))}")
+    lines.append(f"    harden-short-bufsize: {_bool_to_yesno(config.get('harden_short_bufsize', True))}")
+    lines.append(f"    deny-any: {_bool_to_yesno(config.get('deny_any', False))}")
+    lines.append(f"    unwanted-reply-threshold: {config.get('unwanted_reply_threshold', 10000000)}")
+    lines.append(f"    ratelimit: {config.get('ratelimit', 0)}")
+    lines.append(f"    ip-ratelimit: {config.get('ip_ratelimit', 0)}")
+    if config.get("private_address_protection", False):
+        for rng in PRIVATE_ADDRESS_RANGES:
+            lines.append(f"    private-address: {rng}")
+        # Stub zones are meant to answer with private addresses.
+        for name, _addr in load_stub_zones():
+            lines.append(f'    private-domain: "{name}"')
     if config.get("forward_tls", False):
         # Required for DoT: unbound does not auto-discover system CAs, so without
         # a bundle every handshake fails with "self-signed certificate in chain".
@@ -552,24 +634,11 @@ def generate_unbound_conf(config, include_overlays=True):
             lines.append(f"    forward-addr: {server}")
 
     # Stub zones
-    if os.path.exists(STUB_ZONES_FILE):
-        try:
-            with open(STUB_ZONES_FILE, "r") as f:
-                stub_zones = json.load(f)
-            for sz in stub_zones:
-                # Entries saved before input validation existed may be invalid;
-                # skip them instead of producing a config that never starts.
-                try:
-                    name, addr = normalize_stub_zone(sz.get("name", ""), sz.get("addr", ""))
-                except (ValueError, AttributeError) as e:
-                    print(f"Skipping invalid stub zone {sz!r}: {e}", file=sys.stderr)
-                    continue
-                lines.append("")
-                lines.append("stub-zone:")
-                lines.append(f'    name: "{name}"')
-                lines.append(f"    stub-addr: {addr}")
-        except (json.JSONDecodeError, OSError):
-            pass
+    for name, addr in load_stub_zones():
+        lines.append("")
+        lines.append("stub-zone:")
+        lines.append(f'    name: "{name}"')
+        lines.append(f"    stub-addr: {addr}")
 
     # User extra sections (stub-zone/forward-zone/auth-zone/view/python …)
     if include_overlays and _overlay_present(EXTRA_FILE):
@@ -673,7 +742,8 @@ def apply_config(new_config):
 
     # Check if num_threads changed (requires restart)
     old_config = load_config()
-    restart_required = old_config.get("num_threads") != new_config.get("num_threads")
+    restart_keys = [k for k, v in CONFIG_SCHEMA.items() if v.get("restart_required")]
+    restart_required = any(old_config.get(k) != new_config.get(k) for k in restart_keys)
 
     # Backup current conf
     backup = None
@@ -684,7 +754,7 @@ def apply_config(new_config):
     # Save config first so write_and_validate sees the new values
     save_config(new_config)
 
-    # Ensure include files exist (they may not if addon started in custom config mode)
+    # Ensure include files exist (they may not if app started in custom config mode)
     for inc in (BLOCKLIST_CONF, LOCAL_RECORDS_CONF):
         if not os.path.exists(inc):
             open(inc, "w").close()
@@ -706,7 +776,7 @@ def apply_config(new_config):
     if not reload_ok:
         msg = f"Config saved but reload failed: {reload_msg}"
         if restart_required:
-            msg += " (addon restart required for thread count change)"
+            msg += " (app restart required for this change)"
         return {"ok": True, "reload_ok": False, "message": msg, "restart_required": restart_required}
 
     msg = "Configuration applied successfully."
@@ -714,7 +784,7 @@ def apply_config(new_config):
     if tls_warning:
         msg += " Note: " + tls_warning
     if restart_required:
-        msg = "Configuration saved. Addon restart required for thread count change to take effect."
+        msg = "Configuration saved. App restart required for thread count / IPv6 listener changes to take effect."
     if overlay_dropped:
         msg += " Overlay was disabled — see banner for details."
     return {"ok": True, "reload_ok": True, "message": msg, "restart_required": restart_required}
