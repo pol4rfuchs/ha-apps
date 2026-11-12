@@ -182,8 +182,7 @@ jobs:
               f"## [{new_full}] - {today}\n\n"
               f"- Bump Unbound to {new_version} (automated by Renovate PR #{pr_number}, "
               f"checksum-verified against NLnetLabs' published sha256).\n"
-              f"- TODO(fox): review upstream changelog for CVE/behavior notes and "
-              f"replace this line with the real summary before merging.\n\n"
+              f"- Upstream release notes: https://nlnetlabs.nl/projects/unbound/download/\n\n"
           )
           patch(addon / "CHANGELOG.md",
                 r'^# Changelog\n',
@@ -246,7 +245,7 @@ jobs:
 
           **Still needs a human look before merging:**
           - [ ] Skim the upstream changelog between the old and new version for any \`./configure\` flag or build-dependency changes.
-          - [ ] Replace the placeholder CHANGELOG.md line with a real summary.
+          - [ ] Add notable upstream changes (CVEs, behaviour changes) to the CHANGELOG.md entry if there are any.
           - [ ] Confirm the ha-tag suffix (\`-ha1-\`) is right - bump to ha2/ha3/... instead if this isn't the first add-on release at this upstream version.
 
           Merging this PR triggers 03-build-publish-ghcr.yml for unbound automatically (see 26-unbound-auto-bump-trigger-build.yml).
