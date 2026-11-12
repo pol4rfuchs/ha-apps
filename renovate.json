@@ -5,6 +5,7 @@
     "helpers:pinGitHubActionDigestsToSemver"
   ],
   "dependencyDashboard": true,
+  "prHourlyLimit": 0,
   "schedule": [
     "before 6am on wednesday"
   ],
