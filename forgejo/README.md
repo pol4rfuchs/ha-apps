@@ -22,7 +22,7 @@
 
 | Property | Value |
 |---|---|
-| **Upstream image** | `codeberg.org/forgejo/forgejo` (rootless) |
+| **Upstream image** | `forgejo/forgejo` (rootless), pulled from Forgejo's mirror `data.forgejo.org` |
 | **Forgejo version** | `17.0.1` |
 | **App version** | `16.0.21` |
 | **SSH Git access** | optional (`ssh_enabled`) |

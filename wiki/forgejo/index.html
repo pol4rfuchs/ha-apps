@@ -430,7 +430,7 @@
         <div class="metric-grid">
           <div class="metric"><small>App Slug</small><strong>forgejo</strong></div>
           <div class="metric"><small>Web UI</small><strong>http://homeassistant.local:3000</strong></div>
-          <div class="metric"><small>Upstream Image</small><strong>codeberg.org/forgejo/forgejo (rootless)</strong></div>
+          <div class="metric"><small>Upstream Image</small><strong>data.forgejo.org/forgejo/forgejo (rootless)</strong></div>
           <div class="metric"><small>SSH Git</small><strong>optional, port 22</strong></div>
         </div>
       </div>
@@ -456,7 +456,7 @@ Config: /addon_configs/local_forgejo/conf/app.ini</code></pre>
         <a class="section-link" href="#home">#home</a>
       </div>
       <div class="doc-content">
-        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This app runs the official <code>codeberg.org/forgejo/forgejo</code> rootless image, exposed on port 3000 (no HA Ingress, assets break behind it) with optional SSH access for git clone/push.</p>
+        <p><strong>Forgejo</strong> is a self-hosted, free Git platform — a community fork of Gitea. This app runs the official <code>forgejo/forgejo</code> rootless image (pulled from Forgejo's mirror <code>data.forgejo.org</code>, because the registry at <code>codeberg.org</code> rejects CI runners with 403 when it is under load), exposed on port 3000 (no HA Ingress, assets break behind it) with optional SSH access for git clone/push.</p>
         <h2 id="home-pages"><a class="anchor" href="#home-pages">#</a>Wiki Pages</h2>
         <table>
           <thead><tr><th>Page</th><th>Purpose</th></tr></thead>

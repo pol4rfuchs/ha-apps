@@ -18,7 +18,10 @@ ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 ARG BUILD_VERSION
 ARG FORGEJO_IMAGE_VERSION=17.0.1
 
-FROM codeberg.org/forgejo/forgejo:${FORGEJO_IMAGE_VERSION}-rootless AS forgejo
+# Forgejo's own mirror of the official image. codeberg.org answers anonymous registry
+# requests from CI runners with "403 Forbidden" ("Codeberg is under load") for hours at
+# a time; the Forgejo docs name data.forgejo.org as the mirror for that case.
+FROM data.forgejo.org/forgejo/forgejo:${FORGEJO_IMAGE_VERSION}-rootless AS forgejo
 
 FROM ${BUILD_FROM}
 
