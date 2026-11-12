@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.26.2-ha3-pol4r1] - 2026-11-12
+
+- Fix: an invalid entry in the saved local DNS records (a value that is not an IP address, a TTL outside 30-86400, hand-edited or left by an older version) was copied into the Unbound config at every add-on start. `unbound-checkconf` then rejected the config and the add-on did not start, so DNS stayed down. The start now uses the same code as "Add record" and skips invalid entries with a log line.
+- Fix: access control networks and forward servers are validated when settings are saved (CIDR, `IP[@port][#tls-name]`). Entries with line breaks or other characters could previously turn into extra `unbound.conf` directives.
+- Fix: the query log was only capped at 50 MB when the config was generated, so a long-running add-on could fill `/data`. The size is now checked every 10 minutes.
+- Change: saving forward servers with DNS-over-TLS on, but without `#tls-name` (for example `1.1.1.1@853#cloudflare-dns.com`), shows a note: the connection is encrypted, but the server certificate is not verified. Tooltips and placeholders show the full syntax.
+- Web UI: the layout no longer overflows the screen on phones (Local Records, Stub Zones and all settings tabs), the Query Log tab reloads each time it is opened and has a Refresh button, its hint now points to Advanced > Logging instead of a non-existing app option, and a failing statistics request shows a message instead of staying on "--". "Reset to Defaults" is labelled "Reset ALL Settings to Defaults" because it resets every tab. The dark-mode hover colour of green buttons was semi-transparent and is fixed.
+- Docs: the backup section listed only `config.json`; blocklists, whitelist, local records and stub zones live in their own files. Added notes on forwarding with DNS-over-TLS, on `remote-control` in custom config mode, and on how clients reach port 5053. Corrected the app name in the README and stale version references.
+
 ## [1.26.2-ha2-pol4r1] - 2026-10-25
 
 - Fix: a stub zone with an invalid address (for example `192.168.1.1:53` instead of `192.168.1.1@53`) was saved even though the web UI reported an error. From then on every settings change failed, and the next add-on start aborted, so DNS stayed down. Stub zones are now validated, a zone rejected by `unbound-checkconf` is removed again, and invalid entries saved by older versions are skipped at start.
@@ -14,7 +23,7 @@
 ## [1.26.2-ha1-pol4r1] - 2026-10-22
 
 - Bump Unbound to 1.26.2 (automated by Renovate PR #631, checksum-verified against NLnetLabs' published sha256).
-- TODO(fox): review upstream changelog for CVE/behavior notes and replace this line with the real summary before merging.
+- Upstream release notes: https://nlnetlabs.nl/projects/unbound/download/
 
 
 ## [1.26.1-ha3-pol4r1] - 2026-10-17

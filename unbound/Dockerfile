@@ -9,7 +9,7 @@ ARG UNBOUND_VERSION=1.26.2
 # Stage 1: build Unbound from source.
 #
 # Alpine 3.24 stable's apk repo still ships Unbound 1.24.2, well behind
-# upstream (currently 1.26.0). 1.25.2 alone fixed 23 CVEs, so we keep
+# upstream. 1.25.2 alone fixed 23 CVEs, so we keep
 # building from the official NLnetLabs source tarball ourselves instead
 # of waiting for a stable apk backport.
 #

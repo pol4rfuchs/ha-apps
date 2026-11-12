@@ -55,7 +55,7 @@
             --danger: #e05555;
             --danger-hover: #f06565;
             --success: #4a9;
-            --success-hover: #5bba;
+            --success-hover: #5cb;
             --status-success-bg: #1a2e1a;
             --status-success-text: #6cd96c;
             --status-error-bg: #2e1a1a;
@@ -406,14 +406,6 @@
 
         .query-table-wrap { max-height: 500px; overflow-y: auto; }
 
-        @media (max-width: 700px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .setting-label { width: 160px; }
-            div[style*="grid-template-columns:1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-
         /* Settings rows */
         .setting-row {
             display: flex;
@@ -593,6 +585,25 @@
             gap: 10px;
             margin-top: 4px;
         }
+
+        /* Mobile overrides: must come last so they win over the base rules above */
+        @media (max-width: 700px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .add-form, .filter-bar, .actions-bar { flex-wrap: wrap; }
+            .add-form input, .add-form select { min-width: 0; max-width: none !important; flex: 1 1 140px; }
+            .setting-row { flex-wrap: wrap; }
+            .setting-label { width: 100%; padding-top: 0; margin-bottom: 6px; }
+            .setting-input { flex: 1 1 100%; }
+            table { display: block; overflow-x: auto; }
+            .bar-label { width: 110px; }
+            .cache-controls .field, .cache-controls .field input { width: 100%; }
+            .setting-label { position: relative; }
+            .tooltip-icon { position: static; }
+            .tooltip-icon .tooltip-text { left: 0; right: 0; width: auto; }
+            div[style*="grid-template-columns:1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
     </style>
     <script>
         // Restore theme before render to prevent flash
@@ -631,6 +642,7 @@
 
     <!-- ==================== Tab: Overview ==================== -->
     <div class="tab-content active" id="tab-overview">
+        <div id="stats-status" class="status-msg"></div>
         <!-- Hero cards -->
         <div class="hero-grid">
             <div class="hero-card">
@@ -838,6 +850,7 @@
             <h2>Recent Queries</h2>
             <div class="filter-bar">
                 <input type="text" id="query-filter" placeholder="Filter by domain or client...">
+                <button class="btn-secondary" id="refresh-query-log-btn">Refresh</button>
                 <button class="btn-secondary" id="clear-query-log-btn">Clear Log</button>
             </div>
             <div id="query-log-status" class="status-msg"></div>
@@ -877,19 +890,19 @@
             </div>
             <div class="setting-row">
                 <div class="setting-label">Forward Servers
-                    <span class="tooltip-icon">?<span class="tooltip-text">Upstream DNS servers to forward queries to. Leave empty to use full recursive resolution (recommended for privacy).</span></span>
+                    <span class="tooltip-icon">?<span class="tooltip-text">Upstream DNS servers to forward queries to, as IP[@port][#tls-name]. Leave empty to use full recursive resolution (recommended for privacy).</span></span>
                 </div>
                 <div class="setting-input">
                     <div id="forward-list" class="list-items"></div>
                     <div class="add-form" style="margin-bottom:0">
-                        <input type="text" id="new-forward" placeholder="1.1.1.1 (empty = recursive)">
+                        <input type="text" id="new-forward" placeholder="1.1.1.1@853#cloudflare-dns.com (empty = recursive)">
                         <button class="btn-primary btn-sm" id="add-forward-btn">Add</button>
                     </div>
                 </div>
             </div>
             <div class="setting-row">
                 <div class="setting-label">DNS-over-TLS
-                    <span class="tooltip-icon">?<span class="tooltip-text">Encrypt forwarded queries using TLS (e.g. 1.1.1.1@853). Requires forward servers to be configured.</span></span>
+                    <span class="tooltip-icon">?<span class="tooltip-text">Encrypt forwarded queries using TLS. Requires forward servers to be configured. Add the server name after # (e.g. 1.1.1.1@853#cloudflare-dns.com), otherwise the connection is encrypted but the server certificate is not verified.</span></span>
                 </div>
                 <div class="setting-input">
                     <label class="toggle"><input type="checkbox" id="cfg-forward_tls"><span class="toggle-slider"></span></label>
@@ -916,7 +929,7 @@
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
-            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset ALL Settings to Defaults</button>
         </div>
     </div>
 
@@ -964,7 +977,7 @@
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
-            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset ALL Settings to Defaults</button>
         </div>
     </div>
 
@@ -1048,7 +1061,7 @@
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
-            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset ALL Settings to Defaults</button>
         </div>
     </div>
 
@@ -1095,7 +1108,7 @@
         </div>
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
-            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset ALL Settings to Defaults</button>
         </div>
     </div>
 
@@ -1166,7 +1179,7 @@
 
         <div class="save-bar">
             <button class="btn-success" data-action="saveSettings">Save &amp; Apply</button>
-            <button class="btn-secondary" data-action="resetSettings">Reset to Defaults</button>
+            <button class="btn-secondary" data-action="resetSettings">Reset ALL Settings to Defaults</button>
         </div>
     </div>
 
@@ -1231,7 +1244,7 @@
             _store.set("unbound-active-tab", tabId);
 
             // Lazy-load data for tabs
-            if (tabId === "query-log" && !queryLogLoaded) {
+            if (tabId === "query-log") {
                 fetchQueryLog();
                 fetchTopDomains();
             }
@@ -1388,6 +1401,8 @@
                 if (!res.ok) throw new Error("Stats fetch failed");
                 var data = await res.json();
 
+                document.getElementById("stats-status").className = "status-msg";
+
                 // Hero cards
                 document.getElementById("total-queries").textContent = data.total_queries.toLocaleString();
                 document.getElementById("queries-per-sec").textContent = data.queries_per_sec;
@@ -1434,6 +1449,9 @@
                 renderFullStats();
             } catch (e) {
                 console.error("Failed to fetch stats:", e);
+                var st = document.getElementById("stats-status");
+                st.textContent = "Statistics are not available (is Unbound running? In custom config mode, remote-control must be enabled). Retrying every 10 seconds.";
+                st.className = "status-msg error";
             }
         }
 
@@ -1751,20 +1769,17 @@
         // --- Query Log ---
 
         var queryLogData = [];
-        var queryLogLoaded = false;
 
         async function fetchQueryLog() {
             try {
                 var res = await fetch(apiUrl("/api/query-log"));
                 if (!res.ok) throw new Error("Query log fetch failed");
                 queryLogData = await res.json();
-                queryLogLoaded = true;
                 renderQueryLog();
             } catch (e) {
                 console.error("Failed to fetch query log:", e);
                 document.getElementById("query-log-body").innerHTML =
-                    '<tr><td colspan="4" class="empty-state">Query logging may not be enabled. Set log_queries to true in addon config.</td></tr>';
-                queryLogLoaded = true;
+                    '<tr><td colspan="4" class="empty-state">Could not read the query log. Enable &quot;Log Queries&quot; under Advanced &rarr; Logging.</td></tr>';
             }
         }
 
@@ -1797,7 +1812,7 @@
             }
             var tbody = document.getElementById("query-log-body");
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No queries found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No queries found. Query logging is off by default: enable &quot;Log Queries&quot; under Advanced &rarr; Logging.</td></tr>';
                 return;
             }
             // Show most recent first, limit to 200
@@ -2044,7 +2059,7 @@
         }
 
         async function resetSettings() {
-            if (!confirm("Reset all settings to defaults? This will regenerate the Unbound config.")) return;
+            if (!confirm("Reset ALL settings (on every tab, including forward servers and access control) to defaults? This will regenerate the Unbound config.")) return;
             // Build defaults from schema
             var defaults = {};
             for (var key in settingsSchema) {
@@ -2153,6 +2168,7 @@
         });
         _bind('add-stub-zone-btn',      function() { addStubZone(); });
         _bind('clear-query-log-btn',    function() { clearQueryLog(); });
+        _bind('refresh-query-log-btn',  function() { fetchQueryLog(); fetchTopDomains(); });
         _bind('add-acl-btn',            function() { addListItem('acl'); });
         _bind('add-forward-btn',        function() { addListItem('forward'); });
         _bind('flush-domain-btn',       function() { flushDomain(); });

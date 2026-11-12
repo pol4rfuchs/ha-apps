@@ -24,7 +24,7 @@
 |---|---|
 | **Upstream** | `nlnetlabs/unbound` |
 | **Unbound version** | `1.26.2` |
-| **App version** | `1.26.2-ha2-pol4r1` |
+| **App version** | `1.26.2-ha3-pol4r1` |
 | **Default port** | `5053` (mapped from container `53`) |
 | **Config** | Web UI (no YAML editing) |
 | **Arch** | `amd64`, `aarch64` |
@@ -48,7 +48,7 @@
 - **Query Log**: Recent queries viewer, top domains chart, filter by domain/client
 
 ### Server Settings (all hot-reloaded, no restart needed)
-- **Network**: Access control, forward servers, DNS-over-TLS, IPv4/IPv6
+- **Network**: Access control, forward servers (`IP[@port][#tls-name]`), DNS-over-TLS to the upstream, IPv4/IPv6
 - **Performance**: Thread count, prefetch, fast server selection, EDNS buffer size, minimal responses
 - **Cache**: Message/RRset/negative cache sizing, min/max TTL, negative TTL, serve expired, aggressive NSEC
 - **Security & Privacy**: DNSSEC, QNAME minimisation, identity/version hiding, CAPS for ID (0x20)
@@ -70,7 +70,7 @@
 
    Or manually: **Settings** > **Apps** > **App Store** > **⋮** > **Repositories** > Add `https://github.com/pol4rfuchs/ha-apps`
 
-2. Find "Unbound DNS" in the app store and click **Install**
+2. Find "Unbound" in the app store and click **Install**
 3. Start the addon and open the **Web UI** to configure everything
 
 ## Configuration
@@ -87,7 +87,8 @@ For advanced users who need full control over `unbound.conf`:
 2. Place your `unbound.conf` at the addon config path shown in the addon log (e.g. `/addon_configs/<slug>_unbound/unbound.conf`)
 3. Restart the addon
 
-When custom config mode is enabled, all other settings are ignored.
+When custom config mode is enabled, all other settings are ignored. Keep a `remote-control:`
+section in your file, otherwise the statistics, cache flush and reload in the web UI do not work.
 
 ### Overlay Files (mix GUI + snippets)
 
@@ -123,11 +124,15 @@ On first startup, the addon creates a default configuration. After that, all set
 
 ## Network Configuration
 
-The app listens on port **5053** by default (mapped from container port 53).
+The app listens on port **5053** by default (mapped from container port 53). DHCP cannot hand out
+a port, so clients cannot use `5053` directly. Typical setups:
 
-To use as your network's DNS server:
-1. Configure your router's DHCP to distribute your Home Assistant's IP as the DNS server
-2. Ensure clients query port 5053, or change the port mapping to 53 in the app configuration
+- Put a forwarding resolver in front, for example AdGuard Home, and set its upstream DNS server
+  to `<ha-host>:5053`. Point your router's DHCP at AdGuard Home.
+- Or change the port mapping to 53 in the app's **Network** settings if nothing else on the host
+  uses it, then point DHCP at the Home Assistant host.
+
+Never forward port 5053 (or 53) from the internet, see "Local and external access" in `DOCS.md`.
 
 ## Troubleshooting
 
@@ -139,7 +144,7 @@ dig @<homeassistant-ip> -p 5053 google.com
 
 ### Check App Logs
 
-View logs in Home Assistant: **Settings** > **Apps** > **Unbound DNS** > **Log**
+View logs in Home Assistant: **Settings** > **Apps** > **Unbound** > **Log**
 
 ## License
 

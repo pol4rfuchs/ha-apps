@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import threading
 import time
@@ -295,6 +296,17 @@ def save_local_records(records):
         json.dump(records, f, indent=2)
 
 
+def split_local_records(records):
+    """Return (valid normalized records, skipped raw entries)."""
+    valid, skipped = [], []
+    for raw in records:
+        try:
+            valid.append(normalize_local_record(raw))
+        except (ValueError, KeyError, AttributeError, TypeError):
+            skipped.append(raw)
+    return valid, skipped
+
+
 def write_local_records_conf(records):
     """Write /etc/unbound/local_records.conf from records list."""
     with open(LOCAL_RECORDS_CONF, "w", encoding="utf-8") as f:
@@ -304,7 +316,7 @@ def write_local_records_conf(records):
         for raw in records:
             try:
                 rec = normalize_local_record(raw)
-            except (ValueError, KeyError):
+            except (ValueError, KeyError, AttributeError, TypeError):
                 continue
             hostname = rec["hostname"]
             rtype = rec["type"]
@@ -1022,7 +1034,6 @@ def api_config_put():
 @app.route("/api/config/validate-custom", methods=["POST"])
 def api_config_validate_custom():
     """Validate the user's custom unbound.conf without restarting."""
-    import shutil
     import tempfile
 
     if not os.path.exists(CUSTOM_CONFIG_PATH):
@@ -1050,6 +1061,39 @@ def api_config_validate_custom():
     except Exception:
         _logger.exception("Failed to validate custom config")
         return jsonify({"ok": False, "message": "Failed to validate custom config"})
+
+
+# --- Query log size cap ---
+
+QUERY_LOG_CHECK_INTERVAL = 10 * 60  # seconds
+
+
+def rotate_query_log(max_size=None):
+    """Keep the query log under config_gen.LOG_MAX_SIZE while Unbound is running.
+
+    The size was only checked when the config was generated, so a long-running app
+    could fill /data. Copy to .old and truncate in place: Unbound keeps its file
+    handle (append mode), owner and mode stay as run.sh created them.
+    Returns True if the log was rotated.
+    """
+    limit = config_gen.LOG_MAX_SIZE if max_size is None else max_size
+    try:
+        if not os.path.exists(QUERY_LOG_FILE) or os.path.getsize(QUERY_LOG_FILE) <= limit:
+            return False
+        shutil.copyfile(QUERY_LOG_FILE, QUERY_LOG_FILE + ".old")
+        with open(QUERY_LOG_FILE, "w"):
+            pass
+        return True
+    except OSError:
+        _logger.exception("Query log rotation failed")
+        return False
+
+
+def _query_log_rotation_loop():
+    while True:
+        time.sleep(QUERY_LOG_CHECK_INTERVAL)
+        if rotate_query_log():
+            _logger.info("Query log exceeded %d bytes, rotated to .old", config_gen.LOG_MAX_SIZE)
 
 
 # --- Blocklist auto-refresh ---
@@ -1088,12 +1132,26 @@ if __name__ == "__main__":
         print(count)
         sys.exit(0)
 
+    if "--write-local-records" in sys.argv:
+        # Called by run.sh before Unbound starts: rebuild local_records.conf from the saved
+        # records. Invalid entries are skipped (and reported on stderr) instead of ending up
+        # in a config that unbound-checkconf rejects, which would keep the app from starting.
+        logging.basicConfig(level=logging.WARNING)
+        raw_records = load_local_records()
+        valid, skipped = split_local_records(raw_records)
+        write_local_records_conf(valid)
+        for rec in skipped:
+            print(f"Skipping invalid local record {rec!r}", file=sys.stderr)
+        print(len(valid))
+        sys.exit(0)
+
     from waitress import serve
 
     logging.basicConfig(level=logging.INFO)
 
     t = threading.Thread(target=_blocklist_auto_refresh, daemon=True)
     t.start()
+    threading.Thread(target=_query_log_rotation_loop, daemon=True).start()
 
     port = int(os.environ.get("INGRESS_PORT", 2137))
     serve(app, host="0.0.0.0", port=port)

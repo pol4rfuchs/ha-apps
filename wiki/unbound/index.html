@@ -403,7 +403,7 @@
       <a class="nav-item" href="#custom-config" data-target="custom-config"><span class="nav-icon">🧩</span><span><strong>Custom Config</strong><small>Overlay files, full unbound.conf</small></span></a>
       <a class="nav-item" href="#persistence" data-target="persistence"><span class="nav-icon">💾</span><span><strong>Persistence</strong><small>/data/config.json, backup</small></span></a>
       <a class="nav-item" href="#hardening" data-target="hardening"><span class="nav-icon">🔒</span><span><strong>Hardening</strong><small>Source build, CVEs, AppArmor</small></span></a>
-      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.26.1-ha3-pol4r1</small></span></a>
+      <a class="nav-item" href="#changelog" data-target="changelog"><span class="nav-icon">📝</span><span><strong>Version Notes</strong><small>v1.26.2-ha3-pol4r1</small></span></a>
       <a class="nav-item" href="#external-access" data-target="external-access"><span class="nav-icon">🌐</span><span><strong>External access</strong><small>LAN, VPN, reverse proxy</small></span></a>
       <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Troubleshooting</strong><small>No resolution, DNSSEC, port conflicts</small></span></a>
       <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Sources</strong><small>GitHub, upstream, license</small></span></a>
@@ -423,7 +423,7 @@
       <div class="hero-inner">
         <div class="hero-kicker"><span class="pulse"></span> UNBOUND · RECURSIVE DNS RESOLVER · HOME ASSISTANT APP</div>
         <h2>Unbound in <span class="accent">Teal Glass</span>.</h2>
-        <p class="hero-copy">Operations wiki for the Unbound DNS resolver app: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (built from upstream source, currently 1.26.1).</p>
+        <p class="hero-copy">Operations wiki for the Unbound DNS resolver app: web UI dashboard, blocklists, server settings, custom config overlays, and the source-build hardening batch (built from upstream source, currently 1.26.2).</p>
         <div class="hero-actions">
           <a class="btn" href="#installation">🚀 Start Installation</a>
           <a class="btn secondary" href="#webui">📊 Web UI Tour</a>
@@ -434,7 +434,7 @@
           <div class="metric"><small>App Slug</small><strong>unbound</strong></div>
           <div class="metric"><small>Web UI</small><strong>HA sidebar (Ingress only)</strong></div>
           <div class="metric"><small>DNS Port</small><strong>5053/tcp+udp → 53</strong></div>
-          <div class="metric"><small>Upstream</small><strong>nlnetlabs/unbound 1.26.1</strong></div>
+          <div class="metric"><small>Upstream</small><strong>nlnetlabs/unbound 1.26.2</strong></div>
         </div>
       </div>
     </section>
@@ -449,8 +449,8 @@ DNS:    5053/tcp + 5053/udp (mapped from container 53)</code></pre>
       <div class="quick-card glass-card">
         <h3>🛡️ Source-Built Hardening</h3>
         <p>Built from upstream source instead of Alpine's package. Since 1.25.1 this fixed 11 CVEs compared with Alpine's 3.24 package (1.24.2), including CVE-2026-33278 (RCE).</p>
-        <pre><code>unbound version: 1.26.1
-app version:  1.26.1-ha3-pol4r1</code></pre>
+        <pre><code>unbound version: 1.26.2
+app version:  1.26.2-ha3-pol4r1</code></pre>
       </div>
     </section>
 
@@ -596,7 +596,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
       <div class="doc-content">
         <h2 id="ub-sourcebuild"><a class="anchor" href="#ub-sourcebuild">#</a>Why Source-Built</h2>
-        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This app builds Unbound from upstream source instead (currently <strong>1.26.1</strong>, checksum-verified against NLnet Labs' published SHA256). Moving from Alpine's package to 1.25.1 fixed 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
+        <p>Alpine 3.24's package repo only ships Unbound 1.24.2. This app builds Unbound from upstream source instead (currently <strong>1.26.2</strong>, checksum-verified against NLnet Labs' published SHA256). Moving from Alpine's package to 1.25.1 fixed 11 CVEs — most notably <strong>CVE-2026-33278</strong> (remote code execution).</p>
         <h2 id="ub-fixes"><a class="anchor" href="#ub-fixes">#</a>Stability & Hardening Fixes</h2>
         <table>
           <thead><tr><th>Area</th><th>Fix</th></tr></thead>
@@ -623,7 +623,7 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
       </div>
     </article>
 
-    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.26.1-ha3-pol4r1 unbound 1.26.1">
+    <article id="changelog" class="doc-section glass-card" data-search="changelog version notes 1.26.2-ha3-pol4r1 unbound 1.26.2">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">📝</span><div><p class="eyebrow">CHANGELOG.md</p><h2>Version Notes</h2></div></div>
         <a class="section-link" href="#changelog">#changelog</a>
@@ -632,8 +632,8 @@ addon_configs/&lt;slug&gt;_unbound/unbound-extra.conf     # extra top-level sect
         <table>
           <thead><tr><th>Component</th><th>Version</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td>unbound</td><td><code>1.26.1-ha3-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
-            <tr><td>Unbound (upstream)</td><td><code>1.26.1</code></td><td>Source-built, not the Alpine package.</td></tr>
+            <tr><td>unbound</td><td><code>1.26.2-ha3-pol4r1</code></td><td>Manual versioning scheme, decoupled from Release Please.</td></tr>
+            <tr><td>Unbound (upstream)</td><td><code>1.26.2</code></td><td>Source-built, not the Alpine package.</td></tr>
           </tbody>
         </table>
         <blockquote>This app has its own manual version scheme rather than Conventional Commits + Release Please, because upstream releases (source tarballs) don't map cleanly onto semantic-release automation.</blockquote>

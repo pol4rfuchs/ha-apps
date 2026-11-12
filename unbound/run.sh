@@ -49,56 +49,23 @@ apply_blocklists() {
     fi
 }
 
-# Initialize local records file if it doesn't exist
+# Initialize local records file if it doesn't exist, then write the Unbound include.
+# The web UI code does the writing (same validation as "Add record"): invalid
+# entries in /data/local_records.json are skipped instead of reaching
+# unbound-checkconf, which would reject the config and keep the app from starting.
 init_local_records() {
     if [ ! -f "${LOCAL_RECORDS_FILE}" ]; then
         echo "[]" > "${LOCAL_RECORDS_FILE}"
         bashio::log.info "Initialized empty local records file"
     fi
 
-    local rec_count
-    rec_count=$(jq '. | length' "${LOCAL_RECORDS_FILE}")
-    {
-        echo "# Generated local records"
-        echo "# Do not edit manually"
-        echo
-        echo "server:"
-    } > "${LOCAL_RECORDS_CONF}"
-
-    if [ "${rec_count}" != "0" ]; then
-        bashio::log.info "Writing ${rec_count} local DNS record(s)..."
-        for i in $(seq 0 $((rec_count - 1))); do
-            local hostname rtype value ttl
-            hostname=$(jq -r ".[${i}].hostname // empty" "${LOCAL_RECORDS_FILE}" | sed 's/[.]$//')
-            rtype=$(jq -r ".[${i}].type // \"A\"" "${LOCAL_RECORDS_FILE}" | tr '[:lower:]' '[:upper:]')
-            value=$(jq -r ".[${i}].value // .[${i}].ip // empty" "${LOCAL_RECORDS_FILE}" | sed 's/[.]$//')
-            ttl=$(jq -r ".[${i}].ttl // 300" "${LOCAL_RECORDS_FILE}")
-
-            if [ -z "${hostname}" ] || [ -z "${value}" ]; then
-                bashio::log.warning "  Skipping invalid local record at index ${i}"
-                continue
-            fi
-
-            case "${rtype}" in
-                A|AAAA)
-                    bashio::log.info "  ${hostname} ${rtype} ${value}"
-                    echo "    local-zone: \"${hostname}.\" static" >> "${LOCAL_RECORDS_CONF}"
-                    echo "    local-data: \"${hostname}. ${ttl} IN ${rtype} ${value}\"" >> "${LOCAL_RECORDS_CONF}"
-                    ;;
-                CNAME)
-                    bashio::log.info "  ${hostname} CNAME ${value}"
-                    echo "    local-zone: \"${hostname}.\" transparent" >> "${LOCAL_RECORDS_CONF}"
-                    echo "    local-data: \"${hostname}. ${ttl} IN CNAME ${value}.\"" >> "${LOCAL_RECORDS_CONF}"
-                    ;;
-                PTR)
-                    bashio::log.info "  ${hostname} PTR ${value}"
-                    echo "    local-data-ptr: \"${hostname} ${value}.\"" >> "${LOCAL_RECORDS_CONF}"
-                    ;;
-                *)
-                    bashio::log.warning "  Skipping unsupported local record type: ${rtype}"
-                    ;;
-            esac
-        done
+    local rec_count rc=0
+    rec_count=$(python3 /web/app.py --write-local-records | tail -n 1) || rc=$?
+    if [ "${rc}" -eq 0 ] && [[ "${rec_count}" =~ ^[0-9]+$ ]]; then
+        bashio::log.info "Local DNS records written: ${rec_count}"
+    else
+        bashio::log.warning "  Could not process the local records, starting without them"
+        printf '# Generated local records\n# Do not edit manually\n\nserver:\n' > "${LOCAL_RECORDS_CONF}"
     fi
 }
 
