@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.22](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.21...forgejo-v16.0.22) (2026-11-12)
+
+
+### Bug Fixes
+
+* **forgejo:** pull the base image from Forgejo's mirror data.forgejo.org ([#865](https://github.com/pol4rfuchs/ha-apps/issues/865)) ([fad9e48](https://github.com/pol4rfuchs/ha-apps/commit/fad9e4831fe6083362b4307d07ec9f749fd259bf))
+
 ## [16.0.21](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.20...forgejo-v16.0.21) (2026-10-31)
 
 
