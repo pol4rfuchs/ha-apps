@@ -18,6 +18,11 @@ top-level folder and is built, versioned and released independently.
 New apps are also listed in `addons.json`, `release-please-config.json` and
 `.release-please-manifest.json`.
 
+Exception: `unbound` is not managed by Release Please. It has its own version scheme
+(`<upstream>-haNN-pol4rN`), its `CHANGELOG.md` and the `version:` in `config.yaml` are edited by hand
+(or by workflow 25 for upstream bumps), and it is built by workflows 03 and 26. It is therefore not listed in
+`release-please-config.json` or `.release-please-manifest.json`.
+
 ## Rules that CI enforces
 
 - **One pull request per app.** The PR title becomes the squash-merge commit message and must be

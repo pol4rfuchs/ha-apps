@@ -1,14 +1,12 @@
 name: "26 - Unbound Auto-Bump Trigger Build"
 
-# When the PR opened by 25-unbound-auto-bump.yml gets merged, this calls
-# 03-build-publish-ghcr.yml's workflow_dispatch for unbound.
+# When the PR opened by 25-unbound-auto-bump.yml gets merged, this opens the "verify on the
+# Pi" reminder issue.
 #
-# Deliberately NOT a tag push: pushing a tag from a workflow using the
-# default GITHUB_TOKEN would not trigger 03-build-publish-ghcr.yml's
-# `on: push: tags` (GitHub's loop-protection rule - events caused by
-# GITHUB_TOKEN don't cascade into new workflow runs). workflow_dispatch is
-# explicitly exempt from that rule, so calling it via the API works fine
-# with the plain GITHUB_TOKEN - no APP_TOKEN needed here.
+# It no longer starts the build itself: unbound is not managed by Release Please, so the
+# push to main that the merge causes already starts 03-build-publish-ghcr.yml for every
+# such app whose folder changed. Dispatching 03 here as well built and published the same
+# version twice (the two runs sit in different concurrency groups).
 
 on:
   pull_request:
@@ -16,7 +14,6 @@ on:
     branches: [main]
 
 permissions:
-  actions: write   # required to trigger workflow_dispatch on another workflow
   issues: write
 
 jobs:
@@ -26,17 +23,6 @@ jobs:
       startsWith(github.event.pull_request.head.ref, 'auto/unbound-bump-')
     runs-on: ubuntu-24.04
     steps:
-      - name: Trigger 03 Build Publish GHCR for unbound
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          gh workflow run 03-build-publish-ghcr.yml \
-            --repo "${REPO}" \
-            --ref main \
-            -f app=unbound
-
       - name: Open Pi-test reminder issue
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
@@ -50,7 +36,7 @@ jobs:
               title: "unbound: verify on Pi after auto-bump build",
               labels: ["unbound"],
               body: [
-                `Auto-bump PR #${process.env.PR_NUMBER} (${process.env.PR_URL}) was merged and the build/release was triggered automatically.`,
+                `Auto-bump PR #${process.env.PR_NUMBER} (${process.env.PR_URL}) was merged; the push to main starts the build/release automatically.`,
                 ``,
                 `Once the "03 Build Publish GHCR" run finishes and \`:latest\` is promoted:`,
                 ``,

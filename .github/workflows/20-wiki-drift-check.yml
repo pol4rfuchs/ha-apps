@@ -57,6 +57,13 @@ jobs:
             current_version=$(grep -E '^version:' "$cfg" | head -1 | sed -E 's/version:[[:space:]]*"?([^"]*)"?/\1/' | xargs)
             documented_version=$(jq -r --arg s "$slug" '.[$s] // empty' "$manifest")
 
+            # Pages listed here print the app version in their text. The manifest alone cannot
+            # tell whether the page really shows the current version (it can be bumped without
+            # touching the page), so check the page itself too.
+            if [[ " unbound " == *" ${slug} "* ]] && ! grep -qF -- "$current_version" "${wiki_dir}/index.html"; then
+              drift_lines+=("- **${slug}**: wiki page does not mention the current version \`${current_version}\`")
+            fi
+
             if [[ -z "$documented_version" ]]; then
               tmp=$(jq --arg s "$slug" --arg v "$current_version" '.[$s] = $v' "$manifest")
               echo "$tmp" > "$manifest"

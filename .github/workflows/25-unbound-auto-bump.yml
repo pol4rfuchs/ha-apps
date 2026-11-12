@@ -7,8 +7,9 @@ name: "25 - Unbound Auto-Bump PR"
 # `noop` entry for unbound).
 #
 # This workflow prepares that bump as a normal, reviewable PR instead of
-# just an issue (see 24-unbound-renovate-reminder.yml, which stays in place
-# as a fallback in case this one ever fails to open a PR):
+# just an issue. If a step fails (other than the checksum check, which has its
+# own security issue), the last step opens a "manual action needed" issue so the
+# bump is not forgotten:
 #   1. Download the new tarball + NLnetLabs' published sha256 and compare.
 #      A mismatch stops here (job fails, no PR opened) and raises a
 #      security-flagged issue - never trust a mismatched tarball.
@@ -182,8 +183,7 @@ jobs:
               f"## [{new_full}] - {today}\n\n"
               f"- Bump Unbound to {new_version} (automated by Renovate PR #{pr_number}, "
               f"checksum-verified against NLnetLabs' published sha256).\n"
-              f"- TODO(fox): review upstream changelog for CVE/behavior notes and "
-              f"replace this line with the real summary before merging.\n\n"
+              f"- Upstream release notes: https://nlnetlabs.nl/projects/unbound/download/\n\n"
           )
           patch(addon / "CHANGELOG.md",
                 r'^# Changelog\n',
@@ -246,7 +246,7 @@ jobs:
 
           **Still needs a human look before merging:**
           - [ ] Skim the upstream changelog between the old and new version for any \`./configure\` flag or build-dependency changes.
-          - [ ] Replace the placeholder CHANGELOG.md line with a real summary.
+          - [ ] Add notable upstream changes (CVEs, behaviour changes) to the CHANGELOG.md entry if there are any.
           - [ ] Confirm the ha-tag suffix (\`-ha1-\`) is right - bump to ha2/ha3/... instead if this isn't the first add-on release at this upstream version.
 
           Merging this PR triggers 03-build-publish-ghcr.yml for unbound automatically (see 26-unbound-auto-bump-trigger-build.yml).
@@ -264,3 +264,33 @@ jobs:
               --label "unbound" \
               --label "automated-version-bump"
           fi
+
+      # Fallback: when anything above failed (for example the patch step finds a changed
+      # file structure) no PR exists, so tell the maintainer to do the bump by hand.
+      # A checksum mismatch is excluded, it raises its own security issue above.
+      - name: Open manual-action issue if the bump PR could not be prepared
+        if: failure() && steps.checksum.outcome != 'failure'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const newVersion = process.env.NEW_VERSION || "unknown";
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `unbound: manual build/release needed for upstream ${newVersion}`,
+              labels: ["unbound", "manual-action-needed"],
+              body: [
+                `A Renovate PR bumped the NLnetLabs/unbound dependency pointer to **${newVersion}**, but the auto-bump workflow failed: ${process.env.RUN_URL}`,
+                ``,
+                `Since unbound is decoupled from Release Please, nothing was prepared for you. Manual steps:`,
+                ``,
+                `- [ ] Adjust the source-build tarball reference to ${newVersion}`,
+                `- [ ] Bump the ha-tag (e.g. \`${newVersion}-ha1-pol4r1\`)`,
+                `- [ ] Verify on Pi (DNS resolving, ECS toggle, no crash-loop)`,
+                ``,
+                `_Auto-created by 25-unbound-auto-bump.yml (fallback)_`
+              ].join("\n")
+            });
