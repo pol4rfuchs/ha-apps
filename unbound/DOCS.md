@@ -39,6 +39,20 @@ Unbound does not check the server certificate, and the web UI shows a note when 
 a setup. This app does not offer a DNS-over-TLS **server** for clients: put that in front of it,
 for example in AdGuard Home, and use `<ha-host>:5053` as its upstream.
 
+## Hardening options (Security tab)
+
+| Option | Default | Effect |
+|---|---|---|
+| Rebinding Protection | off | Removes private addresses from answers for public names. Stub zones are exempt automatically. Internal names that live in public DNS and point to a private address stop resolving, so switch it on only if you do not need that. |
+| Refuse ANY Queries | off | Minimal answer to `ANY` queries (amplification abuse). |
+| Harden Large Queries / Short Buffer Size | on | Refuse very large queries and ignore EDNS buffers below 512 bytes. |
+| Rate Limit (per zone) | 0 (off) | Queries per second sent to the servers of one zone. |
+| Rate Limit (per client IP) | 0 (off) | Queries per second accepted from one client. A forwarder such as AdGuard Home sends everything from one address, so keep this high or off in that setup. |
+| Unwanted Reply Threshold | 10000000 | Flushes the cache after that many unsolicited replies (cache poisoning protection). 0 = off. |
+
+**Listen on IPv6** (Network tab, restart required) also binds `::0`. Switch it on only if the app's
+container network has IPv6; without it Unbound cannot bind the address and does not start.
+
 ## Custom `unbound.conf` and Overlay Files
 
 See the README's "Custom Configuration" and "Overlay Files" sections for the
@@ -46,7 +60,7 @@ full mechanism (`unbound-overlay.conf` / `unbound-extra.conf` under
 `/addon_configs/<slug>_unbound/`). In short:
 
 - **Full custom config**: enable "Custom Config" in the web UI, then place a
-  complete `unbound.conf` at the addon config path. When enabled, all GUI
+  complete `unbound.conf` at the app config path. When enabled, all GUI
   settings are ignored.
 - **Overlay files**: keep GUI-managed settings but inject a few extra
   `server:` directives or whole top-level sections (`auth-zone:`, `view:`)

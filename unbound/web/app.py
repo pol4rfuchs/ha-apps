@@ -27,7 +27,7 @@ _logger = logging.getLogger("unbound-web")
 
 # Home Assistant Ingress is the only supported entry point: the Supervisor
 # proxies authenticated users from 172.30.32.2. The web UI has no login of its
-# own, so any other peer (e.g. another container on the add-on network) is
+# own, so any other peer (e.g. another container on the app network) is
 # rejected. Loopback stays allowed for in-container checks.
 _INGRESS_PEERS = frozenset({"172.30.32.2", "127.0.0.1", "::1"})
 _rejected_peers = set()
@@ -653,7 +653,7 @@ def write_blocklist_conf():
     """Download all blocklists, subtract the whitelist and write BLOCKLIST_CONF.
 
     Returns (number of blocked domains, list of per-URL errors). The web UI refresh and
-    run.sh (at every add-on start, through --write-blocklist) both use this, so a list
+    run.sh (at every app start, through --write-blocklist) both use this, so a list
     is parsed the same way in both places (hosts format and plain domain lines).
     """
     blocklists = load_blocklists()

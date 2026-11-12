@@ -24,7 +24,7 @@
 |---|---|
 | **Upstream** | `nlnetlabs/unbound` |
 | **Unbound version** | `1.26.2` |
-| **App version** | `1.26.2-ha3-pol4r1` |
+| **App version** | `1.26.2-ha4-pol4r1` |
 | **Default port** | `5053` (mapped from container `53`) |
 | **Config** | Web UI (no YAML editing) |
 | **Arch** | `amd64`, `aarch64` |
@@ -48,10 +48,10 @@
 - **Query Log**: Recent queries viewer, top domains chart, filter by domain/client
 
 ### Server Settings (all hot-reloaded, no restart needed)
-- **Network**: Access control, forward servers (`IP[@port][#tls-name]`), DNS-over-TLS to the upstream, IPv4/IPv6
+- **Network**: Access control, forward servers (`IP[@port][#tls-name]`), DNS-over-TLS to the upstream, IPv4/IPv6, optional IPv6 listener
 - **Performance**: Thread count, prefetch, fast server selection, EDNS buffer size, minimal responses
 - **Cache**: Message/RRset/negative cache sizing, min/max TTL, negative TTL, serve expired, aggressive NSEC
-- **Security & Privacy**: DNSSEC, QNAME minimisation, identity/version hiding, CAPS for ID (0x20)
+- **Security & Privacy**: DNSSEC, QNAME minimisation, identity/version hiding, CAPS for ID (0x20), DNS rebinding protection, refuse `ANY`, per-zone and per-client rate limits, harden-large-queries / harden-short-bufsize, unwanted-reply threshold
 - **Logging**: Verbosity, query logging
 
 ### Under the Hood
@@ -71,28 +71,28 @@
    Or manually: **Settings** > **Apps** > **App Store** > **⋮** > **Repositories** > Add `https://github.com/pol4rfuchs/ha-apps`
 
 2. Find "Unbound" in the app store and click **Install**
-3. Start the addon and open the **Web UI** to configure everything
+3. Start the app and open the **Web UI** to configure everything
 
 ## Configuration
 
-Settings are organized across dedicated tabs (Network, Performance, Cache, Security, Advanced). Changes are applied immediately via hot-reload — no addon restart needed (except for thread count changes).
+Settings are organized across dedicated tabs (Network, Performance, Cache, Security, Advanced). Changes are applied immediately via hot-reload — no app restart needed (except for thread count changes).
 
-The only option in the HA addon panel is `log_level` for controlling addon log verbosity.
+The only option in the HA app panel is `log_level` for controlling app log verbosity.
 
 ### Custom Configuration
 
 For advanced users who need full control over `unbound.conf`:
 
 1. Enable **Custom Config** in the web UI Settings tab
-2. Place your `unbound.conf` at the addon config path shown in the addon log (e.g. `/addon_configs/<slug>_unbound/unbound.conf`)
-3. Restart the addon
+2. Place your `unbound.conf` at the app config path shown in the app log (e.g. `/addon_configs/<slug>_unbound/unbound.conf`)
+3. Restart the app
 
 When custom config mode is enabled, all other settings are ignored. Keep a `remote-control:`
 section in your file, otherwise the statistics, cache flush and reload in the web UI do not work.
 
 ### Overlay Files (mix GUI + snippets)
 
-If you want most settings from the GUI but need a few extras unbound supports (e.g. `local-zone "x." nodefault` to free up reserved zones, `auth-zone:`, `view:`), drop one or both of these files into the addon config folder. Overlays are active whenever **Use custom unbound.conf** is **off**.
+If you want most settings from the GUI but need a few extras unbound supports (e.g. `local-zone "x." nodefault` to free up reserved zones, `auth-zone:`, `view:`), drop one or both of these files into the app config folder. Overlays are active whenever **Use custom unbound.conf** is **off**.
 
 - `/addon_configs/<slug>_unbound/unbound-overlay.conf` — lines are injected at the **end** of the generated `server:` block. Use this for extra `server:` directives. **Do not** wrap the contents in a `server:` header.
 
@@ -116,11 +116,11 @@ If you want most settings from the GUI but need a few extras unbound supports (e
 
 Precedence: because unbound keeps the last occurrence of a scalar directive within `server:`, anything in `unbound-overlay.conf` overrides the corresponding GUI value. List-type directives (`local-zone`, `access-control`, …) stack.
 
-If the combined config fails `unbound-checkconf`, the addon falls back to GUI-only and shows a banner in the **Advanced** tab with the validation error so you can fix the snippet without losing DNS.
+If the combined config fails `unbound-checkconf`, the app falls back to GUI-only and shows a banner in the **Advanced** tab with the validation error so you can fix the snippet without losing DNS.
 
 ### First Run
 
-On first startup, the addon creates a default configuration. After that, all settings live in `/data/config.json` and are managed exclusively through the web UI.
+On first startup, the app creates a default configuration. After that, all settings live in `/data/config.json` and are managed exclusively through the web UI.
 
 ## Network Configuration
 

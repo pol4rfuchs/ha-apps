@@ -2,7 +2,7 @@
 configuration:
   log_level:
     name: Log-Level
-    description: "Steuert den Detailgrad der Log-Ausgabe des Addon-Supervisor-Prozesses."
+    description: "Steuert den Detailgrad der Log-Ausgabe des App-Supervisor-Prozesses."
 
 network:
   53/tcp: DNS-Anfragen über TCP
