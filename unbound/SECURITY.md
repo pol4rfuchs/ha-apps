@@ -62,7 +62,7 @@ The AppArmor profile intentionally does **not** grant `CAP_CHOWN` or
 ## Source Build Rule
 
 When Unbound is built from source instead of the Alpine apk package
-(currently the case for 1.25.1, since Alpine 3.24 stable still ships
+(currently the case for the 1.26.x series, since Alpine 3.24 stable still ships
 1.24.2), the downloaded tarball must be verified against NLnet Labs'
 official SHA256 checksum before extraction. The build fails closed on
 a mismatch.
@@ -100,6 +100,7 @@ External blocklist downloads must enforce:
 - `unbound.conf` hardening directives (`hide-identity`, `hide-version`,
   `access-control` scope, rate-limiting, `harden-*` options) not yet
   reviewed against current best practice.
-- Web UI authentication/session handling not yet reviewed.
+- Web UI authentication is Ingress-only (no login of its own); see
+  `HARDENING_NOTES.md`.
 - Source tarball verification is checksum-only; no GPG signature
   verification against NLnet Labs' release signing key yet.

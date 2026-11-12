@@ -57,9 +57,10 @@
   amplification abuse (`ratelimit`, `ip-ratelimit`), and whether
   `harden-*` options (e.g. `harden-glue`, `harden-dnssec-stripped`)
   are set to their recommended values in `config_gen.py`.
-- **Web UI authentication/session handling is unreviewed.** Unclear
-  whether there's any auth beyond Ingress, and whether that's
-  considered sufficient.
+- **Web UI authentication is Ingress-only.** Since `1.26.1-ha2` every request
+  that does not come from the Ingress gateway (`172.30.32.2`) or loopback is
+  rejected. There is no login of its own; session handling stays with Home
+  Assistant.
 - **Only SHA256 checksum verification, no GPG signature check.** NLnet
   Labs signs releases with an OpenPGP key; checksum verification
   protects against corruption/simple tampering but not against a

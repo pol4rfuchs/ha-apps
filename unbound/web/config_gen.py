@@ -195,6 +195,46 @@ _ZONE_NAME_RE = re.compile(
 )
 
 
+# forward-addr: IP (or name), optionally "@port" and "#tls-auth-name"; no whitespace, quotes or
+# line breaks, so an entry can never turn into another unbound.conf directive.
+_FORWARD_ADDR_RE = re.compile(
+    r"^[A-Za-z0-9._:\[\]-]+(@\d{1,5})?(#[A-Za-z0-9._-]+)?$"
+)
+
+
+def check_access_control_entry(value):
+    """Return an error text for an invalid access-control network, else None."""
+    if not isinstance(value, str):
+        return "expected a string"
+    try:
+        ipaddress.ip_network(value.strip(), strict=False)
+    except ValueError:
+        return f"invalid network {value!r}: expected an IP or CIDR such as 192.168.0.0/16"
+    return None
+
+
+def check_forward_server(value):
+    """Return an error text for an invalid forward server, else None."""
+    if not isinstance(value, str) or not _FORWARD_ADDR_RE.match(value.strip()):
+        return (f"invalid forward server {value!r}: expected IP[@port][#tls-name], "
+                "e.g. 1.1.1.1@853#cloudflare-dns.com")
+    port = value.strip().partition("@")[2].partition("#")[0]
+    if port and not 1 <= int(port) <= 65535:
+        return f"invalid forward server {value!r}: port must be 1-65535"
+    return None
+
+
+def forward_tls_warning(config):
+    """Note for forward servers without a TLS name while DoT is on, else ''."""
+    if not config.get("forward_tls") or not config.get("forward_servers"):
+        return ""
+    if all("#" in str(s) for s in config["forward_servers"]):
+        return ""
+    return ("DNS-over-TLS is on but not every forward server has a #hostname "
+            "(e.g. 1.1.1.1@853#cloudflare-dns.com): the connection is encrypted, "
+            "but the server certificate is not verified.")
+
+
 def _parse_ip(value):
     try:
         return ipaddress.ip_address(value)
@@ -290,6 +330,10 @@ def validate_config(config):
         elif stype == "list":
             if not isinstance(val, list):
                 errors.append(f"{key}: expected list, got {type(val).__name__}")
+            elif key == "access_control":
+                errors.extend(f"{key}: {e}" for e in map(check_access_control_entry, val) if e)
+            elif key == "forward_servers":
+                errors.extend(f"{key}: {e}" for e in map(check_forward_server, val) if e)
 
     return errors
 
@@ -666,6 +710,9 @@ def apply_config(new_config):
         return {"ok": True, "reload_ok": False, "message": msg, "restart_required": restart_required}
 
     msg = "Configuration applied successfully."
+    tls_warning = forward_tls_warning(new_config)
+    if tls_warning:
+        msg += " Note: " + tls_warning
     if restart_required:
         msg = "Configuration saved. Addon restart required for thread count change to take effect."
     if overlay_dropped:

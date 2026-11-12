@@ -5,28 +5,39 @@ details beyond the installation/quickstart steps in the README.
 
 ## Persistent Data
 
-All runtime configuration lives in `/data/config.json`, managed exclusively
-through the app's web UI. This includes:
+Everything lives in `/data`, which is the app's own persistent storage. It survives app
+restarts, updates and container recreation; no extra `map:` entry is required. The web UI
+keeps its state in several files:
 
-- Blocklists, whitelist entries, local DNS records
-- The last successful download of each blocklist (`/data/blocklist_cache/`, used when a refresh fails; excluded from backups because it is downloaded again)
-- Server settings (network, performance, cache, security tabs)
-- Query log data
-
-`/data` is the app's own persistent storage and survives app
-restarts, updates, and container recreation automatically — no extra `map:`
-entry is required for it.
+| File | Content |
+|---|---|
+| `config.json` | Server settings (Network, Performance, Cache, Security, Advanced tabs) |
+| `blocklists.json`, `whitelist.json` | Blocklist URLs and whitelisted domains |
+| `local_records.json` | Local DNS records |
+| `stub_zones.json` | Stub zones |
+| `blocklist_cache/` | Last successful download of each blocklist (used when a refresh fails; excluded from backups because it is downloaded again) |
+| `unbound-control/` | Keys for the control channel, generated on the first start |
+| `unbound_queries.log` | Query log (capped at 50 MB, the previous part is kept as `.old`) |
 
 ## Backup
 
-Back up `/data/config.json` if you want to restore your DNS configuration
-(blocklists, local records, server settings) onto a fresh install. A
-Home Assistant full backup (which includes app data by default) already
-covers this — no addon-specific backup hooks are configured.
+A Home Assistant backup includes `/data`, so a full or app backup restores all of the files above.
+To copy your DNS setup by hand to another installation, take **all** of `config.json`,
+`blocklists.json`, `whitelist.json`, `local_records.json` and `stub_zones.json`, not only
+`config.json`.
 
-There are no secrets to manage for this app: Unbound itself doesn't
-require credentials, and the web UI has no separate authentication beyond
-what Ingress/HA already provides.
+There are no secrets to manage for this app: Unbound itself doesn't require credentials, and the
+web UI has no separate authentication beyond what Ingress/HA already provides. The app has no
+backup hooks of its own.
+
+## Forwarding with DNS-over-TLS
+
+Unbound resolves recursively by default. If you add forward servers and switch on
+**DNS-over-TLS**, write each server as `IP[@port][#tls-name]`, for example
+`1.1.1.1@853#cloudflare-dns.com`. Without the `#tls-name` the connection is encrypted, but
+Unbound does not check the server certificate, and the web UI shows a note when you save such
+a setup. This app does not offer a DNS-over-TLS **server** for clients: put that in front of it,
+for example in AdGuard Home, and use `<ha-host>:5053` as its upstream.
 
 ## Custom `unbound.conf` and Overlay Files
 
@@ -40,6 +51,10 @@ full mechanism (`unbound-overlay.conf` / `unbound-extra.conf` under
 - **Overlay files**: keep GUI-managed settings but inject a few extra
   `server:` directives or whole top-level sections (`auth-zone:`, `view:`)
   that the GUI doesn't expose.
+
+In custom config mode your `unbound.conf` must keep a `remote-control:` section with the key and
+certificate files from `/etc/unbound/` (see the generated config for the paths); otherwise the
+statistics, cache flush and reload in the web UI do not work.
 
 If the combined configuration fails `unbound-checkconf` validation, the
 app automatically falls back to GUI-only settings and surfaces the
