@@ -1,14 +1,16 @@
 name: "24 - Unbound Renovate Merge Reminder"
 
 # Unbound is decoupled from Release Please (manual versioning: <upstream>-haNN-pol4rN).
-# Renovate still opens PRs when NLnetLabs/unbound has a new upstream release, but
-# merging that PR only bumps the version pointer - it does NOT trigger a build/release.
-# This workflow catches that merge and opens a reminder issue so it's not forgotten.
+# Renovate opens a PR when NLnetLabs/unbound has a new upstream release; merging it only
+# bumps the version pointer. Workflow 25 then prepares the bump PR. This workflow is the
+# fallback for the case that 25 fails (for example its patch step finds a changed file
+# structure): it opens a reminder issue so the bump is not forgotten. It does not run when
+# 25 succeeded, so a normal bump no longer produces both an issue and a PR.
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [main]
+  workflow_run:
+    workflows: ["25 - Unbound Auto-Bump PR"]
+    types: [completed]
 
 permissions:
   issues: write
@@ -16,14 +18,15 @@ permissions:
 jobs:
   remind:
     if: >
-      github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'renovate/nlnetlabs-unbound')
+      github.event.workflow_run.conclusion == 'failure' &&
+      startsWith(github.event.workflow_run.head_branch, 'renovate/nlnetlabs-unbound')
     runs-on: ubuntu-24.04
     steps:
       - name: Extract new upstream version from PR title
         id: version
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          # For runs started by a pull_request event this is the pull request title.
+          PR_TITLE: ${{ github.event.workflow_run.display_title }}
         run: |
           # Expected title format: "chore(unbound): update dependency nlnetlabs/unbound to v1.26.0"
           NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'v?\K[0-9]+\.[0-9]+\.[0-9]+$' || echo "unknown")
@@ -36,8 +39,7 @@ jobs:
         with:
           script: |
             const newVersion = process.env.NEW_VERSION;
-            const prNumber = context.payload.pull_request.number;
-            const prUrl = context.payload.pull_request.html_url;
+            const runUrl = context.payload.workflow_run.html_url;
 
             await github.rest.issues.create({
               owner: context.repo.owner,
@@ -45,15 +47,15 @@ jobs:
               title: `unbound: manual build/release needed for upstream ${newVersion}`,
               labels: ["unbound", "manual-action-needed"],
               body: [
-                `Renovate PR #${prNumber} (${prUrl}) was merged, bumping the NLnetLabs/unbound dependency pointer to **${newVersion}**.`,
+                `A Renovate PR bumped the NLnetLabs/unbound dependency pointer to **${newVersion}**, but the auto-bump workflow failed: ${runUrl}`,
                 ``,
-                `Since unbound is decoupled from Release Please, this merge does **not** trigger a build or release by itself. Manual steps:`,
+                `Since unbound is decoupled from Release Please, nothing was prepared for you. Manual steps:`,
                 ``,
                 `- [ ] Adjust the source-build tarball reference to ${newVersion}`,
                 `- [ ] Bump the ha-tag (e.g. \`${newVersion}-ha1-pol4r1\`)`,
                 `- [ ] Trigger build/release manually`,
                 `- [ ] Verify on Pi (DNS resolving, ECS toggle, no crash-loop)`,
                 ``,
-                `_Auto-created by 24-unbound-renovate-reminder.yml_`
+                `_Auto-created by 24-unbound-renovate-reminder.yml (fallback for a failed 25)_`
               ].join("\n")
             });
