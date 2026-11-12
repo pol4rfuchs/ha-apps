@@ -119,13 +119,17 @@
     "2026-11-09": {
       "count": 0,
       "uniques": 0
+    },
+    "2026-11-10": {
+      "count": 6,
+      "uniques": 2
     }
   },
   "downloads": {
     "cortendesk": 120,
     "forgejo": 237,
     "intiface_central": 96,
-    "matrix_auth_service": 159,
+    "matrix_auth_service": 193,
     "matrix_ketesa": 62,
     "matrix_signal_bridge": 235,
     "matrix_synapse": 843,
@@ -138,12 +142,12 @@
     "ntfy": 899,
     "ntfy_manager": 195,
     "restic_backup": 80,
-    "searxng": 1825,
+    "searxng": 1869,
     "teamspeak6": 487,
     "ts6_manager": 346,
     "unbound": 334,
     "unifi_os_control_center": 193,
-    "unifi_toolkit": 32,
+    "unifi_toolkit": 49,
     "vaultwarden": 79
   }
 }
