@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.12](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.11...unifi_os_control_center-v0.7.12) (2026-11-12)
+
+
+### Bug Fixes
+
+* **unifi_os_control_center:** update dependency lucide-react to v1.71.0 ([#861](https://github.com/pol4rfuchs/ha-apps/issues/861)) ([8c161c2](https://github.com/pol4rfuchs/ha-apps/commit/8c161c2f49ad68b865dcd1866ba4a536a7651c3d))
+
 ## [0.7.11](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.10...unifi_os_control_center-v0.7.11) (2026-10-31)
 
 
