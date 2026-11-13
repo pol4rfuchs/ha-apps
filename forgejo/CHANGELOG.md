@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.23](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.22...forgejo-v16.0.23) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [16.0.22](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.21...forgejo-v16.0.22) (2026-11-12)
 
 
