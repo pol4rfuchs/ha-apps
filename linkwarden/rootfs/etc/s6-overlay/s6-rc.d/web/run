@@ -21,8 +21,9 @@ done
 rm -f "${LW_READY_FILE}"
 cd "${LW_DIR}"
 bashio::log.info "Applying database migrations..."
-gosu "${LW_USER}" env PATH="${PATH}" DATABASE_URL="${DATABASE_URL}" PRISMA_HIDE_UPDATE_MESSAGE=1 \
-  prisma migrate deploy --schema "${LW_DIR}/packages/prisma/schema.prisma"
+# DATABASE_URL and PATH are already exported by lw_export_env and gosu keeps the environment; they are not passed
+# on the command line, where the password would show up in the process list.
+gosu "${LW_USER}" prisma migrate deploy --schema "${LW_DIR}/packages/prisma/schema.prisma"
 touch "${LW_READY_FILE}"
 
 cd "${LW_DIR}/apps/web"

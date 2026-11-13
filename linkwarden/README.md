@@ -19,7 +19,7 @@
 | **Default port** | `3200` |
 | **Arch** | `amd64`, `aarch64` |
 
-Important: sign-up is open, anyone who can reach the port can create an account. Keep the port inside your network. Only `amd64` is tested so far, see [DOCS.md](DOCS.md).
+Important: sign-up is open until you switch on `disable_registration` (after you created your account); anyone who can reach the port can create an account before that. Keep the port inside your network. AppArmor is switched off, and only `amd64` is tested so far, see [DOCS.md](DOCS.md).
 
 ## Installation
 

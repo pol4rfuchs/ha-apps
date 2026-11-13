@@ -5,7 +5,7 @@ Linkwarden is a self-hosted bookmark manager that keeps a copy of every page you
 ## Requirements
 
 - **No ingress.** Linkwarden is opened directly on port `3200`.
-- Archiving PDFs and screenshots needs a browser. The app brings Chromium; alternatively it can use a remote browser (see *Remote browser*). The RAM use of the app was **not measured**, and not on a Raspberry Pi at all. Chromium is the part that needs the most while a page is archived.
+- Archiving PDFs and screenshots needs a browser. The app brings Chromium; alternatively it can use a remote browser (see *Remote browser*). The RAM use of the app was **not measured**, and not on a Raspberry Pi at all.
 - Only `amd64` was built and tested so far. `aarch64` (Raspberry Pi) is not tested yet.
 
 ## First start
@@ -14,7 +14,7 @@ Linkwarden is a self-hosted bookmark manager that keeps a copy of every page you
 2. Start the app and wait for `Starting Linkwarden on port 3200` in the log. The first start creates the database and applies the migrations.
 3. Open `http://<ha-host>:3200` and sign up. The first account you create is yours.
 
-**Sign-up is open.** Anyone who can reach port `3200` can create an account (tested: the API accepts a new user without any login). Keep the port inside your network, see *Local and external access*.
+**Sign-up is open until you close it.** Anyone who can reach port `3200` can create an account (tested: the API accepts a new user without any login). After you have created your own account, switch on `disable_registration` and restart the app (tested: the API then refuses new accounts). Keep the port inside your network in any case, see *Local and external access*.
 
 ## Configuration
 
@@ -32,11 +32,15 @@ Optional URL of a remote browser. Empty (the default) means the built-in Chromiu
 
 ### `disable_browser`
 
-Switches the archiving of web pages off completely. In a test **all four formats** (PDF, screenshot, web page copy, readable view) stayed unavailable, and only the link itself was saved. Chromium was still started, so this does not save RAM.
+Switches the archiving of web pages off completely. In a test **all four formats** (PDF, screenshot, web page copy, readable view) stayed unavailable, and only the link itself was saved. Chromium was still started; whether this saves RAM was not measured.
+
+### `disable_registration`
+
+Refuses new accounts (default `false`). Create your own account first and switch it on afterwards: with it on before the first account exists, nobody can sign up. It does not remove existing accounts.
 
 ### `archive_take_count`
 
-How many links the worker archives at the same time (default `1`, range 1 to 10). Raise it only if the host has plenty of RAM and CPU.
+How many links the worker takes per round, for archiving and for the automatic tagging of Linkwarden (default `1`, range 1 to 10). Raise it only if the host has plenty of RAM and CPU.
 
 ## Remote browser
 
@@ -62,9 +66,10 @@ Use the JSON export of the old installation and import it here (both are in the 
 ## What the app sets on purpose
 
 - The database password and the login secret are generated at the first start, stored in `/data/linkwarden/secrets` and never shown. The database password is set again at every start.
-- Linkwarden **does not archive addresses in private networks** (for example `http://192.168.1.10`, `http://homeassistant.local` or pages on your own PC). That is its own protection against requests to internal services, and this app does not switch it off.
+- Linkwarden **does not archive addresses in private networks**. In a test, a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services, and this app does not switch it off.
 - PostgreSQL runs as its own unprivileged user, the web app and the worker as the unprivileged user `linkwarden`.
 - If PostgreSQL or the web app crashes (also if the system kills it for lack of memory), the container stops, so the Supervisor sees it. The worker is restarted automatically.
+- AppArmor is switched off (`apparmor: false`), like in the NetBox app, until a profile has been tested on a Raspberry Pi.
 - Stopping the app takes a few seconds: the worker is ended 5 seconds after the stop signal, then PostgreSQL shuts down cleanly.
 
 ## Backup and restore
@@ -72,7 +77,7 @@ Use the JSON export of the old installation and import it here (both are in the 
 The backup type is `cold`: the Supervisor stops the app, copies `/data` and starts it again, so the PostgreSQL files are consistent. Everything lives in `/data/linkwarden`: `postgresql` (database), `library` (the archived pages, PDFs and screenshots, this is the big part) and `secrets`.
 
 - Restore the backup as a whole. The secrets belong to the database.
-- The app **does not migrate PostgreSQL across major versions** (it is 15 now). If an update ships a new major version, the app refuses to start and says so in the log; the changelog announces it. Before such an update make a dump with `pg_dump` from the running old app, and restore it into the new one.
+- The app **does not migrate PostgreSQL across major versions** (it is 15 now). If an update ships a new major version, the app refuses to start and says so in the log; the changelog announces it. There is no automatic migration and no tested dump and restore path. Before such an update make a backup and a JSON export of your links (see *Moving from another Linkwarden*).
 - Updates of Linkwarden itself migrate the database at the next start. Take a backup first.
 - Not tested yet: backup and restore through the Home Assistant Supervisor.
 

@@ -8,6 +8,10 @@ lw_apply_log_level
 
 bashio::log.info "Preparing Linkwarden data in ${DATA_DIR}..."
 
+if ! bashio::config.has_value 'public_url'; then
+  bashio::log.warning "public_url is empty: logging in only works through http://localhost:${LW_PORT}. Set public_url to the address you open Linkwarden with."
+fi
+
 # ------------------------------------------------------------ directories
 mkdir -p "${DATA_DIR}" "${PG_DATA}" "${LIBRARY_DIR}" "${SECRET_DIR}" "${PG_RUN_DIR}"
 chmod 755 "${DATA_DIR}"

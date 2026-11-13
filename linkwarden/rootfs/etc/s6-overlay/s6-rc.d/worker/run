@@ -35,6 +35,8 @@ if [ -n "${browser_url}" ]; then
   probe="${probe_base%/}/json/version${probe_query}"
   browser_host="${browser_url#*://}"
   browser_host="${browser_host%%[/?]*}"
+  # Drop user:password@ in front of the host, it must not reach the log.
+  browser_host="${browser_host##*@}"
   rc=0
   curl --max-time 8 -fsS -o /dev/null "${probe}" > /dev/null 2>&1 || rc=$?
   if [ "${rc}" -eq 0 ]; then

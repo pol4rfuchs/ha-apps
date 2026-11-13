@@ -36,7 +36,7 @@ remain under their respective upstream licenses.
 | UniFi OS Control Center | Original application of this repository | https://github.com/pol4rfuchs/ha-apps | Apache-2.0 (its third-party libraries keep their own licenses) |
 | Vaultwarden | Vaultwarden | https://github.com/dani-garcia/vaultwarden | AGPL-3.0 |
 | NetBox | NetBox, netbox-docker | https://github.com/netbox-community/netbox, https://github.com/netbox-community/netbox-docker | Apache-2.0 |
-| Linkwarden | Linkwarden | https://github.com/linkwarden/linkwarden | AGPL-3.0 |
+| Linkwarden | Linkwarden, monolith, Playwright (and its Chromium) | https://github.com/linkwarden/linkwarden, https://github.com/Y2Z/monolith, https://github.com/microsoft/playwright | AGPL-3.0, 0BSD, Apache-2.0 |
 | CortenDesk | CortenDesk (console) and CortenDesk Server (rustdesk-server fork) | https://github.com/marcpope/cortendesk, https://github.com/marcpope/cortendesk-server | AGPL-3.0 |
 
 ## Trademarks and Logos

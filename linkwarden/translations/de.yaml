@@ -25,12 +25,18 @@ configuration:
     description: >-
       Schaltet das Archivieren von Webseiten komplett aus: Es entstehen weder
       PDF, Screenshot, Webseiten-Kopie noch Lesemodus, nur der Link wird
-      gespeichert. Der RAM-Verbrauch sinkt dadurch nicht.
-  archive_take_count:
-    name: Links pro Archivierungsrunde
+      gespeichert. Chromium wird trotzdem gestartet.
+  disable_registration:
+    name: Registrierung schließen
     description: >-
-      Wie viele Links der Worker gleichzeitig archiviert. 1 ist am
-      schonendsten für einen Raspberry Pi; nur erhöhen, wenn der Host reichlich
-      RAM und CPU hat.
+      Lehnt neue Konten ab. Lege zuerst dein eigenes Konto an und schalte das
+      danach ein; ist es an, bevor das erste Konto existiert, kann sich
+      niemand registrieren. Solange es aus ist, ist die Registrierung offen.
+  archive_take_count:
+    name: Links pro Runde
+    description: >-
+      Wie viele Links der Worker pro Runde nimmt, zum Archivieren und für das
+      automatische Taggen. 1 ist am schonendsten für einen Raspberry Pi; nur
+      erhöhen, wenn der Host reichlich RAM und CPU hat.
 network:
   3200/tcp: Linkwarden-Weboberfläche und API (Anmeldung erforderlich)

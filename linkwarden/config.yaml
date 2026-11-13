@@ -22,6 +22,7 @@ map:
 backup: cold
 # PostgreSQL writes its data on shutdown.
 timeout: 60
+# AppArmor stays off until a profile is tested on a Raspberry Pi (enforce mode cannot be tested elsewhere), like netbox.
 apparmor: false
 
 options:
@@ -29,6 +30,7 @@ options:
   public_url: ""
   browser_url: ""
   disable_browser: false
+  disable_registration: false
   archive_take_count: 1
 schema:
   log_level: "list(debug|info|warning|error)"
@@ -36,4 +38,5 @@ schema:
   # The URL of a remote browser (for example Browserless) usually contains a token, so it is a password.
   browser_url: "password"
   disable_browser: "bool"
+  disable_registration: "bool"
   archive_take_count: "int(1,10)"

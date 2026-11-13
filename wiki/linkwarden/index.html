@@ -441,7 +441,7 @@
       </div>
       <div class="quick-card glass-card">
         <h3>⚠️ Exposure</h3>
-        <p>Plain HTTP and open sign-up. VPN only; never forward 3200.</p>
+        <p>Plain HTTP; sign-up is open until you close it. VPN only; never forward 3200.</p>
         <pre><code>3200/tcp  (web UI + API)</code></pre>
       </div>
     </section>
@@ -459,7 +459,7 @@
           <li>PostgreSQL listens on <code>127.0.0.1</code> inside the container only</li>
           <li>Secrets (database password, login secret) are generated at the first start and stored in <code>/data</code></li>
           <li>Built-in Chromium for PDFs and screenshots, or an optional remote browser such as Browserless</li>
-          <li>Tested on <code>amd64</code> only; <code>aarch64</code> (Raspberry Pi) is built by the pipeline but not tested yet. RAM use not measured.</li>
+          <li>Tested on <code>amd64</code> only; <code>aarch64</code> (Raspberry Pi) is built by the pipeline but not tested yet. RAM use not measured. AppArmor is switched off.</li>
         </ul>
         <blockquote>Status <strong>experimental</strong>: the Raspberry Pi behaviour, AppArmor (disabled), Supervisor backup and restore and a real Browserless instance have not been tested yet.</blockquote>
       </div>
@@ -478,12 +478,12 @@
           <li>Start the app and wait for <code>Starting Linkwarden on port 3200</code> in the log. The first start creates the database.</li>
           <li>Open <code>http://&lt;ha-host&gt;:3200</code> and sign up.</li>
         </ol>
-        <h2 id="install-signup"><a class="anchor" href="#install-signup">#</a>Sign-up is open</h2>
-        <p>Anyone who can reach port <code>3200</code> can create an account (tested: the API accepts a new user without a login). Keep the port inside your network.</p>
+        <h2 id="install-signup"><a class="anchor" href="#install-signup">#</a>Sign-up is open until you close it</h2>
+        <p>Anyone who can reach port <code>3200</code> can create an account (tested: the API accepts a new user without a login). After you created your own account, switch on <code>disable_registration</code> and restart the app (tested: new accounts are then refused). Keep the port inside your network in any case.</p>
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level public_url browser_url disable_browser archive_take_count">
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level public_url browser_url disable_browser disable_registration archive_take_count">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
@@ -495,8 +495,9 @@
             <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warning</code> or <code>error</code>. Applies to Linkwarden (web and worker) and PostgreSQL.</td></tr>
             <tr><td><code>public_url</code></td><td><em>(empty)</em></td><td>Address you open Linkwarden with, including <code>http://</code> or <code>https://</code> and the port. Empty = <code>http://localhost:3200</code> with a warning in the log.</td></tr>
             <tr><td><code>browser_url</code></td><td><em>(empty)</em></td><td>Optional remote browser (protected <code>password</code> field, the URL usually holds a token). Empty = built-in Chromium. See Remote Browser.</td></tr>
-            <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started, so it does not save RAM.</td></tr>
-            <tr><td><code>archive_take_count</code></td><td><code>1</code></td><td>Links archived at the same time (1–10). 1 is the gentlest for a Raspberry Pi.</td></tr>
+            <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started; RAM was not measured.</td></tr>
+            <tr><td><code>disable_registration</code></td><td><code>false</code></td><td>Refuses new accounts. Create your own account first, then switch it on; it does not remove existing accounts.</td></tr>
+            <tr><td><code>archive_take_count</code></td><td><code>1</code></td><td>Links the worker takes per round, for archiving and automatic tagging (1–10). 1 is the gentlest for a Raspberry Pi.</td></tr>
           </tbody>
         </table>
         <h2 id="cfg-min"><a class="anchor" href="#cfg-min">#</a>Minimal configuration</h2>
@@ -541,12 +542,12 @@
         <h2 id="priv-out"><a class="anchor" href="#priv-out">#</a>What the app sets on purpose</h2>
         <ul>
           <li>Database password and login secret are generated at the first start, stored in <code>/data/linkwarden/secrets</code> and never shown. The database password is set again at every start.</li>
-          <li>Linkwarden <strong>does not archive addresses in private networks</strong> (for example <code>http://192.168.1.10</code> or pages on your own PC). That is its own protection against requests to internal services; the app does not switch it off.</li>
+          <li>Linkwarden <strong>does not archive addresses in private networks</strong>. In a test a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services; the app does not switch it off.</li>
           <li>PostgreSQL, the web app and the worker run as unprivileged users. If PostgreSQL or the web app crashes (also when the system kills it for lack of memory) the container stops; the worker is restarted automatically.</li>
         </ul>
         <h2 id="priv-data"><a class="anchor" href="#priv-data">#</a>Data and backup</h2>
         <p>Backup type <code>cold</code>: the Supervisor stops the app, copies <code>/data</code> and starts it again. Everything lives in <code>/data/linkwarden</code>: <code>postgresql</code>, <code>library</code> (the archives, the big part) and <code>secrets</code>. Restore the backup as a whole.</p>
-        <p>The app does not migrate PostgreSQL across major versions (it is 15 now); an update with a new major version makes it refuse to start and say so in the log. Backup and restore through the Supervisor is not tested yet.</p>
+        <p>The app does not migrate PostgreSQL across major versions (it is 15 now); an update with a new major version makes it refuse to start and say so in the log. There is no automatic migration and no tested dump and restore path, so keep a backup and a JSON export. Backup and restore through the Supervisor is not tested yet.</p>
         <h2 id="priv-move"><a class="anchor" href="#priv-move">#</a>Moving from another Linkwarden</h2>
         <p>Use the JSON export of the old installation and import it here (both are in the Linkwarden settings). Links, collections and tags are imported; every page is archived again. Pages that no longer exist have <strong>no snapshot</strong> afterwards, so keep the old installation (stopped) until everything is archived again.</p>
       </div>

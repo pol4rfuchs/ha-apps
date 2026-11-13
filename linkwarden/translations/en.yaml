@@ -24,12 +24,19 @@ configuration:
     name: Disable archiving
     description: >-
       Switches the archiving of web pages off completely: no PDF, screenshot,
-      web page copy or readable view is created, only the link is saved. Does
-      not reduce the RAM use.
-  archive_take_count:
-    name: Links per archiving round
+      web page copy or readable view is created, only the link is saved.
+      Chromium is still started.
+  disable_registration:
+    name: Close sign-up
     description: >-
-      How many links the worker archives at the same time. 1 is the gentlest
-      for a Raspberry Pi; raise it only if the host has plenty of RAM and CPU.
+      Refuses new accounts. Create your own account first and switch this on
+      afterwards; with it on before the first account exists nobody can sign
+      up. Sign-up is open as long as this is off.
+  archive_take_count:
+    name: Links per round
+    description: >-
+      How many links the worker takes per round, for archiving and for the
+      automatic tagging. 1 is the gentlest for a Raspberry Pi; raise it only
+      if the host has plenty of RAM and CPU.
 network:
   3200/tcp: Linkwarden web UI and API (login required)

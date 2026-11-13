@@ -46,8 +46,8 @@ lw_export_env() {
   local public_url db_password secret encoded_password
   public_url="$(bashio::config 'public_url')"
   if [ -z "${public_url}" ] || [ "${public_url}" = "null" ]; then
+    # The init script logs a warning once; this function runs in the web and the worker service.
     public_url="http://localhost:${LW_PORT}"
-    bashio::log.warning "public_url is empty: logging in only works through ${public_url}. Set public_url to the address you open Linkwarden with."
   fi
   # NextAuth wants the base of its own endpoint; accept the plain address as well.
   public_url="${public_url%/}"
@@ -72,5 +72,8 @@ lw_export_env() {
   ARCHIVE_TAKE_COUNT="$(bashio::config 'archive_take_count')"
   if bashio::config.true 'disable_browser'; then
     export DISABLE_BROWSER="true"
+  fi
+  if bashio::config.true 'disable_registration'; then
+    export NEXT_PUBLIC_DISABLE_REGISTRATION="true"
   fi
 }
