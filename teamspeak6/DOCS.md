@@ -40,6 +40,13 @@ The ports are fixed in the app. If a host port is already in use, change the hos
 
 The app stores all data in `/data/teamspeak6`, which is included in Home Assistant backups. The running server works on a copy inside the container; the app writes it back to `/data/teamspeak6/server` every 5 minutes and when it stops cleanly, so a crash or power loss costs at most the last 5 minutes. The server logs in `/data/teamspeak6/logs` are left out of backups; they are cleared on every start anyway.
 
+**How a backup is made reliable:** a Home Assistant backup only contains what is already in `/data`, so the 5-minute window above would also hide the newest changes in a backup (a channel created just before the backup was missing after a restore). The app therefore sets `backup_pre`: right before the Supervisor copies `/data`, it runs `/usr/local/bin/ts6-backup-sync` in the running app. The script copies the current state to `/data/teamspeak6/server` with SQLite's online backup (the running database is not touched; no checkpoint, no files removed next to the live database) and copies the other changed files (SSH host key, allow/deny lists, file transfers). The app keeps running, nobody is disconnected. The same script does the 5-minute copy.
+
+- A backup holds the state of the moment it starts. What is changed while the backup is being written may or may not be in it.
+- The 5-minute window still applies to anything that does not go through the Supervisor (copying `/data` by hand, a snapshot of the whole disk) and to a crash or power loss.
+- If the script fails, its message is in the Supervisor log and the backup may hold older data.
+- Tested with a stand-in for the Supervisor (running the script in the container, archiving `/data`, restoring into an empty `/data`): a permanent channel created right before the backup was there after the restore, one created after the backup was gone. Without the script the first one was missing. Not tested with a real Supervisor backup and restore.
+
 ## ServerQuery access and `query_ip_allowlist.txt`
 
 The file `query_ip_allowlist.txt` (default content `127.0.0.1`) is **not** an access list. In TeamSpeak it names the addresses that are exempt from the flood protection of the query interface; `query_ip_denylist.txt` is the list of blocked addresses. Tested with `6.0.0-beta13.1`: from another container (not `127.0.0.1`) the SSH and HTTP query interfaces were reachable, and a login with the correct `serveradmin` password or API key worked. So the only protection of ServerQuery is the password: keep ports `10022` and `10080` inside your LAN (or VPN) and set `query_admin_password`.

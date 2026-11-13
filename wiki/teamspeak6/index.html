@@ -744,6 +744,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 ├── logs/               # server logs (cleared on every start, log files not in backups)
 └── .token_was_shown    # marker: the token was already printed</code></pre>
 <p>TeamSpeak works on a copy in <code>/var/tsserver</code> inside the container. The app restores that copy from <code>/data/teamspeak6/server</code> on start and writes it back <strong>every 5 minutes</strong> (a consistent copy of the running database) and when the app stops cleanly. After a crash or power loss you lose at most the last 5 minutes.</p>
+<p><strong>Backups:</strong> right before it copies <code>/data</code>, the Supervisor runs <code>/usr/local/bin/ts6-backup-sync</code> (<code>backup_pre</code>), which copies the current state to <code>/data/teamspeak6/server</code>. A backup holds the state of the moment it starts, also a channel created seconds before. Changes made while the backup is written may or may not be included. Tested with a stand-in for the Supervisor, not with a real backup and restore.</p>
 <h2>What Is Critical?</h2>
 <table>
 <thead><tr><th>File/Path</th><th>Importance</th><th>Why</th></tr></thead>
@@ -788,7 +789,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 <tbody>
 <tr><td><code>teamspeak6/config.yaml</code></td><td>App metadata, schema, ports, image, HA UI.</td></tr>
 <tr><td><code>teamspeak6/Dockerfile</code></td><td>Wrapper around the official TS6 server image (pinned version, <code>TEAMSPEAK_VERSION</code>) with HA start logic.</td></tr>
-<tr><td><code>teamspeak6/rootfs/run.sh</code></td><td>Reads the app options, restores the data, starts the server and backs the database up every 5 minutes.</td></tr>
+<tr><td><code>teamspeak6/rootfs/run.sh</code></td><td>Reads the app options, restores the data, starts the server and backs the database up every 5 minutes. <code>rootfs/usr/local/bin/ts6-backup-sync</code> does the copy and runs as <code>backup_pre</code> before every backup.</td></tr>
 <tr><td><code>translations/en.yaml</code></td><td>Labels and descriptions in the HA config UI.</td></tr>
 </tbody>
 </table>

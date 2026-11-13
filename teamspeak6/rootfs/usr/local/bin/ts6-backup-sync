@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copy the running server's data from /var/tsserver to the persistent store
+# (/data/teamspeak6/server), which is what a Home Assistant backup contains.
+#
+# Used in two places:
+#   - run.sh calls it every 5 minutes while the server runs (periodic sync),
+#   - the Supervisor calls it as backup_pre right before it copies /data, so a
+#     backup holds the state of that moment and not the one from up to 5 minutes ago.
+#
+# The database is copied with SQLite's online backup, which gives a consistent
+# copy of the running database without touching its WAL (no checkpoint, no
+# removal of WAL/SHM next to the live database; with --files-only the database is
+# skipped, run.sh uses that while the database has not changed). The other files (SSH host key,
+# allow/deny lists, file transfer data) are copied when they are newer. Stale
+# WAL/SHM files are removed from the store copy so a restore never replays an old WAL.
+set -Eeuo pipefail
+
+TS_RUNTIME_DIR="${TS_RUNTIME_DIR:-/var/tsserver}"
+TS_SERVER_STORE="${TS_SERVER_STORE:-/data/teamspeak6/server}"
+LOCK_FILE="${TS_SYNC_LOCK:-/tmp/ts6-backup-sync.lock}"
+
+# Only one copy at a time (periodic sync and backup_pre can overlap).
+exec 9>"${LOCK_FILE}"
+flock -w 120 9 || { echo "[ERROR] ts6-backup-sync: another sync is still running"; exit 1; }
+
+if [ ! -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ]; then
+    echo "[INFO] ts6-backup-sync: no running server data yet, nothing to copy."
+    exit 0
+fi
+
+mkdir -p "${TS_SERVER_STORE}"
+
+if [ "${1:-}" != "--files-only" ]; then
+    tmp_db="${TS_SERVER_STORE}/tsserver.sqlitedb.tmp"
+    if sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ".backup '${tmp_db}'" \
+        && mv -f "${tmp_db}" "${TS_SERVER_STORE}/tsserver.sqlitedb"; then
+        rm -f "${TS_SERVER_STORE}/"*.sqlitedb-wal "${TS_SERVER_STORE}/"*.sqlitedb-shm 2>/dev/null || true
+    else
+        rm -f "${tmp_db}"
+        echo "[ERROR] ts6-backup-sync: database copy failed, /data may be outdated."
+        exit 1
+    fi
+fi
+
+for item in "${TS_RUNTIME_DIR}"/*; do
+    case "${item}" in
+        *.sqlitedb*) continue ;;
+    esac
+    [ -e "${item}" ] && { cp -au "${item}" "${TS_SERVER_STORE}/" 2>/dev/null || true; }
+done
+
+echo "[INFO] ts6-backup-sync: server data copied to ${TS_SERVER_STORE}."

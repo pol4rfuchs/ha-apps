@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY rootfs /
-RUN chmod +x /run.sh
+RUN chmod +x /run.sh /usr/local/bin/ts6-backup-sync
 
 LABEL \
     io.hass.name="TeamSpeak 6 Server" \

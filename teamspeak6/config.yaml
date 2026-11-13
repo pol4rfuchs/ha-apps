@@ -30,6 +30,9 @@ schema:
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
 apparmor: false
+# Right before a backup the Supervisor runs this script, which copies the running
+# server data to /data (see DOCS.md, section Backup).
+backup_pre: /usr/local/bin/ts6-backup-sync
 # Supervisor matches each pattern with PurePath.match against the absolute
 # data path (/data/apps/data/<slug>/...), anchored from the right. The
 # "*_teamspeak6" part pins the match to the app data root, so folders

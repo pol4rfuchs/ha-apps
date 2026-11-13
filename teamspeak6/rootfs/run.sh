@@ -90,41 +90,33 @@ sync_from_runtime() {
     fi
 }
 
-# Periodic backup while the server runs. The runtime DB lives in /var/tsserver
-# (outside /data) and is otherwise only copied when the add-on stops cleanly,
-# so a crash, OOM kill or power loss lost everything since the last start.
-# SQLite's online backup API gives a consistent copy of the running database
-# (no WAL involved); the other files (SSH host key, allow/deny lists, file
-# transfer data) are copied as they are.
+# Periodic copy while the server runs. The runtime DB lives in /var/tsserver
+# (outside /data) and is otherwise only copied when the app stops cleanly, so a
+# crash, OOM kill or power loss lost everything since the last start. The copy
+# itself is done by /usr/local/bin/ts6-backup-sync (SQLite online backup, see
+# there); the Supervisor runs the same script as backup_pre (config.yaml), so a
+# Home Assistant backup does not depend on this interval.
 #
-# To spare the SD card / SSD, only changes are written: the database is backed
-# up only when it (or its WAL) changed since the last run, and the other files
-# are copied only when they are newer than the stored copy (cp -u).
+# To spare the SD card / SSD, the script only runs when the database (or its
+# WAL) changed since the last run.
 TS_SYNC_INTERVAL="${TS_SYNC_INTERVAL:-300}"
 periodic_sync() {
-    local last_db_state="" db_state item
+    local last_db_state="" db_state
     while sleep "${TS_SYNC_INTERVAL}"; do
         [ -f "${TS_RUNTIME_DIR}/tsserver.sqlitedb" ] || continue
         db_state="$(stat -c '%Y %s' "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
             "${TS_RUNTIME_DIR}/tsserver.sqlitedb-wal" 2>/dev/null || true)"
         if [ "${db_state}" != "${last_db_state}" ]; then
-            if sqlite3 "${TS_RUNTIME_DIR}/tsserver.sqlitedb" \
-                ".backup '${TS_SERVER_STORE}/tsserver.sqlitedb.tmp'" 2>/dev/null \
-                && mv -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp" "${TS_SERVER_STORE}/tsserver.sqlitedb"; then
+            if /usr/local/bin/ts6-backup-sync >/dev/null; then
                 last_db_state="${db_state}"
-                echo "[INFO] Periodic backup: database saved to persistent store."
+                echo "[INFO] Periodic backup: server data saved to persistent store."
             else
-                rm -f "${TS_SERVER_STORE}/tsserver.sqlitedb.tmp"
                 echo "[WARN] Periodic backup failed — /data may be outdated."
-                continue
             fi
+        else
+            # Database unchanged: still pick up changed non-database files.
+            /usr/local/bin/ts6-backup-sync --files-only >/dev/null || true
         fi
-        for item in "${TS_RUNTIME_DIR}"/*; do
-            case "${item}" in
-                *.sqlitedb*) continue ;;
-            esac
-            [ -e "${item}" ] && { cp -au "${item}" "${TS_SERVER_STORE}/" 2>/dev/null || true; }
-        done
     done
 }
 
