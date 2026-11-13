@@ -17,7 +17,7 @@ ports_description:
 webui: "http://[HOST]:[PORT:8091]"
 watchdog: "tcp://[HOST]:[PORT:8091]"
 map:
-  - type: addon_config
+  - type: app_config
     read_only: false
 # AppArmor is off: apparmor.txt is an untested draft in COMPLAIN mode and is not loaded
 # with apparmor: false. After a test run on the Pi (apparmor: true, evaluate the log, close

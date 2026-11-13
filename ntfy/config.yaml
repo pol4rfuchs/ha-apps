@@ -14,7 +14,7 @@ panel_icon: mdi:bell-badge
 panel_title: ntfy
 webui: http://[HOST]:[PORT:4280]/
 map:
-  - type: addon_config
+  - type: app_config
     read_only: false
 ports:
   4280/tcp: 4280

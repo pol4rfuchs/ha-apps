@@ -17,6 +17,4 @@ configuration:
       ersten Start eines erzeugen zu lassen; es liegt dann im Konfigurationsordner
       der App (admin_ui_password.txt).
 network:
-  8091/tcp:
-    name: "Port der Admin-Oberfläche"
-    description: "Ketesa-Admin-Oberfläche (mit Anmeldung geschützt). Nicht ins Internet weiterleiten."
+  8091/tcp: "Port der Admin-Oberfläche - Ketesa-Admin-Oberfläche (mit Anmeldung geschützt). Nicht ins Internet weiterleiten."

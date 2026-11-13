@@ -42,9 +42,5 @@ configuration:
       'Debug' or 'Trace' for troubleshooting (very verbose).
 
 network:
-  3000/tcp:
-    name: "Web UI Port"
-    description: "Direct HTTP access. Prefer Ingress — this port is optional."
-  22/tcp:
-    name: "SSH Git Port"
-    description: "Only needed if 'Enable SSH Git Access' is on."
+  3000/tcp: "Web UI Port - Direct HTTP access. Prefer Ingress — this port is optional."
+  22/tcp: "SSH Git Port - Only needed if 'Enable SSH Git Access' is on."

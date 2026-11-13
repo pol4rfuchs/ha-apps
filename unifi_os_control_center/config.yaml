@@ -24,7 +24,7 @@ watchdog: "http://[HOST]:[PORT:8599]/api/health"
 backup: hot
 apparmor: false
 map:
-  - addon_config:rw
+  - app_config:rw
 options:
   controller_url: "https://unifi.example.internal"
   api_key: ""

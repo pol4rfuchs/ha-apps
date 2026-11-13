@@ -19,7 +19,7 @@ webui: http://[HOST]:[PORT:3000]
 panel_icon: mdi:git
 panel_title: Forgejo
 map:
-  - type: addon_config
+  - type: app_config
     read_only: false
   - type: ssl
     read_only: true

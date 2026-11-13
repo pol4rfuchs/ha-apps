@@ -45,7 +45,7 @@ the app.
 `backup_paths` only lists which mounted folders restic should walk — it
 does not mount anything itself. Each path listed here must already be
 exposed via the app's own `map:` block in `config.yaml` (currently:
-`homeassistant_config:ro`, `all_addon_configs:ro`, `media:ro`, `share:rw`,
+`homeassistant_config:ro`, `all_app_configs:ro`, `media:ro`, `share:rw`,
 `ssl:ro`). Adding a path to `backup_paths` that isn't mapped does nothing —
 the directory simply won't exist inside the container.
 

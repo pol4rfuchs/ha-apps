@@ -40,9 +40,5 @@ configuration:
     name: Backup-Aufbewahrung (Tage)
     description: "Wie lange Backups aufbewahrt werden, bevor sie gelöscht werden."
 network:
-  8082/tcp:
-    name: "MAS-Public-API-Port"
-    description: "MAS Public API + Account-UI (NPM → hier für HTTPS)."
-  8083/tcp:
-    name: "MAS-Internal-Port"
-    description: "MAS Internal (Health/Metrics, kein NPM)."
+  8082/tcp: "MAS-Public-API-Port - MAS Public API + Account-UI (NPM → hier für HTTPS)."
+  8083/tcp: "MAS-Internal-Port - MAS Internal (Health/Metrics, kein NPM)."

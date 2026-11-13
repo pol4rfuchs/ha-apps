@@ -16,6 +16,4 @@ configuration:
       generated on the first start; it is then kept in the app config folder
       (admin_ui_password.txt).
 network:
-  8091/tcp:
-    name: "Admin UI port"
-    description: "Ketesa admin UI (basic-auth protected). Do not forward it to the internet."
+  8091/tcp: "Admin UI port - Ketesa admin UI (basic-auth protected). Do not forward it to the internet."
