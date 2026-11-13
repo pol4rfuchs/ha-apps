@@ -4,7 +4,9 @@ configuration:
     name: Log-Level
     description: >-
       Ausführlichkeit der Log-Ausgabe von Linkwarden und PostgreSQL. Debug nur
-      zur Fehlersuche verwenden.
+      zur Fehlersuche verwenden. Außer bei debug werden sehr lange Meldungen
+      gekürzt (zum Beispiel ein ganzes Stylesheet, das eine Seite Linkwarden
+      ausgeben lässt).
   public_url:
     name: Öffentliche URL
     description: >-

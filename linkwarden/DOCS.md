@@ -22,6 +22,8 @@ Linkwarden is a self-hosted bookmark manager that keeps a copy of every page you
 
 Verbosity of the log output of Linkwarden and PostgreSQL: `debug`, `info`, `warning` or `error`. The Linkwarden processes drop console messages below the chosen level; PostgreSQL always logs its start and stop messages.
 
+Except at `debug`, **very long messages are cut**: text over 1000 characters (over 5000 if it contains a stack trace) ends with `... (N more characters)`. Without this, one page can fill the log with a whole style sheet: when Linkwarden cannot parse the CSS of a page it prints the complete CSS, which is harmless (the link is still saved) but can be many thousand characters long. Credentials in the URL of the remote browser are hidden before anything is cut.
+
 ### `public_url`
 
 Optional. The address under which you open Linkwarden, with `http://` or `https://`, for example `https://links.example.org`. It is passed to the login component as its base address. With a reverse proxy, use the public address of the proxy.

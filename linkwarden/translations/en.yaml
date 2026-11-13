@@ -4,7 +4,8 @@ configuration:
     name: Log level
     description: >-
       Verbosity of the log output of Linkwarden and PostgreSQL. Use debug only
-      for troubleshooting.
+      for troubleshooting. Except at debug, very long messages are cut (for
+      example a whole style sheet that a page makes Linkwarden print).
   public_url:
     name: Public URL
     description: >-
