@@ -2,7 +2,9 @@
 configuration:
   ntfy_base_url:
     name: ntfy Server URL
-    description: "URL of your ntfy server. Default: http://homeassistant.local:4280"
+    description: >-
+      URL of your ntfy server. Default: http://9bf6aa7c-ntfy:4280, the internal
+      name of the ntfy app from this repository (see the documentation).
   ntfy_auth_type:
     name: Authentication Type
     description: "'none' for open servers, 'basic' for username/password, 'bearer' for token authentication."
