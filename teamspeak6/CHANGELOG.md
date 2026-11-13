@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.27](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.26...teamspeak6-v1.1.27) (2026-11-13)
+
+
+### Bug Fixes
+
+* **teamspeak6:** copy the live server data to /data right before every backup ([#892](https://github.com/pol4rfuchs/ha-apps/issues/892)) ([c20ef25](https://github.com/pol4rfuchs/ha-apps/commit/c20ef25b14dd1fd26860fa0ba207e9b61a703b4c))
+
 ## [1.1.26](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.25...teamspeak6-v1.1.26) (2026-11-13)
 
 
