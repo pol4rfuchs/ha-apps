@@ -3,8 +3,10 @@ configuration:
   query_admin_password:
     name: Query Admin Password
     description: >-
-      Password for the ServerQuery admin account. Leave empty to auto-generate
-      (check logs after first start).
+      Password of the ServerQuery login "serveradmin" (SSH on port 10022).
+      Recommended: set it. It is applied at every start, so you can also add or
+      change it later. If empty, TeamSpeak generates one on the first start; it
+      is not shown in the log.
   log_level:
     name: Log Level
     description: "Verbosity of server logging: 0=Critical, 1=Error, 2=Warning, 3=Info, 4=Debug."
@@ -17,6 +19,5 @@ configuration:
 network:
   "9987/udp": Voice Port (UDP)
   "30033/tcp": File Transfer Port (TCP)
-  "10011/tcp": Server Query Port (TCP)
   "10022/tcp": SSH Query Port (TCP)
   "10080/tcp": HTTP Web Query Port (TCP)

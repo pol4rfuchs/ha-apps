@@ -12,13 +12,11 @@ init: false
 ports:
   9987/udp: 9987
   30033/tcp: 30033
-  10011/tcp: 10011
   10022/tcp: 10022
   10080/tcp: 10080
 ports_description:
   9987/udp: Voice Port (UDP)
   30033/tcp: File Transfer Port (TCP)
-  10011/tcp: Server Query Port (TCP)
   10022/tcp: SSH Query Port (TCP)
   10080/tcp: HTTP Web Query Port (TCP)
 options:
