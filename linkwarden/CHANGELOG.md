@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/pol4rfuchs/ha-apps/compare/linkwarden-v0.2.0...linkwarden-v0.3.0) (2026-11-13)
+
+
+### Features
+
+* **linkwarden:** cut very long log messages ([#886](https://github.com/pol4rfuchs/ha-apps/issues/886)) ([49c8749](https://github.com/pol4rfuchs/ha-apps/commit/49c874912d9be2f13fa4aa8b3338af28e2355741))
+
 ## [0.2.0](https://github.com/pol4rfuchs/ha-apps/compare/linkwarden-v0.1.0...linkwarden-v0.2.0) (2026-11-13)
 
 
