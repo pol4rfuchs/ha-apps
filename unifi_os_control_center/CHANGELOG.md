@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [0.7.13](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.12...unifi_os_control_center-v0.7.13) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [0.7.12](https://github.com/pol4rfuchs/ha-apps/compare/unifi_os_control_center-v0.7.11...unifi_os_control_center-v0.7.12) (2026-11-12)
 
 
