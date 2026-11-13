@@ -12,7 +12,7 @@
   "teamspeak6": "1.1.25",
   "ts6_manager": "1.1.10",
   "matrix_auth_service": "1.0.9",
-  "matrix_ketesa": "0.2.2",
+  "matrix_ketesa": "0.2.3",
   "unifi_toolkit": "0.2.1",
   "unifi_os_control_center": "0.7.13",
   "vaultwarden": "0.2.2",
