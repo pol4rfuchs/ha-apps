@@ -1,7 +1,7 @@
 ---
 name: Intiface Central
 description: Buttplug/Intiface Central with web GUI, MQTT bridge and Home Assistant entities
-version: "1.0.6"
+version: "1.0.7"
 slug: intiface_central
 image: ghcr.io/pol4rfuchs/intiface_central
 stage: experimental
