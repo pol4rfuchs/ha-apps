@@ -1,0 +1,12 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# The worker is restarted by s6 after a crash instead of stopping the container: its start script checks the
+# remote browser again, so a crash caused by an unreachable browser heals itself. The pause keeps a persistent
+# failure from becoming a busy loop.
+# $1 = exit code (256 = terminated by a signal, $2 = signal number)
+if [[ "${1}" -ne 0 && "${1}" -ne 256 ]]; then
+  bashio::log.warning "worker exited with exit code ${1} - restarting in 5 seconds."
+  sleep 5
+else
+  bashio::log.info "worker stopped."
+fi

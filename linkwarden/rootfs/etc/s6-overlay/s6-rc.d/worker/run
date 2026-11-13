@@ -1,0 +1,52 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -euo pipefail
+
+# shellcheck source=/dev/null
+source /usr/local/lib/linkwarden-ha/common.sh
+lw_apply_log_level
+lw_export_env
+
+waited=0
+until [ -e "${LW_READY_FILE}" ]; do
+  waited=$((waited + 1))
+  if [ "${waited}" -gt 600 ]; then
+    bashio::log.error "Timeout while waiting for the database migrations."
+    exit 1
+  fi
+  sleep 1
+done
+
+# Optional remote browser (for example Browserless). It is checked at every start of the worker: if it cannot be
+# reached, the worker uses the built-in Chromium instead of crashing (upstream exits on a failed connection).
+# The URL usually holds a token, so only the host is ever logged.
+browser_url=""
+if ! bashio::config.true 'disable_browser' && bashio::config.has_value 'browser_url'; then
+  browser_url="$(bashio::config 'browser_url')"
+fi
+if [ -n "${browser_url}" ]; then
+  probe="${browser_url/#ws:/http:}"
+  probe="${probe/#wss:/https:}"
+  probe_base="${probe%%\?*}"
+  probe_query=""
+  if [[ "${probe}" == *\?* ]]; then
+    probe_query="?${probe#*\?}"
+  fi
+  probe="${probe_base%/}/json/version${probe_query}"
+  browser_host="${browser_url#*://}"
+  browser_host="${browser_host%%[/?]*}"
+  rc=0
+  curl --max-time 8 -fsS -o /dev/null "${probe}" > /dev/null 2>&1 || rc=$?
+  if [ "${rc}" -eq 0 ]; then
+    export PLAYWRIGHT_WS_URL="${browser_url}"
+    bashio::log.info "Using the remote browser at ${browser_host}."
+  else
+    bashio::log.warning "The remote browser at ${browser_host} is not reachable (curl exit code ${rc}): using the built-in Chromium."
+  fi
+fi
+
+cd "${LW_DIR}/apps/worker"
+export LW_LOG_LEVEL
+export NODE_OPTIONS="--require /usr/local/lib/linkwarden-loglevel.cjs"
+bashio::log.info "Starting the Linkwarden worker..."
+exec gosu "${LW_USER}" tsx worker.ts
