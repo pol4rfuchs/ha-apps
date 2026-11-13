@@ -106,7 +106,9 @@ TeamSpeak 6 (version 6.0.0-beta13.1) has no raw ServerQuery port (`10011`, telne
 └── .token_was_shown    ← marker: the token was already printed
 ```
 
-TeamSpeak works on a copy in `/var/tsserver` inside the container. The app restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the app is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes. The Home Assistant backup contains `/data` except the log files in `logs/`.
+TeamSpeak works on a copy in `/var/tsserver` inside the container. The app restores it from `/data/teamspeak6/server` on start and writes it back **every 5 minutes** (a consistent copy of the running database) and when the app is stopped cleanly. After a crash or power loss you lose at most the last five minutes of changes.
+
+**Backups:** the 5-minute window used to apply to Home Assistant backups too: a backup only contained what had been copied to `/data` up to then, so a channel created just before the backup was missing after a restore. The app now sets `backup_pre` in its `config.yaml`: right before it copies `/data`, the Supervisor runs `/usr/local/bin/ts6-backup-sync`, which copies the current state of the running server to `/data/teamspeak6/server` (the same copy that runs every 5 minutes). The app keeps running during the backup. A backup therefore holds the state of the moment it starts. What is changed while the backup is being written may or may not be in it. The Home Assistant backup contains `/data` except the log files in `logs/`. The 5-minute window still applies to backups that do not go through the Supervisor (for example copying `/data` by hand) and to a crash or power loss.
 
 ---
 
