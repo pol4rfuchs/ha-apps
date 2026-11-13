@@ -25,6 +25,8 @@ timeout: 60
 # AppArmor stays off until a profile is tested on a Raspberry Pi (enforce mode cannot be tested elsewhere), like netbox.
 apparmor: false
 
+# The two URLs are optional: empty means the behaviour described in the translations. The four limits at the end
+# use 0 for "the default of Linkwarden", so the app does not copy values that upstream may change.
 options:
   log_level: "info"
   public_url: ""
@@ -32,11 +34,25 @@ options:
   disable_browser: false
   disable_registration: false
   archive_take_count: 1
+  browser_timeout: 0
+  pdf_max_buffer: 0
+  screenshot_max_buffer: 0
+  index_take_count: 0
+  env_vars: []
 schema:
   log_level: "list(debug|info|warning|error)"
-  public_url: "str"
+  public_url: "str?"
   # The URL of a remote browser (for example Browserless) usually contains a token, so it is a password.
-  browser_url: "password"
+  browser_url: "password?"
   disable_browser: "bool"
   disable_registration: "bool"
   archive_take_count: "int(1,10)"
+  browser_timeout: "int(0,1440)"
+  pdf_max_buffer: "int(0,1024)"
+  screenshot_max_buffer: "int(0,1024)"
+  index_take_count: "int(0,1000)"
+  # Extra settings of Linkwarden without an option of their own. The values often are secrets (mail password, API
+  # keys), so they are password fields.
+  env_vars:
+    - name: "str"
+      value: "password"

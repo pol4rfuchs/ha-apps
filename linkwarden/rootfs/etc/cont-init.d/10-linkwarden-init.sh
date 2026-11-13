@@ -8,6 +8,9 @@ lw_apply_log_level
 
 bashio::log.info "Preparing Linkwarden data in ${DATA_DIR}..."
 
+# A wrong entry in env_vars stops the start here, with the name of the entry in the log.
+lw_validate_env_vars || exit 1
+
 if ! bashio::config.has_value 'public_url'; then
   bashio::log.warning "public_url is empty: logging in only works through http://localhost:${LW_PORT}. Set public_url to the address you open Linkwarden with."
 fi

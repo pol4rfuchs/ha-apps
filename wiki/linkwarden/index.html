@@ -483,7 +483,7 @@
       </div>
     </article>
 
-    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level public_url browser_url disable_browser disable_registration archive_take_count">
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level public_url browser_url disable_browser disable_registration archive_take_count browser_timeout pdf_max_buffer screenshot_max_buffer index_take_count env_vars environment variables email sso ai proxy s3">
       <div class="section-topline">
         <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
         <a class="section-link" href="#configuration">#configuration</a>
@@ -498,6 +498,10 @@
             <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started; RAM was not measured.</td></tr>
             <tr><td><code>disable_registration</code></td><td><code>false</code></td><td>Refuses new accounts. Create your own account first, then switch it on; it does not remove existing accounts.</td></tr>
             <tr><td><code>archive_take_count</code></td><td><code>1</code></td><td>Links the worker takes per round, for archiving and automatic tagging (1–10). 1 is the gentlest for a Raspberry Pi.</td></tr>
+            <tr><td><code>browser_timeout</code></td><td><code>0</code></td><td>Minutes one archiving session may keep the browser open; when exceeded Linkwarden stops the worker and the app restarts it. 0 = Linkwarden default.</td></tr>
+            <tr><td><code>pdf_max_buffer</code>, <code>screenshot_max_buffer</code></td><td><code>0</code></td><td>Largest PDF / screenshot in MB. A bigger page gets none (log: <code>Buffer size exceeded</code>). 0 = Linkwarden default.</td></tr>
+            <tr><td><code>index_take_count</code></td><td><code>0</code></td><td>Links the search index processes per round. 0 = Linkwarden default.</td></tr>
+            <tr><td><code>env_vars</code></td><td><code>[]</code></td><td>Any other Linkwarden setting as <code>name</code> + <code>value</code> (e-mail, single sign-on, AI tags, proxy, S3). Values are hidden and never logged. Names the app sets itself are refused at start; see the documentation.</td></tr>
           </tbody>
         </table>
         <h2 id="cfg-min"><a class="anchor" href="#cfg-min">#</a>Minimal configuration</h2>
@@ -542,7 +546,7 @@
         <h2 id="priv-out"><a class="anchor" href="#priv-out">#</a>What the app sets on purpose</h2>
         <ul>
           <li>Database password and login secret are generated at the first start, stored in <code>/data/linkwarden/secrets</code> and never shown. The database password is set again at every start.</li>
-          <li>Linkwarden <strong>does not archive addresses in private networks</strong>. In a test a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services; the app does not switch it off.</li>
+          <li>Linkwarden <strong>does not archive addresses in private networks</strong>. In a test a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services; the app does not switch it off, but <code>ALLOW_PRIVATE_NETWORK_ACCESS=true</code> in <code>env_vars</code> does (only if you trust every user).</li>
           <li>PostgreSQL, the web app and the worker run as unprivileged users. If PostgreSQL or the web app crashes (also when the system kills it for lack of memory) the container stops; the worker is restarted automatically.</li>
         </ul>
         <h2 id="priv-data"><a class="anchor" href="#priv-data">#</a>Data and backup</h2>
@@ -563,7 +567,7 @@
           <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
           <tbody>
             <tr><td>Login returns to the login page or fails</td><td><code>public_url</code> does not match the address in the browser.</td><td>Set it to the exact address, including <code>http</code>/<code>https</code> and the port.</td></tr>
-            <tr><td>A link from your own network is not archived</td><td>Linkwarden blocks private network addresses.</td><td>Not possible with this app; only public addresses are archived.</td></tr>
+            <tr><td>A link from your own network is not archived</td><td>Linkwarden blocks private network addresses.</td><td>Set <code>ALLOW_PRIVATE_NETWORK_ACCESS=true</code> in <code>env_vars</code> if you trust every user.</td></tr>
             <tr><td><code>The remote browser at &lt;host&gt; is not reachable</code></td><td>Wrong address, port or token, or the browser is down.</td><td>The built-in Chromium is used meanwhile. Fix the address and restart the app.</td></tr>
             <tr><td>A page has no PDF or no screenshot</td><td>The page blocks headless browsers or loads very slowly.</td><td>The other formats are still created.</td></tr>
             <tr><td>The app stops at start and names another PostgreSQL version</td><td>The data folder was written by a different major version.</td><td>See Data &amp; Backup.</td></tr>
