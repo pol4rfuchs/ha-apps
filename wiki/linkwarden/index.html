@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Linkwarden · Wiki</title>
+<style>
+  :root {
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --accent-3: #dbeafe;
+    --bg-deep: #02101a;
+    --bg-navy: #031722;
+    --panel: rgba(3, 23, 34, .72);
+    --panel-2: rgba(3, 23, 34, .48);
+    --panel-3: rgba(2, 16, 26, .78);
+    --border: rgba(224, 242, 254, .18);
+    --border-strong: rgba(224, 242, 254, .40);
+    --text: #f0f9ff;
+    --muted: #9cc7e0;
+    --dim: #5f93b0;
+    --danger: #ff6675;
+    --warning: #ffd166;
+    --ok: #64f4c4;
+    --code-bg: rgba(0, 0, 0, .48);
+    --shadow: 0 26px 86px rgba(0,0,0,.52);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.65;
+    background:
+      radial-gradient(circle at 18% 8%, rgba(14, 165, 233,.26), transparent 32rem),
+      radial-gradient(circle at 86% 18%, rgba(56, 189, 248,.18), transparent 28rem),
+      radial-gradient(circle at 55% 94%, rgba(14, 165, 233,.14), transparent 34rem),
+      linear-gradient(135deg, #02101a 0%, #031722 44%, #04202e 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(153,246,228,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(153,246,228,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.84), transparent 82%);
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, transparent 0, transparent 38%, rgba(0,0,0,.42) 100%);
+    z-index: 0;
+  }
+
+  a { color: var(--accent-3); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22, 3, 15, .90), rgba(31, 5, 21, .70));
+    backdrop-filter: blur(24px);
+    overflow-y: auto;
+  }
+
+  .brand {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(20,184,166,.20), rgba(255,255,255,.04));
+    box-shadow: 0 18px 54px rgba(20,184,166,.12);
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: radial-gradient(circle, rgba(153,246,228,.98), rgba(45,212,191,.68) 46%, rgba(102,10,44,.86));
+    color: #1c0212;
+    font-size: 26px;
+    box-shadow: 0 0 42px rgba(45,212,191,.42);
+  }
+
+  .brand h1 { margin: 0; line-height: 1.05; font-size: 1.05rem; letter-spacing: -.02em; }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: .78rem; font-family: var(--font-mono); }
+
+  .search-box { margin: 18px 0; position: relative; }
+  .search-box input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    color: var(--text);
+    background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    font-size: .94rem;
+  }
+  .search-box input:focus { border-color: var(--border-strong); box-shadow: 0 0 0 4px rgba(45,212,191,.12); }
+  .search-box span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--accent-3); }
+
+  .nav-group-title {
+    margin: 22px 8px 10px;
+    color: var(--dim);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav-item {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: rgba(255,255,255,.020);
+    text-decoration: none !important;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .nav-item:hover, .nav-item.active {
+    transform: translateX(3px);
+    border-color: var(--border-strong);
+    background: rgba(20,184,166,.14);
+    box-shadow: 0 10px 32px rgba(20,184,166,.12);
+  }
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45,212,191,.13);
+    border: 1px solid rgba(153,246,228,.18);
+  }
+  .nav-item strong { display: block; font-size: .88rem; line-height: 1.16; }
+  .nav-item small { display: block; margin-top: 2px; color: var(--muted); font-size: .72rem; line-height: 1.25; }
+
+  .sidebar-footer {
+    margin-top: 24px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgba(0,0,0,.22);
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  main { min-width: 0; padding: 30px clamp(18px, 4vw, 56px) 70px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(28px, 5vw, 54px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(135deg, rgba(20,184,166,.25), rgba(45,212,191,.075) 42%, rgba(0,0,0,.28)),
+      linear-gradient(180deg, rgba(255,255,255,.058), rgba(255,255,255,.012));
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(28px);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    right: -150px;
+    top: -190px;
+    background: radial-gradient(circle, rgba(153,246,228,.32), transparent 62%);
+    filter: blur(4px);
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 1100px; }
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--accent-3);
+    background: rgba(20, 2, 13, .55);
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    box-shadow: 0 0 30px rgba(20,184,166,.13);
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 0 rgba(153,246,228,.75);
+    animation: pulse 1.9s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(153,246,228,0); } 100% { box-shadow: 0 0 0 0 rgba(153,246,228,0); } }
+  .hero h2 {
+    margin: 24px 0 14px;
+    max-width: 980px;
+    font-size: clamp(2.35rem, 6vw, 5.6rem);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+  .hero h2 .accent { color: var(--accent-3); text-shadow: 0 0 45px rgba(153,246,228,.30); }
+  .hero-copy { max-width: 850px; margin: 0; color: #ffe0e8; font-size: clamp(1rem, 1.5vw, 1.22rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+    background: rgba(20,184,166,.17);
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 10px 32px rgba(20,184,166,.13);
+  }
+  .btn.secondary { background: rgba(0,0,0,.25); border-color: var(--border); color: var(--muted); }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+  .metric {
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+  }
+  .metric small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .11em; font-size: .68rem; font-weight: 800; }
+  .metric strong { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 1.02rem; color: var(--accent-3); }
+
+  .control-strip { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin: 22px 0; }
+  .glass-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(180deg, rgba(58, 11, 34, .62), rgba(21, 4, 14, .76)),
+      rgba(255,255,255,.025);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.048);
+    backdrop-filter: blur(24px);
+  }
+  .quick-card { padding: 22px; }
+  .quick-card h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .quick-card p { margin: 0; color: var(--muted); }
+  .mini-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .status-pill { padding: 11px 12px; border-radius: 14px; border: 1px solid rgba(153,246,228,.16); background: rgba(0,0,0,.21); }
+  .status-pill small { display: block; color: var(--dim); font-family: var(--font-mono); font-size: .68rem; }
+  .status-pill strong { display: block; color: var(--ok); font-size: .88rem; }
+
+  .doc-section { margin-top: 22px; padding: clamp(18px, 3vw, 32px); scroll-margin-top: 24px; }
+  .section-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-wrap { display: flex; align-items: center; gap: 14px; }
+  .section-icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: rgba(45,212,191,.14);
+    border: 1px solid rgba(153,246,228,.22);
+    font-size: 1.5rem;
+  }
+  .section-topline h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.04em; }
+  .eyebrow { margin: 0 0 4px; color: var(--accent-3); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; }
+  .section-link { flex: 0 0 auto; padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; background: rgba(0,0,0,.25); color: var(--muted); font-family: var(--font-mono); font-size: .75rem; text-decoration: none !important; }
+
+  .doc-content { color: #fff0f2; overflow-wrap: anywhere; }
+  .doc-content h2, .doc-content h3, .doc-content h4 { position: relative; margin: 1.55em 0 .55em; color: #fff8f8; letter-spacing: -.025em; line-height: 1.2; }
+  .doc-content h2 { font-size: 1.45rem; }
+  .doc-content h3 { font-size: 1.18rem; color: var(--accent-3); }
+  .doc-content h4 { font-size: 1.02rem; color: #ffe0ea; }
+  .anchor { opacity: 0; position: absolute; left: -22px; top: .08em; color: var(--dim); text-decoration: none !important; font-family: var(--font-mono); transition: opacity .16s ease; }
+  .doc-content h2:hover .anchor, .doc-content h3:hover .anchor, .doc-content h4:hover .anchor { opacity: 1; }
+  .doc-content p { margin: .72em 0; color: #fbd0dd; }
+  .doc-content ul, .doc-content ol { padding-left: 1.35rem; }
+  .doc-content li { margin: .35em 0; }
+  .doc-content hr { height: 1px; border: 0; margin: 1.7rem 0; background: linear-gradient(90deg, transparent, rgba(153,246,228,.30), transparent); }
+  .doc-content blockquote { margin: 1.1rem 0; padding: 14px 16px; border-left: 4px solid var(--warning); border-radius: 0 14px 14px 0; background: rgba(255, 209, 102, .075); color: #ffe9af; }
+  .doc-content table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.3rem; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; display: block; box-shadow: inset 0 1px 0 rgba(255,255,255,.045); }
+  .doc-content thead, .doc-content tbody, .doc-content tr { width: 100%; }
+  .doc-content th, .doc-content td { padding: 12px 14px; border-bottom: 1px solid rgba(153,246,228,.11); text-align: left; vertical-align: top; }
+  .doc-content th { color: var(--accent-3); background: rgba(20,184,166,.13); font-size: .8rem; text-transform: uppercase; letter-spacing: .055em; }
+  .doc-content tr:last-child td { border-bottom: 0; }
+
+  code { font-family: var(--font-mono); font-size: .88em; color: #ffe0e0; background: rgba(45,212,191,.11); border: 1px solid rgba(153,246,228,.13); border-radius: 7px; padding: .13em .36em; }
+  pre { position: relative; margin: 1rem 0 1.3rem; padding: 18px 16px; overflow: auto; border-radius: 18px; border: 1px solid rgba(153,246,228,.20); background: linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,0)), var(--code-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.055); }
+  pre code { background: none; border: none; padding: 0; color: #fdd8e0; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,.35); color: var(--muted); font-family: var(--font-mono); font-size: .68rem; cursor: pointer; }
+  .copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .source-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin: 1rem 0; }
+  .source-chip { padding: 13px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,.21); }
+  .source-chip span { margin-right: 7px; }
+  .source-chip strong, .source-chip small { display: block; }
+  .source-chip small { color: var(--muted); font-size: .75rem; }
+
+  .page-footer { margin-top: 24px; padding: 22px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: rgba(0,0,0,.25); color: var(--muted); text-align: center; }
+  .page-footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  mark { color: #1c0212; background: var(--accent-3); border-radius: 4px; padding: 0 .12em; }
+  .hidden-by-search { display: none !important; }
+
+  .mobile-menu { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px 15px; color: #1c0212; background: var(--accent-3); box-shadow: 0 16px 50px rgba(20,184,166,.33); font-weight: 900; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: fixed; z-index: 8; left: 12px; top: 12px; bottom: 12px; width: min(370px, calc(100vw - 24px)); height: auto; border: 1px solid var(--border); border-radius: 24px; transform: translateX(calc(-100% - 20px)); transition: transform .22s ease; }
+    aside.sidebar.open { transform: translateX(0); }
+    .mobile-menu { display: inline-flex; }
+    .metric-grid, .control-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    main { padding: 18px 14px 70px; }
+    .hero { padding: 24px; }
+    .hero h2 { letter-spacing: -.055em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .section-topline { flex-direction: column; }
+    .mini-status { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: white; color: black; }
+    aside.sidebar, .mobile-menu, .copy-btn, .hero-actions, .search-box { display: none !important; }
+    .layout { display: block; }
+    main { padding: 0; }
+    .glass-card, .hero, .page-footer { box-shadow: none; background: white; border: 1px solid #ddd; color: black; break-inside: avoid; }
+    .doc-content, .doc-content p { color: black; }
+    a { color: black; }
+  }
+</style>
+<link rel="stylesheet" href="../assets/css/addon-themes.css">
+<script src="../assets/js/themes.js"></script>
+</head>
+<body>
+<button class="mobile-menu" id="mobileMenu">☰ Wiki</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🔖</div>
+      <div>
+        <h1>Linkwarden</h1>
+        <p>BOOKMARK ARCHIVE WIKI</p>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="searchInput" type="search" placeholder="Search public_url, browser, archive, backup, troubleshooting..." autocomplete="off" />
+    </div>
+
+    <div class="nav-group-title">Navigation</div>
+    <nav class="nav" id="navList">
+      <a class="nav-item" href="#home" data-target="home"><span class="nav-icon">🏠</span><span><strong>Overview</strong><small>What it does</small></span></a>
+      <a class="nav-item" href="#installation" data-target="installation"><span class="nav-icon">🚀</span><span><strong>First Start</strong><small>Install, public_url, sign-up</small></span></a>
+      <a class="nav-item" href="#configuration" data-target="configuration"><span class="nav-icon">⚙️</span><span><strong>App Options</strong><small>All options with defaults</small></span></a>
+      <a class="nav-item" href="#browser" data-target="browser"><span class="nav-icon">🌐</span><span><strong>Remote Browser</strong><small>Browserless, fallback, log</small></span></a>
+      <a class="nav-item" href="#access" data-target="access"><span class="nav-icon">🛡️</span><span><strong>Local &amp; External</strong><small>LAN, VPN, reverse proxy</small></span></a>
+      <a class="nav-item" href="#privacy" data-target="privacy"><span class="nav-icon">🔒</span><span><strong>Data &amp; Backup</strong><small>Secrets, cold backup, moving</small></span></a>
+      <a class="nav-item" href="#troubleshooting" data-target="troubleshooting"><span class="nav-icon">🛠️</span><span><strong>Known Symptoms &amp; Fixes</strong><small>Login, archiving, browser</small></span></a>
+      <a class="nav-item" href="#sources" data-target="sources"><span class="nav-icon">📦</span><span><strong>Links &amp; License</strong><small>Repository and upstream</small></span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong style="color:var(--accent-3)">Quick reference</strong><br>
+      Version: <code>0.0.1</code><br>UI: port <code>3200</code><br>Backup: <code>cold</code><br>DB: PostgreSQL 15
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="hero-kicker"><span class="pulse"></span> LINKWARDEN · BOOKMARKS · ARCHIVE · HOME ASSISTANT APP</div>
+        <h2>Keep every page you save, <span class="accent">self-hosted</span>.</h2>
+        <p class="hero-copy">Operations wiki for the Linkwarden app: PostgreSQL built in, PDF, screenshot, web page copy and readable view for every link, an optional remote browser, backup and the known limits.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#installation">🚀 Start Installation</a>
+          <a class="btn secondary" href="#configuration">⚙️ Options</a>
+          <a class="btn secondary" href="#browser">🌐 Remote Browser</a>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><small>App Slug</small><strong>linkwarden</strong></div>
+          <div class="metric"><small>Version</small><strong>0.0.1</strong></div>
+          <div class="metric"><small>Web UI</small><strong>http://&lt;ha-host&gt;:3200</strong></div>
+          <div class="metric"><small>Status</small><strong>experimental</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-strip">
+      <div class="quick-card glass-card">
+        <h3>⚡ Minimum Run Path</h3>
+        <p>Set the address you open Linkwarden with, then sign up.</p>
+        <pre><code>public_url: "http://192.168.1.10:3200"</code></pre>
+      </div>
+      <div class="quick-card glass-card">
+        <h3>⚠️ Exposure</h3>
+        <p>Plain HTTP and open sign-up. VPN only; never forward 3200.</p>
+        <pre><code>3200/tcp  (web UI + API)</code></pre>
+      </div>
+    </section>
+
+    <article id="home" class="doc-section glass-card" data-search="home overview linkwarden bookmarks archive pdf screenshot readable postgresql experimental">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🏠</span><div><p class="eyebrow">Home</p><h2>Overview</h2></div></div>
+        <a class="section-link" href="#home">#home</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Linkwarden</strong> is a self-hosted bookmark manager that keeps a copy of every page you save: a PDF, a screenshot, a copy of the web page and a readable view. This Home Assistant app runs the web app and the worker of the official Linkwarden image together with PostgreSQL in one container — nothing else has to be set up.</p>
+        <h2 id="home-scope"><a class="anchor" href="#home-scope">#</a>Current Scope</h2>
+        <ul>
+          <li>Web UI and API directly on port <code>3200</code> (no Ingress), with Linkwarden's own login</li>
+          <li>PostgreSQL listens on <code>127.0.0.1</code> inside the container only</li>
+          <li>Secrets (database password, login secret) are generated at the first start and stored in <code>/data</code></li>
+          <li>Built-in Chromium for PDFs and screenshots, or an optional remote browser such as Browserless</li>
+          <li>Tested on <code>amd64</code> only; <code>aarch64</code> (Raspberry Pi) is built by the pipeline but not tested yet. RAM use not measured.</li>
+        </ul>
+        <blockquote>Status <strong>experimental</strong>: the Raspberry Pi behaviour, AppArmor (disabled), Supervisor backup and restore and a real Browserless instance have not been tested yet.</blockquote>
+      </div>
+    </article>
+
+    <article id="installation" class="doc-section glass-card" data-search="installation install repository public_url sign up registration first start migration">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🚀</span><div><p class="eyebrow">First Start</p><h2>Install the App</h2></div></div>
+        <a class="section-link" href="#installation">#installation</a>
+      </div>
+      <div class="doc-content">
+        <ol>
+          <li>Open <strong>Settings → Apps → App Store</strong>, choose <strong>Repositories</strong> in the top right menu and add <code>https://github.com/pol4rfuchs/ha-apps</code>.</li>
+          <li>Select <strong>Linkwarden</strong> and click <strong>Install</strong>.</li>
+          <li>Set <code>public_url</code> to the address you will open Linkwarden with. Logging in only works through this address.</li>
+          <li>Start the app and wait for <code>Starting Linkwarden on port 3200</code> in the log. The first start creates the database.</li>
+          <li>Open <code>http://&lt;ha-host&gt;:3200</code> and sign up.</li>
+        </ol>
+        <h2 id="install-signup"><a class="anchor" href="#install-signup">#</a>Sign-up is open</h2>
+        <p>Anyone who can reach port <code>3200</code> can create an account (tested: the API accepts a new user without a login). Keep the port inside your network.</p>
+      </div>
+    </article>
+
+    <article id="configuration" class="doc-section glass-card" data-search="configuration options log_level public_url browser_url disable_browser archive_take_count">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">⚙️</span><div><p class="eyebrow">Configuration</p><h2>App Options</h2></div></div>
+        <a class="section-link" href="#configuration">#configuration</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warning</code> or <code>error</code>. Applies to Linkwarden (web and worker) and PostgreSQL.</td></tr>
+            <tr><td><code>public_url</code></td><td><em>(empty)</em></td><td>Address you open Linkwarden with, including <code>http://</code> or <code>https://</code> and the port. Empty = <code>http://localhost:3200</code> with a warning in the log.</td></tr>
+            <tr><td><code>browser_url</code></td><td><em>(empty)</em></td><td>Optional remote browser (protected <code>password</code> field, the URL usually holds a token). Empty = built-in Chromium. See Remote Browser.</td></tr>
+            <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started, so it does not save RAM.</td></tr>
+            <tr><td><code>archive_take_count</code></td><td><code>1</code></td><td>Links archived at the same time (1–10). 1 is the gentlest for a Raspberry Pi.</td></tr>
+          </tbody>
+        </table>
+        <h2 id="cfg-min"><a class="anchor" href="#cfg-min">#</a>Minimal configuration</h2>
+        <pre><code>public_url: "http://192.168.1.10:3200"</code></pre>
+      </div>
+    </article>
+
+    <article id="browser" class="doc-section glass-card" data-search="remote browser browserless chromium cdp websocket token fallback worker restart log">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🌐</span><div><p class="eyebrow">Browser</p><h2>Remote Browser</h2></div></div>
+        <a class="section-link" href="#browser">#browser</a>
+      </div>
+      <div class="doc-content">
+        <p>A remote browser takes the load of PDFs and screenshots off the Raspberry Pi. It must speak the Chrome DevTools protocol, for example Browserless. Set <code>browser_url</code> to <code>ws://&lt;host&gt;:3000?token=&lt;token&gt;</code> or, for a Chromium with remote debugging, <code>http://&lt;host&gt;:9222</code>.</p>
+        <ul>
+          <li>The browser is checked <strong>every time the worker starts</strong>. Reachable: <code>Using the remote browser at &lt;host&gt;:&lt;port&gt;</code>. Not reachable: the built-in Chromium is used and a warning is logged; the app does not crash.</li>
+          <li>The worker does not look again while it runs. When the remote browser is back, restart the app.</li>
+          <li>Only the host is logged. Credential-like query parameters (<code>token=</code>, <code>apikey=</code>, <code>key=</code>, <code>password=</code>, <code>secret=</code>) are replaced by <code>&lt;hidden&gt;</code> in the log, also in the line the Linkwarden worker prints itself.</li>
+        </ul>
+        <blockquote>Tested with a Chromium with remote debugging as a stand-in. A real Browserless instance was not tested with this app.</blockquote>
+      </div>
+    </article>
+
+    <article id="access" class="doc-section glass-card" data-search="access lan vpn reverse proxy tls https public_url port 3200 sign-up">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛡️</span><div><p class="eyebrow">Access</p><h2>Local and External Access</h2></div></div>
+        <a class="section-link" href="#access">#access</a>
+      </div>
+      <div class="doc-content">
+        <p><strong>Local (LAN):</strong> open <code>http://&lt;ha-host&gt;:3200</code>. Linkwarden has its own login. The app serves plain HTTP, so passwords cross your network unencrypted; use a reverse proxy with TLS if that matters to you.</p>
+        <p><strong>External (internet):</strong> recommendation <strong>VPN only.</strong> Bookmarks and archived pages can contain private data, and sign-up is open. If you still publish it, use only a reverse proxy with TLS, never forward port <code>3200</code> directly, and set <code>public_url</code> to the public <code>https://</code> address.</p>
+        <p>The proxy connects to <code>http://&lt;ha-host&gt;:3200</code>.</p>
+      </div>
+    </article>
+
+    <article id="privacy" class="doc-section glass-card" data-search="privacy security data backup cold postgresql major version pg_dump secrets json export import snapshot private network ssrf">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🔒</span><div><p class="eyebrow">Security</p><h2>Data &amp; Backup</h2></div></div>
+        <a class="section-link" href="#privacy">#privacy</a>
+      </div>
+      <div class="doc-content">
+        <h2 id="priv-out"><a class="anchor" href="#priv-out">#</a>What the app sets on purpose</h2>
+        <ul>
+          <li>Database password and login secret are generated at the first start, stored in <code>/data/linkwarden/secrets</code> and never shown. The database password is set again at every start.</li>
+          <li>Linkwarden <strong>does not archive addresses in private networks</strong> (for example <code>http://192.168.1.10</code> or pages on your own PC). That is its own protection against requests to internal services; the app does not switch it off.</li>
+          <li>PostgreSQL, the web app and the worker run as unprivileged users. If PostgreSQL or the web app crashes (also when the system kills it for lack of memory) the container stops; the worker is restarted automatically.</li>
+        </ul>
+        <h2 id="priv-data"><a class="anchor" href="#priv-data">#</a>Data and backup</h2>
+        <p>Backup type <code>cold</code>: the Supervisor stops the app, copies <code>/data</code> and starts it again. Everything lives in <code>/data/linkwarden</code>: <code>postgresql</code>, <code>library</code> (the archives, the big part) and <code>secrets</code>. Restore the backup as a whole.</p>
+        <p>The app does not migrate PostgreSQL across major versions (it is 15 now); an update with a new major version makes it refuse to start and say so in the log. Backup and restore through the Supervisor is not tested yet.</p>
+        <h2 id="priv-move"><a class="anchor" href="#priv-move">#</a>Moving from another Linkwarden</h2>
+        <p>Use the JSON export of the old installation and import it here (both are in the Linkwarden settings). Links, collections and tags are imported; every page is archived again. Pages that no longer exist have <strong>no snapshot</strong> afterwards, so keep the old installation (stopped) until everything is archived again.</p>
+      </div>
+    </article>
+
+    <article id="troubleshooting" class="doc-section glass-card" data-search="troubleshooting login public_url private network browser unreachable pdf screenshot postgresql version">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">🛠️</span><div><p class="eyebrow">Troubleshooting</p><h2>Known Symptoms &amp; Fixes</h2></div></div>
+        <a class="section-link" href="#troubleshooting">#troubleshooting</a>
+      </div>
+      <div class="doc-content">
+        <table>
+          <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Login returns to the login page or fails</td><td><code>public_url</code> does not match the address in the browser.</td><td>Set it to the exact address, including <code>http</code>/<code>https</code> and the port.</td></tr>
+            <tr><td>A link from your own network is not archived</td><td>Linkwarden blocks private network addresses.</td><td>Not possible with this app; only public addresses are archived.</td></tr>
+            <tr><td><code>The remote browser at &lt;host&gt; is not reachable</code></td><td>Wrong address, port or token, or the browser is down.</td><td>The built-in Chromium is used meanwhile. Fix the address and restart the app.</td></tr>
+            <tr><td>A page has no PDF or no screenshot</td><td>The page blocks headless browsers or loads very slowly.</td><td>The other formats are still created.</td></tr>
+            <tr><td>The app stops at start and names another PostgreSQL version</td><td>The data folder was written by a different major version.</td><td>See Data &amp; Backup.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article id="sources" class="doc-section glass-card" data-search="sources github license changelog documentation upstream agpl">
+      <div class="section-topline">
+        <div class="section-title-wrap"><span class="section-icon">📦</span><div><p class="eyebrow">Sources</p><h2>Links &amp; License</h2></div></div>
+        <a class="section-link" href="#sources">#sources</a>
+      </div>
+      <div class="doc-content">
+        <div class="source-grid">
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/tree/main/linkwarden"><span>🐙</span><strong>App source</strong><small>pol4rfuchs/ha-apps</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/linkwarden/DOCS.md"><span>📖</span><strong>DOCS.md</strong><small>Full documentation</small></a>
+          <a class="source-chip" href="https://github.com/pol4rfuchs/ha-apps/blob/main/linkwarden/CHANGELOG.md"><span>📝</span><strong>Changelog</strong><small>Release history</small></a>
+          <a class="source-chip" href="https://github.com/linkwarden/linkwarden"><span>🔖</span><strong>Upstream Linkwarden</strong><small>linkwarden/linkwarden</small></a>
+        </div>
+        <blockquote>Linkwarden is AGPL-3.0. Unofficial, community-maintained app, not affiliated with or endorsed by the Linkwarden project.</blockquote>
+      </div>
+    </article>
+
+    <footer class="page-footer">
+      <div class="links">
+        <a href="#home">🏠 Home</a>
+        <a href="https://github.com/pol4rfuchs/ha-apps">🐙 GitHub</a>
+      </div>
+      <div>Linkwarden · Bookmark Archive Wiki · standalone HTML · no external CSS/JS required</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  const searchInput = document.getElementById('searchInput');
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const sidebar = document.getElementById('sidebar');
+  const menu = document.getElementById('mobileMenu');
+
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'COPY';
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      } catch (err) {
+        btn.textContent = 'FAILED';
+        setTimeout(() => btn.textContent = 'COPY', 1200);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  function setActive(id) {
+    navItems.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActive(visible.target.id);
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: [0.1, 0.25, 0.5] });
+
+  sections.forEach(s => observer.observe(s));
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let firstVisible = null;
+    sections.forEach(section => {
+      const haystack = (section.dataset.search + ' ' + section.innerText).toLowerCase();
+      const hit = !q || haystack.includes(q);
+      section.classList.toggle('hidden-by-search', !hit);
+      if (hit && !firstVisible) firstVisible = section.id;
+    });
+    navItems.forEach(a => {
+      const section = document.getElementById(a.dataset.target);
+      a.style.display = section && section.classList.contains('hidden-by-search') ? 'none' : '';
+    });
+    if (firstVisible) setActive(firstVisible);
+  });
+
+  menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  navItems.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') sidebar.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>

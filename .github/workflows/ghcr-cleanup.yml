@@ -51,6 +51,7 @@ jobs:
           - vaultwarden
           - cortendesk
           - netbox
+          - linkwarden
     steps:
       - name: Delete old untagged versions
         continue-on-error: true

@@ -1,0 +1,35 @@
+---
+configuration:
+  log_level:
+    name: Log level
+    description: >-
+      Verbosity of the log output of Linkwarden and PostgreSQL. Use debug only
+      for troubleshooting.
+  public_url:
+    name: Public URL
+    description: >-
+      Address under which you open Linkwarden, for example
+      http://homeassistant.local:3200 or https://links.example.org. Logging in
+      only works through this address. Empty = http://localhost:3200 (a
+      warning is logged).
+  browser_url:
+    name: Remote browser URL
+    description: >-
+      Optional remote browser for PDFs and screenshots, for example Browserless
+      (ws://host:3000?token=...). The URL usually contains a token, so it is
+      stored like a password. Empty = the built-in Chromium. If the remote
+      browser cannot be reached when the worker starts, the built-in one is used
+      and a warning is logged.
+  disable_browser:
+    name: Disable archiving
+    description: >-
+      Switches the archiving of web pages off completely: no PDF, screenshot,
+      web page copy or readable view is created, only the link is saved. Does
+      not reduce the RAM use.
+  archive_take_count:
+    name: Links per archiving round
+    description: >-
+      How many links the worker archives at the same time. 1 is the gentlest
+      for a Raspberry Pi; raise it only if the host has plenty of RAM and CPU.
+network:
+  3200/tcp: Linkwarden web UI and API (login required)

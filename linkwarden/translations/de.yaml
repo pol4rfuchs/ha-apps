@@ -1,0 +1,36 @@
+---
+configuration:
+  log_level:
+    name: Log-Level
+    description: >-
+      Ausführlichkeit der Log-Ausgabe von Linkwarden und PostgreSQL. Debug nur
+      zur Fehlersuche verwenden.
+  public_url:
+    name: Öffentliche URL
+    description: >-
+      Adresse, unter der du Linkwarden öffnest, zum Beispiel
+      http://homeassistant.local:3200 oder https://links.example.org. Die
+      Anmeldung funktioniert nur über diese Adresse. Leer =
+      http://localhost:3200 (es wird eine Warnung geloggt).
+  browser_url:
+    name: URL des externen Browsers
+    description: >-
+      Optionaler externer Browser für PDFs und Screenshots, zum Beispiel
+      Browserless (ws://host:3000?token=...). Die URL enthält meist ein Token
+      und wird deshalb wie ein Passwort gespeichert. Leer = der eingebaute
+      Chromium. Ist der externe Browser beim Start des Workers nicht
+      erreichbar, wird der eingebaute genutzt und eine Warnung geloggt.
+  disable_browser:
+    name: Archivierung abschalten
+    description: >-
+      Schaltet das Archivieren von Webseiten komplett aus: Es entstehen weder
+      PDF, Screenshot, Webseiten-Kopie noch Lesemodus, nur der Link wird
+      gespeichert. Der RAM-Verbrauch sinkt dadurch nicht.
+  archive_take_count:
+    name: Links pro Archivierungsrunde
+    description: >-
+      Wie viele Links der Worker gleichzeitig archiviert. 1 ist am
+      schonendsten für einen Raspberry Pi; nur erhöhen, wenn der Host reichlich
+      RAM und CPU hat.
+network:
+  3200/tcp: Linkwarden-Weboberfläche und API (Anmeldung erforderlich)

@@ -92,6 +92,17 @@
       }
     ]
   },
+  "linkwarden": {
+    "readme": "README.md",
+    "items": [
+      {
+        "value_from": { "file": "Dockerfile", "regex": "ARG LINKWARDEN_VERSION=(\\S+)" },
+        "table_row_label": "Linkwarden version",
+        "table_value_format": "`{value}`",
+        "badge": { "label": "Linkwarden", "color": "1E88E5" }
+      }
+    ]
+  },
   "searxng": {
     "readme": "README.md",
     "items": [

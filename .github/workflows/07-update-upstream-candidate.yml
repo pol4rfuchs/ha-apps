@@ -91,6 +91,11 @@ jobs:
             mode: noop
             tag_prefix: ntfy-manager
             reason: "Internal app add-on; no external upstream version/ref is declared in-repo."
+          - addon: linkwarden
+            mode: github_latest_release_arg
+            upstream_repo: linkwarden/linkwarden
+            arg_name: LINKWARDEN_VERSION
+            tag_prefix: linkwarden
           - addon: netbox
             mode: noop
             tag_prefix: netbox

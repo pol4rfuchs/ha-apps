@@ -39,6 +39,7 @@ body:
         - vaultwarden
         - cortendesk
         - netbox
+        - linkwarden
         - Repo-wide / tooling (not app-specific)
     validations:
       required: true
