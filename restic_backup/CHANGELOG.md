@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/pol4rfuchs/ha-apps/compare/restic_backup-v0.2.3...restic_backup-v0.2.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [0.2.3](https://github.com/pol4rfuchs/ha-apps/compare/restic_backup-v0.2.2...restic_backup-v0.2.3) (2026-10-16)
 
 
