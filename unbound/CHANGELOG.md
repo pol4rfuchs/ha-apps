@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.26.2-ha5-pol4r1] - 2026-11-13
+
+- Fix: `config.yaml` uses the current `app_config` map type instead of the legacy `addon_config`, so the Supervisor no longer logs a deprecation warning. The app config folder (`/config` in the container, `/addon_configs/<slug>_unbound/` on the host) is unchanged.
+
 ## [1.26.2-ha4-pol4r1] - 2026-11-12
 
 - Feature: new hardening settings in the Security tab: DNS rebinding protection (off by default, stub zones are exempt), refuse `ANY` queries (off), `harden-large-queries` and `harden-short-bufsize` (on), per-zone and per-client rate limits (0 = off) and the unwanted-reply threshold (10,000,000, was Unbound's default of off). The defaults change no resolving behaviour.
