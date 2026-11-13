@@ -2,11 +2,16 @@
 # shellcheck shell=bash
 # The worker is restarted by s6 after a crash instead of stopping the container: its start script checks the
 # remote browser again, so a crash caused by an unreachable browser heals itself. The pause keeps a persistent
-# failure from becoming a busy loop.
+# failure from becoming a busy loop; it must stay below the time limit s6 gives a finish script (5 seconds).
 # $1 = exit code (256 = terminated by a signal, $2 = signal number)
-if [[ "${1}" -ne 0 && "${1}" -ne 256 ]]; then
-  bashio::log.warning "worker exited with exit code ${1} - restarting in 5 seconds."
-  sleep 5
-else
-  bashio::log.info "worker stopped."
-fi
+# 143 and 130 (128 + SIGTERM / SIGINT) are how Node.js ends after the normal stop signal, so they are no crash
+# and must not delay the shutdown of the container.
+case "${1}" in
+  0 | 256 | 130 | 143)
+    bashio::log.info "worker stopped."
+    ;;
+  *)
+    bashio::log.warning "worker exited with exit code ${1} - restarting in 3 seconds."
+    sleep 3
+    ;;
+esac

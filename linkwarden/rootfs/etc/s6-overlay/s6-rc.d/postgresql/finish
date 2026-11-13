@@ -1,11 +1,22 @@
 #!/command/with-contenv bashio
 # shellcheck shell=bash
-# PostgreSQL is essential: if it crashes, stop the container so the Supervisor restarts it.
+# PostgreSQL is essential: if it crashes, stop the container so the Supervisor sees it and the app does not keep
+# running half-dead.
 # $1 = exit code (256 = terminated by a signal, $2 = signal number)
-if [[ "${1}" -ne 0 && "${1}" -ne 256 ]]; then
-  bashio::log.warning "postgresql exited with exit code ${1} - stopping the container."
+code="${1}"
+if [[ "${code}" -eq 256 ]]; then
+  # SIGINT (PostgreSQL's down signal) and SIGTERM are the normal stop signals. Any other signal, for example the
+  # SIGKILL of the out-of-memory killer, is a crash.
+  if [[ "${2:-0}" -eq 2 || "${2:-0}" -eq 15 ]]; then
+    code=0
+  else
+    code=$((128 + ${2:-0}))
+  fi
+fi
+if [[ "${code}" -ne 0 ]]; then
+  bashio::log.warning "postgresql stopped unexpectedly (exit code ${1}, signal ${2:-none}) - stopping the container."
   # Pass the exit code on, otherwise the container ends with 0 (= "stopped cleanly")
-  echo "${1}" > /run/s6-linux-init-container-results/exitcode
+  echo "${code}" > /run/s6-linux-init-container-results/exitcode
   /run/s6/basedir/bin/halt
 fi
 bashio::log.info "postgresql stopped."

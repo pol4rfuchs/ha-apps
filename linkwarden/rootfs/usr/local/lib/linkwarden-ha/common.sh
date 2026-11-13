@@ -43,7 +43,7 @@ lw_urlencode() {
 # The secrets are read from ${SECRET_DIR}; the database password is part of DATABASE_URL, which exists only in
 # the environment of these two processes.
 lw_export_env() {
-  local public_url db_password secret
+  local public_url db_password secret encoded_password
   public_url="$(bashio::config 'public_url')"
   if [ -z "${public_url}" ] || [ "${public_url}" = "null" ]; then
     public_url="http://localhost:${LW_PORT}"
@@ -58,11 +58,13 @@ lw_export_env() {
 
   db_password="$(< "${SECRET_DIR}/db_password")"
   secret="$(< "${SECRET_DIR}/nextauth_secret")"
+  # Assign first, export afterwards: a failing command inside export would be masked (SC2155, §11).
+  encoded_password="$(lw_urlencode "${db_password}")"
 
   export NODE_ENV="production"
   export NEXTAUTH_URL="${public_url}"
   export NEXTAUTH_SECRET="${secret}"
-  export DATABASE_URL="postgresql://linkwarden:$(lw_urlencode "${db_password}")@127.0.0.1:5432/linkwarden"
+  export DATABASE_URL="postgresql://linkwarden:${encoded_password}@127.0.0.1:5432/linkwarden"
   export PLAYWRIGHT_BROWSERS_PATH="/ms-playwright"
   export NEXT_TELEMETRY_DISABLED="1" PRISMA_HIDE_UPDATE_MESSAGE="1"
   export PATH="${LW_DIR}/node_modules/.bin:${PATH}"
