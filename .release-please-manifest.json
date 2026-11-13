@@ -1,21 +1,21 @@
 {
   "forgejo": "16.0.23",
   "intiface_central": "1.0.7",
-  "matrix_synapse": "2.0.3",
+  "matrix_synapse": "2.0.4",
   "nginx_proxy_manager": "2.1.7",
-  "navidrome": "2.1.12",
+  "navidrome": "2.1.13",
   "restic_backup": "0.2.4",
-  "ntfy": "1.2.19",
+  "ntfy": "1.2.20",
   "ntfy_manager": "0.2.17",
   "nextcloud": "33.0.25",
-  "searxng": "1.1.6",
+  "searxng": "1.1.7",
   "teamspeak6": "1.1.25",
   "ts6_manager": "1.1.10",
   "matrix_auth_service": "1.0.9",
-  "matrix_ketesa": "0.2.2",
+  "matrix_ketesa": "0.2.3",
   "unifi_toolkit": "0.2.1",
-  "unifi_os_control_center": "0.7.12",
+  "unifi_os_control_center": "0.7.13",
   "vaultwarden": "0.2.2",
   "cortendesk": "0.2.4",
-  "netbox": "0.1.1"
+  "netbox": "0.1.2"
 }

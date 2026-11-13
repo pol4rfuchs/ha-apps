@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.20](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.19...ntfy-v1.2.20) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [1.2.19](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.2.18...ntfy-v1.2.19) (2026-11-06)
 
 
