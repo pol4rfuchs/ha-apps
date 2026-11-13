@@ -53,6 +53,7 @@
 |---|---|---|
 | `license_accepted` | `false` | Must be `true`: you accept the TeamSpeak server license. |
 | `query_admin_password` | — | Password of the ServerQuery login `serveradmin`. **Set it.** It is applied at every start, so it also works if you add or change it later (tested). If empty, TeamSpeak generates one on the first start; the app hides it in the log, so you cannot read it. |
+| `query_ip_allowlist` | `["172.30.32.0/23"]` | Addresses or networks that are exempt from TeamSpeak's flood protection for query commands (see *Flood protection* below). Loopback is always included. |
 | `log_level` | `3` | TeamSpeak log level, `0`–`4` (higher is more verbose). |
 
 The ports are fixed. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the app options.
@@ -92,6 +93,18 @@ TeamSpeak 6 (version 6.0.0-beta13.1) has no raw ServerQuery port (`10011`, telne
 
 ---
 
+## 🚦 Flood protection of the query interface
+
+TeamSpeak 6 locks out a query client that sends more than 10 commands within 3 seconds (instance settings `serverinstance_serverquery_flood_commands=10`, `flood_time=3`) for 10 minutes (`ban_time=600`). A request to the HTTP query with a virtual server id counts as two commands. Another app, such as TS6 Manager, is a foreign client for the server, so a page that loads several lists at once can trigger the lock, and the manager then only shows errors (HTTP 502, "client is flooding", "socket hang up"). The lock outlasts a restart of the manager; restarting TeamSpeak clears it.
+
+The file `query_ip_allowlist.txt` is the list of addresses that are exempt from this protection. The app writes it at every start from the option `query_ip_allowlist` (plus `127.0.0.1` and `::1`); the default is the Home Assistant app network `172.30.32.0/23`, so other apps on the same Home Assistant are not locked out. Manual edits of the file are replaced at the next start.
+
+- Allowed entries: an IP address or a network (IPv4 prefix 16–32, IPv6 prefix 48–128). Catch-all networks such as `0.0.0.0/0` or `::/0` and wide networks such as `10.0.0.0/8` are refused: the app does not start and the log names the entry.
+- The list only affects the flood protection. It is not an access list: the password or API key is still required, and in a test even the correct password was refused after a few wrong ones from an allowlisted address (see [DOCS.md](DOCS.md)).
+- To keep the default protection for everything, set the list to empty (`[]`). Then loopback is the only exempt address.
+
+---
+
 ## 💾 Data and backup
 
 ```text
@@ -102,7 +115,7 @@ TeamSpeak 6 (version 6.0.0-beta13.1) has no raw ServerQuery port (`10011`, telne
 │   ├── query_ip_allowlist.txt
 │   ├── query_ip_denylist.txt
 │   └── files/
-├── logs/               ← server logs (cleared on every start, log files not in backups)
+├── logs/               ← server logs (kept across restarts, cut to 1 MiB above 5 MiB, not in backups)
 └── .token_was_shown    ← marker: the token was already printed
 ```
 

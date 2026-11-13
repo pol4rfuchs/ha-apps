@@ -7,6 +7,16 @@ configuration:
       Recommended: set it. It is applied at every start, so you can also add or
       change it later. If empty, TeamSpeak generates one on the first start; it
       is not shown in the log.
+  query_ip_allowlist:
+    name: Query flood-protection allowlist
+    description: >-
+      Addresses or networks that TeamSpeak does not lock out for sending too
+      many query commands (more than 10 in 3 seconds, ban 10 minutes). Needed
+      for other apps that query the server, such as TS6 Manager. Default: the
+      Home Assistant app network 172.30.32.0/23. Loopback is always included.
+      Entries: IP address or network (IPv4 prefix 16-32, IPv6 prefix 48-128);
+      0.0.0.0/0 and other wide networks are refused. Replaces manual edits of
+      query_ip_allowlist.txt.
   log_level:
     name: Log Level
     description: "Verbosity of server logging: 0=Critical, 1=Error, 2=Warning, 3=Info, 4=Debug."
