@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.1.6...searxng-v1.1.7) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [1.1.6](https://github.com/pol4rfuchs/ha-apps/compare/searxng-v1.1.5...searxng-v1.1.6) (2026-11-10)
 
 
