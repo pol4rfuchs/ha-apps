@@ -73,15 +73,11 @@ s6-overlay Services:
 
 **Symptom.** The pages show HTTP 502 or empty lists. The log of this app has `TSApiError: client is flooding`, then `socket hang up` and `Transport reset ... after a stale-socket error`. The lock outlasts a restart of this app and ends after the ban time or when the TeamSpeak 6 app is restarted.
 
-**Remedy.**
-1. Use the **TeamSpeak 6 app of this repository** and its option `query_ip_allowlist`. Its default is the Home Assistant app network `172.30.32.0/23`, which contains this app; then TeamSpeak does not lock it out. Tested with the original TS6 Manager client: 32 quick requests (a page load, four times in a row) all succeeded against a server with the sender in the allowlist, while without it 27 of 32 failed. Another TeamSpeak server needs the address of this app in its `query_ip_allowlist.txt`.
-2. This app now also keeps itself below the limit: it spaces its requests (at most 8 commands per 3 seconds, so a page that asks for many lists can take a few seconds longer), shares identical read requests that run at the same time (and reuses the answer for one second), and after a "client is flooding" answer sends nothing for 30 seconds, doubling up to 5 minutes, instead of asking again every second. While it waits, the page shows a message that names `query_ip_allowlist`. Tested against a real TeamSpeak 6 server without the allowlist: 32 of 32 requests succeeded.
-
-These changes to the manager are a patch (`patches/0001-flood-protection-backoff-and-log-fallback.patch`) that the image build applies to the pinned source of the manager; the proper place for them is the source repository of the manager. The build fails if the patch no longer applies after the pinned version was changed.
+**Remedy.** Use the **TeamSpeak 6 app of this repository** and its option `query_ip_allowlist`. Its default is the Home Assistant app network `172.30.32.0/23`, which contains this app; then TeamSpeak does not lock it out. Tested with the original TS6 Manager client: 32 quick requests (a page load, four times in a row) all succeeded against a server with the sender in the allowlist, while without it 27 of 32 failed. Another TeamSpeak server needs the address of this app in its `query_ip_allowlist.txt`.
 
 ## Server logs page
 
-The "Logs" page asks TeamSpeak for the log of the virtual server. TeamSpeak creates that file with the first log line of the virtual server after a start; until then it answers error 2052 (`file input/output error`), which used to show as an empty page and an HTTP 502. The manager now shows the instance log in that case, with a note on top. The TeamSpeak 6 app of this repository keeps its logs across restarts, so the file normally exists (see its documentation).
+The "Logs" page asks TeamSpeak for the log of the virtual server. TeamSpeak creates that file with the first log line of the virtual server after a start; until then it answers error 2052 (`file input/output error`), which shows as an empty page and an HTTP 502. The TeamSpeak 6 app of this repository keeps its logs across restarts, so the file normally exists (see its documentation).
 
 ## Local and external access
 
