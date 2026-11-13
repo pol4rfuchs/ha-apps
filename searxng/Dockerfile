@@ -1,5 +1,5 @@
 ARG BUILD_ARCH
-ARG SEARXNG_VERSION=2026.11.9-57ff753ad
+ARG SEARXNG_VERSION=2026.11.13-219b63b20
 
 # Tor is not in the SearXNG image (it is a stripped Void Linux without a package manager), so take
 # it from a Void Linux image together with the shared libraries it needs. The final stage runs
