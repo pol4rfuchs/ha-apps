@@ -9,6 +9,20 @@ ARG LINKWARDEN_IMAGE=ghcr.io/linkwarden/linkwarden:v${LINKWARDEN_VERSION}
 
 FROM ${LINKWARDEN_IMAGE} AS linkwarden
 
+# Guard for automatic version bumps (workflow 07): Linkwarden changed its container layout once (2.15), and this app
+# copies files out of the upstream image and starts them with its own commands. If the layout, the Debian release
+# (glibc: the copied node and monolith must run on the base below) or the tools change, the build fails here and the
+# candidate PR turns red instead of producing an image that builds but does not start.
+RUN . /etc/os-release \
+    && [ "${VERSION_CODENAME}" = "bookworm" ] \
+    && test -f /data/apps/worker/worker.ts \
+    && test -d /data/apps/web/.next \
+    && test -f /data/packages/prisma/schema.prisma \
+    && for tool in next tsx prisma; do test -x "/data/node_modules/.bin/${tool}" || exit 1; done \
+    && test -x /usr/local/bin/node \
+    && test -x /usr/local/bin/monolith \
+    && ls -d /ms-playwright/chromium_headless_shell-* > /dev/null
+
 FROM ${BUILD_FROM}
 
 # BUILD_ARCH and BUILD_VERSION come from build-app.yaml (version = version from config.yaml)
