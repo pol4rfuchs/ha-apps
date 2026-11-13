@@ -50,8 +50,11 @@ jobs:
           # Release-producing changes must be scoped to an add-on.
           # This prevents accidental titles like "fix: update ntfy", which Release Please
           # may classify ambiguously or ignore for package-specific releases.
+          # The scope "apps" is for one change that touches several apps at once
+          # (for example a Supervisor deprecation fix). Release Please assigns the squash
+          # commit to every app folder it touches, so each of them gets its own release.
           pattern_release = re.compile(
-              rf"^(feat|fix)\(({addon_scopes})\)(!)?: .+"
+              rf"^(feat|fix)\(({addon_scopes}|apps)\)(!)?: .+"
           )
 
           # Non-release housekeeping may be repo-wide and therefore scopeless.
@@ -69,6 +72,7 @@ jobs:
               print("Required examples:", file=sys.stderr)
               print("  fix(ntfy): update upstream to 2.14.0", file=sys.stderr)
               print("  feat(ts6_manager): add backup scheduler", file=sys.stderr)
+              print("  fix(apps): replace deprecated map types in several apps", file=sys.stderr)
               print("  chore(ci): update pinned GitHub Actions", file=sys.stderr)
               print("  chore: update repository metadata", file=sys.stderr)
               print("", file=sys.stderr)

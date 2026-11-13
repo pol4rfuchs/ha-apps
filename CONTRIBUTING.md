@@ -29,6 +29,8 @@ Exception: `unbound` is not managed by Release Please. It has its own version sc
   a Conventional Commit with an app scope: `fix(ntfy): …` or `feat(ts6_manager): …`. Housekeeping
   may be scopeless: `chore: …`, `docs(nextcloud): …`. Workflow `18` checks this. GitHub proposes
   the branch name as title, so set the title yourself.
+  One change that touches several apps (for example a Supervisor deprecation fix) may be a single
+  PR with the scope `apps`: `fix(apps): …`. Release Please releases every app folder the commit touches.
 - Only `feat`/`fix` commits trigger a release. Release Please then opens a release PR for the app
   (`chore(main): release <app> x.y.z`); merge release PRs one at a time.
 - Squash-merge only.
