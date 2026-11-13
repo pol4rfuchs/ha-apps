@@ -492,7 +492,7 @@
         <table>
           <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warning</code> or <code>error</code>. Applies to Linkwarden (web and worker) and PostgreSQL.</td></tr>
+            <tr><td><code>log_level</code></td><td><code>info</code></td><td><code>debug</code>, <code>info</code>, <code>warning</code> or <code>error</code>. Applies to Linkwarden (web and worker) and PostgreSQL. Except at <code>debug</code>, very long messages are cut (<code>... (N more characters)</code>).</td></tr>
             <tr><td><code>public_url</code></td><td><em>(empty)</em></td><td>Address you open Linkwarden with, including <code>http://</code> or <code>https://</code> and the port. Empty = <code>http://localhost:3200</code> with a warning in the log.</td></tr>
             <tr><td><code>browser_url</code></td><td><em>(empty)</em></td><td>Optional remote browser (protected <code>password</code> field, the URL usually holds a token). Empty = built-in Chromium. See Remote Browser.</td></tr>
             <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started; RAM was not measured.</td></tr>
