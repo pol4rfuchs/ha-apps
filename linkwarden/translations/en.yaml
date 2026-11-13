@@ -43,21 +43,21 @@ configuration:
     description: >-
       Longest time one archiving session may keep the browser open, in minutes.
       If it takes longer, Linkwarden stops the worker (the app restarts it) and
-      the log says so. Empty = the default of Linkwarden.
+      the log says so. 0 = the default of Linkwarden.
   pdf_max_buffer:
     name: Largest PDF (MB)
     description: >-
       Largest PDF that is kept, in megabytes. A bigger page gets no PDF (the
-      log says Buffer size exceeded). Empty = the default of Linkwarden.
+      log says Buffer size exceeded). 0 = the default of Linkwarden.
   screenshot_max_buffer:
     name: Largest screenshot (MB)
     description: >-
-      Largest screenshot that is kept, in megabytes. Empty = the default of
+      Largest screenshot that is kept, in megabytes. 0 = the default of
       Linkwarden.
   index_take_count:
     name: Links per search index round
     description: >-
-      How many links the search index processes per round. Empty = the
+      How many links the search index processes per round. 0 = the
       default of Linkwarden.
   env_vars:
     name: Additional environment variables

@@ -44,7 +44,7 @@ How many links the worker takes per round, for archiving and for the automatic t
 
 ### `browser_timeout`, `pdf_max_buffer`, `screenshot_max_buffer`, `index_take_count`
 
-Optional limits. **Empty means the default of Linkwarden**, so the app does not copy values that Linkwarden may change.
+Optional limits. **0 means the default of Linkwarden** (the preset), so the app does not copy values that Linkwarden may change.
 
 - `browser_timeout` (minutes): the longest time one archiving session may keep the browser open. When it is exceeded, Linkwarden ends the worker with the message `Browser has been open for more than N minutes` and the app restarts the worker. The unit is minutes, not milliseconds.
 - `pdf_max_buffer` and `screenshot_max_buffer` (MB): the largest PDF or screenshot that is kept. A bigger page gets none and the log says `Buffer size exceeded`; the other formats are still created.

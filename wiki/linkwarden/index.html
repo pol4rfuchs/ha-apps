@@ -498,9 +498,9 @@
             <tr><td><code>disable_browser</code></td><td><code>false</code></td><td>Switches the archiving of web pages off completely: in a test all four formats stayed unavailable. Chromium was still started; RAM was not measured.</td></tr>
             <tr><td><code>disable_registration</code></td><td><code>false</code></td><td>Refuses new accounts. Create your own account first, then switch it on; it does not remove existing accounts.</td></tr>
             <tr><td><code>archive_take_count</code></td><td><code>1</code></td><td>Links the worker takes per round, for archiving and automatic tagging (1–10). 1 is the gentlest for a Raspberry Pi.</td></tr>
-            <tr><td><code>browser_timeout</code></td><td><em>(empty)</em></td><td>Minutes one archiving session may keep the browser open; when exceeded Linkwarden stops the worker and the app restarts it. Empty = Linkwarden default.</td></tr>
-            <tr><td><code>pdf_max_buffer</code>, <code>screenshot_max_buffer</code></td><td><em>(empty)</em></td><td>Largest PDF / screenshot in MB. A bigger page gets none (log: <code>Buffer size exceeded</code>). Empty = Linkwarden default.</td></tr>
-            <tr><td><code>index_take_count</code></td><td><em>(empty)</em></td><td>Links the search index processes per round. Empty = Linkwarden default.</td></tr>
+            <tr><td><code>browser_timeout</code></td><td><code>0</code></td><td>Minutes one archiving session may keep the browser open; when exceeded Linkwarden stops the worker and the app restarts it. 0 = Linkwarden default.</td></tr>
+            <tr><td><code>pdf_max_buffer</code>, <code>screenshot_max_buffer</code></td><td><code>0</code></td><td>Largest PDF / screenshot in MB. A bigger page gets none (log: <code>Buffer size exceeded</code>). 0 = Linkwarden default.</td></tr>
+            <tr><td><code>index_take_count</code></td><td><code>0</code></td><td>Links the search index processes per round. 0 = Linkwarden default.</td></tr>
             <tr><td><code>env_vars</code></td><td><code>[]</code></td><td>Any other Linkwarden setting as <code>name</code> + <code>value</code> (e-mail, single sign-on, AI tags, proxy, S3). Values are hidden and never logged. Names the app sets itself are refused at start; see the documentation.</td></tr>
           </tbody>
         </table>

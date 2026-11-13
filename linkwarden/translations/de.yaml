@@ -43,22 +43,22 @@ configuration:
     description: >-
       Längste Zeit, die eine Archivierung den Browser offen halten darf, in
       Minuten. Dauert es länger, stoppt Linkwarden den Worker (die App startet
-      ihn neu) und das Log sagt es. Leer = der Standard von Linkwarden.
+      ihn neu) und das Log sagt es. 0 = der Standard von Linkwarden.
   pdf_max_buffer:
     name: Größtes PDF (MB)
     description: >-
       Größtes PDF, das behalten wird, in Megabyte. Eine größere Seite bekommt
-      kein PDF (das Log meldet Buffer size exceeded). Leer = der Standard von
+      kein PDF (das Log meldet Buffer size exceeded). 0 = der Standard von
       Linkwarden.
   screenshot_max_buffer:
     name: Größter Screenshot (MB)
     description: >-
-      Größter Screenshot, der behalten wird, in Megabyte. Leer = der Standard
+      Größter Screenshot, der behalten wird, in Megabyte. 0 = der Standard
       von Linkwarden.
   index_take_count:
     name: Links pro Runde der Suchindizierung
     description: >-
-      Wie viele Links der Suchindex pro Runde verarbeitet. Leer = der Standard
+      Wie viele Links der Suchindex pro Runde verarbeitet. 0 = der Standard
       von Linkwarden.
   env_vars:
     name: Zusätzliche Umgebungsvariablen

@@ -83,12 +83,14 @@ lw_validate_env_vars() {
   fi
 }
 
-# Export an option as environment variable only if it is set; empty means the default of Linkwarden.
-lw_export_if_set() {
+# Export a limit as environment variable. 0 (or no value) means the default of Linkwarden: the variable is not set.
+lw_export_limit() {
   local option="$1" variable="$2" value
   if bashio::config.has_value "${option}"; then
     value="$(bashio::config "${option}")"
-    export "${variable}=${value}"
+    if [ "${value}" != "0" ]; then
+      export "${variable}=${value}"
+    fi
   fi
 }
 
@@ -138,8 +140,8 @@ lw_export_env() {
   if bashio::config.true 'disable_registration'; then
     export NEXT_PUBLIC_DISABLE_REGISTRATION="true"
   fi
-  lw_export_if_set browser_timeout BROWSER_TIMEOUT
-  lw_export_if_set pdf_max_buffer PDF_MAX_BUFFER
-  lw_export_if_set screenshot_max_buffer SCREENSHOT_MAX_BUFFER
-  lw_export_if_set index_take_count INDEX_TAKE_COUNT
+  lw_export_limit browser_timeout BROWSER_TIMEOUT
+  lw_export_limit pdf_max_buffer PDF_MAX_BUFFER
+  lw_export_limit screenshot_max_buffer SCREENSHOT_MAX_BUFFER
+  lw_export_limit index_take_count INDEX_TAKE_COUNT
 }
