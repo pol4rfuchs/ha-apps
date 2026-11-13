@@ -5,6 +5,13 @@ Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 
 ---
 
+## [2.0.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v2.0.3...matrix_synapse-v2.0.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [2.0.3](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v2.0.2...matrix_synapse-v2.0.3) (2026-11-12)
 
 
