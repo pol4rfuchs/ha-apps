@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.13](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.12...navidrome-v2.1.13) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [2.1.12](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.11...navidrome-v2.1.12) (2026-10-25)
 
 
