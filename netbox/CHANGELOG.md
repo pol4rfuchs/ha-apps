@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/pol4rfuchs/ha-apps/compare/netbox-v0.1.1...netbox-v0.1.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [0.1.1](https://github.com/pol4rfuchs/ha-apps/compare/netbox-v0.1.0...netbox-v0.1.1) (2026-11-07)
 
 
