@@ -1,4 +1,5 @@
 import express from "express";
+import { ZodError } from "zod";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -67,6 +68,24 @@ app.use((_req, res) => res.status(404).json({ error: "not_found" }));
 
 // Final error guard
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  // Bad input from the client is a 400, not a server error: a body that fails
+  // validation (zod) or is not valid JSON (body parser).
+  if (err instanceof ZodError) {
+    if (!res.headersSent) {
+      res.status(400).json({
+        error: "invalid_request",
+        message: "Invalid request body.",
+        issues: err.issues.map((i) => ({ path: i.path.join("."), message: i.message }))
+      });
+    }
+    return;
+  }
+  if (err?.type === "entity.parse.failed" || err?.type === "entity.too.large") {
+    if (!res.headersSent) {
+      res.status(err.type === "entity.too.large" ? 413 : 400).json({ error: "invalid_request" });
+    }
+    return;
+  }
   logger.error(`Unhandled: ${err?.message ?? err}`);
   if (!res.headersSent) res.status(500).json({ error: "internal_error" });
 });

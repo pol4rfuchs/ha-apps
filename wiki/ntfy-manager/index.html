@@ -552,7 +552,7 @@
           <tr>
             <td><code>ntfy_base_url</code></td>
             <td><code>url</code></td>
-            <td><code>http://homeassistant.local:4280</code></td>
+            <td><code>http://9bf6aa7c-ntfy:4280</code></td>
             <td>Address of the ntfy server, e.g. the internal address of the ntfy app or an external URL.</td>
           </tr>
           <tr>
@@ -604,7 +604,7 @@
     <div class="code-block">
       <div class="label">config.yaml · options</div>
       <pre>options:
-  ntfy_base_url: "http://homeassistant.local:4280"
+  ntfy_base_url: "http://9bf6aa7c-ntfy:4280"
   ntfy_auth_type: "basic"
   ntfy_username: ""
   ntfy_password: ""
@@ -622,7 +622,7 @@
       <div class="alert-icon">⚠️</div>
       <div class="alert-body">
         <strong>Docker-internal URL (optional)</strong>
-        If both apps run on the same Supervisor, the Docker-internal address <code>http://a0d7b954-ntfy:80</code> can be used instead of the external URL — no TLS overhead, no NAT loopback. The default value <code>http://homeassistant.local:4280</code> works as well.
+        If both apps run on the same Supervisor, the default is the Docker-internal address <code>http://9bf6aa7c-ntfy:4280</code>: no TLS overhead, no NAT loopback, and it cannot resolve to another Home Assistant system in your network. Use an IP address or another name only if the ntfy runs elsewhere or the repository id differs (see the app documentation).
       </div>
     </div>
   </div>
@@ -722,7 +722,7 @@ auth-default-access: deny-all</pre>
 
     <div class="code-block">
       <div class="label">ntfy SSE endpoint (internal)</div>
-      <pre>GET http://a0d7b954-ntfy:80/ha-alerts,ha-info,ha-system/sse
+      <pre>GET http://9bf6aa7c-ntfy:4280/ha-alerts,ha-info,ha-system/sse
 Authorization: Bearer &lt;token&gt;</pre>
     </div>
 
@@ -767,7 +767,7 @@ Authorization: Bearer &lt;token&gt;</pre>
           <tr>
             <td>"Cannot connect to ntfy"</td>
             <td>Wrong <code>ntfy_base_url</code> or the ntfy app is not started</td>
-            <td>Check the Docker-internal URL: <code>http://a0d7b954-ntfy:80</code>. Both apps must be running.</td>
+            <td>Check the Docker-internal URL: <code>http://9bf6aa7c-ntfy:4280</code>. Both apps must be running.</td>
           </tr>
           <tr>
             <td>401 Unauthorized</td>

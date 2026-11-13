@@ -18,7 +18,7 @@ ports:
 ports_description:
   8099/tcp: Optional direct web UI access. Ingress works without exposing this port.
 options:
-  ntfy_base_url: http://homeassistant.local:4280
+  ntfy_base_url: http://9bf6aa7c-ntfy:4280
   ntfy_auth_type: basic
   ntfy_username: ''
   ntfy_password: ''

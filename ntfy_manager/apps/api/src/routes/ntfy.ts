@@ -70,6 +70,40 @@ ntfyRouter.get("/users", async (req, res) => {
   res.status(r.status || 502).json({ ok: r.ok, data: r.data, status: r.status });
 });
 
+/**
+ * ntfy >= 2.37 only accepts some user changes over its local admin socket,
+ * which this app cannot reach (the socket is a file inside the ntfy container).
+ * ntfy then answers 403 "forbidden: this operation is only allowed over the
+ * local admin socket" (code 40302). Turn that into a message the panel can show.
+ */
+const ADMIN_SOCKET_MESSAGE =
+  "ntfy only allows this over its local admin socket, which the panel cannot reach. " +
+  "Use the ntfy command line in the ntfy app instead (for example: ntfy user change-role, " +
+  "ntfy user change-pass, ntfy user del).";
+
+function isAdminSocketOnly(r: { status: number; data: unknown; rawText?: string }): boolean {
+  if (r.status !== 403) return false;
+  const code = (r.data as { code?: number } | null)?.code;
+  return code === 40302 || (r.rawText ?? "").includes("local admin socket");
+}
+
+function sendUserResult(
+  res: import("express").Response,
+  r: { ok: boolean; status: number; data: unknown; rawText?: string; error?: string }
+) {
+  if (isAdminSocketOnly(r)) {
+    res.status(403).json({
+      ok: false,
+      status: 403,
+      data: r.data,
+      error: ADMIN_SOCKET_MESSAGE,
+      reason: "admin_socket_only"
+    });
+    return;
+  }
+  res.status(r.status || 502).json({ ok: r.ok, data: r.data, status: r.status });
+}
+
 ntfyRouter.put("/users", async (req, res) => {
   const schema = z.object({
     username: z.string().min(1),
@@ -77,9 +111,14 @@ ntfyRouter.put("/users", async (req, res) => {
     role: z.enum(["admin", "user"]).optional()
   });
   const body = schema.parse(req.body);
-  const r = await ntfyRequest("PUT", "/v1/users", { session: req.session, body });
+  // ntfy 2.37 answers 403 (admin socket only) as soon as the request body has a
+  // "role" field, even "user". Creating a user and changing a password work
+  // without it, and a new user is a regular user anyway, so never forward the
+  // role. The panel already tells the admin to run `ntfy user change-role`.
+  const forwarded = { username: body.username, password: body.password };
+  const r = await ntfyRequest("PUT", "/v1/users", { session: req.session, body: forwarded });
   audit(r.ok ? "INFO" : "WARN", "users", `PUT user ${body.username} → ${r.status}`);
-  res.status(r.status || 502).json({ ok: r.ok, data: r.data, status: r.status });
+  sendUserResult(res, r);
 });
 
 ntfyRouter.delete("/users", async (req, res) => {
@@ -87,7 +126,7 @@ ntfyRouter.delete("/users", async (req, res) => {
   const body = schema.parse(req.body);
   const r = await ntfyRequest("DELETE", "/v1/users", { session: req.session, body });
   audit(r.ok ? "INFO" : "WARN", "users", `DELETE user ${body.username} → ${r.status}`);
-  res.status(r.status || 502).json({ ok: r.ok, data: r.data, status: r.status });
+  sendUserResult(res, r);
 });
 
 // ---------------------------------------------------------------------------
@@ -129,9 +168,28 @@ ntfyRouter.delete("/access", async (req, res) => {
 // Account / Reservations
 // ---------------------------------------------------------------------------
 
+/**
+ * ntfy lists the full access tokens of the account in /v1/account. The panel
+ * never needs them (it only reads the username and the reservations), so hide
+ * all but the first characters before the response leaves the backend.
+ */
+function maskTokens(data: unknown): unknown {
+  if (!data || typeof data !== "object") return data;
+  const account = data as { tokens?: unknown };
+  if (!Array.isArray(account.tokens)) return data;
+  return {
+    ...account,
+    tokens: account.tokens.map((t) =>
+      t && typeof t === "object" && typeof (t as { token?: unknown }).token === "string"
+        ? { ...t, token: `${(t as { token: string }).token.slice(0, 7)}…` }
+        : t
+    )
+  };
+}
+
 ntfyRouter.get("/account", async (req, res) => {
   const r = await ntfyRequest("GET", "/v1/account", { session: req.session });
-  res.status(r.status || 502).json({ ok: r.ok, data: r.data, status: r.status });
+  res.status(r.status || 502).json({ ok: r.ok, data: maskTokens(r.data), status: r.status });
 });
 
 /**

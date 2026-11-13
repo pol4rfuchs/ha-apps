@@ -454,7 +454,7 @@
         <h3>⚡ Minimum Configuration</h3>
         <p>Use this first, then expose only the required client ports. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the app options.</p>
         <pre><code>license_accepted: true
-query_admin_password: ""   # empty = generated, printed in the log on first start</code></pre>
+query_admin_password: ""   # set it; empty = generated, hidden in the log</code></pre>
       </div>
       <div class="quick-card glass-card">
         <h3>🧭 Runbook Health Matrix</h3>
@@ -611,7 +611,7 @@ Data:       /data/teamspeak6</code></pre>
 <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
 <tbody>
 <tr><td><code>license_accepted</code></td><td><code>false</code></td><td>Must be <code>true</code> (you accept the TeamSpeak server license), otherwise the app refuses to start.</td></tr>
-<tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password of the ServerQuery login <code>serveradmin</code>. If empty, TeamSpeak generates one on the first start and prints it in the log.</td></tr>
+<tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password of the ServerQuery login <code>serveradmin</code>. Set it: it is applied at every start. If empty, TeamSpeak generates one on the first start; the app hides it in the log.</td></tr>
 <tr><td><code>log_level</code></td><td><code>3</code></td><td>TeamSpeak log level <code>0</code>–<code>4</code> (0 Critical · 1 Error · 2 Warning · 3 Info · 4 Debug).</td></tr>
 </tbody>
 </table>
@@ -621,7 +621,6 @@ Data:       /data/teamspeak6</code></pre>
 <tbody>
 <tr><td><code>9987</code></td><td>UDP</td><td>Voice connections.</td></tr>
 <tr><td><code>30033</code></td><td>TCP</td><td>File transfers.</td></tr>
-<tr><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td></tr>
 <tr><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td></tr>
 <tr><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery; required for TS6 Manager.</td></tr>
 </tbody>
@@ -644,7 +643,6 @@ Data:       /data/teamspeak6</code></pre>
 <tbody>
 <tr><td><code>9987</code></td><td><strong>UDP</strong></td><td>Voice port for TeamSpeak clients.</td><td>✅ Yes</td></tr>
 <tr><td><code>30033</code></td><td>TCP</td><td>File transfer.</td><td>✅ Optional</td></tr>
-<tr><td><code>10011</code></td><td>TCP</td><td>Raw ServerQuery.</td><td>⛔ No</td></tr>
 <tr><td><code>10022</code></td><td>TCP</td><td>SSH ServerQuery.</td><td>⛔ No</td></tr>
 <tr><td><code>10080</code></td><td>TCP</td><td>HTTP WebQuery / Manager connection.</td><td>⛔ No</td></tr>
 </tbody>
@@ -684,11 +682,10 @@ token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></pre>
 </ol>
 <blockquote><strong>Save immediately:</strong> The token is one-time only and only visible on first start or when regenerated.</blockquote>
 <h2>ServerQuery Admin</h2>
-<p>For query/automation, the built-in <code>serveradmin</code> account is available. If no password was set, the generated password must be retrieved from the log.</p>
-<pre><code>ServerAdmin password: &lt;generated-password&gt;</code></pre>
+<p>For query/automation, the built-in <code>serveradmin</code> account is available. Set <code>query_admin_password</code> to get a login you know: it is applied at every start. The generated password of the first start is hidden in the log (<code>&lt;hidden&gt;</code>).</p>
 <h2>Generate a New Privilege Key via ServerQuery</h2>
-<pre><code>telnet &lt;HA-IP&gt; 10011
-login serveradmin &lt;query-password&gt;
+<pre><code>ssh -p 10022 serveradmin@&lt;HA-IP&gt;
+# password: your query_admin_password
 use sid=1
 tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 
@@ -811,7 +808,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 <ul>
 <li><strong>Only voice port public:</strong> <code>9987/udp</code>.</li>
 <li><strong>File transfer optional:</strong> <code>30033/tcp</code>, only if needed.</li>
-<li><strong>Query private:</strong> <code>10011</code>, <code>10022</code>, <code>10080</code> never exposed to the internet.</li>
+<li><strong>Query private:</strong> <code>10022</code>, <code>10080</code> never exposed to the internet.</li>
 <li><strong>Secure the query admin password</strong> and never commit it to Git.</li>
 <li><strong>Save the Privilege Key immediately</strong> and do not store it publicly after use.</li>
 <li><strong>Backups before updates</strong>, because beta software and server data are critical.</li>
@@ -851,8 +848,8 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 <li>If the token is truly gone: regenerate via ServerQuery.</li>
 <li>Use the new token in the client immediately.</li>
 </ol>
-<pre><code>telnet &lt;HA-IP&gt; 10011
-login serveradmin &lt;query-password&gt;
+<pre><code>ssh -p 10022 serveradmin@&lt;HA-IP&gt;
+# password: your query_admin_password
 use sid=1
 tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <h2>Clients Cannot Connect Externally</h2>
@@ -973,7 +970,7 @@ tokenadd tokentype=0 tokenid1=6 tokenid2=0</code></pre>
 <p>The beta license limits the server to a single virtual server instance. Multi-server hosting is not available in the current beta.</p>
 
 <h2>Query Ports Must Stay Private</h2>
-<p>Ports <code>10011</code>, <code>10022</code>, and <code>10080</code> must never be exposed to the internet. They provide full administrative access to the server and have no built-in rate limiting or brute force protection beyond the allowlist.</p>
+<p>Ports <code>10022</code> and <code>10080</code> must never be exposed to the internet. They provide full administrative access to the server. The password (or API key) is their only protection: <code>query_ip_allowlist.txt</code> is not an access list, it only exempts addresses from the flood protection (tested).</p>
       </div>
     </article>
 

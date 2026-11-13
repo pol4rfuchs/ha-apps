@@ -81,7 +81,7 @@ Full admin control panel for an ntfy server running as a HAOS app.
 
 | Option | Default | Description |
 |--------|---------|--------------|
-| `ntfy_base_url` | `http://homeassistant.local:4280` | URL of the ntfy server |
+| `ntfy_base_url` | `http://9bf6aa7c-ntfy:4280` | URL of the ntfy server. The default is the internal name of the ntfy app from this repository; see [DOCS.md](DOCS.md) for when to use another address. |
 | `ntfy_auth_type` | `basic` | `none`, `basic` or `bearer` |
 | `ntfy_username` | `""` | Default username (for `basic`) |
 | `ntfy_password` | `""` | Default password (for `basic`) |

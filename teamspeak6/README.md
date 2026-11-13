@@ -23,7 +23,7 @@
 | **App version** | `1.1.25` |
 | **Voice port** | `9987/udp` |
 | **File transfer** | `30033/tcp` |
-| **ServerQuery** | `10011/tcp` (raw), `10022/tcp` (SSH), `10080/tcp` (HTTP) |
+| **ServerQuery** | `10022/tcp` (SSH), `10080/tcp` (HTTP) |
 | **Data** | `/data/teamspeak6` (included in Home Assistant backups, except the log files in logs/) |
 
 ---
@@ -52,7 +52,7 @@
 | Option | Default | Description |
 |---|---|---|
 | `license_accepted` | `false` | Must be `true`: you accept the TeamSpeak server license. |
-| `query_admin_password` | — | Password of the ServerQuery login `serveradmin`. If empty, TeamSpeak generates one on the first start and prints it in the log. |
+| `query_admin_password` | — | Password of the ServerQuery login `serveradmin`. **Set it.** It is applied at every start, so it also works if you add or change it later (tested). If empty, TeamSpeak generates one on the first start; the app hides it in the log, so you cannot read it. |
 | `log_level` | `3` | TeamSpeak log level, `0`–`4` (higher is more verbose). |
 
 The ports are fixed. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the app options.
@@ -65,11 +65,10 @@ The ports are fixed. Server name, server password and slot count are set in the 
 |---|---|---|
 | `9987` | UDP | Voice |
 | `30033` | TCP | File transfer |
-| `10011` | TCP | ServerQuery (raw) |
 | `10022` | TCP | ServerQuery (SSH) |
 | `10080` | TCP | ServerQuery (HTTP) |
 
-Only `9987/udp` (and `30033/tcp` for file transfer) are meant to be forwarded on your router for friends outside your network. Keep the three ServerQuery ports inside your LAN or behind a VPN. See *Local and external access* in [DOCS.md](DOCS.md).
+Only `9987/udp` (and `30033/tcp` for file transfer) are meant to be forwarded on your router for friends outside your network. Keep the two ServerQuery ports inside your LAN or behind a VPN. See *Local and external access* in [DOCS.md](DOCS.md).
 
 ---
 
@@ -78,16 +77,18 @@ Only `9987/udp` (and `30033/tcp` for file transfer) are meant to be forwarded on
 On the first start the log shows two things you need:
 
 - the **privilege key (token)**: `token=…` — paste it in the client under **Permissions → Use Privilege Key** to become server admin. It is shown **only once**.
-- the ServerQuery login `serveradmin` and its password (only if you left `query_admin_password` empty).
+- a note that the generated ServerQuery password and API key are **not** shown (the app hides them). To use ServerQuery, set `query_admin_password` and restart the app.
 
 If you missed the token, create a new one through ServerQuery:
 
 ```bash
-telnet <ha-host> 10011
-login serveradmin <your-query-password>
+ssh -p 10022 serveradmin@<ha-host>
+# password: your query_admin_password
 use sid=1
 tokenadd tokentype=0 tokenid1=6 tokenid2=0
 ```
+
+TeamSpeak 6 (version 6.0.0-beta13.1) has no raw ServerQuery port (`10011`, telnet) any more: the server only offers SSH, HTTP and HTTPS query interfaces (checked in the server's `--help` and by connecting to the running server: nothing listens on `10011`). This app enables SSH and HTTP.
 
 ---
 

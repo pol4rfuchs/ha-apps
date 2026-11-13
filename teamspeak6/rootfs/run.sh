@@ -165,8 +165,8 @@ if [ -f "${TOKEN_SHOWN_FILE}" ]; then
     echo "╔═══════════════════════════════════════════════════════════════╗"
     echo "║  WARNING                                                      ║"
     echo "║  The admin token is only visible in the log on FIRST start!   ║"
-    echo "║  If you lost it, create a new token via ServerQuery:          ║"
-    echo "║  telnet <pi-ip> 10011 -> login serveradmin <pw>               ║"
+    echo "║  If you lost it, create a new token via ServerQuery over SSH: ║"
+    echo "║  ssh -p 10022 serveradmin@<ha-host> (query_admin_password)    ║"
     echo "║  -> use sid=1 -> tokenadd tokentype=0 tokenid1=6 tokenid2=0   ║"
     echo "╚═══════════════════════════════════════════════════════════════╝"
     echo ""
@@ -175,6 +175,11 @@ fi
 export TSSERVER_LICENSE_ACCEPTED=accept
 export TSSERVER_QUERY_SSH_ENABLED=1
 export TSSERVER_QUERY_HTTP_ENABLED=1
+# Upstream allows unauthenticated guest sessions on the SSH and HTTP query
+# interfaces by default. Nobody needs them here (the API key or the serveradmin
+# password is used), so switch them off.
+export TSSERVER_QUERY_SSH_ALLOW_GUEST=0
+export TSSERVER_QUERY_HTTP_ALLOW_GUEST=0
 export TSSERVER_LOG_LEVEL="${LOG_LEVEL}"
 
 if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
@@ -225,7 +230,11 @@ if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
     TS_PID=$!
     TOKEN_FOUND=0
     while IFS= read -r line; do
-        echo "$line"
+        # On the very first start TeamSpeak prints the generated ServerQuery
+        # password and API key in clear text. Hide both so they never end up in
+        # the Supervisor log; query_admin_password is the way to get a known
+        # password (it is applied at every start).
+        printf '%s\n' "$line" | sed -E 's/(password|apikey)= "[^"]*"/\1= "<hidden>"/g'
         if [ "${TOKEN_FOUND}" = "0" ] && echo "$line" | grep -q "token="; then
             TOKEN="$(echo "$line" | grep -o 'token=[^ ]*' | head -1)"
             echo ""
@@ -240,6 +249,10 @@ if [ ! -f "${TOKEN_SHOWN_FILE}" ] && [ "${EXISTING_SERVER_STATE}" = "0" ]; then
             echo ""
             touch "${TOKEN_SHOWN_FILE}"
             TOKEN_FOUND=1
+            if [ -z "${QUERY_ADMIN_PASSWORD}" ]; then
+                echo "[INFO] The generated ServerQuery password is not shown in the log."
+                echo "[INFO] To use ServerQuery, set query_admin_password and restart the app."
+            fi
         fi
     done < "${_FIFO}"
     rm -f "${_FIFO}"
