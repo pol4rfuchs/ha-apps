@@ -19,7 +19,7 @@ See [DOCS.md](DOCS.md) for setup, credentials, network access and open items.
 | Property | Value |
 |---|---|
 | **Ketesa version** | `v1.5.2` |
-| **App version** | `0.2.2` |
+| **App version** | `0.2.3` |
 | **Port** | `8091` (basic-auth protected, LAN or VPN only) |
 | **Arch** | `amd64`, `aarch64` |
 
