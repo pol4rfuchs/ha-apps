@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/pol4rfuchs/ha-apps/compare/linkwarden-v0.1.0...linkwarden-v0.2.0) (2026-11-13)
+
+
+### Features
+
+* **linkwarden:** optional limits and a list for any other setting ([#884](https://github.com/pol4rfuchs/ha-apps/issues/884)) ([bfd6b68](https://github.com/pol4rfuchs/ha-apps/commit/bfd6b68310f605d99ba172b38476b30a2b73d8ad))
+
 ## [0.1.0](https://github.com/pol4rfuchs/ha-apps/compare/linkwarden-v0.0.1...linkwarden-v0.1.0) (2026-11-13)
 
 
