@@ -1,6 +1,6 @@
 ---
 name: "Linkwarden"
-version: "0.2.0"
+version: "0.3.0"
 slug: "linkwarden"
 description: "Linkwarden - self-hosted bookmark manager that archives pages as PDF, screenshot and readable copy, with built-in PostgreSQL"
 url: "https://github.com/pol4rfuchs/ha-apps"
