@@ -14,7 +14,7 @@
   "matrix_auth_service": "1.0.8",
   "matrix_ketesa": "0.2.2",
   "unifi_toolkit": "0.2.1",
-  "unifi_os_control_center": "0.7.12",
+  "unifi_os_control_center": "0.7.13",
   "vaultwarden": "0.2.2",
   "cortendesk": "0.2.4",
   "netbox": "0.1.1"
