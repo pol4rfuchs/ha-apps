@@ -17,5 +17,6 @@
   "unifi_os_control_center": "0.7.13",
   "vaultwarden": "0.2.2",
   "cortendesk": "0.2.4",
+  "linkwarden": "0.0.1",
   "netbox": "0.1.2"
 }

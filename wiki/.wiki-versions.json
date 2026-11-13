@@ -20,5 +20,6 @@
   "unifi_toolkit": "0.2.0",
   "vaultwarden": "0.2.2",
   "cortendesk": "0.2.3",
-  "netbox": "0.1.1"
+  "netbox": "0.1.1",
+  "linkwarden": "0.0.1"
 }

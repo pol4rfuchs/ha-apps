@@ -31,7 +31,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
       # Checks that must be present and green (the required checks of the main ruleset).
       REQUIRED_CHECKS: "Repository shape and monorepo contract|Validate squash-merge title|AppArmor profiles"
-      DB_APPS: "forgejo nextcloud matrix_synapse matrix_auth_service vaultwarden cortendesk restic_backup"
+      DB_APPS: "forgejo nextcloud matrix_synapse matrix_auth_service vaultwarden cortendesk restic_backup linkwarden"
       # Minutes since the last commit before a PR may be merged, so path-filtered checks (build test) have started.
       MIN_AGE_MINUTES: "45"
       # Cooldown for fast-lane upstream PRs, counted from the commit that workflow 07/23 created. A release that is

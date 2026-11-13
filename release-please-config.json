@@ -123,6 +123,13 @@
       "include-component-in-tag": true,
       "tag-separator": "-",
       "prerelease": true
+    },
+    "linkwarden": {
+      "release-type": "simple",
+      "component": "linkwarden",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "prerelease": true
     }
   }
 }

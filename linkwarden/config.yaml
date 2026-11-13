@@ -1,0 +1,42 @@
+---
+name: "Linkwarden"
+version: "0.0.1"
+slug: "linkwarden"
+description: "Linkwarden - self-hosted bookmark manager that archives pages as PDF, screenshot and readable copy, with built-in PostgreSQL"
+url: "https://github.com/pol4rfuchs/ha-apps"
+arch:
+  - aarch64
+  - amd64
+image: "ghcr.io/pol4rfuchs/linkwarden"
+stage: experimental
+init: false
+ports:
+  3200/tcp: 3200
+ports_description:
+  3200/tcp: "Linkwarden web UI and API (login required)"
+webui: "http://[HOST]:[PORT:3200]"
+map:
+  - type: addon_config
+    read_only: false
+# Cold backup: the Supervisor stops the app, copies /data (PostgreSQL files are consistent) and starts it again.
+backup: cold
+# PostgreSQL writes its data on shutdown.
+timeout: 60
+# AppArmor stays off until a profile is tested on a Raspberry Pi (enforce mode cannot be tested elsewhere), like netbox.
+apparmor: false
+
+options:
+  log_level: "info"
+  public_url: ""
+  browser_url: ""
+  disable_browser: false
+  disable_registration: false
+  archive_take_count: 1
+schema:
+  log_level: "list(debug|info|warning|error)"
+  public_url: "str"
+  # The URL of a remote browser (for example Browserless) usually contains a token, so it is a password.
+  browser_url: "password"
+  disable_browser: "bool"
+  disable_registration: "bool"
+  archive_take_count: "int(1,10)"

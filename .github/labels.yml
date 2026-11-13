@@ -102,6 +102,9 @@
 - name: "addon/netbox"
   color: "0b5ea8"
   description: "Affects the NetBox add-on"
+- name: "addon/linkwarden"
+  color: "1e88e5"
+  description: "Affects the Linkwarden add-on"
 # ── Wiki ───────────────────────────────────────────────────────────────────────
 - name: "wiki-drift"
   color: "fbca04"

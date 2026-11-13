@@ -130,6 +130,12 @@
     },
     {
       "matchFileNames": [
+        "linkwarden/**"
+      ],
+      "semanticCommitScope": "linkwarden"
+    },
+    {
+      "matchFileNames": [
         "matrix_ketesa/**"
       ],
       "semanticCommitScope": "matrix_ketesa"
@@ -220,6 +226,7 @@
         "vaultwarden/**",
         "cortendesk/**",
         "netbox/**",
+        "linkwarden/**",
         "restic_backup/**"
       ],
       "automerge": false
