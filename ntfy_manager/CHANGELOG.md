@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.18](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.17...ntfy_manager-v0.2.18) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** findings from the HAOS test run (teamspeak6, ntfy, ntfy_manager) ([#888](https://github.com/pol4rfuchs/ha-apps/issues/888)) ([dfffcf8](https://github.com/pol4rfuchs/ha-apps/commit/dfffcf8188a169fb50f2ee03cecbcb53a1e9edae))
+
 ## [0.2.17](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.16...ntfy_manager-v0.2.17) (2026-10-25)
 
 
