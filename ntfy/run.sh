@@ -283,5 +283,9 @@ create_admin "${ADMIN_USER}" "${ADMIN_PASS}"
 provision_admin_tier "${ADMIN_USER}"
 provision_ha_token "${ADMIN_USER}"
 
-bashio::log.info "Starting ntfy → http://homeassistant.local:4280"
+if [ -n "${BASE_URL}" ]; then
+    bashio::log.info "Starting ntfy on port 4280 (base-url: ${BASE_URL})"
+else
+    bashio::log.info "Starting ntfy on port 4280 (open it at http://<ha-host>:4280)"
+fi
 exec ntfy serve --config="${CONFIG_FILE}" 2>&1

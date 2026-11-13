@@ -33,7 +33,7 @@ Admin user 'admin' ready
 HA integration token created:
   tk_XXXXXXXXXXXXXXXX
   Saved to: /data/ntfy/ha_token.txt
-Starting ntfy → http://homeassistant.local:4280
+Starting ntfy on port 4280 (open it at http://<ha-host>:4280)
 ```
 
 ### Step 4 — Open the web UI
