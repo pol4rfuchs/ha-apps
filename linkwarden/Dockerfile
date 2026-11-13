@@ -87,14 +87,17 @@ RUN chown -R linkwarden:linkwarden /opt/linkwarden/apps/web/.next/cache \
       /etc/s6-overlay/s6-rc.d/worker/finish
 
 # Smoke test: the copied binaries run on this base image, the application tools are in place, PostgreSQL is
-# installed and the browser starts (all shared libraries are present).
+# installed and the browser starts (all shared libraries are present). Playwright names the browser differently per
+# architecture (amd64: chrome-headless-shell-linux64/chrome-headless-shell, arm64: chrome-linux/headless_shell),
+# so it is searched for, not spelled out.
 RUN node --version \
     && monolith --version \
     && /opt/linkwarden/node_modules/.bin/tsx --version \
     && /opt/linkwarden/node_modules/.bin/next --version \
     && /opt/linkwarden/node_modules/.bin/prisma --version \
     && ( set -- /usr/lib/postgresql/*/bin/postgres && "$1" --version ) \
-    && ( set -- /ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux*/chrome-headless-shell && "$1" --version )
+    && ( browser="$(find /ms-playwright -type f \( -name chrome-headless-shell -o -name headless_shell \) -perm -u+x -print -quit)" \
+         && [ -n "${browser}" ] && "${browser}" --version )
 
 ENV LANG=C.utf8
 
