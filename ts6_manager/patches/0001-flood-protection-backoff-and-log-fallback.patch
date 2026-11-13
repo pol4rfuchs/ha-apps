@@ -1,0 +1,398 @@
+diff --git a/packages/backend/src/routes/logs.routes.test.ts b/packages/backend/src/routes/logs.routes.test.ts
+new file mode 100644
+index 0000000..928f5b9
+--- /dev/null
++++ b/packages/backend/src/routes/logs.routes.test.ts
+@@ -0,0 +1,57 @@
++import { describe, it, expect, vi } from 'vitest';
++import express from 'express';
++import type { AddressInfo } from 'net';
++import { logRoutes } from './logs.routes.js';
++import { TSApiError } from '../middleware/error-handler.js';
++
++async function get(execute: any, query = '') {
++  const app = express();
++  app.locals.connectionPool = { getClient: () => ({ execute }) };
++  app.use((req: any, _res, next) => { req.user = { role: 'admin' }; next(); });
++  app.use('/api/servers/:configId/vs/:sid/logs', logRoutes);
++  app.use((err: any, _req: any, res: any, _next: any) =>
++    res.status(err instanceof TSApiError ? 502 : 500).json({ error: err.message, code: err.code }));
++  const server = app.listen(0);
++  try {
++    const { port } = server.address() as AddressInfo;
++    const r = await fetch(`http://127.0.0.1:${port}/api/servers/1/vs/1/logs${query}`);
++    return { status: r.status, body: await r.json() };
++  } finally {
++    server.close();
++  }
++}
++
++describe('server logs route', () => {
++  it('returns the log of the virtual server when TeamSpeak has one', async () => {
++    const execute = vi.fn().mockResolvedValue([{ l: 'x' }]);
++    const r = await get(execute, '?lines=100&reverse=1');
++    expect(r.status).toBe(200);
++    expect(r.body).toEqual([{ l: 'x' }]);
++    expect(execute).toHaveBeenCalledTimes(1);
++  });
++
++  it('shows the instance log with an explanation when the virtual server has no log file yet (error 2052)', async () => {
++    const execute = vi.fn()
++      .mockRejectedValueOnce(new TSApiError(2052, 'file input/output error'))
++      .mockResolvedValueOnce([{ l: 'instance line' }]);
++    const r = await get(execute);
++    expect(r.status).toBe(200);
++    expect(execute.mock.calls[1][2].instance).toBe(1);
++    expect(r.body[0].l).toMatch(/has not written a log for virtual server 1/);
++    expect(r.body[1]).toEqual({ l: 'instance line' });
++  });
++
++  it('keeps other TeamSpeak errors as they are', async () => {
++    const execute = vi.fn().mockRejectedValue(new TSApiError(2568, 'insufficient client permissions'));
++    const r = await get(execute);
++    expect(r.status).toBe(502);
++    expect(execute).toHaveBeenCalledTimes(1);
++  });
++
++  it('does not fall back when the instance log itself was asked for', async () => {
++    const execute = vi.fn().mockRejectedValue(new TSApiError(2052, 'file input/output error'));
++    const r = await get(execute, '?instance=1');
++    expect(r.status).toBe(502);
++    expect(execute).toHaveBeenCalledTimes(1);
++  });
++});
+diff --git a/packages/backend/src/routes/logs.routes.ts b/packages/backend/src/routes/logs.routes.ts
+index ddd00e4..3e594ca 100644
+--- a/packages/backend/src/routes/logs.routes.ts
++++ b/packages/backend/src/routes/logs.routes.ts
+@@ -1,6 +1,7 @@
+ import { Router, Request, Response } from 'express';
+ import { requireRole } from '../middleware/rbac.js';
+ import type { ConnectionPool } from '../ts-client/connection-pool.js';
++import { TSApiError } from '../middleware/error-handler.js';
+ 
+ export const logRoutes: Router = Router({ mergeParams: true });
+ 
+@@ -15,12 +16,32 @@ const getClient = (req: Request) => {
+ const getSid = (req: Request) => parseInt(String(req.params.sid));
+ 
+ logRoutes.get('/', async (req: Request, res: Response, next) => {
++  const logview = (instance: unknown) => getClient(req).execute(getSid(req), 'logview', {
++    lines: req.query.lines || 100,
++    reverse: req.query.reverse || 1,
++    instance,
++    begin_pos: req.query.begin_pos,
++  });
+   try {
+-    res.json(await getClient(req).execute(getSid(req), 'logview', {
+-      lines: req.query.lines || 100,
+-      reverse: req.query.reverse || 1,
+-      instance: req.query.instance || 0,
+-      begin_pos: req.query.begin_pos,
+-    }));
+-  } catch (err) { next(err); }
++    res.json(await logview(req.query.instance || 0));
++  } catch (err) {
++    // TeamSpeak creates the log file of a virtual server with its first log
++    // line, so right after a start of the server logview answers 2052 "file
++    // input/output error". That is not a failure of this app: show the
++    // instance log (which exists from the start) and say why.
++    if (err instanceof TSApiError && err.code === 2052 && String(req.query.instance || 0) === '0') {
++      try {
++        const instanceLog = await logview(1);
++        const stamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
++        res.json([
++          {
++            l: `${stamp}|INFO    |ts6-manager  |   |TeamSpeak has not written a log for virtual server ${getSid(req)} since it started: it creates that file with the first event (for example a client joining). The instance log is shown instead.`,
++          },
++          ...(Array.isArray(instanceLog) ? instanceLog : []),
++        ]);
++        return;
++      } catch { /* fall through to the original error */ }
++    }
++    next(err);
++  }
+ });
+diff --git a/packages/backend/src/ts-client/webquery-client.test.ts b/packages/backend/src/ts-client/webquery-client.test.ts
+index 38666ca..d7282f6 100644
+--- a/packages/backend/src/ts-client/webquery-client.test.ts
++++ b/packages/backend/src/ts-client/webquery-client.test.ts
+@@ -107,3 +107,100 @@ describe('WebQueryClient stale keep-alive retry', () => {
+     client.destroy();
+   });
+ });
++
++describe('WebQueryClient flood protection', () => {
++  it('shares one request between identical concurrent read-only calls and reuses the answer for a moment', async () => {
++    const client = new WebQueryClient('10.0.0.1', 10080, 'key');
++    const get = vi.fn().mockResolvedValue(okResponse({ list: [1, 2] }));
++    pinTransport(client, { get });
++
++    const [a, b, c] = await Promise.all([
++      client.execute(1, 'channellist'),
++      client.execute(1, 'channellist'),
++      client.execute(1, 'channellist'),
++    ]);
++    expect(get).toHaveBeenCalledTimes(1);
++    expect(a).toEqual({ list: [1, 2] });
++    expect(b).toEqual(a);
++    expect(c).toEqual(a);
++    // a different command or different parameters is a different request
++    await client.execute(1, 'clientlist');
++    await client.execute(1, 'channellist', { x: 1 });
++    expect(get).toHaveBeenCalledTimes(3);
++    client.destroy();
++  });
++
++  it('does not cache commands that change something and drops the cache after them', async () => {
++    const client = new WebQueryClient('10.0.0.1', 10080, 'key');
++    const get = vi.fn().mockResolvedValue(okResponse());
++    pinTransport(client, { get });
++
++    await client.execute(1, 'channellist');
++    await client.execute(1, 'channelcreate', { channel_name: 'a' });
++    await client.execute(1, 'channelcreate', { channel_name: 'a' });
++    await client.execute(1, 'channellist');
++    expect(get).toHaveBeenCalledTimes(4);
++    client.destroy();
++  });
++
++  it('keeps the requests below the server flood limit', async () => {
++    vi.useFakeTimers();
++    try {
++      const client = new WebQueryClient('10.0.0.1', 10080, 'key');
++      const times: number[] = [];
++      const get = vi.fn().mockImplementation(async () => { times.push(Date.now()); return okResponse(); });
++      pinTransport(client, { get });
++
++      // 10 different requests for a virtual server (2 commands each for the server)
++      const all = Promise.all(Array.from({ length: 10 }, (_, i) => client.execute(1, 'channelinfo', { cid: i })));
++      await vi.advanceTimersByTimeAsync(20_000);
++      await all;
++      expect(get).toHaveBeenCalledTimes(10);
++      // never more than 8 commands (= 4 requests) within any 3 s window
++      for (let i = 0; i < times.length; i++) {
++        const inWindow = times.filter((t) => t >= times[i] && t < times[i] + 3000).length;
++        expect(inWindow * 2).toBeLessThanOrEqual(8);
++      }
++      client.destroy();
++    } finally {
++      vi.useRealTimers();
++    }
++  });
++
++  it('stops sending after "client is flooding" and says what to do', async () => {
++    const client = new WebQueryClient('10.0.0.1', 10080, 'key');
++    const get = vi.fn().mockResolvedValue({ data: { status: { code: 524, message: 'client is flooding' } } });
++    pinTransport(client, { get });
++
++    await expect(client.execute(1, 'serverinfo')).rejects.toThrow(/client is flooding/);
++    // while the backoff lasts nothing is sent to the server
++    for (let i = 0; i < 5; i++) {
++      await expect(client.execute(1, 'clientlist')).rejects.toThrow(/query_ip_allowlist/);
++    }
++    expect(get).toHaveBeenCalledTimes(1);
++    // our own notice must not extend the backoff
++    const until = (client as any).floodUntil;
++    await expect(client.execute(1, 'clientlist')).rejects.toThrow();
++    expect((client as any).floodUntil).toBe(until);
++    client.destroy();
++  });
++
++  it('asks again after the backoff and forgets it after a success', async () => {
++    vi.useFakeTimers();
++    try {
++      const client = new WebQueryClient('10.0.0.1', 10080, 'key');
++      const get = vi.fn()
++        .mockResolvedValueOnce({ data: { status: { code: 524, message: 'client is flooding' } } })
++        .mockResolvedValue(okResponse());
++      pinTransport(client, { get });
++
++      await expect(client.execute(1, 'serverinfo')).rejects.toThrow(/flooding/);
++      await vi.advanceTimersByTimeAsync(31_000);
++      await expect(client.execute(1, 'clientlist')).resolves.toEqual({ ok: 1 });
++      expect((client as any).floodBackoffMs).toBe(0);
++      client.destroy();
++    } finally {
++      vi.useRealTimers();
++    }
++  });
++});
+diff --git a/packages/backend/src/ts-client/webquery-client.ts b/packages/backend/src/ts-client/webquery-client.ts
+index 925b160..8eae209 100644
+--- a/packages/backend/src/ts-client/webquery-client.ts
++++ b/packages/backend/src/ts-client/webquery-client.ts
+@@ -13,6 +13,30 @@ export class WebQueryClient {
+   // reset attempt per window, then fail fast.
+   private static readonly RESET_COOLDOWN_MS = 5000;
+ 
++  // TeamSpeak 6 bans a query client that sends more than
++  // serverinstance_serverquery_flood_commands (default 10) commands within
++  // flood_time (default 3 s) for ban_time (default 600 s), and a request with a
++  // virtual server id ("/{sid}/{command}") counts as two commands (use + the
++  // command). A page that loads several lists at once easily crosses that, and
++  // the ban then outlasts a restart of this app. So requests are paced to stay
++  // below the default limit, and when the server still answers "flooding" no
++  // further request is sent for a while (backoff) instead of feeding the ban.
++  private static readonly FLOOD_WINDOW_MS = 3000;
++  private static readonly FLOOD_BUDGET = 8;
++  private static readonly FLOOD_BACKOFF_START_MS = 30_000;
++  private static readonly FLOOD_BACKOFF_MAX_MS = 300_000;
++  private sentCommands: { at: number; weight: number }[] = [];
++  private floodUntil = 0;
++  private floodBackoffMs = 0;
++
++  // A page often asks for the same list several times in a row (several
++  // components, quick reloads). Identical read-only requests that are already
++  // running share one answer, and the answer is reused for a second.
++  private static readonly READ_ONLY = /^(?:[a-z]+(?:list|info|find)|version|whoami|logview)$/;
++  private static readonly READ_CACHE_MS = 1000;
++  private inflight = new Map<string, Promise<any>>();
++  private readCache = new Map<string, { at: number; value: any }>();
++
+   constructor(
+     private host: string,
+     private port: number,
+@@ -79,14 +103,97 @@ export class WebQueryClient {
+     }
+   }
+ 
++  private toApiError(error: any): TSApiError {
++    let apiError: TSApiError;
++    if (error instanceof TSApiError) apiError = error;
++    else if (error.response?.data?.status) {
++      apiError = new TSApiError(error.response.data.status.code, error.response.data.status.message);
++    } else apiError = new TSApiError(-1, error.message || 'Connection failed');
++    if (this.isFloodError(apiError)) this.noteFlood();
++    return apiError;
++  }
++
++  private isFloodError(error: any): boolean {
++    return error instanceof TSApiError && !(error as any).floodBlocked && /flood/i.test(error.message);
++  }
++
++  private assertNotFloodBlocked(): void {
++    const left = this.floodUntil - Date.now();
++    if (left > 0) {
++      const blocked = new TSApiError(
++        -1,
++        `TeamSpeak flood protection is active for this client; waiting ${Math.ceil(left / 1000)} s before asking again. ` +
++          'Add the Supervisor network to query_ip_allowlist in the TeamSpeak 6 app.',
++      );
++      (blocked as any).floodBlocked = true; // our own message, not a new report from the server
++      throw blocked;
++    }
++  }
++
++  private noteFlood(): void {
++    this.floodBackoffMs = Math.min(
++      this.floodBackoffMs ? this.floodBackoffMs * 2 : WebQueryClient.FLOOD_BACKOFF_START_MS,
++      WebQueryClient.FLOOD_BACKOFF_MAX_MS,
++    );
++    this.floodUntil = Date.now() + this.floodBackoffMs;
++    console.warn(`[WebQuery] TeamSpeak reports flooding for ${this.host}:${this.port}; pausing requests for ${Math.round(this.floodBackoffMs / 1000)} s`);
++  }
++
++  // Wait until sending one more request keeps the commands in the last
++  // FLOOD_WINDOW_MS below FLOOD_BUDGET.
++  private async pace(sid: number): Promise<void> {
++    const weight = sid > 0 ? 2 : 1;
++    for (;;) {
++      const now = Date.now();
++      this.sentCommands = this.sentCommands.filter((c) => now - c.at < WebQueryClient.FLOOD_WINDOW_MS);
++      const used = this.sentCommands.reduce((sum, c) => sum + c.weight, 0);
++      if (used + weight <= WebQueryClient.FLOOD_BUDGET) {
++        this.sentCommands.push({ at: now, weight });
++        return;
++      }
++      const wait = this.sentCommands[0].at + WebQueryClient.FLOOD_WINDOW_MS - now;
++      await new Promise((resolve) => setTimeout(resolve, Math.max(wait, 20)));
++    }
++  }
++
++  private async send<T>(sid: number, fn: () => Promise<T>): Promise<T> {
++    this.assertNotFloodBlocked();
++    await this.pace(sid);
++    this.assertNotFloodBlocked();
++    const result = await fn();
++    this.floodBackoffMs = 0;
++    return result;
++  }
++
+   async execute(sid: number, command: string, params?: Record<string, any>): Promise<any> {
++    if (!WebQueryClient.READ_ONLY.test(command)) {
++      this.readCache.clear();
++      return this.executeNow(sid, command, params);
++    }
++    const key = `${sid}:${command}:${JSON.stringify(this.cleanParams(params) ?? {})}`;
++    const cached = this.readCache.get(key);
++    if (cached && Date.now() - cached.at < WebQueryClient.READ_CACHE_MS) return structuredClone(cached.value);
++    let running = this.inflight.get(key);
++    if (!running) {
++      running = this.executeNow(sid, command, params)
++        .then((value) => {
++          this.readCache.set(key, { at: Date.now(), value });
++          return value;
++        })
++        .finally(() => this.inflight.delete(key));
++      this.inflight.set(key, running);
++    }
++    return structuredClone(await running);
++  }
++
++  private async executeNow(sid: number, command: string, params?: Record<string, any>): Promise<any> {
+     try {
+       // WebQuery URL pattern: /{sid}/{command}
+       // For instance-level commands (sid=0): /{command}
+       const path = sid > 0 ? `/${sid}/${command}` : `/${command}`;
+ 
+-      const response = await this.withStaleSocketRetry(() =>
+-        this.http.get(path, { params: this.cleanParams(params) })
++      const response = await this.send(sid, () =>
++        this.withStaleSocketRetry(() => this.http.get(path, { params: this.cleanParams(params) })),
+       );
+ 
+       const data = response.data;
+@@ -97,22 +204,16 @@ export class WebQueryClient {
+ 
+       return data.body || data;
+     } catch (error: any) {
+-      if (error instanceof TSApiError) throw error;
+-      if (error.response?.data?.status) {
+-        throw new TSApiError(
+-          error.response.data.status.code,
+-          error.response.data.status.message,
+-        );
+-      }
+-      throw new TSApiError(-1, error.message || 'Connection failed');
++      throw this.toApiError(error);
+     }
+   }
+ 
+   async executePost(sid: number, command: string, params?: Record<string, any>): Promise<any> {
++    this.readCache.clear();
+     try {
+       const path = sid > 0 ? `/${sid}/${command}` : `/${command}`;
+-      const response = await this.withStaleSocketRetry(() =>
+-        this.http.post(path, null, { params: this.cleanParams(params) })
++      const response = await this.send(sid, () =>
++        this.withStaleSocketRetry(() => this.http.post(path, null, { params: this.cleanParams(params) })),
+       );
+ 
+       const data = response.data;
+@@ -122,14 +223,7 @@ export class WebQueryClient {
+ 
+       return data.body || data;
+     } catch (error: any) {
+-      if (error instanceof TSApiError) throw error;
+-      if (error.response?.data?.status) {
+-        throw new TSApiError(
+-          error.response.data.status.code,
+-          error.response.data.status.message,
+-        );
+-      }
+-      throw new TSApiError(-1, error.message || 'Connection failed');
++      throw this.toApiError(error);
+     }
+   }
+ 

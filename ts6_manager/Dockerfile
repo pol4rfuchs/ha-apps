@@ -35,7 +35,15 @@ RUN git init . \
     && git fetch --depth 1 origin "${TS6_MANAGER_REF}" \
     && git checkout --detach FETCH_HEAD
 
-RUN pnpm install --frozen-lockfile
+# Patches on top of the pinned ref (patches/*.patch, applied in name order).
+# 0001: client-side flood protection pacing and backoff for the TeamSpeak 6
+# WebQuery client, and a readable server log page right after a TeamSpeak
+# start (see DOCS.md). `git apply` fails the build when a patch no longer
+# applies, for example after TS6_MANAGER_REF was moved: then check whether
+# the change is in the new ref and delete or refresh the patch.
+COPY patches/ /patches/
+RUN for p in /patches/*.patch; do git apply --verbose "$p"; done \
+    && pnpm install --frozen-lockfile
 
 # DL3003: use WORKDIR instead of cd
 WORKDIR /src/packages/backend
