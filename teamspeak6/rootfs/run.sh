@@ -175,6 +175,11 @@ fi
 export TSSERVER_LICENSE_ACCEPTED=accept
 export TSSERVER_QUERY_SSH_ENABLED=1
 export TSSERVER_QUERY_HTTP_ENABLED=1
+# Upstream allows unauthenticated guest sessions on the SSH and HTTP query
+# interfaces by default. Nobody needs them here (the API key or the serveradmin
+# password is used), so switch them off.
+export TSSERVER_QUERY_SSH_ALLOW_GUEST=0
+export TSSERVER_QUERY_HTTP_ALLOW_GUEST=0
 export TSSERVER_LOG_LEVEL="${LOG_LEVEL}"
 
 if [ -n "${QUERY_ADMIN_PASSWORD}" ]; then
