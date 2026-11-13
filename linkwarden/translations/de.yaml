@@ -38,5 +38,43 @@ configuration:
       Wie viele Links der Worker pro Runde nimmt, zum Archivieren und für das
       automatische Taggen. 1 ist am schonendsten für einen Raspberry Pi; nur
       erhöhen, wenn der Host reichlich RAM und CPU hat.
+  browser_timeout:
+    name: Zeitlimit des Browsers (Minuten)
+    description: >-
+      Längste Zeit, die eine Archivierung den Browser offen halten darf, in
+      Minuten. Dauert es länger, stoppt Linkwarden den Worker (die App startet
+      ihn neu) und das Log sagt es. Leer = der Standard von Linkwarden.
+  pdf_max_buffer:
+    name: Größtes PDF (MB)
+    description: >-
+      Größtes PDF, das behalten wird, in Megabyte. Eine größere Seite bekommt
+      kein PDF (das Log meldet Buffer size exceeded). Leer = der Standard von
+      Linkwarden.
+  screenshot_max_buffer:
+    name: Größter Screenshot (MB)
+    description: >-
+      Größter Screenshot, der behalten wird, in Megabyte. Leer = der Standard
+      von Linkwarden.
+  index_take_count:
+    name: Links pro Runde der Suchindizierung
+    description: >-
+      Wie viele Links der Suchindex pro Runde verarbeitet. Leer = der Standard
+      von Linkwarden.
+  env_vars:
+    name: Zusätzliche Umgebungsvariablen
+    description: >-
+      Einstellungen von Linkwarden, für die es hier keine eigene Option gibt,
+      zum Beispiel E-Mail, Single Sign-on, KI-Tags oder ein Proxy. Jeder
+      Eintrag ist ein Variablenname mit Wert. Die Werte werden wie Passwörter
+      ausgeblendet und nie ins Log geschrieben. Ein Name, den die App selbst
+      setzt, wird abgelehnt: Die App startet dann nicht, und das Log nennt den
+      Eintrag (siehe Dokumentation).
+    fields:
+      name:
+        name: Variablenname
+        description: Name der Umgebungsvariable, zum Beispiel EMAIL_FROM.
+      value:
+        name: Wert
+        description: Wert der Variable.
 network:
   3200/tcp: Linkwarden-Weboberfläche und API (Anmeldung erforderlich)

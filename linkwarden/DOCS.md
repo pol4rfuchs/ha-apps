@@ -24,7 +24,7 @@ Verbosity of the log output of Linkwarden and PostgreSQL: `debug`, `info`, `warn
 
 ### `public_url`
 
-The address under which you open Linkwarden, with `http://` or `https://`, for example `https://links.example.org`. It is passed to the login component as its base address. With a reverse proxy, use the public address of the proxy.
+Optional. The address under which you open Linkwarden, with `http://` or `https://`, for example `https://links.example.org`. It is passed to the login component as its base address. With a reverse proxy, use the public address of the proxy.
 
 ### `browser_url`
 
@@ -41,6 +41,23 @@ Refuses new accounts (default `false`). Create your own account first and switch
 ### `archive_take_count`
 
 How many links the worker takes per round, for archiving and for the automatic tagging of Linkwarden (default `1`, range 1 to 10). Raise it only if the host has plenty of RAM and CPU.
+
+### `browser_timeout`, `pdf_max_buffer`, `screenshot_max_buffer`, `index_take_count`
+
+Optional limits. **Empty means the default of Linkwarden**, so the app does not copy values that Linkwarden may change.
+
+- `browser_timeout` (minutes): the longest time one archiving session may keep the browser open. When it is exceeded, Linkwarden ends the worker with the message `Browser has been open for more than N minutes` and the app restarts the worker. The unit is minutes, not milliseconds.
+- `pdf_max_buffer` and `screenshot_max_buffer` (MB): the largest PDF or screenshot that is kept. A bigger page gets none and the log says `Buffer size exceeded`; the other formats are still created.
+- `index_take_count`: how many links the search index processes per round.
+
+### `env_vars`
+
+A list for every other setting of Linkwarden that has no option of its own, for example e-mail, single sign-on, AI tagging, a proxy or S3 storage. Each entry has a `name` (the environment variable) and a `value`. The names are the ones Linkwarden documents.
+
+- The values are protected fields (hidden like passwords) and are never written to the log. The log only lists the names.
+- A wrong entry stops the start, and the log names it: an invalid name, a name with the prefix `LW_`, `S6_` or `SUPERVISOR_`, or a name that the app sets itself: `DATABASE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `STORAGE_FOLDER`, `PLAYWRIGHT_WS_URL`, `PLAYWRIGHT_BROWSERS_PATH`, `NODE_ENV`, `NODE_OPTIONS`, `PATH`, `HOME`, `SHELL`, `USER`, `LD_PRELOAD`, `LD_LIBRARY_PATH`, `NEXT_TELEMETRY_DISABLED`, `PRISMA_HIDE_UPDATE_MESSAGE`, and the variables behind the options above (`DISABLE_BROWSER`, `NEXT_PUBLIC_DISABLE_REGISTRATION`, `ARCHIVE_TAKE_COUNT`, `BROWSER_TIMEOUT`, `PDF_MAX_BUFFER`, `SCREENSHOT_MAX_BUFFER`, `INDEX_TAKE_COUNT`). Use the option instead.
+- The app passes the variables on to Linkwarden. Whether a feature works with them (mail, single sign-on, AI) is not tested by this app.
+- Some variables loosen protections of Linkwarden or send data to other services. You take that responsibility when you set them. For example `ALLOW_PRIVATE_NETWORK_ACCESS=true` switches off the protection described below, and AI keys send page content to the provider.
 
 ## Remote browser
 
@@ -66,7 +83,7 @@ Use the JSON export of the old installation and import it here (both are in the 
 ## What the app sets on purpose
 
 - The database password and the login secret are generated at the first start, stored in `/data/linkwarden/secrets` and never shown. The database password is set again at every start.
-- Linkwarden **does not archive addresses in private networks**. In a test, a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services, and this app does not switch it off.
+- Linkwarden **does not archive addresses in private networks**. In a test, a page on a Docker-internal address was refused; other private addresses were not tried. That is its own protection against requests to internal services, and this app does not switch it off. It can be switched off with the variable `ALLOW_PRIVATE_NETWORK_ACCESS=true` in `env_vars` (it worked in a test); then Linkwarden can be made to request internal addresses by anyone who can log in, so only do that if you trust every user.
 - PostgreSQL runs as its own unprivileged user, the web app and the worker as the unprivileged user `linkwarden`.
 - If PostgreSQL or the web app crashes (also if the system kills it for lack of memory), the container stops, so the Supervisor sees it. The worker is restarted automatically.
 - AppArmor is switched off (`apparmor: false`), like in the NetBox app, until a profile has been tested on a Raspberry Pi.
@@ -92,7 +109,7 @@ The reverse proxy connects to `http://<ha-host>:3200`.
 ## Troubleshooting
 
 - **Login returns to the login page or fails:** `public_url` does not match the address in the browser (including `http` or `https` and the port).
-- **A link from your own network is not archived:** private network addresses are blocked by Linkwarden, see *What the app sets on purpose*.
+- **A link from your own network is not archived:** private network addresses are blocked by Linkwarden, see *What the app sets on purpose* for the variable that lifts it.
 - **`The remote browser at <host> is not reachable` in the log:** the app uses the built-in Chromium. Check the address, the port and the token; restart the app when the browser is up.
 - **A page has no PDF or no screenshot:** the page may block headless browsers or take very long to load. The other formats are still created.
 - **The app stops right after it starts and says it found another PostgreSQL version:** see *Backup and restore*.
