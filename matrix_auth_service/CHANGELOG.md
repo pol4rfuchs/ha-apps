@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.8...matrix_auth_service-v1.0.9) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** clear Supervisor warnings (translations network, app_config map) ([#870](https://github.com/pol4rfuchs/ha-apps/issues/870)) ([74b5408](https://github.com/pol4rfuchs/ha-apps/commit/74b54080a750ff55f3dff6fe9714a1c469764d57))
+
 ## [1.0.8](https://github.com/pol4rfuchs/ha-apps/compare/matrix_auth_service-v1.0.7...matrix_auth_service-v1.0.8) (2026-11-12)
 
 
