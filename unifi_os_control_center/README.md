@@ -3,7 +3,7 @@
 <div align="center">
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![App Version](https://img.shields.io/badge/UniFi%20OS%20Control%20Center-0.7.12-0559C9?style=for-the-badge&logo=ubiquiti&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
+[![App Version](https://img.shields.io/badge/UniFi%20OS%20Control%20Center-0.7.13-0559C9?style=for-the-badge&logo=ubiquiti&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 </div>
