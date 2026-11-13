@@ -7,6 +7,16 @@ configuration:
       Empfohlen: setzen. Es greift bei jedem Start, du kannst es also auch
       später setzen oder ändern. Ist es leer, erzeugt TeamSpeak beim ersten
       Start eines; es wird nicht im Log angezeigt.
+  query_ip_allowlist:
+    name: Allowlist für den Flood-Schutz der Query
+    description: >-
+      Adressen oder Netze, die TeamSpeak nicht sperrt, wenn sie zu viele
+      Query-Befehle senden (mehr als 10 in 3 Sekunden, Sperre 10 Minuten).
+      Nötig für andere Apps, die den Server abfragen, etwa den TS6 Manager.
+      Standard: das Home-Assistant-App-Netz 172.30.32.0/23. Loopback ist
+      immer dabei. Einträge: IP-Adresse oder Netz (IPv4-Präfix 16-32,
+      IPv6-Präfix 48-128); 0.0.0.0/0 und andere breite Netze werden
+      abgelehnt. Ersetzt manuelle Änderungen an query_ip_allowlist.txt.
   log_level:
     name: Log-Level
     description: "Detailgrad des Server-Loggings: 0=Kritisch, 1=Fehler, 2=Warnung, 3=Info, 4=Debug."

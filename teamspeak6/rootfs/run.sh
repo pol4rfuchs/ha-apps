@@ -124,9 +124,20 @@ migrate_legacy_data
 rm -f "${TS_SERVER_STORE}/"*.tmp 2>/dev/null || true
 sync_to_runtime
 
-# Clear TS6 logs on every restart
-rm -f "${TS_LOG_DIR}"/*.log 2>/dev/null || true
+# Logs: TeamSpeak writes one ever growing file per virtual server and per
+# instance (TSSERVER_APPEND_LOGS) instead of new files at every start. They are
+# kept across restarts because TeamSpeak creates the log file of a virtual
+# server only with its first log line; without the kept file the "Logs" page of
+# TS6 Manager (logview) fails right after every start. Files over 5 MiB are cut
+# to their last 1 MiB at start; the logs are not part of Home Assistant backups.
 mkdir -p "${TS_LOG_DIR}"
+rm -f "${TS_LOG_DIR}"/tsserver_20*.log 2>/dev/null || true   # per-start files of older versions of this app
+for log_file in "${TS_LOG_DIR}"/*.log; do
+    if [ -f "${log_file}" ] && [ "$(stat -c %s "${log_file}")" -gt 5242880 ]; then
+        tail -c 1048576 "${log_file}" > "${log_file}.tmp" && mv -f "${log_file}.tmp" "${log_file}"
+    fi
+done
+export TSSERVER_APPEND_LOGS=1
 
 EXISTING_SERVER_STATE=0
 if has_dir_contents "${TS_SERVER_STORE}"; then
@@ -163,6 +174,50 @@ if [ -f "${TOKEN_SHOWN_FILE}" ]; then
     echo "╚═══════════════════════════════════════════════════════════════╝"
     echo ""
 fi
+
+# Query flood-protection allowlist. TeamSpeak locks a query client out (default
+# ban: 10 minutes) that sends more than 10 commands in 3 seconds. Another app, such
+# as TS6 Manager, is a "foreign" client for the server, so the addresses in
+# query_ip_allowlist.txt are exempt from that. The file is written at every start
+# from the option query_ip_allowlist (plus loopback); manual edits are replaced.
+# Only single addresses and networks that are not too wide are accepted: never a
+# catch-all such as 0.0.0.0/0 or ::/0.
+valid_allowlist_entry() {
+    local entry="$1" addr prefix="" o
+    addr="${entry%%/*}"
+    [ "${addr}" != "${entry}" ] && prefix="${entry#*/}"
+    if [[ "${addr}" =~ ^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$ ]]; then
+        for o in "${BASH_REMATCH[@]:1:4}"; do
+            [ "$((10#${o}))" -le 255 ] || return 1
+        done
+        [ -z "${prefix}" ] && return 0
+        [[ "${prefix}" =~ ^[0-9]{1,2}$ ]] || return 1
+        [ "$((10#${prefix}))" -ge 16 ] && [ "$((10#${prefix}))" -le 32 ]
+    elif [[ "${addr}" == *:* && "${addr}" =~ ^[0-9a-fA-F:]+$ ]]; then
+        [ -z "${prefix}" ] && return 0
+        [[ "${prefix}" =~ ^[0-9]{1,3}$ ]] || return 1
+        [ "$((10#${prefix}))" -ge 48 ] && [ "$((10#${prefix}))" -le 128 ]
+    else
+        return 1
+    fi
+}
+
+write_query_allowlist() {
+    local file="${TS_RUNTIME_DIR}/query_ip_allowlist.txt" entry
+    local -a entries=()
+    mapfile -t entries < <(jq -r '.query_ip_allowlist[]? // empty' "${OPTIONS_FILE}")
+    for entry in "${entries[@]}"; do
+        [ -n "${entry}" ] || continue
+        if ! valid_allowlist_entry "${entry}"; then
+            echo "[ERROR] query_ip_allowlist: '${entry}' is not accepted. Use an IP address or a network such as 172.30.32.0/23 (IPv4 prefix 16-32, IPv6 prefix 48-128); catch-all networks like 0.0.0.0/0 are refused."
+            exit 1
+        fi
+    done
+    mkdir -p "${TS_RUNTIME_DIR}"
+    { echo "127.0.0.1"; echo "::1"; printf '%s\n' "${entries[@]}"; } | awk 'NF && !seen[$0]++' > "${file}"
+    echo "[INFO] Query flood-protection allowlist: $(paste -sd' ' "${file}")"
+}
+write_query_allowlist
 
 export TSSERVER_LICENSE_ACCEPTED=accept
 export TSSERVER_QUERY_SSH_ENABLED=1

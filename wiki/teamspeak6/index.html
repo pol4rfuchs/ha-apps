@@ -612,6 +612,7 @@ Data:       /data/teamspeak6</code></pre>
 <tbody>
 <tr><td><code>license_accepted</code></td><td><code>false</code></td><td>Must be <code>true</code> (you accept the TeamSpeak server license), otherwise the app refuses to start.</td></tr>
 <tr><td><code>query_admin_password</code></td><td><em>empty</em></td><td>Password of the ServerQuery login <code>serveradmin</code>. Set it: it is applied at every start. If empty, TeamSpeak generates one on the first start; the app hides it in the log.</td></tr>
+<tr><td><code>query_ip_allowlist</code></td><td><code>["172.30.32.0/23"]</code></td><td>Addresses or networks that are exempt from TeamSpeak's flood protection for query commands (more than 10 commands in 3 seconds lock a client out for 10 minutes). The default is the Home Assistant app network, so TS6 Manager is not locked out. Written to <code>query_ip_allowlist.txt</code> at every start; catch-all networks such as <code>0.0.0.0/0</code> are refused. Not an access list.</td></tr>
 <tr><td><code>log_level</code></td><td><code>3</code></td><td>TeamSpeak log level <code>0</code>–<code>4</code> (0 Critical · 1 Error · 2 Warning · 3 Info · 4 Debug).</td></tr>
 </tbody>
 </table>
@@ -741,7 +742,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 │   ├── query_ip_allowlist.txt
 │   ├── query_ip_denylist.txt
 │   └── files/
-├── logs/               # server logs (cleared on every start, log files not in backups)
+├── logs/               # server logs (kept across restarts, cut to 1 MiB above 5 MiB, not in backups)
 └── .token_was_shown    # marker: the token was already printed</code></pre>
 <p>TeamSpeak works on a copy in <code>/var/tsserver</code> inside the container. The app restores that copy from <code>/data/teamspeak6/server</code> on start and writes it back <strong>every 5 minutes</strong> (a consistent copy of the running database) and when the app stops cleanly. After a crash or power loss you lose at most the last 5 minutes.</p>
 <p><strong>Backups:</strong> right before it copies <code>/data</code>, the Supervisor runs <code>/usr/local/bin/ts6-backup-sync</code> (<code>backup_pre</code>), which copies the current state to <code>/data/teamspeak6/server</code>. A backup holds the state of the moment it starts, also a channel created seconds before. Changes made while the backup is written may or may not be included. Tested with a stand-in for the Supervisor, not with a real backup and restore.</p>
@@ -752,7 +753,7 @@ API/Auth:       serveradmin / API-Key / WebQuery credentials</code></pre>
 <tr><td><code>server/tsserver.sqlitedb</code></td><td>Very high</td><td>Virtual servers, channels, permissions, client data.</td></tr>
 <tr><td><code>server/ssh_host_rsa_key</code></td><td>High</td><td>SSH ServerQuery host key.</td></tr>
 <tr><td><code>server/query_ip_allowlist.txt</code> / <code>query_ip_denylist.txt</code></td><td>Medium</td><td>Query access restrictions.</td></tr>
-<tr><td><code>logs/</code></td><td>Low</td><td>Debugging and token retrieval (cleared on every start).</td></tr>
+<tr><td><code>logs/</code></td><td>Low</td><td>Debugging and token retrieval (kept across restarts, cut to the last 1 MiB when a file is over 5 MiB).</td></tr>
 </tbody>
 </table>
 <h2>Home Assistant Backup</h2>
