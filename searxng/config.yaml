@@ -18,7 +18,7 @@ ports:
 ports_description:
   8080/tcp: SearXNG Web UI
 map:
-  - type: addon_config
+  - type: app_config
     read_only: false
     path: /etc/searxng
 options:

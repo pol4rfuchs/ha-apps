@@ -15,7 +15,7 @@ arch:
   - aarch64
 map:
   - homeassistant_config:ro
-  - all_addon_configs:ro
+  - all_app_configs:ro
   - media:ro
   - share:rw
   - ssl:ro

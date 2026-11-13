@@ -43,7 +43,7 @@ fi
 case "${ND_DATAFOLDER}" in
   /data|/data/*) : ;;
   /config/addons_config/*)
-    bashio::log.warning "ND_DATAFOLDER=${ND_DATAFOLDER} -- make sure 'addon_config' is in the map block of config.yaml, otherwise this path is NOT persistent!"
+    bashio::log.warning "ND_DATAFOLDER=${ND_DATAFOLDER} -- make sure 'app_config' is in the map block of config.yaml, otherwise this path is NOT persistent!"
     ;;
   *)
     bashio::log.warning "ND_DATAFOLDER=${ND_DATAFOLDER} is neither /data nor /config/addons_config/* -- this path is most likely NOT persistent and the database will be lost on the next restart!"

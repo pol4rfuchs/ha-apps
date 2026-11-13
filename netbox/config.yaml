@@ -16,7 +16,7 @@ ports_description:
   8001/tcp: "NetBox web UI and REST API (login required)"
 webui: "http://[HOST]:[PORT:8001]"
 map:
-  - type: addon_config
+  - type: app_config
     read_only: false
 # Cold backup: the Supervisor stops the app, copies /data (PostgreSQL files are consistent) and starts it again.
 backup: cold

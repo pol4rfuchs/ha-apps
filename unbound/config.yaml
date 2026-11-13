@@ -20,7 +20,7 @@ ports_description:
   53/tcp: DNS TCP queries
   53/udp: DNS UDP queries
 map:
-  - addon_config:rw
+  - app_config:rw
 backup_exclude:
   - "**/blocklist_cache"
 options:
