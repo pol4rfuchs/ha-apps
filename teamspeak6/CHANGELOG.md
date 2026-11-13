@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.28](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.27...teamspeak6-v1.1.28) (2026-11-13)
+
+
+### Bug Fixes
+
+* **apps:** TeamSpeak 6 query flood protection and server logs (teamspeak6, ts6_manager) ([#894](https://github.com/pol4rfuchs/ha-apps/issues/894)) ([b0af6fb](https://github.com/pol4rfuchs/ha-apps/commit/b0af6fb0b8b46d471015c3ce0aba4d3af219b1bc))
+
 ## [1.1.27](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.26...teamspeak6-v1.1.27) (2026-11-13)
 
 
