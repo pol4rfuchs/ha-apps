@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.11...ts6_manager-v1.2.0) (2026-11-14)
+
+
+### Features
+
+* **apps:** enable tested AppArmor profiles (ntfy, ntfy_manager, teamspeak6, ts6_manager) ([#908](https://github.com/pol4rfuchs/ha-apps/issues/908)) ([973ff37](https://github.com/pol4rfuchs/ha-apps/commit/973ff37e33f0b6f56c31e9041b48e615646ad895))
+
 ## [1.1.11](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.1.10...ts6_manager-v1.1.11) (2026-11-13)
 
 
