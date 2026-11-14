@@ -42,8 +42,12 @@ configuration:
   ND_SCANNER_SCHEDULE:
     name: Scan Schedule
     description: >-
-      Cron or interval expression for automatic library scans.
-      Examples: "@every 24h", "0 2 * * *", "0" = disabled.
+      When Navidrome scans the library automatically. Allowed:
+      "@every 24h" (interval), "@hourly", "@daily", "@weekly", "@monthly",
+      "@yearly", or a cron expression with 5 or 6 fields, for example
+      "0 3 * * *" (every day at 03:00). "0" switches the automatic scan off.
+      An invalid value is replaced by "@every 24h" and a warning appears
+      in the app log.
   ND_AUTOIMPORTPLAYLISTS:
     name: Auto-import Playlists
     description: Automatically read .m3u/.m3u8 playlist files found in the music folder.

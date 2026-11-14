@@ -9,6 +9,37 @@ set -e
 JSONSOURCE="/data/options.json"
 ENVFILE="/run/navidrome.env"
 
+# --- Scan schedule check ---
+# Navidrome aborts at start (FATAL, the app then shows "error") when
+# ND_SCANNER_SCHEDULE cannot be parsed. Accepted by Navidrome (checked against
+# Navidrome 0.64.2): "0" or empty (no periodic scan), the descriptors @yearly,
+# @annually, @monthly, @weekly, @daily, @midnight, @hourly, "@every <duration>"
+# (for example "@every 24h", "@every 1h30m") and cron expressions with 5 or 6
+# fields. This check is deliberately coarse (it does not test the value ranges
+# of a cron field); it only catches the typical mistakes.
+_nd_schedule_valid() {
+  local value="$1"
+  local -a fields
+  case "${value}" in
+    "" | "0") return 0 ;;
+    "@yearly" | "@annually" | "@monthly" | "@weekly" | "@daily" | "@midnight" | "@hourly") return 0 ;;
+    "@every "*)
+      [[ "${value#@every }" =~ ^([0-9]+(\.[0-9]+)?(ns|us|ms|s|m|h))+$ ]] && return 0
+      return 1
+      ;;
+    "@"*) return 1 ;;
+  esac
+  read -r -a fields <<< "${value}"
+  if [ "${#fields[@]}" -ne 5 ] && [ "${#fields[@]}" -ne 6 ]; then
+    return 1
+  fi
+  local field
+  for field in "${fields[@]}"; do
+    [[ "${field}" =~ ^[0-9A-Za-z*/,?-]+$ ]] || return 1
+  done
+  return 0
+}
+
 # --- Log level (applies to the app logs and to Navidrome) ---
 LOG_LEVEL="$(bashio::config 'log_level')"
 bashio::log.level "${LOG_LEVEL}"
@@ -128,6 +159,13 @@ for KEY in "${ALL_KEYS[@]}"; do
 
   # Skip empty strings (optional fields that are not set)
   [ -z "${VALUE}" ] && continue
+
+  # An unparsable schedule would make Navidrome stop at start. Warn and use the
+  # default instead, so the app keeps running and the cause is visible in the log.
+  if [[ "${KEY}" == "ND_SCANNER_SCHEDULE" ]] && ! _nd_schedule_valid "${VALUE}"; then
+    bashio::log.warning "ND_SCANNER_SCHEDULE is invalid: '${VALUE}'. Using '@every 24h' instead. Examples: '@every 24h', '@daily', '0 3 * * *' (every day at 03:00), '0' (no periodic scan)."
+    VALUE="@every 24h"
+  fi
 
   _env_write "${KEY}" "${VALUE}"
 
