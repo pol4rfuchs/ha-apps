@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.1...ts6_manager-v1.2.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ts6_manager:** move the source ref to the manager version that answers a wrong songId with 400 ([#919](https://github.com/pol4rfuchs/ha-apps/issues/919)) ([5a60df0](https://github.com/pol4rfuchs/ha-apps/commit/5a60df0a82ca9c2991e1c4c16e59dec2ce0224ec))
+
 ## [1.2.1](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.0...ts6_manager-v1.2.1) (2026-11-14)
 
 
