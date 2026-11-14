@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.4...ntfy_manager-v0.3.5) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** rename the display name from ntfy HAOS Admin Panel to ntfy Manager ([#938](https://github.com/pol4rfuchs/ha-apps/issues/938)) ([3c6f190](https://github.com/pol4rfuchs/ha-apps/commit/3c6f19095268cdca2c9f5cb130bb7383a3406072))
+
 ## [0.3.4](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.3...ntfy_manager-v0.3.4) (2026-11-14)
 
 
