@@ -89,7 +89,7 @@ The app runs with an AppArmor profile (`apparmor.txt`, `apparmor: true`). The Su
 - **Network:** TCP, UDP, IPv4/IPv6, Unix sockets and netlink; no raw or packet sockets.
 - **Mount:** denied.
 
-Tested by the maintainer on a Raspberry Pi 4 with HAOS 18.5, AppArmor enforcing: first-time setup, connecting to the TeamSpeak 6 app and 60 parallel queries, and a restart of the whole system. Not tested: music bots, the video sidecar and bot flows, and updating an app while its profile is loaded.
+Tested by the maintainer on a Raspberry Pi 4 with HAOS 18.5, AppArmor enforcing: first-time setup, connecting to the TeamSpeak 6 app, a music bot with yt-dlp and ffmpeg, the video sidecar, 60 parallel queries, and a restart of the whole system; no "Permission denied" appeared. Not tested: updating an app while its profile is loaded.
 
 **If an extension of your own reports "Permission denied":** the profile blocked an access. Write to `/data` instead, or to `/tmp` for temporary files. The kernel log of the host shows `apparmor="DENIED"` lines with the blocked path (visible on the HAOS console or through the developer SSH access). If the app itself needs the path, open an issue in the repository with that line; the profile is changed in `apparmor.txt` and arrives with an app update.
 
