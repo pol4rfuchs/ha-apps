@@ -8,7 +8,7 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) as a sin
 - Dashboard with live stats, bandwidth graph, channel tree
 - Client management (kick, ban, move, poke)
 - Permissions, groups, ban list, token management
-- Music bots (radio, YouTube via yt-dlp, local library)
+- Music bots (radio, YouTube via yt-dlp, local library, Navidrome)
 - Bot flow engine (visual node editor for automations)
 - Embeddable server widgets (SVG/PNG/JSON)
 - Own web interface on port 8066 (no ingress), with its own login
@@ -131,6 +131,20 @@ Bot flows (page "Bots") are normally built in the editor. They can also be creat
 Create a snapshot with `POST /api/servers/<configId>/virtual-servers/<sid>/snapshot` (admin only, `Authorization: Bearer` token of the manager). It must be a `POST`; a `GET` is answered with 404 (`Cannot GET`). The answer is HTTP 200 with the snapshot as JSON in the field `data`. Tested against TeamSpeak 6 6.0.0-beta13.1.
 
 Restoring: the manager has a deploy route, `POST .../virtual-servers/<sid>/snapshot/deploy`, which forwards its request body to the TeamSpeak command `serversnapshotdeploy`; that route itself was not tested. Deploying a snapshot directly through ServerQuery was tested: it restored the saved state (a test channel created afterwards was gone). **The virtual server restarts while a snapshot is deployed**, so all clients are disconnected for a moment.
+
+## Navidrome as music source
+
+The manager can use a Navidrome (Subsonic) server, for example the Navidrome app of this repository, as a source for the music bot. Found tracks are copied into the manager's music folder (`/data/music`) and then play like any other song.
+
+1. In the manager open **Settings → Navidrome**, switch it on and enter the address, a Navidrome user name and its password. Inside Home Assistant use the internal host name of the Navidrome app (shown on the app's info page in Home Assistant) with port `4533`, for example `http://<navidrome-app-host>:4533`. The password is stored encrypted and never shown again; leave the field empty to keep it.
+2. Press **Test connection**. It reports the Navidrome version or a readable error.
+3. In the music library of a server a Navidrome search field appears. Search, then **Add** a track. Adding the same track again does not download it twice.
+
+Things to know:
+
+- The search needs a search term (at most 200 characters); an empty one is refused, because Navidrome would answer an empty search with its whole library. At most 20 tracks are shown.
+- Deleting a song in the manager deletes only the copy in `/data/music`, not the file in Navidrome.
+- Tested against Navidrome 0.64.2 outside Home Assistant: the search (including the refused empty, blank and overlong terms). Only checked by unit tests and the build, not run against a real Navidrome: the connection test, adding a track, adding the same track twice, and deleting a song. Not tested at all: access from the manager to the Navidrome app inside Home Assistant, playing an imported track through the music bot in TeamSpeak, large libraries.
 
 ## Server logs page
 
