@@ -1,83 +1,98 @@
 #include <tunables/global>
 
-# NOTE: four s6-rc.d services share this container (ts6-init, ts6-backend:
-# Node/Prisma API, ts6-nginx: reverse-proxy + static frontend, ts6-sidecar:
-# Go/Pion WebRTC media relay for video streaming, /usr/local/bin/ts6-sidecar,
-# already covered by the /usr/local/bin/** ix rule below — loopback-only,
-# no extra network rule needed since network tcp/udp/inet/inet6 below are
-# already unconditional). Same HA base image family as ntfy_manager/
-# restic_backup, so the s6 baseline below is high-confidence — but the
-# app-specific paths (Prisma DB, yt-dlp/ffmpeg media downloads) are new.
-# Test a full start + login + a real music download via yt-dlp, a video
-# stream if video_streaming is enabled, then a clean restart, before relying
-# on this in production. If something breaks with "Permission denied",
-# check `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED
-# path. apparmor is off (apparmor: false) for now — flip to true only after
-# that full test pass (Buildrules §8: no permanent panic-fix).
+# v3: Ausführen und Lesen nur auf die Pfade, die die App braucht; Schreiben, Fähigkeiten und Netzwerk eng.
 profile ts6_manager_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Network: TeamSpeak WebQuery API, outbound yt-dlp downloads
+  # Fähigkeiten: Docker-Standardsatz ohne net_raw
+  capability chown,
+  capability dac_override,
+  capability dac_read_search,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability setgid,
+  capability setuid,
+  capability setpcap,
+  capability net_bind_service,
+  capability sys_chroot,
+  capability mknod,
+  capability audit_write,
+  capability setfcap,
+
+  # Netzwerk
   network tcp,
   network udp,
   network inet,
   network inet6,
+  network unix,
+  network netlink,
+  deny network raw,
+  deny network packet,
+  deny mount,
 
-  # s6-overlay baseline (Buildrules §8)
-  /init                        ix,
-  /package/**                  ix,
-  /command/**                  ix,
-  /run/{s6,s6-rc*,service}/**  ix,
-  /run/s6/**                   rix,
-  /etc/s6-overlay/**           rix,
-  /etc/services.d/**           rwix,
-  /etc/cont-init.d/**          rwix,
-  /etc/cont-finish.d/**        rwix,
-  /run/{,**}                   rwk,
-  /dev/tty                     rw,
+  # Ausführen (s6-overlay, nginx, Node, Prisma, Sidecar, yt-dlp, ffmpeg)
+  /init                        mrix,
+  /package/**                  mrix,
+  /command/**                  mrix,
+  /bin/**                      mrix,
+  /sbin/**                     mrix,
+  /usr/bin/**                  mrix,
+  /usr/sbin/**                 mrix,
+  /usr/local/bin/**            mrix,
+  /usr/libexec/**              mrix,
+  /usr/lib/bashio/**           mrix,
+  /usr/lib/node_modules/**     mrix,
+  /app/**                      mrix,
+  /etc/s6-overlay/**           mrwix,
+  /etc/services.d/**           mrwix,
+  /etc/cont-init.d/**          mrwix,
+  /etc/cont-finish.d/**        mrwix,
+  /run/                        rw,
+  /var/run/                    rw,
+  /run/**                      mrwkix,
+  /var/run/**                  mrwkix,
+  /tmp/s6/**                   mrwkix,
 
-  # Shell + coreutils + the add-on's own init script
-  /bin/**                      ix,
-  /usr/bin/**                  ix,
-  /usr/sbin/**                 ix,
-  /usr/local/bin/**            ix,
-
-  # Node backend (Prisma-based API) + frontend static build
-  /app/**                      rix,
+  # Bibliotheken und Systemdateien (nur Lesen)
+  /lib/                        r,
+  /lib64/                      r,
+  /usr/lib/                    r,
+  /usr/lib64/                  r,
+  /usr/local/lib/              r,
+  /lib/**                      mr,
+  /usr/lib/**                  mr,
+  /usr/local/lib/**            mr,
+  /etc/**                      r,
+  /usr/share/**                r,
   /var/www/html/**             r,
+  /sys/**                      r,
+  @{PROC}/**                   r,
+  owner @{PROC}/@{pid}/**      rw,
 
-  # nginx (reverse proxy + static frontend)
-  /etc/nginx/**                r,
-  /var/log/nginx/**            rw,
-  /run/nginx/**                rw,
+  # Geräte
+  /dev/null                    rw,
+  /dev/zero                    rw,
+  /dev/full                    rw,
+  /dev/random                  r,
+  /dev/urandom                 r,
+  /dev/tty                     rw,
+  /dev/ptmx                    rw,
+  /dev/pts/**                  rw,
+  /dev/shm/**                  rw,
 
-  # yt-dlp / ffmpeg (media download + transcoding)
-  /usr/lib/python3*/**         ix,
-
-  # Persistent add-on data: secrets, SQLite DB, downloaded music
+  # Schreiben
+  /tmp/                        rw,
+  /tmp/**                      mrwk,
+  /var/tmp/**                  rwk,
   /data/                       rw,
   /data/**                     rwk,
+  /var/log/nginx/**            rw,
+  /var/lib/nginx/**            rw,
+  /var/cache/nginx/**          rw,
+  /root/**                     rw,
 
-  # /tmp
-  /tmp/                        rw,
-  /tmp/**                      rw,
-
-  # System files
-  /etc/passwd                  r,
-  /etc/group                   r,
-  /etc/hosts                   r,
-  /etc/resolv.conf             r,
-  /etc/nsswitch.conf           r,
-  /etc/ssl/**                  r,
-  /etc/localtime               r,
-  /usr/share/zoneinfo/**       r,
-
-  # Proc
-  @{PROC}/**                   r,
-  owner @{PROC}/*/status       r,
-  owner @{PROC}/*/fd/          r,
-
-  # ptrace / signal for Docker's own process introspection
+  # Signale und Prozess-Introspektion
+  signal,
   ptrace (trace,read) peer=docker-default,
-  signal (receive) set=(kill,term) peer=/usr/bin/docker,
 }
