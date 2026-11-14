@@ -5,7 +5,10 @@ configuration:
     description: "Detailgrad der Log-Ausgabe. INFO für den Normalbetrieb, DEBUG nur zur Fehlersuche."
   base_url:
     name: Basis-URL
-    description: "Externe URL deines ntfy-Servers (z.B. https://ntfy.deine-domain.com). Erforderlich für Anhänge, iOS-Push und UnifiedPush/Matrix Push Gateway. Ohne diese Angabe ist /_matrix/push/v1/notify nicht verfügbar und Android-Push via UnifiedPush funktioniert nicht."
+    description: >-
+      Externe URL deines ntfy-Servers (z.B. https://ntfy.deine-domain.com). Erforderlich für Anhänge,
+      iOS-Push und UnifiedPush/Matrix Push Gateway. Ohne diese Angabe ist /_matrix/push/v1/notify
+      nicht verfügbar und Android-Push via UnifiedPush funktioniert nicht.
   behind_proxy:
     name: Hinter Proxy
     description: "Aktivieren, wenn ntfy hinter Nginx/Traefik/Caddy läuft. Liest die echte Client-IP aus X-Forwarded-For."
@@ -14,19 +17,28 @@ configuration:
     description: "Zugriffslevel für nicht authentifizierte Anfragen. 'deny-all' empfohlen, sobald Nutzer konfiguriert sind."
   enable_signup:
     name: Registrierung erlauben
-    description: "Erlaubt Nutzern, sich selbst über die Web-UI zu registrieren."
+    description: >-
+      Erlaubt Nutzern, sich selbst über die Web-UI zu registrieren. Braucht enable_login: Ist der
+      Login aus, wird die Registrierung automatisch abgeschaltet (das Log sagt es), weil ntfy mit
+      Registrierung ohne Login nicht startet.
   enable_login:
     name: Login aktivieren
-    description: "Zeigt das Login-Formular in der Web-UI. Empfohlen, sobald Nutzer konfiguriert sind."
+    description: >-
+      Zeigt das Login-Formular in der Web-UI. Empfohlen, sobald Nutzer konfiguriert sind. Ist es aus,
+      ist auch die Registrierung aus.
   enable_reservations:
     name: Topic-Reservierungen
-    description: "Erlaubt Nutzern, Topic-Namen zu reservieren."
+    description: >-
+      Erlaubt Nutzern, Topic-Namen zu reservieren. Reservierungen brauchen den Login. Der Admin-
+      Benutzer wird von dieser Option nicht eingeschränkt (für normale Nutzer nicht geprüft).
   cache_duration:
     name: Cache-Dauer
-    description: "Wie lange Nachrichten zwischengespeichert werden. Format: 12h, 7d usw."
+    description: >-
+      Wie lange Nachrichten zwischengespeichert werden. Format: 12h, 7d usw. Gilt für andere Nutzer
+      und anonyme Besucher, nicht für den Admin-Benutzer (eigene Stufe, 365 Tage).
   attachment_total_size_limit:
     name: Anhänge Gesamtlimit
-    description: "Maximaler Gesamtspeicher für alle Anhänge. Beispiel: 5G, 500M. Erfordert base_url."
+    description: "Maximaler Gesamtspeicher für alle Anhänge. Beispiel: 5G, 500M. Erfordert base_url. Der Admin-Benutzer hat eigene Grenzen."
   attachment_file_size_limit:
     name: Anhänge Dateilimit
     description: "Maximale Größe eines einzelnen Anhangs. Beispiel: 15M. Erfordert base_url."
@@ -59,10 +71,15 @@ configuration:
     description: "Maximale Upload-/Download-Bandbreite für Anhänge pro Besucher (IP) und Tag. Beispiel: 5G. Erfordert base_url."
   upstream_base_url:
     name: Upstream-Basis-URL
-    description: "Nur für iOS-Push-Benachrichtigungen. Auf 'https://ntfy.sh' setzen, um iOS-Unterstützung zu aktivieren. Erfordert base_url."
+    description: >-
+      Nur für iOS-Push-Benachrichtigungen. Auf 'https://ntfy.sh' setzen, um iOS-Unterstützung zu
+      aktivieren. Erfordert base_url.
   admin_username:
     name: Admin-Benutzername
-    description: "Benutzername für das erste Admin-Konto. Wird beim Start automatisch angelegt. Leer lassen zum Überspringen."
+    description: >-
+      Benutzername für das erste Admin-Konto. Wird beim Start automatisch angelegt. Leer lassen zum
+      Überspringen. Ändert man den Namen, wird der neue Name mit dem Admin-Passwort angelegt; der alte
+      Admin bleibt bestehen und muss von Hand entfernt werden.
   admin_password:
     name: Admin-Passwort
     description: "Passwort für das erste Admin-Konto."

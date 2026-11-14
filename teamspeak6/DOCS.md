@@ -71,6 +71,8 @@ The exemption is only about flooding, not about passwords. Tested from an allowl
 
 ## Server log (`logview`)
 
+The option `log_level` (0–4) only applies to the server's log files in `/data/teamspeak6/logs` and to `logview`. It does not change what the server prints to the app log (the Log tab in Home Assistant).
+
 TeamSpeak creates the log file of a virtual server only with the first log line of that virtual server after a start. Until then the query command `logview` for that virtual server answers error 2052 (`file input/output error`); this is how `6.0.0-beta13.1` behaves, not a permission or path problem (the app runs as root and writes to `/data/teamspeak6/logs`). TS6 Manager showed it as an empty "Logs" page and an HTTP 502. The app therefore keeps the logs across restarts (one growing file per virtual server and one for the instance, `TSSERVER_APPEND_LOGS=1`), so the file of the virtual server already exists after a restart; files over 5 MiB are cut to their last 1 MiB at start. Tested: after two restarts `logview` answered right away. Error 2052 can still appear once, right after the update from an older version of this app (its first start removes the old per-start log files) until the virtual server logs its first line; TS6 Manager then shows the instance log with a note.
 
 ## ServerQuery access and `query_ip_allowlist.txt`

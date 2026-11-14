@@ -5,7 +5,10 @@ configuration:
     description: "Log verbosity. Use INFO for normal operation, DEBUG only for troubleshooting."
   base_url:
     name: Base URL
-    description: "External URL of your ntfy server (e.g. https://ntfy.your-domain.com). Required for attachments, iOS push, and UnifiedPush / Matrix Push Gateway. Without this, /_matrix/push/v1/notify is unavailable and Android push via UnifiedPush will not work."
+    description: >-
+      External URL of your ntfy server (e.g. https://ntfy.your-domain.com). Required for attachments,
+      iOS push, and UnifiedPush / Matrix Push Gateway. Without this, /_matrix/push/v1/notify is
+      unavailable and Android push via UnifiedPush will not work.
   behind_proxy:
     name: Behind Proxy
     description: "Enable if ntfy runs behind Nginx/Traefik/Caddy. Reads real client IP from X-Forwarded-For."
@@ -14,19 +17,26 @@ configuration:
     description: "Access level for unauthenticated requests. 'deny-all' recommended when users are configured."
   enable_signup:
     name: Enable Signup
-    description: "Allow users to self-register via the web UI."
+    description: >-
+      Allow users to self-register via the web UI. Needs enable_login: while login is off, sign-up is
+      switched off automatically (the log says so), because ntfy does not start with sign-up but
+      without login.
   enable_login:
     name: Enable Login
-    description: "Show login form in the web UI. Recommended when users are configured."
+    description: "Show login form in the web UI. Recommended when users are configured. If off, sign-up is switched off too."
   enable_reservations:
     name: Topic Reservations
-    description: "Allow users to reserve topic names."
+    description: >-
+      Allow users to reserve topic names. Reservations need login. The admin user is not limited by
+      this option (not checked for regular users).
   cache_duration:
     name: Cache Duration
-    description: "How long messages are cached. Format: 12h, 7d, etc."
+    description: >-
+      How long messages are cached. Format: 12h, 7d, etc. Applies to other users and anonymous
+      visitors, not to the admin user (own tier, 365 days).
   attachment_total_size_limit:
     name: Attachment Total Limit
-    description: "Maximum total storage for all attachments. Example: 5G, 500M. Requires base_url."
+    description: "Maximum total storage for all attachments. Example: 5G, 500M. Requires base_url. The admin user has its own limits."
   attachment_file_size_limit:
     name: Attachment File Limit
     description: "Maximum size of a single attachment. Example: 15M. Requires base_url."
@@ -62,7 +72,10 @@ configuration:
     description: "For iOS push notifications only. Set to 'https://ntfy.sh' to enable iOS support. Requires base_url."
   admin_username:
     name: Admin Username
-    description: "Username for the first admin account. Created automatically on startup. Leave empty to skip."
+    description: >-
+      Username for the first admin account. Created automatically on startup. Leave empty to skip. If
+      you change the name, the new name is created with the admin password; the old admin stays and
+      must be removed by hand.
   admin_password:
     name: Admin Password
     description: "Password for the first admin account."

@@ -31,6 +31,14 @@ VISITOR_REQUEST_LIMIT_REPLENISH=$(bashio::config 'visitor_request_limit_replenis
 VISITOR_MESSAGE_DAILY_LIMIT=$(bashio::config 'visitor_message_daily_limit' '1000000')
 MESSAGE_SIZE_LIMIT=$(bashio::config 'message_size_limit' '4096')
 UPSTREAM_URL=$(bashio::config 'upstream_base_url' '')
+
+# ntfy refuses to start with enable-signup but without enable-login ("cannot set
+# enable-signup without also setting enable-login"), so sign-up is switched off
+# when login is off.
+if [ "${ENABLE_LOGIN}" != "true" ] && [ "${ENABLE_SIGNUP}" = "true" ]; then
+    bashio::log.info "enable_login is off, disabling enable_signup (sign-up needs login)"
+    ENABLE_SIGNUP="false"
+fi
 ADMIN_USER=$(bashio::config 'admin_username' '')
 ADMIN_PASS=$(bashio::config 'admin_password' '')
 
@@ -119,23 +127,62 @@ fi
 # Create admin users via ntfy CLI (NTFY_AUTH_FILE env var, no --config flag)
 # Fix 4: NTFY_PASSWORD env var used throughout — zero interactive prompts
 # ---------------------------------------------------------------------------
+# Run an ntfy CLI command; on failure log a warning with ntfy's own message
+# (never silently ignore it). Returns the exit code of the command.
+run_ntfy_cli() {
+    local what="$1"
+    shift
+    local out="" rc=0
+    out="$(NTFY_AUTH_FILE="${AUTH_FILE}" "$@" </dev/null 2>&1)" || rc=$?
+    if [ "${rc}" -ne 0 ]; then
+        bashio::log.warning "ntfy: ${what} failed (exit ${rc}): ${out}"
+    fi
+    return "${rc}"
+}
+
+# True if the ntfy user exists. The list is read into a variable first and the
+# names are compared exactly: `ntfy user list | grep -q` ends the pipe early,
+# ntfy then gets SIGPIPE and with pipefail the answer was wrong about half of
+# the time, and "^user admin" also matched "admin2".
+ntfy_user_exists() {
+    local username="$1"
+    local listing="" rc=0 line name
+    listing="$(NTFY_AUTH_FILE="${AUTH_FILE}" ntfy user list </dev/null 2>&1)" || rc=$?
+    if [ "${rc}" -ne 0 ]; then
+        bashio::log.warning "ntfy: listing users failed (exit ${rc}): ${listing}"
+        return 1
+    fi
+    while IFS= read -r line; do
+        case "${line}" in
+            "user "*)
+                name="${line#user }"
+                name="${name%% (*}"
+                if [ "${name}" = "${username}" ]; then
+                    return 0
+                fi
+                ;;
+        esac
+    done <<< "${listing}"
+    return 1
+}
+
 create_admin() {
     local username="$1"
     local password="$2"
     if [ -z "${username}" ] || [ -z "${password}" ]; then
         return
     fi
-    if NTFY_AUTH_FILE="${AUTH_FILE}" ntfy user list </dev/null 2>/dev/null | grep -q "^user ${username}"; then
+    if ntfy_user_exists "${username}"; then
         bashio::log.info "Admin user '${username}' already exists — syncing password + role"
-        NTFY_AUTH_FILE="${AUTH_FILE}" NTFY_PASSWORD="${password}" \
-            ntfy user change-pass "${username}" </dev/null 2>/dev/null || true
+        NTFY_PASSWORD="${password}" run_ntfy_cli "changing the password of '${username}'" \
+            ntfy user change-pass "${username}" || true
     else
         bashio::log.info "Creating admin user '${username}' …"
-        NTFY_AUTH_FILE="${AUTH_FILE}" NTFY_PASSWORD="${password}" \
-            ntfy user add --role=admin "${username}" </dev/null 2>/dev/null || true
+        NTFY_PASSWORD="${password}" run_ntfy_cli "creating the admin user '${username}'" \
+            ntfy user add --role=admin "${username}" || true
     fi
-    NTFY_AUTH_FILE="${AUTH_FILE}" \
-        ntfy user change-role "${username}" admin </dev/null 2>/dev/null || true
+    run_ntfy_cli "setting the role of '${username}' to admin" \
+        ntfy user change-role "${username}" admin || true
     bashio::log.info "Admin user '${username}' ready"
 }
 

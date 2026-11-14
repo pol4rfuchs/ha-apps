@@ -54,7 +54,7 @@
 | `license_accepted` | `false` | Must be `true`: you accept the TeamSpeak server license. |
 | `query_admin_password` | — | Password of the ServerQuery login `serveradmin`. **Set it.** It is applied at every start, so it also works if you add or change it later (tested). If empty, TeamSpeak generates one on the first start; the app hides it in the log, so you cannot read it. |
 | `query_ip_allowlist` | `["172.30.32.0/23"]` | Addresses or networks that are exempt from TeamSpeak's flood protection for query commands (see *Flood protection* below). Loopback is always included. |
-| `log_level` | `3` | TeamSpeak log level, `0`–`4` (higher is more verbose). |
+| `log_level` | `3` | TeamSpeak log level, `0`–`4` (higher is more verbose). It only applies to the server's log files (`logs/` and `logview`), not to the output in the app log. |
 
 The ports are fixed. Server name, server password and slot count are set in the TeamSpeak client or through ServerQuery, not in the app options.
 

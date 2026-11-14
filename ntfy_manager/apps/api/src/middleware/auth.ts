@@ -4,6 +4,7 @@ import {
   basicAuthHeader,
   bearerAuthHeader,
   decryptSession,
+  isSessionRevoked,
   type SessionPayload
 } from "../services/auth.js";
 
@@ -46,7 +47,7 @@ function viaIngress(req: Request): boolean {
 export function resolveSession(req: Request): SessionPayload | null {
   // 1) cookie?
   const raw = req.cookies?.[env.SESSION_COOKIE_NAME];
-  if (raw) {
+  if (raw && !isSessionRevoked(raw)) {
     const session = decryptSession(raw);
     if (session) return session;
   }
