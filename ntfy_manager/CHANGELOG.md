@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.5...ntfy_manager-v0.3.6) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** rename ntfy Admin Console to ntfy Manager in the web interface ([#949](https://github.com/pol4rfuchs/ha-apps/issues/949)) ([db6c25a](https://github.com/pol4rfuchs/ha-apps/commit/db6c25a22eaa3607d970200eda0bfee8c54b6680))
+
 ## [0.3.5](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.4...ntfy_manager-v0.3.5) (2026-11-14)
 
 
