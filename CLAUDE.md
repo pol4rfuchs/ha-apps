@@ -16,7 +16,9 @@ The user wants lists, not git commands.
 
 Everything in the repo is English: code, comments, runtime log messages, docs, wiki, CI/workflow comments, config comments,
 commit messages, PR titles and PR descriptions. The only exception is `*/translations/de.yaml` and `en.yaml`, which keep both
-languages. Chat replies to the maintainer stay in German.
+languages (CHANGELOGs and the wiki pages are exempt). Chat replies to the maintainer stay in German.
+Workflow 00 runs `scripts/check_english_only.py` and fails on German text (umlauts and common German words); a line that has to stay
+carries the marker `lang-check:allow`.
 
 ## Commands
 
