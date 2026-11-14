@@ -150,10 +150,10 @@ action:
 | `base_url` | — | External URL (e.g. `https://ntfy.your-domain.com`). Required for attachments, iOS push, and **UnifiedPush / Matrix Push Gateway**. |
 | `behind_proxy` | false | Set to `true` if running behind Nginx / Traefik / Caddy |
 | `auth_default_access` | deny-all | Unauthenticated access: `deny-all` · `read-only` · `write-only` · `read-write` |
-| `enable_signup` | true | Allow self-registration via web UI |
-| `enable_login` | true | Show login form in web UI |
-| `enable_reservations` | true | Allow users to reserve topic names |
-| `cache_duration` | 12h | How long messages are cached (e.g. `12h`, `7d`) |
+| `enable_signup` | true | Allow self-registration via web UI. Needs `enable_login`: while login is off, sign-up is switched off automatically and the log says `enable_login is off, disabling enable_signup`. |
+| `enable_login` | true | Show login form in web UI. |
+| `enable_reservations` | true | Allow users to reserve topic names. Reservations need login. This option does not limit the admin user (not checked for regular users). |
+| `cache_duration` | 12h | How long messages are cached (e.g. `12h`, `7d`). Applies to other users and anonymous visitors, not to the admin (see *Limits of the admin user*). |
 | `attachment_file_size_limit` | 15M | Max size per attachment — requires `base_url` |
 | `attachment_total_size_limit` | 5G | Total attachment storage — requires `base_url` |
 | `attachment_expiry_duration` | 3h | How long attachments are kept |
@@ -168,6 +168,10 @@ action:
 | `upstream_base_url` | — | iOS push: set to `https://ntfy.sh` — requires `base_url` |
 | `admin_username` | — | Admin account username — created automatically on startup |
 | `admin_password` | — | Admin account password |
+
+**Admin account at every start.** If the user `admin_username` exists, its password is set to `admin_password` and its role to admin; if not, it is created. Failures of the ntfy commands are logged as warnings (`ntfy: … failed`), not hidden. If you change `admin_username`, the new name is created with `admin_password`; the old admin account stays and has to be removed by hand (`ntfy user del <name>`, see *CLI Access*).
+
+**Limits of the admin user.** The admin user has its own tier ("admin tier") with its own limits: message cache 365 days, attachment limits of its own. The options `cache_duration` and `attachment_*` apply to other users and to anonymous visitors, not to the admin.
 
 ---
 
