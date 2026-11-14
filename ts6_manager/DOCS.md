@@ -96,32 +96,41 @@ Tested with a real manager and a TeamSpeak 6 server: a `viewer` without a grant 
 
 ## Bot flows
 
-Bot flows (page "Bots") are normally built in the editor. They can also be created through the API. Each node has a `type` and a `config` object; edges connect node ids. Example that posts a message to the whole virtual server every minute (tested: the flow was enabled, the cron trigger fired at the start of each minute and the execution ended with status `completed`):
+Bot flows (page "Bots") are normally built in the editor. They can also be created through the API: `PUT /api/bots/<id>` with `{name, flowData: {nodes, edges}}`, then `POST /api/bots/<id>/enable`. Each node has a `type` and a `config` object; edges connect node ids. Example that sends a private message to one client every minute (tested on a real instance: the cron trigger fired at the start of each minute and `GET /api/bots/<id>/executions` showed status `completed`):
 
 ```json
 {
   "name": "Every minute",
-  "serverConfigId": 1,
-  "virtualServerId": 1,
   "flowData": {
     "nodes": [
-      { "id": "t1", "type": "trigger_cron", "label": "Every minute", "config": { "cron": "* * * * *" }, "x": 40, "y": 40 },
-      { "id": "a1", "type": "action_message", "label": "Say hello", "config": { "targetMode": "server", "message": "Hello from a bot flow" }, "x": 320, "y": 40 }
+      { "id": "n1", "type": "trigger_cron", "label": "Cron Timer", "config": { "cron": "* * * * *", "timezone": "UTC" }, "x": 100, "y": 100 },
+      { "id": "n2", "type": "action_message", "label": "Send Message", "config": { "targetMode": "client", "target": "<clientId>", "message": "Hello" }, "x": 400, "y": 100 }
     ],
     "edges": [
-      { "id": "e1", "source": "t1", "sourcePort": "out", "target": "a1", "targetPort": "in" }
+      { "id": "e1", "source": "n1", "sourcePort": "out", "target": "n2", "targetPort": "in" }
     ]
   }
 }
 ```
 
-- `trigger_cron`: `cron` is a five-field cron expression (UTC unless the flow carries a `timezone`). `targetMode` of `action_message` is `client`, `channel` or `server`.
+- `trigger_cron`: `cron` is a five-field cron expression; `timezone` defaults to UTC.
+- `action_message`: `targetMode` is `client`, `channel` or `server`; `target` is the client id (`client`) or the channel id (`channel`). Without a `target` the client that caused the event is used.
 - Put the settings under `config`, not under `data`. With `data` the manager reads an empty cron expression, logs `Invalid cron expression ''` and still reports the flow as enabled, but it never fires.
-- Not tested: that the message arrives in the TeamSpeak client (the test checked the flow execution, not the chat window), and the other trigger and action types.
+- **Use `client` or `channel` for messages people should see.** With `server` the TeamSpeak server accepts the message (confirmed with a query listener: `notifytextmessage targetmode=3`), but the TeamSpeak 6 client has no server chat and shows it nowhere.
+- Channel messages are sent from the manager's query session. Older source versions moved that session into the target channel first and failed with `already member of channel` (TeamSpeak error 770) when it was already there, so nothing was sent. The manager now skips the move in that case and moves the session back afterwards (needs the source version that contains this fix).
+
+## Music bots
+
+- **Repeat modes.** `POST /api/music-bots/<id>/queue/repeat` with `{"mode": ...}` accepts `off`, `track` (repeat the current track) and `queue` (repeat the whole queue). Anything else, such as `single` or `all`, is answered with HTTP 400 `Invalid repeat mode`.
+- **Channel codec.** A channel with Opus Voice (codec 4, quality 6, the TeamSpeak default) made music crackle in a test; after switching the bot's channel to Opus Music (codec 5, quality 10) the sound was clean. Set the codec of the channel the music bot joins to Opus Music. The manager shows no hint about this and does not change channel settings itself.
+- **Memory with long tracks.** A 77-minute YouTube track made the manager use about 1.2 GB of RAM in a test (about 190 MB otherwise). Playback itself does not load the file: ffmpeg decodes it while it is played (measured with a 77-minute file: about 120 MB for the manager and 50 MB for ffmpeg, constant). The peak therefore most likely comes from the download and conversion with yt-dlp, which could not be reproduced here without YouTube access. On a 4 GB device, avoid downloading several very long tracks at the same time.
+- **Opus encoder.** The log line `@discordjs/opus unavailable, using opusscript (WASM)` means the manager encodes in software, which needs more CPU. Music still plays; it only costs CPU.
 
 ## Server snapshot
 
-Create a snapshot with `POST /api/servers/<configId>/virtual-servers/<sid>/snapshot` (admin only, with the usual `Authorization: Bearer` token of the manager). The answer is HTTP 200 with the snapshot data; deploying one is `POST .../snapshot/deploy`. A `GET` on these paths is answered with 404 (`Cannot GET`), which is easy to mistake for a missing feature. Tested against TeamSpeak 6 6.0.0-beta13.1: the POST was answered with 200 and snapshot data. Deploying a snapshot was not tested.
+Create a snapshot with `POST /api/servers/<configId>/virtual-servers/<sid>/snapshot` (admin only, `Authorization: Bearer` token of the manager). It must be a `POST`; a `GET` is answered with 404 (`Cannot GET`). The answer is HTTP 200 with the snapshot as JSON in the field `data`. Tested against TeamSpeak 6 6.0.0-beta13.1.
+
+Restoring: the manager has a deploy route, `POST .../virtual-servers/<sid>/snapshot/deploy`, which forwards its request body to the TeamSpeak command `serversnapshotdeploy`; that route itself was not tested. Deploying a snapshot directly through ServerQuery was tested: it restored the saved state (a test channel created afterwards was gone). **The virtual server restarts while a snapshot is deployed**, so all clients are disconnected for a moment.
 
 ## Server logs page
 
