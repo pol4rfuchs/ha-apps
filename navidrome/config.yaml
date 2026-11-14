@@ -1,6 +1,6 @@
 ---
 name: Navidrome
-version: "2.1.13"
+version: "2.1.14"
 slug: navidrome
 description: Modern Music Server and Streamer compatible with Subsonic/Airsonic
 url: https://github.com/pol4rfuchs/ha-apps
