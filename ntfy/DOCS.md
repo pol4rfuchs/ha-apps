@@ -293,6 +293,20 @@ All data is stored in `/data/ntfy/` and included in HA backups automatically:
 
 ---
 
+## AppArmor
+
+The app runs with an AppArmor profile (`apparmor.txt`, `apparmor: true`). The Supervisor loads it when the app is installed and reloads it when the app is updated. What the profile allows:
+
+- **Write access** only to `/data`, `/tmp`, `/run` and the app's own folders (`/config`, `/etc/ntfy`). Other files are read-only or not accessible (apart from the usual device files such as `/dev/null`).
+- **Programs and scripts** run only from the system folders of the image and the app's own program folders.
+- **Capabilities:** the standard Docker set without `net_raw`.
+- **Network:** TCP, UDP, IPv4/IPv6, Unix sockets and netlink; no raw or packet sockets.
+- **Mount:** denied.
+
+Tested by the maintainer on a Raspberry Pi 4 with HAOS 18.5, AppArmor enforcing: start, restart, sending and fetching messages, and a restart of the whole system. Not tested: everything else (only sending and fetching were run), and updating an app while its profile is loaded.
+
+**If an extension of your own reports "Permission denied":** the profile blocked an access. Write to `/data` instead, or to `/tmp` for temporary files. The kernel log of the host shows `apparmor="DENIED"` lines with the blocked path (visible on the HAOS console or through the developer SSH access). If the app itself needs the path, open an issue in the repository with that line; the profile is changed in `apparmor.txt` and arrives with an app update.
+
 ## Local and external access
 
 **Local (LAN):** open `http://<ha-host>:4280`. The web UI and API require a login for everything by default (`auth_default_access: deny-all`). There is no Ingress, so Home Assistant's own authentication does not apply. The app has no `ssl` option; HTTPS is only possible through a reverse proxy.
