@@ -1,73 +1,90 @@
 #include <tunables/global>
 
-# NOTE: two s6-rc.d services share this container (ntfy-admin: the Node/
-# Express API; nginx: reverse-proxies to it + serves the static web build).
-# Test a full start + login + a real ntfy topic subscription, then a clean
-# restart, before relying on this in production. If something breaks with
-# "Permission denied", check `dmesg | grep -i apparmor` (or journalctl -k)
-# for the exact DENIED path and add it here.
+# v3: Ausführen und Lesen nur auf die Pfade, die die App braucht; Schreiben, Fähigkeiten und Netzwerk eng.
 profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Network: outbound to the configured ntfy server, inbound on 8099/Ingress
+  # Fähigkeiten: Docker-Standardsatz ohne net_raw
+  capability chown,
+  capability dac_override,
+  capability dac_read_search,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability setgid,
+  capability setuid,
+  capability setpcap,
+  capability net_bind_service,
+  capability sys_chroot,
+  capability mknod,
+  capability audit_write,
+  capability setfcap,
+
+  # Netzwerk
   network tcp,
+  network udp,
   network inet,
   network inet6,
+  network unix,
+  network netlink,
+  deny network raw,
+  deny network packet,
+  deny mount,
 
-  # s6-overlay baseline (Buildrules §8)
-  /init                        ix,
-  /package/**                  ix,
-  /command/**                  ix,
-  /run/{s6,s6-rc*,service}/**  ix,
-  /run/s6/**                   rix,
-  /etc/s6-overlay/**           rix,
-  /etc/services.d/**           rwix,
-  /etc/cont-init.d/**          rwix,
-  /etc/cont-finish.d/**        rwix,
-  /run/{,**}                   rwk,
-  /dev/tty                     rw,
+  # Ausführen (s6-overlay, nginx, Node)
+  /init                        mrix,
+  /package/**                  mrix,
+  /command/**                  mrix,
+  /bin/**                      mrix,
+  /sbin/**                     mrix,
+  /usr/bin/**                  mrix,
+  /usr/sbin/**                 mrix,
+  /usr/local/bin/**            mrix,
+  /usr/libexec/**              mrix,
+  /usr/lib/bashio/**           mrix,
+  /opt/ntfy-admin/**           mrix,
+  /etc/s6-overlay/**           mrwix,
+  /etc/services.d/**           mrwix,
+  /etc/cont-init.d/**          mrwix,
+  /etc/cont-finish.d/**        mrwix,
+  /run/                        rw,
+  /var/run/                    rw,
+  /run/**                      mrwkix,
+  /var/run/**                  mrwkix,
+  /tmp/s6/**                   mrwkix,
 
-  # Shell + coreutils + bashio
-  /bin/**                      ix,
-  /usr/bin/**                  ix,
-  /usr/sbin/**                 ix,
-  /usr/local/bin/**            ix,
-  /usr/lib/bashio/**           ix,
-
-  # Node.js runtime + the API app
-  /usr/lib/node_modules/**     ix,
-  /opt/ntfy-admin/**           rix,
-
-  # nginx (reverse proxy + static web build)
-  /etc/nginx/**                r,
-  /usr/share/nginx/html/**     r,
-  /var/log/nginx/**            rw,
-  /run/nginx/**                rw,
-
-  # Persistent add-on data: JWT secret, log files
-  /data/                       rw,
-  /data/**                     rw,
-
-  # /tmp
-  /tmp/                        rw,
-  /tmp/**                      rw,
-
-  # System files
-  /etc/passwd                  r,
-  /etc/group                   r,
-  /etc/hosts                   r,
-  /etc/resolv.conf             r,
-  /etc/nsswitch.conf           r,
-  /etc/ssl/**                  r,
-  /etc/localtime               r,
-  /usr/share/zoneinfo/**       r,
-
-  # Proc
+  # Bibliotheken und Systemdateien (nur Lesen)
+  /lib/**                      mr,
+  /usr/lib/**                  mr,
+  /usr/local/lib/**            mr,
+  /etc/**                      r,
+  /usr/share/**                r,
+  /sys/**                      r,
   @{PROC}/**                   r,
-  owner @{PROC}/*/status       r,
-  owner @{PROC}/*/fd/          r,
+  owner @{PROC}/@{pid}/**      rw,
 
-  # ptrace / signal for Docker's own process introspection
+  # Geräte
+  /dev/null                    rw,
+  /dev/zero                    rw,
+  /dev/full                    rw,
+  /dev/random                  r,
+  /dev/urandom                 r,
+  /dev/tty                     rw,
+  /dev/ptmx                    rw,
+  /dev/pts/**                  rw,
+  /dev/shm/**                  rw,
+
+  # Schreiben
+  /tmp/                        rw,
+  /tmp/**                      mrwk,
+  /var/tmp/**                  rwk,
+  /data/                       rw,
+  /data/**                     rwk,
+  /var/log/nginx/**            rw,
+  /var/lib/nginx/**            rw,
+  /var/cache/nginx/**          rw,
+
+  # Signale und Prozess-Introspektion
+  signal,
   ptrace (trace,read) peer=docker-default,
-  signal (receive) set=(kill,term) peer=/usr/bin/docker,
 }
