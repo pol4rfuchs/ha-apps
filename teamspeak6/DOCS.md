@@ -20,6 +20,20 @@ token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 In your TeamSpeak client: **Permissions → Use Privilege Key** → paste the token. It is only shown once. The generated ServerQuery password and API key of the first start are hidden in the log (the app replaces them with `<hidden>`). Set `query_admin_password` to get a ServerQuery login you know.
 
+## AppArmor
+
+The app runs with an AppArmor profile (`apparmor.txt`, `apparmor: true`). The Supervisor loads it when the app is installed and reloads it when the app is updated. What the profile allows:
+
+- **Write access** only to `/data`, `/tmp`, `/run` and the app's own folders (`/var/tsserver`, the runtime copy of the server data). Other files are read-only or not accessible (apart from the usual device files such as `/dev/null`).
+- **Programs and scripts** run only from the system folders of the image and the app's own program folders.
+- **Capabilities:** the standard Docker set without `net_raw`.
+- **Network:** TCP, UDP, IPv4/IPv6, Unix sockets and netlink; no raw or packet sockets.
+- **Mount:** denied.
+
+Tested by the maintainer on a Raspberry Pi 4 with HAOS 18.5, AppArmor enforcing: start, restart, backup and restore, and a restart of the whole system. Not tested: load on the TeamSpeak 6 server (many clients), and updating an app while its profile is loaded.
+
+**If an extension of your own reports "Permission denied":** the profile blocked an access. Write to `/data` instead, or to `/tmp` for temporary files. The kernel log of the host shows `apparmor="DENIED"` lines with the blocked path (visible on the HAOS console or through the developer SSH access). If the app itself needs the path, open an issue in the repository with that line; the profile is changed in `apparmor.txt` and arrives with an app update.
+
 ## Local and external access
 
 **Local (LAN):** connect to `<ha-host>:9987` (UDP). The ServerQuery ports `10022` (SSH) and `10080` (HTTP) are published on the host as well. There is no raw ServerQuery port (`10011`) in TeamSpeak 6. The two ports are meant for the LAN: anyone who reaches them and knows the `serveradmin` password (or its API key) can administer the server. Set `query_admin_password` yourself. It is applied at every start, so you can set or change it at any time (tested); restart the app afterwards.
