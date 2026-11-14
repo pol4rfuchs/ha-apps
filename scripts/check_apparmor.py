@@ -7,7 +7,8 @@ Per add-on:
   * missing     apparmor: true  +  no apparmor.txt (hard fail, repo rule)
   * s6 baseline rule-based check of the s6-overlay minimum (Buildrules §8);
                 hard fail only for apparmor: true, otherwise reported only
-                so the backlog stays visible.
+                so the backlog stays visible. Not applied to add-ons listed
+                in NO_S6 (container without s6-overlay).
 
 Add-ons with apparmor: false and no profile are only listed in the summary.
 HA treats a missing `apparmor` key as enabled, so that counts as true.
@@ -43,6 +44,13 @@ S6_BASELINE = {
     "/etc/services.d/**": ("/etc/services.d/x",),
     "/etc/cont-init.d/**": ("/etc/cont-init.d/x",),
     "/etc/cont-finish.d/**": ("/etc/cont-finish.d/x",),
+}
+
+# Add-ons whose container does not run under s6-overlay (plain entrypoint on a
+# vendor image), so the s6 baseline does not apply to their profile. Keep this
+# list short and give the reason; every other add-on needs the baseline.
+NO_S6 = {
+    "teamspeak6": "vendor image with a plain bash entrypoint, no s6-overlay",
 }
 
 RULE_RE = re.compile(
@@ -165,8 +173,8 @@ def check_addon(addon: str) -> dict:
     elif detail == "parser not installed":
         row["syntax"] = "skipped"
 
-    missing = missing_baseline(text)
-    row["baseline"] = "ok" if not missing else f"missing {len(missing)}"
+    missing = [] if addon in NO_S6 else missing_baseline(text)
+    row["baseline"] = "n/a" if addon in NO_S6 else ("ok" if not missing else f"missing {len(missing)}")
     if missing:
         msg = f"{addon}: s6 baseline (§8) lacks execute rule for: {', '.join(missing)}"
         if enabled:
