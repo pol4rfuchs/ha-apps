@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.18...ntfy_manager-v0.3.0) (2026-11-14)
+
+
+### Features
+
+* **apps:** enable tested AppArmor profiles (ntfy, ntfy_manager, teamspeak6, ts6_manager) ([#908](https://github.com/pol4rfuchs/ha-apps/issues/908)) ([973ff37](https://github.com/pol4rfuchs/ha-apps/commit/973ff37e33f0b6f56c31e9041b48e615646ad895))
+
 ## [0.2.18](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.2.17...ntfy_manager-v0.2.18) (2026-11-13)
 
 
