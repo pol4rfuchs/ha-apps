@@ -20,7 +20,7 @@
 |---|---|
 | **Server** | TeamSpeak 6 Server (`teamspeaksystems/teamspeak6-server`, version pinned in the Dockerfile) |
 | **Architectures** | `amd64`, `aarch64` |
-| **App version** | `1.1.28` |
+| **App version** | `1.2.0` |
 | **Voice port** | `9987/udp` |
 | **File transfer** | `30033/tcp` |
 | **ServerQuery** | `10022/tcp` (SSH), `10080/tcp` (HTTP) |
