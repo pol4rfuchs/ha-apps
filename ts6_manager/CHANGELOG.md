@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.3.3...ts6_manager-v1.4.0) (2026-11-14)
+
+
+### Features
+
+* **ts6_manager:** mount the media folder read only for the Navidrome local folder mode ([#946](https://github.com/pol4rfuchs/ha-apps/issues/946)) ([6d2b515](https://github.com/pol4rfuchs/ha-apps/commit/6d2b515650b7f564ebf8dbe56843ba78e4468cb5))
+
 ## [1.3.3](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.3.2...ts6_manager-v1.3.3) (2026-11-14)
 
 
