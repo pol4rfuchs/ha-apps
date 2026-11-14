@@ -2,7 +2,7 @@
 set -euo pipefail
 
 bashio::log.level "$(bashio::config 'log_level')"
-bashio::log.info "Preparing ntfy HAOS Admin Panel API ..."
+bashio::log.info "Preparing ntfy Manager API ..."
 
 mkdir -p /data/logs
 

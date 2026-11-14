@@ -51,7 +51,7 @@ export default function App() {
       setConfig(c);
     } catch {
       setConfig({
-        appName: "ntfy HAOS Admin Panel",
+        appName: "ntfy Manager",
         version: "0.2.0",
         ntfyBaseUrl: "",
         defaultTopics: [],
