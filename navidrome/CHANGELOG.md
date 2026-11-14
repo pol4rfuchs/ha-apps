@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.14](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.13...navidrome-v2.1.14) (2026-11-14)
+
+
+### Bug Fixes
+
+* **navidrome:** fall back from an invalid scan schedule, document schedule and WAV track numbers ([#929](https://github.com/pol4rfuchs/ha-apps/issues/929)) ([e85201b](https://github.com/pol4rfuchs/ha-apps/commit/e85201ba9c9bb41c330a731731b90ac8bb7d96f4))
+
 ## [2.1.13](https://github.com/pol4rfuchs/ha-apps/compare/navidrome-v2.1.12...navidrome-v2.1.13) (2026-11-13)
 
 
