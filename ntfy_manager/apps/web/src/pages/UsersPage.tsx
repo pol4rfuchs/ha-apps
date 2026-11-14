@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, KeyRound, Trash2 } from "lucide-react";
+import { Loader2, Plus, KeyRound, Trash2 } from "lucide-react";
 import { ntfy, ntfyErrorText, type NtfyUser } from "../lib/ntfy";
 import { toast } from "../lib/toast";
 import Modal from "../components/Modal";
@@ -82,7 +82,7 @@ export default function UsersPage({
           </div>
         ) : !users ? (
           <div className="card-body">
-            <div className="empty">Loading users…</div>
+            <div className="empty flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading users…</div>
           </div>
         ) : !filtered.length ? (
           <div className="card-body">

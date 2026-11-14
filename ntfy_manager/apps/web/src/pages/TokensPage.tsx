@@ -18,7 +18,7 @@ export default function TokensPage({ ntfyUrl }: { ntfyUrl: string | null }) {
       <div className="card">
         <div className="card-header">
           <h3 className="font-bold">API Tokens</h3>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={openNtfy} className="btn btn-ghost text-xs">
               <ExternalLink className="h-3.5 w-3.5" /> Open ntfy web UI
             </button>

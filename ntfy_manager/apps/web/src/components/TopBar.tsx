@@ -42,7 +42,7 @@ export default function TopBar({
       <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
         <button
           onClick={onOpenMobileNav}
-          className="lg:hidden btn btn-ghost h-9 w-9 p-0 grid place-items-center"
+          aria-label="Menu" className="lg:hidden shrink-0 btn btn-ghost h-9 w-9 p-0 grid place-items-center"
         >
           <Menu className="h-4 w-4" />
         </button>
@@ -63,15 +63,15 @@ export default function TopBar({
             className="flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-muted/70"
           />
         </div>
-        <button onClick={onRefresh} className="btn btn-ghost">
-          <RefreshCw className="h-4 w-4" /> Refresh
+        <button onClick={onRefresh} aria-label="Refresh" className="btn btn-ghost shrink-0">
+          <RefreshCw className="h-4 w-4" /> <span className="hidden sm:inline">Refresh</span>
         </button>
-        <button onClick={onQuickSend} className="btn btn-primary">
-          <Send className="h-4 w-4" /> Quick Send
+        <button onClick={onQuickSend} aria-label="Quick Send" className="btn btn-primary shrink-0">
+          <Send className="h-4 w-4" /> <span className="hidden sm:inline">Quick Send</span>
         </button>
         <div
           title={user ?? undefined}
-          className="h-9 w-9 rounded-full bg-linear-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10"
+          className="h-9 w-9 shrink-0 rounded-full bg-linear-to-br from-brand to-brand2 grid place-items-center text-xs font-extrabold border border-white/10"
         >
           {initials}
         </div>

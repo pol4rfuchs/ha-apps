@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import { ntfy, ntfyErrorText, type NtfyUser } from "../lib/ntfy";
 import { toast } from "../lib/toast";
 import PermBadge from "../components/PermBadge";
@@ -121,7 +121,7 @@ export default function AclPage({
           </div>
         ) : !users ? (
           <div className="card-body">
-            <div className="empty">Loading…</div>
+            <div className="empty flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
           </div>
         ) : !filtered.length ? (
           <div className="card-body">
