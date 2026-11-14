@@ -48,6 +48,8 @@ Every API call you make from the panel hits this app's Express backend, which de
 
 The ntfy `user.db` is the only source of truth. There's no second user store.
 
+**Logout.** The session is a stateless encrypted cookie. On logout the browser cookie is deleted and the cookie is also put on a block list in the backend, so a copy of it that was made before the logout is refused (HTTP 401) until it would have expired anyway. The block list lives in memory (at most 1000 entries): after a restart of this app a copied cookie is valid again until its 12 hours are over. Tested against a real ntfy 2.37.2.
+
 ## Page reference
 
 ### Overview

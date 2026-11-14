@@ -55,6 +55,42 @@ export function decryptSession(token: string): SessionPayload | null {
   }
 }
 
+/**
+ * Cookies of sessions that were logged out. The session itself is stateless, so
+ * without this list a cookie that was copied before the logout would stay valid
+ * until it expires (12 hours). The list lives in memory only: it is empty after a
+ * restart of the app, and it holds at most MAX_REVOKED entries (oldest dropped first).
+ */
+const MAX_REVOKED = 1000;
+const revoked = new Map<string, number>(); // sha256(cookie) -> expiry (unix seconds)
+
+function cookieKey(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function pruneRevoked(): void {
+  const now = Date.now() / 1000;
+  for (const [key, exp] of revoked) {
+    if (exp <= now) revoked.delete(key);
+  }
+}
+
+export function revokeSession(token: string): void {
+  const session = decryptSession(token);
+  if (!session) return; // invalid or expired already: nothing to block
+  pruneRevoked();
+  revoked.set(cookieKey(token), session.exp);
+  while (revoked.size > MAX_REVOKED) {
+    const oldest = revoked.keys().next().value as string;
+    revoked.delete(oldest);
+  }
+}
+
+export function isSessionRevoked(token: string): boolean {
+  pruneRevoked();
+  return revoked.has(cookieKey(token));
+}
+
 /** Build a Basic-auth header from user/pass. */
 export function basicAuthHeader(user: string, pass: string): string {
   const b64 = Buffer.from(`${user}:${pass}`, "utf8").toString("base64");

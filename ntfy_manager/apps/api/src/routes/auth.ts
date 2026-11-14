@@ -6,6 +6,7 @@ import {
   basicAuthHeader,
   bearerAuthHeader,
   encryptSession,
+  revokeSession,
   type SessionPayload
 } from "../services/auth.js";
 import { ntfyRequest } from "../ntfy/client.js";
@@ -145,6 +146,9 @@ authRouter.post("/login", loginLimiter, async (req, res) => {
  *  config defaults (e.g. the static HA bearer token), so this is a
  *  real logout instead of an instant silent re-login. */
 authRouter.post("/logout", (req, res) => {
+  // Also block this cookie on the server, so a copy of it is useless after logout.
+  const raw = req.cookies?.[env.SESSION_COOKIE_NAME];
+  if (raw) revokeSession(raw);
   res.clearCookie(env.SESSION_COOKIE_NAME);
   res.cookie(LOGGED_OUT_COOKIE_NAME, "1", {
     httpOnly: true,
