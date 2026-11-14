@@ -1,10 +1,10 @@
 #include <tunables/global>
 
-# v3: Ausführen und Lesen nur auf die Pfade, die die App braucht; Schreiben, Fähigkeiten und Netzwerk eng.
+# v3: Execute and read only the paths the app needs; writes, capabilities and network are kept narrow.
 profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Fähigkeiten: Docker-Standardsatz ohne net_raw
+  # Capabilities: Docker default set without net_raw
   capability chown,
   capability dac_override,
   capability dac_read_search,
@@ -20,7 +20,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   capability audit_write,
   capability setfcap,
 
-  # Netzwerk
+  # Network
   network tcp,
   network udp,
   network inet,
@@ -31,7 +31,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   deny network packet,
   deny mount,
 
-  # Ausführen (s6-overlay, nginx, Node)
+  # Execute (s6-overlay, nginx, Node)
   /init                        mrix,
   /package/**                  mrix,
   /command/**                  mrix,
@@ -53,7 +53,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   /var/run/**                  mrwkix,
   /tmp/s6/**                   mrwkix,
 
-  # Bibliotheken und Systemdateien (nur Lesen)
+  # Libraries and system files (read only)
   /lib/**                      mr,
   /usr/lib/**                  mr,
   /usr/local/lib/**            mr,
@@ -63,7 +63,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   @{PROC}/**                   r,
   owner @{PROC}/@{pid}/**      rw,
 
-  # Geräte
+  # Devices
   /dev/null                    rw,
   /dev/zero                    rw,
   /dev/full                    rw,
@@ -74,7 +74,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   /dev/pts/**                  rw,
   /dev/shm/**                  rw,
 
-  # Schreiben
+  # Write
   /tmp/                        rw,
   /tmp/**                      mrwk,
   /var/tmp/**                  rwk,
@@ -84,7 +84,7 @@ profile ntfy_manager_addon flags=(attach_disconnected,mediate_deleted) {
   /var/lib/nginx/**            rw,
   /var/cache/nginx/**          rw,
 
-  # Signale und Prozess-Introspektion
+  # Signals and process introspection
   signal,
   ptrace (trace,read) peer=docker-default,
 }
