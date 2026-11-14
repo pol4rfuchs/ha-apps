@@ -72,13 +72,13 @@
 
 ## 0.1.0
 
-- Initiales Konzept-Skeleton: Dockerfile (Multi-Stage, Binary aus
-  `ghcr.io/element-hq/matrix-authentication-service`), eigene
-  Postgres-Instanz, cont-init-Script für Secrets/Config-Generierung
-- `postgres-backup` S6-Service ergänzt (periodischer `pg_dump`, analog
-  Synapse-Add-on, inkl. `finish`-Script — im Synapse-Original fehlt das)
-- `backup_exclude`-Pfad korrekt relativ zum `/data`-Mount gesetzt
-  (`mas/postgresql/pg_wal`) — im Synapse-Original steht dort fälschlich
-  `data/postgresql/pg_wal`, was `pg_wal` nie tatsächlich ausschließt
-- Noch ungetestet — kein Build, kein Container-Start durchgeführt
-- `icon.png`/`logo.png`/`apparmor.txt` bewusst zurückgestellt
+- Initial concept skeleton: Dockerfile (multi-stage, binary from
+  `ghcr.io/element-hq/matrix-authentication-service`), own
+  Postgres instance, cont-init script for secrets/config generation
+- Added a `postgres-backup` s6 service (periodic `pg_dump`, like the
+  Synapse add-on, including a `finish` script — the Synapse original lacks it)
+- Set the `backup_exclude` path correctly relative to the `/data` mount
+  (`mas/postgresql/pg_wal`) — the Synapse original wrongly has
+  `data/postgresql/pg_wal`, which never actually excludes `pg_wal`
+- Still untested — no build, no container start performed
+- `icon.png`/`logo.png`/`apparmor.txt` deliberately postponed
