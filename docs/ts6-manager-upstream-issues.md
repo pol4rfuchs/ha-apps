@@ -38,3 +38,26 @@ document the node format (`trigger_cron: { cron }`, `action_message: { targetMod
 Creating a music bot computes a TeamSpeak identity with `generateIdentityAsync(23)` (`voice-bot-manager.ts`).
 On a Raspberry Pi 4 this took 138 seconds, one CPU core was busy, and the interface showed nothing. Suggested: show a
 progress or "working" state, and make the security level configurable (for example an environment variable).
+
+## 6. Channel message fails with "already member of channel" (error 770)
+
+`action_message` with `targetMode: channel` (`packages/backend/src/bot-engine/flow-runner.ts`, `executeMessage`) always
+sends `clientmove` for the query session into the target channel before `sendtextmessage`. When the session already
+is in that channel (for example the default channel) TeamSpeak answers error 770 `already member of channel`, the
+execution ends with that error and no message is sent. Suggested: skip the `clientmove` when `whoami` reports the
+target channel already, and move back in a `finally` block. The fork `pol4rfuchs/ts6-manager` contains this fix with a
+test (branch `fix/channel-message-already-member`).
+
+## 7. Server message (`targetMode: server`) is invisible in the TeamSpeak 6 client
+
+The server accepts `sendtextmessage targetmode=3` (confirmed with a ServerQuery listener), but the TeamSpeak 6 client
+has no server chat, so nobody sees it. Suggested: warn in the flow editor when `server` is chosen, or hide it.
+
+## 8. Native Opus encoder is not used in the Alpine arm64 image (analysis)
+
+On a Raspberry Pi 4 the log says `@discordjs/opus unavailable, using opusscript (WASM)`. The build installs the
+prebuilt `opus.node` for `linux-arm64-musl` successfully, but that binary lists `libc.so` (not `libc.musl-aarch64.so.1`)
+as a needed library (`readelf -d`); the x64 musl build lists `libc.musl-x86_64.so.1`. `libc.so` exists on Alpine only with
+`musl-dev`, which the build stage has and the runtime stage does not, so loading fails at runtime only. Not verified in an
+Alpine arm64 container (the analysis is from the downloaded release file and the CI build log). Possible fixes: build
+`@discordjs/opus` from source in the build stage (`npm_config_build_from_source`), or provide a `libc.so` in the runtime image.

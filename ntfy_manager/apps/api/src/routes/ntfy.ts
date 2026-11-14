@@ -140,7 +140,7 @@ ntfyRouter.post("/access", async (req, res) => {
     permission: z.enum(["read-write", "read-only", "write-only", "deny-all"])
   });
   const body = schema.parse(req.body);
-  const r = await ntfyRequest("POST", "/v1/access", { session: req.session, body });
+  const r = await ntfyRequest("POST", "/v1/users/access", { session: req.session, body });
   audit(
     r.ok ? "INFO" : "WARN",
     "acl",
@@ -155,7 +155,7 @@ ntfyRouter.delete("/access", async (req, res) => {
     topic: z.string().min(1)
   });
   const body = schema.parse(req.body);
-  const r = await ntfyRequest("DELETE", "/v1/access", { session: req.session, body });
+  const r = await ntfyRequest("DELETE", "/v1/users/access", { session: req.session, body });
   audit(
     r.ok ? "INFO" : "WARN",
     "acl",
