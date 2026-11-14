@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.1...ntfy_manager-v0.3.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* **apps:** remaining findings of the full function test (ts6_manager docs, ntfy_manager UI) ([#921](https://github.com/pol4rfuchs/ha-apps/issues/921)) ([9348562](https://github.com/pol4rfuchs/ha-apps/commit/9348562d008b7692f4a496e2d514b0c0510fe888))
+
 ## [0.3.1](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.0...ntfy_manager-v0.3.1) (2026-11-14)
 
 
