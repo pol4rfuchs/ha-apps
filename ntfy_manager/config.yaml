@@ -5,7 +5,7 @@ slug: ntfy_haos_admin_panel
 description: Full-featured admin console for ntfy on Home Assistant OS
 url: https://github.com/pol4rfuchs/ha-apps
 image: ghcr.io/pol4rfuchs/ntfy_manager
-apparmor: false
+apparmor: true
 arch:
   - aarch64
   - amd64

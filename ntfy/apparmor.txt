@@ -1,76 +1,90 @@
 #include <tunables/global>
 
-# NOTE: test a full start + create an account via admin_username/password +
-# publish and receive on a topic, then a clean restart, before relying on
-# this in production. If something breaks with "Permission denied", check
-# `dmesg | grep -i apparmor` (or journalctl -k) for the exact DENIED path
-# and add it here.
+# v3: Ausführen und Lesen nur auf die Pfade, die die App braucht; Schreiben, Fähigkeiten und Netzwerk eng.
 profile ntfy_addon flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
 
-  # Network: inbound API/WebUI, outbound upstream_base_url (iOS push relay)
+  # Fähigkeiten: Docker-Standardsatz ohne net_raw
+  capability chown,
+  capability dac_override,
+  capability dac_read_search,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability setgid,
+  capability setuid,
+  capability setpcap,
+  capability net_bind_service,
+  capability sys_chroot,
+  capability mknod,
+  capability audit_write,
+  capability setfcap,
+
+  # Netzwerk
   network tcp,
+  network udp,
   network inet,
   network inet6,
+  network unix,
+  network netlink,
+  deny network raw,
+  deny network packet,
+  deny mount,
 
-  # s6-overlay baseline (Buildrules §8) — this add-on has no COPY rootfs/ of
-  # its own (CMD ["/run.sh"] runs directly), but the HA base image's /init
-  # still manages these paths on every start/stop.
-  /init                        ix,
-  /package/**                  ix,
-  /command/**                  ix,
-  /run/{s6,s6-rc*,service}/**  ix,
-  /run/s6/**                   rix,
-  /etc/s6-overlay/**           rix,
-  /etc/services.d/**           rwix,
-  /etc/cont-init.d/**          rwix,
-  /etc/cont-finish.d/**        rwix,
-  /run/{,**}                   rwk,
+  # Ausführen (Programme und Skripte des Containers)
+  /init                        mrix,
+  /package/**                  mrix,
+  /command/**                  mrix,
+  /bin/**                      mrix,
+  /sbin/**                     mrix,
+  /usr/bin/**                  mrix,
+  /usr/sbin/**                 mrix,
+  /usr/local/bin/**            mrix,
+  /usr/libexec/**              mrix,
+  /run.sh                      mrix,
+  /usr/lib/bashio/**           mrix,
+  /etc/s6-overlay/**           mrwix,
+  /etc/services.d/**           mrwix,
+  /etc/cont-init.d/**          mrwix,
+  /etc/cont-finish.d/**        mrwix,
+  /run/                        rw,
+  /var/run/                    rw,
+  /run/**                      mrwkix,
+  /var/run/**                  mrwkix,
+
+  # Bibliotheken und Systemdateien (nur Lesen)
+  /lib/**                      mr,
+  /usr/lib/**                  mr,
+  /usr/local/lib/**            mr,
+  /etc/**                      r,
+  /usr/share/**                r,
+  /sys/**                      r,
+  @{PROC}/**                   r,
+  owner @{PROC}/@{pid}/**      rw,
+
+  # Geräte
+  /dev/null                    rw,
+  /dev/zero                    rw,
+  /dev/full                    rw,
+  /dev/random                  r,
+  /dev/urandom                 r,
   /dev/tty                     rw,
+  /dev/ptmx                    rw,
+  /dev/pts/**                  rw,
+  /dev/shm/**                  rw,
 
-  # Shell + coreutils + the add-on's own entrypoint script
-  /bin/**                      ix,
-  /usr/bin/**                  ix,
-  /usr/sbin/**                 ix,
-  /usr/local/bin/**            ix,
-  /run.sh                      ix,
-
-  # bashio + CLI helper functions installed into profile.d
-  /usr/lib/bashio/**           ix,
-  /etc/profile.d/**            r,
-
-  # ntfy server config, generated fresh on every start
+  # Schreiben
+  /tmp/                        rw,
+  /tmp/**                      mrwk,
+  /var/tmp/**                  rwk,
+  /data/                       rw,
+  /data/**                     rwk,
+  /config/                     rw,
+  /config/**                   rw,
   /etc/ntfy/                   rw,
   /etc/ntfy/**                 rw,
 
-  # Persistent add-on data: user db, cache, attachments, HA token
-  /data/                       rw,
-  /data/**                     rw,
-
-  # Add-on config folder (ha_token.txt copy)
-  /config/                     rw,
-  /config/**                   rw,
-
-  # /tmp
-  /tmp/                        rw,
-  /tmp/**                      rw,
-
-  # System files
-  /etc/passwd                  r,
-  /etc/group                   r,
-  /etc/hosts                   r,
-  /etc/resolv.conf             r,
-  /etc/nsswitch.conf           r,
-  /etc/ssl/**                  r,
-  /etc/localtime               r,
-  /usr/share/zoneinfo/**       r,
-
-  # Proc
-  @{PROC}/**                   r,
-  owner @{PROC}/*/status       r,
-  owner @{PROC}/*/fd/          r,
-
-  # ptrace / signal for Docker's own process introspection
+  # Signale und Prozess-Introspektion
+  signal,
   ptrace (trace,read) peer=docker-default,
-  signal (receive) set=(kill,term) peer=/usr/bin/docker,
 }

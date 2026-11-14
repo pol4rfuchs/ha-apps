@@ -116,6 +116,20 @@ nginx is set to `proxy_read_timeout 24h`. If you're behind a reverse proxy, chec
 **Reservation API returns 404**
 You're using a ntfy server too old to support reservations. Reservations are a paid-tier / self-host-with-payments feature.
 
+## AppArmor
+
+The app runs with an AppArmor profile (`apparmor.txt`, `apparmor: true`). The Supervisor loads it when the app is installed and reloads it when the app is updated. What the profile allows:
+
+- **Write access** only to `/data`, `/tmp`, `/run` and the app's own folders (the nginx folders `/var/log/nginx`, `/var/lib/nginx`, `/var/cache/nginx`). Other files are read-only or not accessible (apart from the usual device files such as `/dev/null`).
+- **Programs and scripts** run only from the system folders of the image and the app's own program folders.
+- **Capabilities:** the standard Docker set without `net_raw`.
+- **Network:** TCP, UDP, IPv4/IPv6, Unix sockets and netlink; no raw or packet sockets.
+- **Mount:** denied.
+
+Tested by the maintainer on a Raspberry Pi 4 with HAOS 18.5, AppArmor enforcing: login, sending a message and creating a user, and a restart of the whole system; no "Permission denied" appeared. Not tested: the other pages of the panel (only the listed actions were run), and updating an app while its profile is loaded.
+
+**If an extension of your own reports "Permission denied":** the profile blocked an access. Write to `/data` instead, or to `/tmp` for temporary files. The kernel log of the host shows `apparmor="DENIED"` lines with the blocked path (visible on the HAOS console or through the developer SSH access). If the app itself needs the path, open an issue in the repository with that line; the profile is changed in `apparmor.txt` and arrives with an app update.
+
 ## Local and external access
 
 **Local (LAN):** open the panel from the Home Assistant sidebar (Ingress, protected by your HA login) or, optionally, directly on `http://<ha-host>:8099`. The direct port is optional; clear it in the app's Network tab if you only want Ingress. The credentials from the app configuration are only used for requests coming through Ingress; on the direct port the panel always asks for an ntfy login. The session cookie is encrypted.

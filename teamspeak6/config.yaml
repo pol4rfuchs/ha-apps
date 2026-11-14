@@ -31,7 +31,7 @@ schema:
   query_ip_allowlist: ["str"]
 panel_icon: mdi:microphone
 panel_title: TeamSpeak 6
-apparmor: false
+apparmor: true
 # Right before a backup the Supervisor runs this script, which copies the running
 # server data to /data (see DOCS.md, section Backup).
 backup_pre: /usr/local/bin/ts6-backup-sync
