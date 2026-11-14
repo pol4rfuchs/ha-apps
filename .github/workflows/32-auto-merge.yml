@@ -1,5 +1,8 @@
 ---
 # Merges Release Please PRs and fast-lane upstream PRs (branches `auto/<app>-…`) once every check of the PR is green.
+# A Release Please PR is merged only after it has been quiet for RELEASE_MIN_AGE_HOURS (every merge to main updates it
+# and restarts the wait), so several changes become one release instead of one release per merge. A Release Please PR can
+# always be merged by hand earlier.
 # Polls instead of using GitHub's native auto-merge: native auto-merge only waits for the required checks of the
 # ruleset, and the path-filtered build test (02) is not one of them. Here a PR waits until no check is pending or failed.
 # The merge uses APP_TOKEN (not GITHUB_TOKEN), otherwise the push to main would not start workflow 05 / the image build.
@@ -36,8 +39,11 @@ jobs:
       MIN_AGE_MINUTES: "45"
       # Cooldown for fast-lane upstream PRs, counted from the commit that workflow 07/23 created. A release that is
       # pulled or hot-fixed upstream shortly after publication must not become an image right away
-      # (Renovate waits 2 days for the same reason). Release Please PRs are not delayed: they only follow a fast-lane merge.
+      # (Renovate waits 2 days for the same reason). Release Please PRs have their own quiet time, see RELEASE_MIN_AGE_HOURS.
       FASTLANE_MIN_AGE_HOURS: "24"
+      # Quiet time for a Release Please PR, counted from its last commit. Several merges to main within this time end up in
+      # one release (and one Home Assistant update). Merge the PR by hand to release earlier.
+      RELEASE_MIN_AGE_HOURS: "12"
     steps:
       - name: Merge PRs whose checks are all green
         shell: bash
@@ -77,6 +83,11 @@ jobs:
             fi
             if [[ "${kind}" == "fastlane" ]] && (( age < FASTLANE_MIN_AGE_HOURS * 60 )); then
               echo "#${number}: fast-lane cooldown, ${age} min of ${FASTLANE_MIN_AGE_HOURS} h elapsed."
+              continue
+            fi
+
+            if [[ "${kind}" == "release" ]] && (( age < RELEASE_MIN_AGE_HOURS * 60 )); then
+              echo "#${number}: release quiet time, ${age} min of ${RELEASE_MIN_AGE_HOURS} h elapsed (merge by hand to release earlier)."
               continue
             fi
 
