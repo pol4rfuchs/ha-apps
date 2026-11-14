@@ -71,7 +71,8 @@ s6-overlay Services:
 
 - **Empty lists.** Lists without entries (bans, complaints, offline messages) show as empty. Older versions answered HTTP 502 with TeamSpeak error 1281 "database empty result set" for them.
 - **Wrong ids in music bot requests.** A missing or non-numeric `songId` (queue and play) or `stationId` (play-radio) in the request body is answered with HTTP 400 `... must be an integer`. Older versions answered HTTP 500.
-- **Creating a music bot takes a while.** When a music bot is created, the manager computes a TeamSpeak identity for it at security level 23. On a Raspberry Pi 4 this took about 30 seconds in a test, uses one CPU core while it runs, and the interface shows no progress. It can take up to a minute; wait for it to finish. The level is fixed in the manager and not configurable in this app.
+- **Creating a music bot takes a while.** When a music bot is created, the manager computes a TeamSpeak identity for it at security level 23. On a Raspberry Pi 4 this took 138 seconds in a test (the earlier estimate of 30 seconds was too low), uses one CPU core while it runs, and the interface shows no progress. Plan for 30 seconds up to several minutes, depending on the device, and wait for it to finish. The level is hard-coded in the manager (`generateIdentityAsync(23)`); this app has no option for it, because the manager offers no setting that could be passed through.
+- **The footer shows "TS6 WEBUI v1.0.0".** That text is fixed in the manager's login and setup pages and is not the version of this app. The version of this app is shown in Home Assistant.
 - **Public widgets name the TeamSpeak host.** The public widget data (`/api/widget/<token>/data`) contains `serverHost`, the host name that is set for the TeamSpeak server in the manager (inside Home Assistant this is the internal app host name). Anyone who knows the widget token can read it. The manager has no switch to leave it out, and this app cannot switch it off. Do not share the widget URL with people who should not see the host name.
 
 ## Flood protection of TeamSpeak 6
@@ -81,6 +82,46 @@ s6-overlay Services:
 **Symptom.** The pages show HTTP 502 or empty lists. The log of this app has `TSApiError: client is flooding`, then `socket hang up` and `Transport reset ... after a stale-socket error`. The lock outlasts a restart of this app and ends after the ban time or when the TeamSpeak 6 app is restarted.
 
 **Remedy.** The manager now keeps itself below the limit (from the source version that contains pull request 3 of its repository): it spaces its requests (at most 8 commands per 3 seconds, so a page that asks for many lists can take a few seconds longer), shares identical read requests that run at the same time (and reuses the answer for one second), and after a "client is flooding" answer sends nothing for 30 seconds, doubling up to 5 minutes. While it waits, the page shows a message that names `query_ip_allowlist`. Tested against a real TeamSpeak 6 server without the allowlist: the previous client failed 27 of 32 quick requests, this one 0 of 32. On top of that, use the **TeamSpeak 6 app of this repository** and its option `query_ip_allowlist`. Its default is the Home Assistant app network `172.30.32.0/23`, which contains this app; then TeamSpeak does not lock it out. Tested with the original TS6 Manager client: 32 quick requests (a page load, four times in a row) all succeeded against a server with the sender in the allowlist, while without it 27 of 32 failed. Another TeamSpeak server needs the address of this app in its `query_ip_allowlist.txt`.
+
+## Roles and server access
+
+There are two roles. Both can sign in; what they may do differs.
+
+| | `admin` | `viewer` |
+|---|---|---|
+| Users, TeamSpeak connections, bots, bans, logs, tokens page, all changes (create channel, snapshot, ...) | yes | no (HTTP 403) |
+| Read channels, clients and the server list | yes | yes, but only on servers that were granted to the user; without a grant HTTP 403 |
+
+Tested with a real manager and a TeamSpeak 6 server: a `viewer` without a grant got 403 on the server, its channel list and its bans; after a row was added to the manager's per-user table `UserServerAccess` it got 200 on channels and clients, and still 403 on bans, logs, bots and every write. The manager has neither a page nor an API route that creates such a row, so with an unmodified manager a `viewer` can read nothing on a server. Use `admin` for people who need to see anything. This is a gap of the manager, not of this app; see `docs/ts6-manager-upstream-issues.md`.
+
+## Bot flows
+
+Bot flows (page "Bots") are normally built in the editor. They can also be created through the API. Each node has a `type` and a `config` object; edges connect node ids. Example that posts a message to the whole virtual server every minute (tested: the flow was enabled, the cron trigger fired at the start of each minute and the execution ended with status `completed`):
+
+```json
+{
+  "name": "Every minute",
+  "serverConfigId": 1,
+  "virtualServerId": 1,
+  "flowData": {
+    "nodes": [
+      { "id": "t1", "type": "trigger_cron", "label": "Every minute", "config": { "cron": "* * * * *" }, "x": 40, "y": 40 },
+      { "id": "a1", "type": "action_message", "label": "Say hello", "config": { "targetMode": "server", "message": "Hello from a bot flow" }, "x": 320, "y": 40 }
+    ],
+    "edges": [
+      { "id": "e1", "source": "t1", "sourcePort": "out", "target": "a1", "targetPort": "in" }
+    ]
+  }
+}
+```
+
+- `trigger_cron`: `cron` is a five-field cron expression (UTC unless the flow carries a `timezone`). `targetMode` of `action_message` is `client`, `channel` or `server`.
+- Put the settings under `config`, not under `data`. With `data` the manager reads an empty cron expression, logs `Invalid cron expression ''` and still reports the flow as enabled, but it never fires.
+- Not tested: that the message arrives in the TeamSpeak client (the test checked the flow execution, not the chat window), and the other trigger and action types.
+
+## Server snapshot
+
+Create a snapshot with `POST /api/servers/<configId>/virtual-servers/<sid>/snapshot` (admin only, with the usual `Authorization: Bearer` token of the manager). The answer is HTTP 200 with the snapshot data; deploying one is `POST .../snapshot/deploy`. A `GET` on these paths is answered with 404 (`Cannot GET`), which is easy to mistake for a missing feature. Tested against TeamSpeak 6 6.0.0-beta13.1: the POST was answered with 200 and snapshot data. Deploying a snapshot was not tested.
 
 ## Server logs page
 
