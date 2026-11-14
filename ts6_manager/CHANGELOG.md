@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.3.0...ts6_manager-v1.3.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ts6_manager:** update upstream to 778d1b867a8c (changelog: https://github.com/pol4rfuchs/ts6-manager/commit/778d1b867a8cc70493d87ae154b9a369497a855c) ([#933](https://github.com/pol4rfuchs/ha-apps/issues/933)) ([261dd4d](https://github.com/pol4rfuchs/ha-apps/commit/261dd4d783b75a3ffb1b48083d0d7d591240266a))
+
 ## [1.3.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.4...ts6_manager-v1.3.0) (2026-11-14)
 
 
