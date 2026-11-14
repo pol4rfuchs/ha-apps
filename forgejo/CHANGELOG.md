@@ -138,14 +138,14 @@
 ## [16.0.0] – 2026-05-14
 
 ### Features
-- Initiale Veröffentlichung – Forgejo v16 (aktuellste Version)
-- Plattformen: amd64 + aarch64 (Raspberry Pi 4 & 5)
-- HA Ingress-Integration mit dynamischer URL-Erkennung via Supervisor API
-- Multi-Stage Dockerfile (HA-Base + Forgejo Binary)
-- SSH Git-Zugriff mit persistenten Host-Keys
-- SSL/TLS Unterstützung
-- AppArmor Sicherheitsprofil
-- s6-overlay Service-Architektur (korrekte HA-Integration)
-- Konfiguration via FORGEJO__-Umgebungsvariablen + environment-to-ini
-- Persistente Daten in addon_config (/config)
+- Initial release – Forgejo v16 (latest version)
+- Platforms: amd64 + aarch64 (Raspberry Pi 4 & 5)
+- HA Ingress integration with dynamic URL detection via the Supervisor API
+- Multi-stage Dockerfile (HA base + Forgejo binary)
+- SSH Git access with persistent host keys
+- SSL/TLS support
+- AppArmor security profile
+- s6-overlay service architecture (proper HA integration)
+- Configuration via FORGEJO__ environment variables + environment-to-ini
+- Persistent data in addon_config (/config)
 - GitHub Actions CI/CD: Codeberg → GitHub → GHCR Pipeline

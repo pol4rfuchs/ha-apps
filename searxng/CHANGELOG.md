@@ -317,9 +317,9 @@
 
 ## 2026.3.8
 
-- Initiales Release
-- Basiert auf `searxng/searxng:latest`
-- Ingress-Support mit automatischer Base-URL-Erkennung
-- Secret Key wird persistent in `addon_config` gespeichert
-- Default `settings.yml` wird beim Erststart automatisch angelegt
-- `custom.sh` Hook für eigene Befehle vor dem Start
+- Initial release
+- Based on `searxng/searxng:latest`
+- Ingress support with automatic base URL detection
+- Secret key is stored persistently in `addon_config`
+- Default `settings.yml` is created automatically on first start
+- `custom.sh` hook for custom commands before start
