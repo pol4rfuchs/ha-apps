@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.2.0...teamspeak6-v1.2.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* **apps:** findings of the full function test (ntfy, ntfy_manager, teamspeak6, ts6_manager) ([#914](https://github.com/pol4rfuchs/ha-apps/issues/914)) ([e067f20](https://github.com/pol4rfuchs/ha-apps/commit/e067f2022f87f908a57865b93c6cb64999e0e044))
+
 ## [1.2.0](https://github.com/pol4rfuchs/ha-apps/compare/teamspeak6-v1.1.28...teamspeak6-v1.2.0) (2026-11-14)
 
 
