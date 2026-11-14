@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.3...ts6_manager-v1.2.4) (2026-11-14)
+
+
+### Bug Fixes
+
+* **apps:** access rules in ntfy_manager, channel messages and docs in ts6_manager ([#924](https://github.com/pol4rfuchs/ha-apps/issues/924)) ([f7c605b](https://github.com/pol4rfuchs/ha-apps/commit/f7c605bc8fcdddf15f4aa7bf78275170e19c7328))
+
 ## [1.2.3](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.2...ts6_manager-v1.2.3) (2026-11-14)
 
 
