@@ -134,17 +134,20 @@ Restoring: the manager has a deploy route, `POST .../virtual-servers/<sid>/snaps
 
 ## Navidrome as music source
 
-The manager can use a Navidrome (Subsonic) server, for example the Navidrome app of this repository, as a source for the music bot. Found tracks are copied into the manager's music folder (`/data/music`) and then play like any other song.
+The manager can use a Navidrome (Subsonic) server, for example the Navidrome app of this repository, as a source for the music bot. Tracks are **streamed**: when a track plays, the manager reads it from Navidrome. Nothing is copied to the disk of this app, so a track does not take space twice.
 
 1. In the manager open **Settings → Navidrome**, switch it on and enter the address, a Navidrome user name and its password. Inside Home Assistant use the internal host name of the Navidrome app (shown on the app's info page in Home Assistant) with port `4533`, for example `http://<navidrome-app-host>:4533`. The password is stored encrypted and never shown again; leave the field empty to keep it.
 2. Press **Test connection**. It reports the Navidrome version or a readable error.
-3. In the music library of a server a Navidrome search field appears. Search, then **Add** a track. Adding the same track again does not download it twice.
+3. In the music library of a server a Navidrome search field appears. Search, then **Add** a track. Adding only creates an entry in the library that points to the track (no download), so it is instant. Adding the same track again does not create a second entry, and tracks that are already in the library show "In library" instead of "Add".
 
 Things to know:
 
+- **Navidrome has to be reachable while a track plays** (also for seeking). If Navidrome is stopped or the settings are switched off or removed, those tracks cannot be played. The other sources are not affected.
+- The web address with the user name and a token (not the password) is only used inside the manager to start playback and is not written to the log.
+- Deleting a song in the manager removes only its entry. The file in Navidrome is never touched.
+- Tracks that an older version of this app had copied into `/data/music` keep playing from that copy. **Add** the track again to replace the copy by the stream; the old file is then deleted.
 - The search needs a search term (at most 200 characters); an empty one is refused, because Navidrome would answer an empty search with its whole library. At most 20 tracks are shown.
-- Deleting a song in the manager deletes only the copy in `/data/music`, not the file in Navidrome.
-- Tested against Navidrome 0.64.2 outside Home Assistant: the search (including the refused empty, blank and overlong terms). Only checked by unit tests and the build, not run against a real Navidrome: the connection test, adding a track, adding the same track twice, and deleting a song. Not tested at all: access from the manager to the Navidrome app inside Home Assistant, playing an imported track through the music bot in TeamSpeak, large libraries.
+- Tested against Navidrome 0.64.2 outside Home Assistant: the search (including the refused terms), adding a track and adding it twice (one entry, no file written), an unknown track id, and decoding FLAC, MP3 and WAV from Navidrome with seeking and with wrong credentials. Not run against a real Navidrome: the connection test and deleting a song. Not tested at all: access from the manager to the Navidrome app inside Home Assistant, playing a track through the music bot in TeamSpeak, long tracks and a dropped connection during playback, large libraries.
 
 ## Server logs page
 
