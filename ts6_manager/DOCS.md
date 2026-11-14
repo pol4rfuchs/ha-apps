@@ -69,6 +69,7 @@ s6-overlay Services:
 
 ## Things to know
 
+- **Empty lists.** Lists without entries (bans, complaints, offline messages) show as empty. Older versions answered HTTP 502 with TeamSpeak error 1281 "database empty result set" for them.
 - **Creating a music bot takes a while.** When a music bot is created, the manager computes a TeamSpeak identity for it at security level 23. On a Raspberry Pi 4 this took about 30 seconds in a test, uses one CPU core while it runs, and the interface shows no progress. It can take up to a minute; wait for it to finish. The level is fixed in the manager and not configurable in this app.
 - **Public widgets name the TeamSpeak host.** The public widget data (`/api/widget/<token>/data`) contains `serverHost`, the host name that is set for the TeamSpeak server in the manager (inside Home Assistant this is the internal app host name). Anyone who knows the widget token can read it. The manager has no switch to leave it out, and this app cannot switch it off. Do not share the widget URL with people who should not see the host name.
 
