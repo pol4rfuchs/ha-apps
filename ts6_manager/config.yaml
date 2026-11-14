@@ -14,6 +14,9 @@ ports:
   8066/tcp: 8066
 panel_icon: mdi:microphone
 webui: http://[HOST]:[PORT:8066]
+map:
+  - type: media
+    read_only: true
 options:
   log_level: info
   video_streaming: false
