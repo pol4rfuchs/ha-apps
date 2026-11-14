@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.2...ntfy_manager-v0.3.3) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** add CSRF protection for state-changing API requests ([#925](https://github.com/pol4rfuchs/ha-apps/issues/925)) ([22fadd6](https://github.com/pol4rfuchs/ha-apps/commit/22fadd6fafded2c225a0d3c7034dd2ea08fc5046))
+
 ## [0.3.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.1...ntfy_manager-v0.3.2) (2026-11-14)
 
 
