@@ -66,6 +66,9 @@ profile ts6_manager_addon flags=(attach_disconnected,mediate_deleted) {
   /etc/**                      r,
   /usr/share/**                r,
   /var/www/html/**             r,
+  # Media folder (read only): Navidrome local folder mode reads tracks from here
+  /media/                      r,
+  /media/**                    r,
   /sys/**                      r,
   @{PROC}/**                   r,
   owner @{PROC}/@{pid}/**      rw,
