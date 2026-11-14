@@ -41,6 +41,7 @@ Wraps [clusterzx/ts6-manager](https://github.com/clusterzx/ts6-manager) as a sin
 | `/data/ts6webui.db` | SQLite database |
 | `/data/secrets.env` | JWT_SECRET + ENCRYPTION_KEY (auto-generated) |
 | `/data/music/` | Downloaded music (yt-dlp) |
+| `/media/` | Home Assistant media folder, mounted **read only** (used only by the Navidrome local folder mode) |
 
 The secrets are generated automatically on the first start.  
 **Do not delete them** — otherwise all stored credentials become invalid.
@@ -148,6 +149,26 @@ Things to know:
 - Tracks that an older version of this app had copied into `/data/music` keep playing from that copy. **Add** the track again to replace the copy by the stream; the old file is then deleted.
 - The search needs a search term (at most 200 characters); an empty one is refused, because Navidrome would answer an empty search with its whole library. At most 20 tracks are shown.
 - Tested against Navidrome 0.64.2 outside Home Assistant: the search (including the refused terms), adding a track and adding it twice (one entry, no file written), an unknown track id, and decoding FLAC, MP3 and WAV from Navidrome with seeking and with wrong credentials. Not run against a real Navidrome: the connection test and deleting a song. Not tested at all: access from the manager to the Navidrome app inside Home Assistant, playing a track through the music bot in TeamSpeak, long tracks and a dropped connection during playback, large libraries.
+
+## Navidrome: local folder mode
+
+By default the manager streams Navidrome tracks over HTTP (see "Navidrome as music source"). If the Navidrome music folder is also visible to this app, it can read the file directly instead: no network request, no user name and token in a web address, and Navidrome may be stopped while the track plays.
+
+**What the app gets.** This app mounts the Home Assistant **media folder read only** (`/media`). That gives the app read access to **everything** in the media folder, not only the music. The mount is read only and the AppArmor profile allows reading `/media/**` only (no write, no execute). The mount is part of the app and cannot be switched off in its options; the app only reads from it when the setting "Music folder" is filled in, and with the setting empty it never opens a file there.
+
+**Set up**
+1. The Navidrome music folder has to be inside the media folder. The Navidrome app of this repository uses `/media/music` by default, and Home Assistant mounts the media folder at `/media` in both apps, so both apps see the music under the same path.
+2. In Navidrome switch on **Report Real Path** for the player named `ts6-manager` (Navidrome keeps this setting per player; the player appears after the manager has contacted Navidrome once, for example after "Test connection"). Without it Navidrome reports made-up paths built from the tags and the folder mode cannot find the files.
+3. In the manager open **Settings → Navidrome** and enter the **Music folder**, for example `/media/music`. It must be an absolute path without `..`.
+4. Press **Test connection**. It also reports "Music folder readable: yes or no" (it does not list files).
+5. Add tracks as usual. The path Navidrome reports is stored with the track; tracks added earlier ask Navidrome for it once when they are played for the first time.
+
+**How a track is read.** With a music folder set, the manager looks for the file in that folder first. It uses the file only if its real path (links resolved) stays inside the music folder and the file is readable. Otherwise (file missing, path outside the folder, no real path reported) it streams the track over HTTP as before and writes a line to the log without any path or login.
+
+**What does not work**
+- Navidrome on another device, or a music folder that is not inside `/media` (for example folders added with `ND_EXTRA_MUSIC_FOLDERS` outside of `/media`): the files are not visible here, so the track is streamed.
+- Several Navidrome libraries: the path Navidrome reports is checked against the one music folder you entered, so only files below it are read directly.
+- A path outside the music folder, and Navidrome and this app seeing the music under different paths (for example `/music` in Navidrome and `/media/music` here): streamed over HTTP.
 
 ## Server logs page
 
