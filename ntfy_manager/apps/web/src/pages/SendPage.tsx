@@ -56,7 +56,7 @@ export default function SendPage() {
   function example() {
     setTopic("ha-notify");
     setTitle("Test Notification");
-    setMessage("Hello from ntfy Admin Console!");
+    setMessage("Hello from ntfy Manager!");
     setTags("house,test");
     setPrio(4);
     setClick("");

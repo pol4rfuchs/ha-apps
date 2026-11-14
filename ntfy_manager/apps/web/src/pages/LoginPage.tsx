@@ -70,7 +70,7 @@ export default function LoginPage({ onSuccess }: { onSuccess: () => void }) {
             <Activity className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-base font-extrabold">ntfy Admin Console</div>
+            <div className="text-base font-extrabold">ntfy Manager</div>
             <div className="text-xs text-muted font-semibold">
               {status?.ntfyBaseUrl ?? "Connecting…"}
             </div>
