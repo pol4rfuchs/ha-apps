@@ -8,7 +8,7 @@ export const configRouter = Router();
 configRouter.get("/", (req, res) => {
   const s = resolveSession(req);
   res.json({
-    appName: "ntfy HAOS Admin Panel",
+    appName: "ntfy Manager",
     version: "0.2.0",
     ntfyBaseUrl: env.NTFY_BASE_URL,
     defaultTopics: DEFAULT_TOPICS,

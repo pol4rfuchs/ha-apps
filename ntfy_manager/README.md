@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.png" alt="ntfy HAOS Admin Panel Logo" width="500">
+<img src="./logo.png" alt="ntfy Manager Logo" width="500">
 
 # 🛠️ ntfy Manager — Home Assistant App
 

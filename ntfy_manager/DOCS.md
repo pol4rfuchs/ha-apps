@@ -1,4 +1,4 @@
-# ntfy HAOS Admin Panel — Documentation
+# ntfy Manager — Documentation
 
 ## Quick start
 
