@@ -67,6 +67,11 @@ s6-overlay Services:
 | `video_streaming` | `false` | Enables the WebRTC media sidecar for streaming video into TeamSpeak channels. Off: the sidecar idles and needs hardly any RAM/CPU. |
 | `log_level` | `info` | Log level of the backend (trace/debug/info/notice/warning/error/fatal). The backend logs via `console.*`, and the levels are filtered there (`log`/`info` = info, `warn` = warning, `error` = error). nginx and the video sidecar are not affected. |
 
+## Things to know
+
+- **Creating a music bot takes a while.** When a music bot is created, the manager computes a TeamSpeak identity for it at security level 23. On a Raspberry Pi 4 this took about 30 seconds in a test, uses one CPU core while it runs, and the interface shows no progress. It can take up to a minute; wait for it to finish. The level is fixed in the manager and not configurable in this app.
+- **Public widgets name the TeamSpeak host.** The public widget data (`/api/widget/<token>/data`) contains `serverHost`, the host name that is set for the TeamSpeak server in the manager (inside Home Assistant this is the internal app host name). Anyone who knows the widget token can read it. The manager has no switch to leave it out, and this app cannot switch it off. Do not share the widget URL with people who should not see the host name.
+
 ## Flood protection of TeamSpeak 6
 
 **Cause.** TeamSpeak 6 locks out a query client that sends more than 10 commands within 3 seconds (instance settings `serverinstance_serverquery_flood_commands=10`, `flood_time=3`) for 10 minutes (`ban_time=600`); a WebQuery request with a virtual server id counts as two commands. TS6 Manager is a foreign client for the server, so several quick page loads (Dashboard, Channels, Clients, Server groups, Tokens) can trigger the lock.
