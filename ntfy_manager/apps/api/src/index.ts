@@ -13,6 +13,7 @@ import { streamRouter } from "./routes/stream.js";
 import { logsRouter } from "./routes/logs.js";
 import { configRouter } from "./routes/config.js";
 import { audit, logger } from "./services/logger.js";
+import { csrfGuard } from "./middleware/csrf.js";
 
 const app = express();
 
@@ -46,6 +47,8 @@ app.use(
 app.use(cors({ origin: false, credentials: true })); // same-origin only
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+// State-changing requests need the panel's own header and no cross-site origin
+app.use(csrfGuard);
 app.use(
   morgan("tiny", {
     skip: (req) => req.url.startsWith("/api/health") || req.url.startsWith("/api/ntfy/stream")

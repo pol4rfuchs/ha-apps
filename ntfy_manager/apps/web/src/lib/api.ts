@@ -24,6 +24,9 @@ export type ApiInit = Omit<RequestInit, "body"> & { body?: unknown };
 
 export async function api<T>(path: string, init?: ApiInit): Promise<T> {
   const headers = new Headers(init?.headers);
+  // Required by the API's CSRF guard for every state-changing request; a page on
+  // another origin cannot set it without a CORS preflight, which the API refuses.
+  headers.set("X-Requested-With", "ntfy-admin");
   let body: BodyInit | undefined;
   if (init?.body !== undefined) {
     if (init.body instanceof FormData || typeof init.body === "string") {
