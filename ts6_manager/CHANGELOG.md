@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.4...ts6_manager-v1.3.0) (2026-11-14)
+
+
+### Features
+
+* **ts6_manager:** add Navidrome as music source and update the manager source ([#930](https://github.com/pol4rfuchs/ha-apps/issues/930)) ([019ecb0](https://github.com/pol4rfuchs/ha-apps/commit/019ecb0cfaf4757f55236269f6194e77b5e12f38))
+
 ## [1.2.4](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.2.3...ts6_manager-v1.2.4) (2026-11-14)
 
 
