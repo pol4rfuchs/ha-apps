@@ -198,3 +198,12 @@ jobs:
           fi
 
           echo "No (unallowed) deprecated legacy forge references found."
+
+      - name: Check that text outside translations is English
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Everything in the repo is English (CLAUDE.md); translations, CHANGELOGs and the wiki are exempt.
+          # A line that has to stay German carries the marker "lang-check:allow".
+          python3 scripts/check_english_only.py --self-test
+          python3 scripts/check_english_only.py
