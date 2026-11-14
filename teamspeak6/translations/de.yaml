@@ -19,7 +19,10 @@ configuration:
       abgelehnt. Ersetzt manuelle Änderungen an query_ip_allowlist.txt.
   log_level:
     name: Log-Level
-    description: "Detailgrad des Server-Loggings: 0=Kritisch, 1=Fehler, 2=Warnung, 3=Info, 4=Debug."
+    description: >-
+      Detailgrad des Server-Loggings: 0=Kritisch, 1=Fehler, 2=Warnung,
+      3=Info, 4=Debug. Gilt nur für die Logdateien des Servers (Ordner logs und
+      der Befehl logview), nicht für die Ausgabe im App-Log.
   license_accepted:
     name: TeamSpeak-Lizenz akzeptieren
     description: >-

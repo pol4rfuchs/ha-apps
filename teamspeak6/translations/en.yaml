@@ -19,7 +19,10 @@ configuration:
       query_ip_allowlist.txt.
   log_level:
     name: Log Level
-    description: "Verbosity of server logging: 0=Critical, 1=Error, 2=Warning, 3=Info, 4=Debug."
+    description: >-
+      Verbosity of server logging: 0=Critical, 1=Error, 2=Warning, 3=Info,
+      4=Debug. It only applies to the server's log files (logs folder and the
+      logview command), not to the output in the app log.
   license_accepted:
     name: Accept TeamSpeak License
     description: >-
