@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.4.0...ts6_manager-v1.4.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **ts6_manager:** report a Navidrome track that cannot be started and explain the music folder check ([#952](https://github.com/pol4rfuchs/ha-apps/issues/952)) ([e3a347b](https://github.com/pol4rfuchs/ha-apps/commit/e3a347b2fa7ab567a55c3427f2db846b16d1aa81))
+
 ## [1.4.0](https://github.com/pol4rfuchs/ha-apps/compare/ts6_manager-v1.3.3...ts6_manager-v1.4.0) (2026-11-14)
 
 
