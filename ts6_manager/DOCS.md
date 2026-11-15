@@ -160,10 +160,12 @@ By default the manager streams Navidrome tracks over HTTP (see "Navidrome as mus
 1. The Navidrome music folder has to be inside the media folder. The Navidrome app of this repository uses `/media/music` by default, and Home Assistant mounts the media folder at `/media` in both apps, so both apps see the music under the same path.
 2. In Navidrome switch on **Report Real Path** for the player named `ts6-manager` (Navidrome keeps this setting per player; the player appears after the manager has contacted Navidrome once, for example after "Test connection"). Without it Navidrome reports made-up paths built from the tags and the folder mode cannot find the files.
 3. In the manager open **Settings → Navidrome** and enter the **Music folder**, for example `/media/music`. It must be an absolute path without `..`.
-4. Press **Test connection**. It also reports "Music folder readable: yes or no" (it does not list files).
+4. Press **Test connection**. It also reports "Music folder readable: yes or no" (it does not list files). This only shows that the folder can be read; it does not check that it is the right one (a folder such as `/data` would also be reported as readable). The folder has to be exactly the path in front of the file name that Navidrome reports as the real path: if Navidrome reports `/media/music/Band/Album/Title.wav`, enter `/media/music`. A wrong folder is not an error: the manager then simply streams the track over HTTP.
 5. Add tracks as usual. The path Navidrome reports is stored with the track; tracks added earlier ask Navidrome for it once when they are played for the first time.
 
 **How a track is read.** With a music folder set, the manager looks for the file in that folder first. It uses the file only if its real path (links resolved) stays inside the music folder and the file is readable. Otherwise (file missing, path outside the folder, no real path reported) it streams the track over HTTP as before and writes a line to the log without any path or login.
+
+**If a track cannot be played.** The manager now tells you why instead of staying silent: when Navidrome is not reachable and the path of an older track is not stored yet, or when the file and the stream both cannot be read, the play action fails with a message (for example "Navidrome is not reachable. Check the URL and port." or "Navidrome did not deliver the track. Check that Navidrome is running and its settings are correct.") and the bot stays as it was. The messages contain no path, web address or login.
 
 **What does not work**
 - Navidrome on another device, or a music folder that is not inside `/media` (for example folders added with `ND_EXTRA_MUSIC_FOLDERS` outside of `/media`): the files are not visible here, so the track is streamed.
