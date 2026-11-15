@@ -408,6 +408,9 @@ jobs:
             commit_subject="fix(${ADDON}): update upstream to ${SHORT_VALUE}"
           fi
 
+          # Record the remote state of the candidate branch so --force-with-lease has an expected value.
+          git fetch origin "+refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}" || true
+
           git checkout -B "${TARGET_BRANCH}"
           git add "${ADDON}/Dockerfile"
           git commit -m "${commit_subject}"

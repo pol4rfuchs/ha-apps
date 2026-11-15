@@ -411,6 +411,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # Record the current remote state of the candidate branch (if any) so
+          # --force-with-lease has a real expected value. Without it, a re-run for
+          # the same target is rejected because the lease assumes the branch is absent.
+          git fetch origin "+refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}" || true
+
           git checkout -B "${TARGET_BRANCH}"
           git add "${ADDON}/Dockerfile"
           git commit -m "fix(${ADDON}): update upstream to ${SHORT_VALUE}"
