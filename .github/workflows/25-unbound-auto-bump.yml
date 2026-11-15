@@ -232,6 +232,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # Record the remote state of the candidate branch so --force-with-lease has an expected value.
+          git fetch origin "+refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}" || true
+
           git checkout -B "${TARGET_BRANCH}"
           git add unbound/config.yaml unbound/README.md unbound/Dockerfile unbound/CHANGELOG.md
           git commit -m "chore(unbound): bump to ${NEW_FULL} (automated)"
