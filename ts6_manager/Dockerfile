@@ -6,7 +6,7 @@ ARG BUILD_ARCH=unknown
 ARG BUILD_VERSION=1.1.0
 ARG TS6_MANAGER_REPO=https://github.com/pol4rfuchs/ts6-manager.git
 ARG TS6_MANAGER_BRANCH=main
-ARG TS6_MANAGER_REF=2306862b80549986dc8db250e9ab94e73614be58
+ARG TS6_MANAGER_REF=91f72f125ece6c34e8f42be752cd1c60353ab76d
 # Must live in the GLOBAL arg scope (before the first FROM), not re-declared
 # right before Stage 3's FROM. An ARG declared between two FROM lines is only
 # a stage-local declaration for the stage that follows it; BuildKit has shown
