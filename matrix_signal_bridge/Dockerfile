@@ -4,7 +4,7 @@
 # 3-stage build, analogous to the official github.com/mautrix/signal/Dockerfile:
 # Signal needs Rust (libsignal_ffi.a) AND Go (bridge binary, links against
 # the Rust artifact via CGO/LIBRARY_PATH). Hence more complex than WhatsApp.
-ARG SIGNAL_VERSION=v0.2610.0
+ARG SIGNAL_VERSION=v0.2611.0
 ARG BUILD_ARCH
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.7
 
