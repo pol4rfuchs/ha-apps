@@ -7,7 +7,7 @@
 **TeamSpeak 6 voice server as a Home Assistant app, built on the official `teamspeaksystems/teamspeak6-server` image.**
 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-ha--apps-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pol4rfuchs/ha-apps)
-[![TeamSpeak Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0--beta13.1-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://teamspeak.com)
+[![TeamSpeak Version](https://img.shields.io/badge/TeamSpeak%206-v6.0.0--beta14-F39C12?style=for-the-badge&logo=teamspeak&logoColor=white)](https://teamspeak.com)
 [![Home Assistant App](https://img.shields.io/badge/Home%20Assistant-App-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/addons/)
 
 </div>
