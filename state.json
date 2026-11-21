@@ -155,6 +155,10 @@
     "2026-11-18": {
       "count": 9,
       "uniques": 4
+    },
+    "2026-11-19": {
+      "count": 0,
+      "uniques": 0
     }
   },
   "downloads": {
@@ -172,14 +176,14 @@
     "netbox": 98,
     "nextcloud": 287,
     "nginx_proxy_manager": 100,
-    "ntfy": 1253,
+    "ntfy": 1257,
     "ntfy_manager": 491,
     "restic_backup": 108,
-    "searxng": 2168,
-    "teamspeak6": 716,
+    "searxng": 2241,
+    "teamspeak6": 757,
     "ts6_manager": 731,
     "unbound": 393,
-    "unifi_os_control_center": 265,
+    "unifi_os_control_center": 278,
     "unifi_toolkit": 65,
     "vaultwarden": 93
   }
