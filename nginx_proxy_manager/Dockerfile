@@ -1,5 +1,5 @@
 ARG BUILD_VERSION
-FROM jc21/nginx-proxy-manager:2.17.0
+FROM jc21/nginx-proxy-manager:2.17.1
 
 ARG BUILD_ARCH
 ARG BUILD_VERSION
