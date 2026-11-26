@@ -175,6 +175,10 @@
     "2026-11-23": {
       "count": 0,
       "uniques": 0
+    },
+    "2026-11-24": {
+      "count": 0,
+      "uniques": 0
     }
   },
   "downloads": {
@@ -188,7 +192,7 @@
     "matrix_synapse": 1037,
     "matrix_telegram_bridge": 300,
     "matrix_whatsapp_bridge": 309,
-    "navidrome": 356,
+    "navidrome": 360,
     "netbox": 98,
     "nextcloud": 287,
     "nginx_proxy_manager": 100,
@@ -199,8 +203,8 @@
     "teamspeak6": 793,
     "ts6_manager": 731,
     "unbound": 393,
-    "unifi_os_control_center": 282,
-    "unifi_toolkit": 65,
+    "unifi_os_control_center": 286,
+    "unifi_toolkit": 69,
     "vaultwarden": 99
   }
 }
