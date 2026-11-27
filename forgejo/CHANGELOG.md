@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.24](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.23...forgejo-v16.0.24) (2026-11-27)
+
+
+### Bug Fixes
+
+* **forgejo:** update upstream to 17.0.2 (changelog: https://codeberg.org/forgejo/forgejo/releases/tag/v17.0.2) ([#975](https://github.com/pol4rfuchs/ha-apps/issues/975)) ([b96389e](https://github.com/pol4rfuchs/ha-apps/commit/b96389e5189e99589955c3094df1b423057e13db))
+
 ## [16.0.23](https://github.com/pol4rfuchs/ha-apps/compare/forgejo-v16.0.22...forgejo-v16.0.23) (2026-11-13)
 
 

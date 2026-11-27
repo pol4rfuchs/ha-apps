@@ -1,5 +1,5 @@
 {
-  "forgejo": "16.0.23",
+  "forgejo": "16.0.24",
   "intiface_central": "1.0.7",
   "matrix_synapse": "2.0.4",
   "nginx_proxy_manager": "2.1.8",
