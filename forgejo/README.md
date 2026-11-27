@@ -24,7 +24,7 @@
 |---|---|
 | **Upstream image** | `forgejo/forgejo` (rootless), pulled from Forgejo's mirror `data.forgejo.org` |
 | **Forgejo version** | `17.0.2` |
-| **App version** | `16.0.23` |
+| **App version** | `16.0.24` |
 | **SSH Git access** | optional (`ssh_enabled`) |
 | **Arch** | `amd64`, `aarch64` |
 
