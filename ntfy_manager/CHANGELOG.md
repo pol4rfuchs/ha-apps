@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.7](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.6...ntfy_manager-v0.3.7) (2026-11-27)
+
+
+### Bug Fixes
+
+* **ntfy_manager:** keep URL credentials out of the logs ([#999](https://github.com/pol4rfuchs/ha-apps/issues/999)) ([2094b69](https://github.com/pol4rfuchs/ha-apps/commit/2094b692ae916ee58a5cdcc92f7a627c16ee5fdd))
+
 ## [0.3.6](https://github.com/pol4rfuchs/ha-apps/compare/ntfy_manager-v0.3.5...ntfy_manager-v0.3.6) (2026-11-14)
 
 
