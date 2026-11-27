@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.3.2...ntfy-v1.3.3) (2026-11-27)
+
+
+### Bug Fixes
+
+* **ntfy:** update upstream to 2.38.2 (changelog: https://github.com/binwiederhier/ntfy/releases/tag/v2.38.2) ([#985](https://github.com/pol4rfuchs/ha-apps/issues/985)) ([421c023](https://github.com/pol4rfuchs/ha-apps/commit/421c023e62eaf2a743503e8757ca139c0ce7d78c))
+
 ## [1.3.2](https://github.com/pol4rfuchs/ha-apps/compare/ntfy-v1.3.1...ntfy-v1.3.2) (2026-11-16)
 
 
