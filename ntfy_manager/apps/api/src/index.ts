@@ -97,5 +97,5 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 // auth middleware relies on to tell Ingress from direct port access.
 app.listen(env.API_PORT, "127.0.0.1", () => {
   audit("INFO", "runtime", `API started on port ${env.API_PORT}`);
-  logger.info(`API listening on ${env.API_PORT} (ntfy at ${env.NTFY_BASE_URL})`);
+  logger.info(`API listening on ${env.API_PORT} (ntfy host ${new URL(env.NTFY_BASE_URL).host})`);
 });
