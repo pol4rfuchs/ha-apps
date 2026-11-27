@@ -1,6 +1,6 @@
 import { NTFY_BASE } from "../env.js";
 import type { SessionPayload } from "../services/auth.js";
-import { audit } from "../services/logger.js";
+import { audit, redactCredentials } from "../services/logger.js";
 
 export type NtfyResult<T = unknown> = {
   ok: boolean;
@@ -69,8 +69,8 @@ export async function ntfyRequest<T = unknown>(
       err instanceof Error && err.name === "TimeoutError"
         ? `Timed out after ${opts.timeoutMs ?? 10_000}ms`
         : err instanceof Error
-        ? err.message
-        : String(err);
+        ? redactCredentials(err.message)
+        : redactCredentials(String(err));
     audit("ERROR", "ntfy", `Request failed: ${method} ${path} → ${msg}`);
     return { ok: false, status: 0, data: null, error: msg };
   }

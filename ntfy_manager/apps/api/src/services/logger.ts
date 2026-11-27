@@ -38,6 +38,11 @@ function configuredThreshold(): number {
   return LEVEL_PRIORITY[configured] ?? LEVEL_PRIORITY.INFO;
 }
 
+/** Strip `user:pass@` from URLs inside a log string so credentials never reach the log. */
+export function redactCredentials(text: string): string {
+  return text.replace(/(\b[a-z][a-z0-9+.-]*:\/\/)[^/\s@]+@/gi, "$1");
+}
+
 export function audit(
   level: LogLevel,
   source: string,
