@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.9](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.8...nginx_proxy_manager-v2.1.9) (2026-11-27)
+
+
+### Bug Fixes
+
+* **nginx_proxy_manager:** update upstream to 2.17.1 (changelog: https://github.com/NginxProxyManager/nginx-proxy-manager/releases) ([#977](https://github.com/pol4rfuchs/ha-apps/issues/977)) ([1cb9ff2](https://github.com/pol4rfuchs/ha-apps/commit/1cb9ff23ba307e84b562921a7d5fd0ea166b66bb))
+
 ## [2.1.8](https://github.com/pol4rfuchs/ha-apps/compare/nginx_proxy_manager-v2.1.7...nginx_proxy_manager-v2.1.8) (2026-11-13)
 
 
