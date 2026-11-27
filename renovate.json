@@ -4,7 +4,9 @@
     "config:recommended",
     "helpers:pinGitHubActionDigestsToSemver"
   ],
-  "dependencyDashboard": true,
+  "dependencyDashboard": {
+    "enabled": true
+  },
   "prHourlyLimit": 0,
   "schedule": [
     "before 6am on wednesday"
