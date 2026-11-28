@@ -378,10 +378,9 @@ fi
 
 if [ -n "${BRIDGE_REG_LIST}" ]; then
     bashio::log.info "🌉 Appservice bridge(s) registered — restart Synapse after changes"
-    cat >> "${SYNAPSE_CONFIG}" << EOF
-
-app_service_config_files:
-${BRIDGE_REG_LIST}EOF
+    # printf instead of a heredoc: "${BRIDGE_REG_LIST}EOF" on one line is not a valid
+    # heredoc terminator, so the heredoc ran on and wrote script lines into homeserver.yaml.
+    printf '\napp_service_config_files:\n%s' "${BRIDGE_REG_LIST}" >> "${SYNAPSE_CONFIG}"
 fi
 
 # ── Media retention (optional auto-purge) ─────────────────────────────────
