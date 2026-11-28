@@ -100,7 +100,7 @@ else
 
     # Fallback: direct binary name
     if [ -z "${LKJWT_URL}" ]; then
-        LKJWT_URL="https://github.com/element-hq/lk-jwt-service/releases/download/${LKJWT_LATEST}/lk-jwt-service-linux-${LK_ARCH}"
+        LKJWT_URL="https://github.com/element-hq/lk-jwt-service/releases/download/${LKJWT_LATEST}/lk-jwt-service_linux_${LK_ARCH}"
     fi
     bashio::log.info "   URL: ${LKJWT_URL}"
 
