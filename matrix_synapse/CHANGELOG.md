@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.5](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v2.0.4...matrix_synapse-v2.0.5) (2026-11-28)
+
+
+### Bug Fixes
+
+* **matrix_synapse:** use the real lk-jwt-service asset name in the download fallback ([#1004](https://github.com/pol4rfuchs/ha-apps/issues/1004)) ([60b6715](https://github.com/pol4rfuchs/ha-apps/commit/60b671542d82877637867fef0e9d1d8fbc64123a))
+* **matrix_synapse:** write bridge registration list without broken heredoc ([#1003](https://github.com/pol4rfuchs/ha-apps/issues/1003)) ([7efb0bc](https://github.com/pol4rfuchs/ha-apps/commit/7efb0bc918622322352f8dc72f6a1884bea7f1d7))
+
 ## [2.0.4](https://github.com/pol4rfuchs/ha-apps/compare/matrix_synapse-v2.0.3...matrix_synapse-v2.0.4) (2026-11-13)
 
 
