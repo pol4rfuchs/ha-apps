@@ -38,6 +38,11 @@ Please include:
 - Architecture (`aarch64` / `amd64`)
 - Relevant log output
 
+## Security vulnerabilities
+
+Do not report undisclosed vulnerabilities in a public issue. Follow [SECURITY.md](SECURITY.md) and
+use GitHub's private vulnerability reporting.
+
 ## Out of scope
 
 - Feature requests for upstream projects (ntfy, Navidrome, etc.) — report those upstream

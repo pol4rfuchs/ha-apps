@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/pol4rfuchs/ha-apps/security/advisories/new
+    about: Undisclosed vulnerabilities go here, never into a public issue. See SECURITY.md.
   - name: Wiki / Documentation
     url: https://github.com/pol4rfuchs/ha-apps/wiki
     about: Before reporting, check whether it is already documented in the wiki.

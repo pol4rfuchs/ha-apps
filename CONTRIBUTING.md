@@ -56,6 +56,11 @@ docker run --rm -v ha-test-data:/data ha-test-<app>
 - Things Docker cannot show: AppArmor in enforce mode and the Supervisor's own option validation.
   Say in the PR if you could not test them.
 
+## Security
+
+Do not describe an undisclosed vulnerability in an issue or a pull request. Report it privately as
+described in [SECURITY.md](SECURITY.md); the fix is then prepared in a private advisory fork.
+
 ## Labels and issues
 
 Labels are defined in `.github/labels.yml` and synced by workflow `15` without pruning. If a
