@@ -100,6 +100,10 @@ GitHub (source + CI)   → builds via GitHub Actions runners
 GHCR (ghcr.io)         ← images live here
 ```
 
+## Security
+
+Found a vulnerability in the packaging of an app? Please report it privately, see [SECURITY.md](SECURITY.md).
+
 ## License
 
 Each app may have its own license terms — see the respective app folder.

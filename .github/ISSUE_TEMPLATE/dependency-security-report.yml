@@ -7,6 +7,10 @@ body:
   - type: markdown
     attributes:
       value: |
+        **Do not use this public form for an undisclosed vulnerability.** Report it privately instead:
+        [Report a vulnerability](https://github.com/pol4rfuchs/ha-apps/security/advisories/new) (see `SECURITY.md`).
+        This form is only for issues that are already public, such as a published CVE in a dependency.
+
         For automatically detected security alerts, `27-dependabot-alerts-to-issues.yml` already creates issues.
         This form is for anything you discovered yourself (e.g. during a manual review, a Pi test, or an upstream changelog).
 
